@@ -6,10 +6,9 @@
 
 
 
+**** The story so far  
 
-**** Was bisher geschah 
-
-**** Plan für dieses Kapitel 
+**** Plans for this chapter 
 
 
 \vskip-2.5em
@@ -21,7 +20,7 @@
       :END:
 
 
-****** Lernziele 
+****** Learning outcomes 
 
 *****                    
       :PROPERTIES:
@@ -38,9 +37,9 @@
 
 
 
-** Zusammenfassung 
+** Conclusion 
 
-**** Zusammenfassung 
+**** Conclusion  
 
 Lorem ipsum 
 
