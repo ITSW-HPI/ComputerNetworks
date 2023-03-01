@@ -1,0 +1,6 @@
+# This file is populated by newChapter.sh - usually no need to edit manually
+# It provides pointers to all chapters, so that LaTeX xr can find references 
+# across chapters 
+
+#+LATEX_HEADER: \externaldocument{../ch_org/ch_org}
+

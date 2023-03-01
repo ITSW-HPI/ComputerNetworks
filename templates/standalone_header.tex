@@ -1,0 +1,32 @@
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+
+\RequirePackage{xcolor}
+
+%% HPI color definitions according to the design manual
+% These do not exactly match the RGB values used in the Powerpoint slide master due to unknown reasons
+\definecolor{hpiyellow}{RGB}{246,168,0}
+\definecolor{hpiorange}{RGB}{221,97,8}
+\definecolor{hpired}{RGB}{177,6,58}
+\definecolor{hpigray}{RGB}{90,96,101}
+\definecolor{hpiblue}{RGB}{0,122,158}
+
+
+\renewcommand{\sfdefault}{neosans}
+% Different font weights for neosans
+\newcommand{\textl}[1]{{\fontseries{l}\selectfont #1}} % light
+\newcommand{\textm}[1]{{\fontseries{m}\selectfont #1}} % medium, same as default weight
+\newcommand{\textsb}[1]{{\fontseries{sb}\selectfont #1}} % semibold
+\newcommand{\textmb}[1]{{\fontseries{mb}\selectfont #1}} % bold, same as \textbf
+\newcommand{\texteb}[1]{{\fontseries{eb}\selectfont #1}} % extra bold
+\newcommand{\textub}[1]{{\fontseries{ub}\selectfont #1}} % ultra bold
+
+\tikzset{every picture/.style={/utils/exec={\sffamily}}}
+\tikzset{flipflop RSflanke/.style={
+  flipflop,
+  flipflop def={t1=S, t2=C, c2=1, t3=R, t6=Q, t4={\ctikztextnot{Q}}}
+}}
+
+\usetikzlibrary{calc}
+\usetikzlibrary{positioning}

@@ -1,0 +1,54 @@
+#+LATEX_CLASS: beamerhpi
+#+LATEX_CLASS_OPTIONS:[navigation,compact]
+#+COLUMNS: %45ITEM %10BEAMER_env(Env) %10BEAMER_act(Act) %4BEAMER_col(Col) %8BEAMER_opt(Opt)
+#+OPTIONS: toc:nil H:3 prop:nil title:nil
+#+BEAMER_FRAME_LEVEL: 3
+
+
+#+include: "shared_header.org"
+
+
+ 
+#  Beamer setup:  
+#+LATEX_HEADER: \newif\iflattersubsect
+
+#+LATEX_HEADER: \AtBeginSection[]{\begin{frame}\frametitle{Inhaltsverzeichnis}\tableofcontents[currentsection,hideothersubsections]\end{frame} \lattersubsectfalse}
+#+LATEX_HEADER: \AtBeginSubsection[]{\iflattersubsect \begin{frame}\frametitle{Inhaltsverzeichnis} \tableofcontents[currentsubsection,currentsection,subsectionstyle=show/shaded/hide]\end{frame}\fi\lattersubsecttrue}
+
+#+LATEX_HEADER: \usepackage{etoolbox}
+#+LATEX_HEADER: \makeatletter \patchcmd{\beamer@sectionintoc}{\vskip1.5em}{\vskip0.25cm}{}{}\makeatother
+
+ 
+#+LATEX_HEADER: \setbeamertemplate{section in toc}[sections numbered]
+#+LATEX_HEADER: \setbeamertemplate{subsection in toc}[subsections numbered]
+#+LATEX_HEADER: \setbeamertemplate{caption}[numbered]
+
+
+#+Latex_HEADER: \usepackage{chngcntr}
+#+LATEX_HEADER: \counterwithin{section}{chapter}
+#+LATEX_HEADER: \counterwithin{subsection}{section}
+#+LATEX_HEADER: \counterwithin{figure}{chapter}
+#+LATEX_HEADER: \counterwithin{table}{chapter}
+#+LATEX_HEADER: \counterwithin{equation}{chapter}
+
+
+#+LATEX_HEADER: \addtobeamertemplate{navigation symbols}{}{ \hspace{1em}    \usebeamerfont{footline}  \insertframenumber / \inserttotalframenumber }
+
+
+
+# Cross-referencing: 
+#+LATEX_HEADER: \definecolor{linkscolor}{HTML}{2A1B81}
+#+LATEX_HEADER: \hypersetup{pdfauthor={Holger Karl}, pdftitle={GDS}, colorlinks = true, linkcolor=., urlcolor = linkscolor, citecolor = green}
+
+# Glossaries:
+#+LATEX_HEADER: \usepackage[acronyms,toc=false,nopostdot]{glossaries}
+#+LATEX_HEADER: \loadglsentries{../glossary}
+#+LATEX_HEADER: \renewcommand{\glossarysection}[2][]{}
+#+LATEX_HEADER: \makeglossaries
+
+
+
+
+# EXTERNAL FILES 
+
+#+include: ./externaldocuments.org 

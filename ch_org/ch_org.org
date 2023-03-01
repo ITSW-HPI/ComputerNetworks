@@ -1,0 +1,17 @@
+#+TITLE: Computer Networks  \newline Kapitel \thechapter: \newline  Organisation
+#+include: "../templates/slidehead.org"
+# if you want to add a short title as well: 
+#+BEAMER_HEADER: % \title[Short title]{copy title from above}
+#+BEAMER_HEADER: \author[H.\ Karl]{Holger Karl}
+#+BEAMER_HEADER: \date{WS 21/22}
+
+
+\setcounter{chapter}{-1}
+\refstepcounter{chapter}
+
+
+#+BIBLIOGRAPHY: ../bib plain
+
+#+include: "./ch_org_content.org"
+
+#+include: "../templates/references.org"

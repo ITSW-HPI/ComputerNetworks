@@ -1,0 +1,12 @@
+# Nicer look for theorems
+#+LATEX_HEADER: \usepackage{thmtools}
+#+LATEX_HEADER: \declaretheoremstyle[headfont=\normalfont\bfseries,  notefont=\mdseries, notebraces={(}{)},  bodyfont=\normalfont,  postheadspace=1em,  parent=chapter]{mystyle}
+#+LATEX_HEADER: \declaretheorem[style=mystyle, name=Definition,shaded={rulecolor={RGB}{221,97,8}, rulewidth=1.5pt, bgcolor={rgb}{1,1,1}, margin=8pt}]{definition}
+#+LATEX_HEADER: % \declaretheorem[style=mystyle, name={Zum Weiterlesen},shaded={rulecolor={RGB}{4FA2BB}, rulewidth=1.5pt, bgcolor={rgb}{1,1,1}, margin=8pt}]{furtherreading}
+#+LATEX_HEADER: % \declaretheorem[style=mystyle, name=Satz,shaded={rulecolor={RGB}{200,188,221}, rulewidth=2pt, bgcolor={rgb}{1,1,1}, margin=8pt}]{theorem}
+#+LATEX_HEADER: % \declaretheorem[style=mystyle,name=Beispiel,shaded={rulecolor={RGB}{153,209,156}, rulewidth=2pt, bgcolor={rgb}{1,1,1}, margin=8pt}]{example}
+#+LATEX_HEADER: % \declaretheorem[style=mystyle,name=Bemerkung,shaded={rulecolor={RGB}{209,207,207}, rulewidth=2pt, bgcolor={rgb}{1,1,1}, margin=8pt}]{note}
+#+LATEX_HEADER: % \declaretheorem[style=mystyle, name=Achtung,shaded={rulecolor={RGB}{249,105,0}, rulewidth=2pt, bgcolor={rgb}{1,1,1}, margin=8pt}]{alertblock}
+#+LATEX_HEADER: % \declaretheorem[style=mystyle,name=Zitat,shaded={rulecolor={RGB}{209,207,207}, rulewidth=2pt, bgcolor={rgb}{1,1,1}, margin=8pt}]{zitat}
+#+LATEX_HEADER: % \declaretheorem[style=mystyle,name=Beweis,shaded={rulecolor={RGB}{200,188,221}, rulewidth=2pt, bgcolor={rgb}{1,1,1}, margin=8pt}]{beweis}
+

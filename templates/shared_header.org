@@ -1,0 +1,69 @@
+# header commands shared between book and slide chapter 
+
+#+LANGUAGE: de
+#+LATEX_HEADER: \usepackage[german]{babel}
+
+
+
+# Citations: 
+#+LATEX_HEADER: \usepackage[style=alphabetic,bibstyle=alphabetic,url=false,natbib=true,backend=biber]{biblatex}
+#+LATEX_HEADER: \setbeamertemplate{bibliography item}{\insertbiblabel}
+#+LATEX_HEADER: \addbibresource{../bib.bib}
+#+BIBLIOGRAPHY: ../bib plain
+
+# Graphics, Tikz, etc: 
+
+#+LATEX_HEADER: \usepackage{tikz}
+#+LATEX_HEADER: \usetikzlibrary{tikzmark}
+#+LATEX_HEADER: \usepackage{tikzsymbols}
+#+LATEX_HEADER: \usepackage[export]{adjustbox}
+#+LATEX_HEADER: \graphicspath{{./figures/}{./standalone/}{../hpi-slides/backgrounds/}{../templates/}}
+#+LATEX_HEADER: \usepackage{subcaption}
+
+# Generic latex setup
+#+LATEX_HEADER: \usepackage{booktabs}
+#+LATEX_HEADER: \usepackage{amsmath,amssymb}
+
+# Define new environments: 
+#+LATEX_HEADER: \usepackage{environ}
+#+LATEX_HEADER: \usepackage{fontawesome5}
+#+LATEX_HEADER: \NewEnviron{textbook}{
+#+LATEX_HEADER:   \mode<article>{
+#+LATEX_HEADER:      \marginpar{\faBook \, \BODY}
+#+LATEX_HEADER:     }
+#+LATEX_HEADER:   \mode<presentation>{%
+#+LATEX_HEADER:   \begin{tikzpicture}[overlay, remember picture]
+#+LATEX_HEADER:     % \draw [step=0.25, very thin] (current page.north west) grid (current page.south east);
+#+LATEX_HEADER:     \node [align=flush right, fill=hpiyellow!10, xshift=20.6cm, yshift=-2.4cm, anchor=south east] at (current page.north west) {\faBook \, \BODY}; 
+#+LATEX_HEADER:   \end{tikzpicture}
+#+LATEX_HEADER:   }
+#+LATEX_HEADER:   \mode<all>
+#+LATEX_HEADER: }
+#+LATEX_HEADER: \NewEnviron{context_riscv}{
+#+LATEX_HEADER:   \mode<article>{
+#+LATEX_HEADER:      \marginpar{RISC-V-spezifisch}
+#+LATEX_HEADER:     }
+#+LATEX_HEADER:   \mode<presentation>{%
+#+LATEX_HEADER:   \begin{tikzpicture}[overlay, remember picture]
+#+LATEX_HEADER:     \node [align=flush right, xshift=20.6cm, yshift=-1.6cm, anchor=south east] at (current page.north west) {\includegraphics[height=0.8cm]{RISC_V_Standard_2.png}}; 
+#+LATEX_HEADER:   \end{tikzpicture}
+#+LATEX_HEADER:   }
+#+LATEX_HEADER:   \mode<all>
+#+LATEX_HEADER: }
+#+LATEX_HEADER: \NewEnviron{context_ripes}{
+#+LATEX_HEADER:   \mode<article>{
+#+LATEX_HEADER:      \marginpar{Ripes-spezifisch}
+#+LATEX_HEADER:     }
+#+LATEX_HEADER:   \mode<presentation>{%
+#+LATEX_HEADER:   \begin{tikzpicture}[overlay, remember picture]
+#+LATEX_HEADER:     \node [align=flush right, xshift=20.6cm, yshift=-1.4cm, anchor=south east] at (current page.north west) {Ripes-spezifisch}; 
+#+LATEX_HEADER:   \end{tikzpicture}
+#+LATEX_HEADER:   }
+#+LATEX_HEADER:   \mode<all>
+#+LATEX_HEADER: }
+
+
+
+
+
+

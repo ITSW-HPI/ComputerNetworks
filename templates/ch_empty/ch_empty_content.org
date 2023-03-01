@@ -1,0 +1,46 @@
+\label{ch:DDD}
+
+\begin{frame}[title={bg=Hauptgebaeude_Tag}]
+ \maketitle 
+\end{frame}
+
+
+
+
+**** Was bisher geschah 
+
+**** Plan für dieses Kapitel 
+
+
+\vskip-2.5em
+
+*****                     
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+
+****** Lernziele 
+
+*****                    
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+
+** Zusammenfassung 
+
+**** Zusammenfassung 
+
+Lorem ipsum 
+

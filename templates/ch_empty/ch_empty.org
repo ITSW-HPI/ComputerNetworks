@@ -1,0 +1,17 @@
+#+TITLE: AAA  \newline Kapitel \thechapter: \newline  BBB
+#+include: "../templates/slidehead.org"
+# if you want to add a short title as well: 
+#+BEAMER_HEADER: % \title[Short title]{copy title from above}
+#+BEAMER_HEADER: \author[H.\ Karl]{Holger Karl}
+#+BEAMER_HEADER: \date{SS 23}
+
+
+\setcounter{chapter}{DDD}
+\refstepcounter{chapter}
+
+
+#+BIBLIOGRAPHY: ../bib plain
+
+#+include: "./CCC_content.org"
+
+#+include: "../templates/references.org"
