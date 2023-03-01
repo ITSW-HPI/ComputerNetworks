@@ -4,12 +4,176 @@
  \maketitle 
 \end{frame}
 
+** Who are we? 
+
+
+**** Who are we
+
+ Fachgebiet „Internet-Technologie und Softwarisierung“ (ITSW)
+ - Prof. Dr. Holger Karl 
+ - holger.karl@hpi.de 
+ - A-E.8  
+ - Office hours: on demand
+ - Web page: https://hpi.de/karl/home.html
 
 
 
-**** The story so far  
+**** Main research topics
 
-**** Plans for this chapter 
+In general: architectures and protocols of communication systems
+ - Structure, design, performance evaluation, implementation, …
+ - For all types of communication: computer networks, voice communication, data & multimedia content
+
+**** Main research topics                                          :noexport:
+ More specifically
+ - Future mobile and wireless communication
+ - What comes after GSM, UMTS, WLAN?
+ - Future Internet
+ - Data centre networks 
+ - Clouds meet operator networks 
+ - Buzzwords: Software-Defined Networking; 
+ - Network Function Virtualization 
+
+**** Teaching FG ITSW                                              :noexport:
+
+
+
+#+BEGIN_EXPORT latex
+\begin{figure}
+\adjustbox{width=0.9\textwidth}{
+\begin{tikzpicture}[auto, node distance=5cm, xscale=2.5,yscale=1.25,
+block/.style = {rectangle, draw=black, thick, align=center}]
+\node at (0,0) (s4)  {IV}; 
+\node at (0,1) (s5) {V}; 
+\node at (0,2)  (s6) {VI}; 
+\node at (0,3) (s7) {VII}; 
+\node at (0,4) (s8) {VIII}; 
+% 
+\node [block] at (3, 0) (kms) {KMS};
+\node [block,fill=blue!20] at (3,1)  (rnvs){Rechnernetze/\\Verteilte Systeme}; 
+\node [block,fill=green!20] at (1,3)  (mc) {Mobile\\communication}; 
+\node [block,fill=red!20] at (2,4) (fi) {Future\\Internet}; 
+\node [block,fill=yellow!20] at (3,4)  (epe) {Empiric\\Performance\\Evaluation}; 
+\node [block] at (4,4)  (seminar8) {Seminar}; 
+\node [block] at (4,3) (seminar7) {Seminar}; 
+\node [block] at (4,2)  (ps) {Proseminar}; 
+\node [block] at (5,3)  (pg1) {Project\\group}; 
+\node [block] at (5,4)  (pg1) {Project\\group}; 
+%
+\draw [->] (kms) -- (rnvs); 
+\draw [->] (rnvs) -- (mc); 
+\draw [->] (rnvs) -- (fi); 
+\draw [->] (rnvs) -- (ps); 
+\end{tikzpicture}
+}
+\caption{Classes offered by Computer Networks group}
+\label{fig:classes}
+\end{figure}
+#+END_EXPORT 
+
+
+
+
+
+** Topics 
+**** Topic of ``Computer Networks''
+- Ever wondered what really happened after 
+  - Typing http://www.uni-paderborn.de into a Web browser?
+  - Making a phone call?
+- How does data get from one device to another?
+  - Basic abstractions have been treated in KMS
+  - What happens ``behind the scene'' and ``on the wire''?
+- Communication systems enable this transport of data
+  - What are the necessary ingredients for such systems? Typical components?
+  - Are there any basic mechanisms to put such components together? To organize their working together?
+  - How can we cope with size, complexity, failures, user demands, … in such systems? 
+  - How to evaluate? Analysis? Simulation? Measurements? Tools?
+
+**** Topic of ``Computer Networks''
+
+- This lecture is about basic architecture and protocol mechanisms
+  - Attempts to give an overview of all important components
+  - Essentially, a round-up of all layers of ISO/OSI model
+  - For both data communication and voice / ``telecommunication''
+- It is NOT about specific technical solutions
+- It is NOT about mobile and wireless communication
+  - Covered in ``Mobile Communication''
+  - Requires ``Computer Networks'' as pre-requisite
+- It is NOT about distributed systems
+  - Rather, builds the foundation for them to work
+
+
+
+
+** Formalities 
+
+*** Lecture 
+
+**** Lecture
+
+- Classic in-person lecture, homework assignments 
+- Slides to be provided via Moodle
+- Some handwritten scribbling 
+- Teletask recordings will be made available 
+
+**** Time table 
+
+Regular: 
+- Tuesday, 15:15 - 16:45, HS 1 (?)
+- Thursday, 9:15 - 10:45, HS 1 (?)
+
+\pause 
+
+Covers *both* 
+- lectures  (about 3/4) and 
+- discussion of homework assignments  (about 1/4)
+
+To be scheduled on-demand  
+
+**** Make-up classes? 
+
+- We have Thursday classes! :-( 
+  - How to deal with holidays? 
+
+**** Homework assignments 
+
+- A list of smaller and bigger homework assignments will be made
+  available in Moodle 
+- From the bigger assignments: *choose any two* to hand in
+  - They will be checked 
+  - "big" will be clearly marked 
+- You will need *two* successful submissions to be admitted to the
+  exam 
+
+
+**** No tutoring 
+
+There are no tutors available, no "Testate", ... 
+
+*** Resources 
+
+**** Slides 
+
+- Only PDFs! 
+- No script 
+- Github 
+
+
+**** Acknowledgement 
+
+To give credit where credit is due: 
+
+- Some of the material on these slides (text, pictures, graphs, pictograms, etc.) is used from lectures given by Profs. Krüger, Juling, Zitterbart, Schiller, Carle, Menth at the universities Karlsruhe, Braunschweig, FU Berlin, TU Munich, Würzburg
+- Other parts are based on material available via the Internet, company presentations, and similar sources
+- In particular, Tanenbaum’s and Peterson/Davie’s books’ online material
+- Many thanks to everybody who contributed here and has graciously agreed to make their material available
+
+
+
+
+*** Textbooks 
+
+**** Primary textbook 
 
 
 \vskip-2.5em
@@ -21,7 +185,15 @@
       :END:
 
 
-****** Learning outcomes 
+
+A. Tanenbaum, Computer Networks, 6th edition, Prentice-Hall
+
+- Classic textbook, excellent tutorial style, if occasionally a bit lengthy
+- Do NOT use an earlier edition; they are partially outdated
+- Do NOT use a translation
+- Good command of English is necessary anyway
+
+
 
 *****                    
       :PROPERTIES:
@@ -29,6 +201,7 @@
       :BEAMER_col: 0.48
       :END:   
 
+\includegraphics[width=0.7\columnwidth]{Tanenbaum_Cover.png}
 
 
 *****                               :B_ignoreheading:
@@ -37,10 +210,49 @@
       :END:
 
 
+**** Secondary recommendations 
+
+L. L. Peterson & B. S. Davie, Computer Networks – A Systems Approach, 2003, 3rd edition, Morgan Kaufman 
+- Rather technical approach, quickly gets down to „how to build it“ questions
+- Maybe a bit quick on the beginner, though
+
+J. F. Kurose & K. W. Ross, Computer Networking: A Top-Down Approach Featuring the Internet, 2004, 6th edition, Addison Wesley
+- Motivates why communication systems are built in a certain fashion by starting out from the applications that they should support
+
+William Stallings, Data and Computer Communications, 7th Edition, Prentice Hall  
+- A bit more technical, less chatty than Tanenbaum 
+
+
+
+**** Tertiary recommendations: Oldies but goldies 
+
+
+F. Halsall: Data Communications, Computer Networks and OSI. Addison-Wesley, 4. Auflage, 1997
+- Similar to Tanenbaum, more details, particularly good for lower-layer questions
+- Unfortunately, no longer updated
+
+S. Keshav: An Engineering Approach to Computer Networking. Addison-Wesley, 1999
+- Excellent book for fundamental treatments, some good theory chapters
+- Also explains why some design choices are made
+- Unfortunately, also a bit outdated
+
+W.R. Stevens: TCP/IP Illustrated, Vol. 1- 3, 1994, Addison-Wesley
+- Excellent presentation with plenty of protocol traces; sadly,
+  out-of-date by now 
+
+
+*** Exams 
+
+**** Exams 
+
+- Material of both lecture and homework assignments are  relevant for
+  the exam 
+- Oral or written exam, we will see 
 
 ** Conclusion 
 
 **** Conclusion  
 
-Lorem ipsum 
+- It is a pretty typical class 
+
 
