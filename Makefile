@@ -1,4 +1,4 @@
-.PHONY: chapters chapter all slides slides169 handout clean book cleanall  quick biberclean  output
+.PHONY: chapters chapter all slides slides169 handout clean book cleanall  quick biberclean output bibpull
 
 # Use .SECONDARY with no argument is a little overkill, but using %.tex does not work
 # because we need to refer to .tex files in subdirectories. make does not allow %/%.tex. 
@@ -120,6 +120,10 @@ cleanall:
 # if biber runs crazy: 
 biberclean:
 	rm -rf `biber --cache`
+
+# if there are new papers to cite:
+bibpull:
+	pushd ${HOME}/texmf/paperpile ; git pull ; popd 
 
 cleanstandalone:
 	find . -name "*.pdf"  | grep standalone | xargs rm

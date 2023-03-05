@@ -8,6 +8,7 @@
 # Citations: 
 #+LATEX_HEADER: \usepackage[style=alphabetic,bibstyle=alphabetic,url=false,natbib=true,backend=biber]{biblatex}
 #+LATEX_HEADER: \setbeamertemplate{bibliography item}{\insertbiblabel}
+#+LATEX_HEADER: \addbibresource{../paperpile.bib}
 #+LATEX_HEADER: \addbibresource{../bib.bib}
 #+BIBLIOGRAPHY: ../bib plain
 
