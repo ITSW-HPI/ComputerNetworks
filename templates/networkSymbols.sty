@@ -1,0 +1,135 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{networkSymbols}[2021/06/14 networkSymbols]
+
+
+
+\RequirePackage{../../templates/moeptikz}
+
+\usetikzlibrary{calc}
+
+\usepackage{tkz-euclide}
+\usetikzlibrary{decorations.text,shapes,math,calc,intersections, shadings, shadows, shapes.arrows,shapes.symbols,shapes.geometric,decorations.pathreplacing}
+\usetikzlibrary{decorations.pathmorphing,matrix}
+\usepackage{tikzsymbols}
+\usepackage{tikzpeople}
+
+\usepackage{xcolor}
+% ----
+% colors
+\definecolor{myteal}{RGB}{0,128,128}
+\definecolor{myfuchsia}{RGB}{157,99,129}
+\definecolor{myred}{HTML}{D71D36}
+\definecolor{myblue}{RGB}{32,131,213}
+\definecolor{mygold}{RGB}{219,184,128}
+\definecolor{myyellow}{HTML}{FFBA08}
+\definecolor{magnolia}{RGB}{247,240,245}
+
+
+
+\newcommand*{\nodelabel}[1]{#1}
+
+\tikzset{
+        every picture/.style={
+        line width=1pt
+      },
+      state/.style={tape, draw, tape bend top=none, minimum width=.5cm},
+      database/.style={
+        cylinder,
+        cylinder uses custom fill,
+        cylinder body fill=myyellow!50,
+        cylinder end fill=myyellow!50,
+        shape border rotate=90,
+        aspect=0.75,
+        draw
+      },
+    between/.style args={#1 and #2}{
+         at = ($(#1)!0.5!(#2)$)
+    },      
+}
+
+
+\def\centerarc[#1](#2)(#3:#4:#5);%
+%Syntax: [draw options] (center) (initial angle:final angle:radius)
+    {
+    %\draw[#1] ($(#2)+({#5*cos(#3)},{#5*sin(#3)})$) arc (#3:#4:#5);
+    \draw[#1]([shift=(#3:#5)]#2) arc (#3:#4:#5);
+  }
+
+
+  
+\newcommand{\basestation}{
+  \begin{tikzpicture}[scale=0.25]
+    \coordinate (top) at (0,0);
+    \coordinate (left) at (-1,-3);
+    \coordinate (right) at (1,-3);
+
+    \draw (top) -- (left) -- (right) -- (top);
+    \filldraw [gray] (top) circle [radius=0.5];
+
+    
+    \draw [thin] ($ (top)!.4!(left) $) -- ($ (top)!0.7!(right)  $); 
+    \draw [thin] ($ (top)!.6!(left) $) -- ($ (top)!0.9!(right)  $); 
+    \draw [thin] ($ (top)!.4!(right) $) -- ($ (top)!0.7!(left)  $); 
+    \draw [thin] ($ (top)!.6!(right) $) -- ($ (top)!0.9!(left)  $);
+
+    % \cercle{top}{2}{60}{-60};
+
+    % \draw [green] (0,0) +(-20:1) arc (-20:20:2.5) ;
+    \centerarc[](0,0)(-45:45:1cm); 
+    \centerarc[thin](0,0)(-45:45:1.5cm); 
+    \centerarc[very thin](0,0)(-45:45:2cm); 
+    \centerarc[](0,0)(135:225:1cm); 
+    \centerarc[thin](0,0)(135:225:1.5cm); 
+    \centerarc[very thin](0,0)(135:225:2cm); 
+  \end{tikzpicture}
+}
+
+\newcommand{\pprocess}[1]{
+  \begin{tikzpicture}
+    \node  [inner xsep = 15pt, draw, rectangle] (tmp)  {#1};
+    \draw ([xshift=5pt]tmp.north west) -- ([xshift=5pt]tmp.south west);
+    \draw ([xshift=-5pt]tmp.north east) -- ([xshift=-5pt]tmp.south east);
+  \end{tikzpicture}
+}
+
+
+\newcommand{\farm}[2][3]{
+  \begin{tikzpicture}
+    \begin{scope}[on grid, node distance=.12cm]
+      \node[server] (#2_1) at (0,0) {};
+      \foreach \i [remember=\i as \lasti] in {1,...,#1} {
+        \ifnum\i>1
+        \node[server, above=of #2_\lasti] (#2_\i) {};
+        \fi
+      }
+    \end{scope}
+  \end{tikzpicture}
+}
+
+
+% \pgfdeclareshape{process}{
+%   \inheritsavedanchors[from=rectangle] % this is nearly a rectangle
+%   \inheritanchorborder[from=rectangle]
+%   \inheritanchor[from=rectangle]{center}
+%   \inheritanchor[from=rectangle]{north}
+%   \inheritanchor[from=rectangle]{south}
+%   \inheritanchor[from=rectangle]{west}
+%   \inheritanchor[from=rectangle]{east}
+%   % ... and possibly more
+%   \backgroundpath{% This is new
+%     % store lower right in xa/ya and upper right in xb/yb
+%   \southwest \pgf@xa=\pgf@x \pgf@ya=\pgf@y
+%   \northeast \pgf@xb=\pgf@x \pgf@yb=\pgf@y
+%   % compute x off the left part
+%   \pgf@xc=\pgf@xa \advance\pgf@xc by-5pt % this should be a parameter
+%   \pgf@xd=\pgf@xb \advance\pgf@xd by-5pt
+%     % construct main path
+%     \pgfpathmoveto{\pgfpoint{\pgf@xc}{\pgf@ya}}
+%     \pgfpathlineto{\pgfpoint{\pgf@xc}{\pgf@yb}}
+%     \pgfpathclose
+%     % 
+%     \pgfpathmoveto{\pgfpoint{\pgf@right}{\pgf@ya}}
+%     \pgfpathlineto{\pgfpoint{\pgf@xd}{\pgf@yb}}
+%     \pgfpathclose
+%  }
+% }
