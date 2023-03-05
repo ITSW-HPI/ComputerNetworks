@@ -86,9 +86,9 @@ sed -I~  "s/* Appendix/** ${chapterName}\n\n#+include: \"..\/ch_${chapterLabel}\
 
 # and make sure that the graphicspaths in book point to all relevant subdirectories
 
-echo "\\appendtographicspath{{../ch_${chapterLabel}/}}" >> book/graphicspath.tex
-echo "\\appendtographicspath{{../ch_${chapterLabel}/standalone/}}" >> book/graphicspath.tex
-echo "\\appendtographicspath{{../ch_${chapterLabel}/figures/}}" >> book/graphicspath.tex
+echo "\\\\appendtographicspath{{../ch_${chapterLabel}/}}" >> book/graphicspath.tex
+echo "\\\\appendtographicspath{{../ch_${chapterLabel}/standalone/}}" >> book/graphicspath.tex
+echo "\\\\appendtographicspath{{../ch_${chapterLabel}/figures/}}" >> book/graphicspath.tex
 
 
 
