@@ -20,6 +20,7 @@
 #+LATEX_HEADER: \usepackage[export]{adjustbox}
 #+LATEX_HEADER: \graphicspath{{./figures/}{./standalone/}{../hpi-slides/backgrounds/}{../templates/}}
 #+LATEX_HEADER: \usepackage{subcaption}
+#+LATEX_HEADER: \usepackage{../templates/moeptikz}
 
 # Generic latex setup
 #+LATEX_HEADER: \usepackage{booktabs}
