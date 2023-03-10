@@ -1,0 +1,106 @@
+\documentclass[tikz]{standalone}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{ifthen} 
+
+\usepackage{../../templates/moeptikz}
+\input{../../templates/standalone_header}
+
+\usetikzlibrary{positioning,decorations.pathreplacing, calc, shapes.multipart, ext.positioning-plus}
+
+
+
+\begin{document}
+
+
+\begin{tikzpicture}
+  \label{fig:basics:msc:packet:multihop}
+
+  \node [client, scale=0.5] at (0,0) (a) {A}; 
+  \node [switch, scale=0.5] at (1,0) (sw1) {SW 1}; 
+  \node [switch, scale=0.5] at (2,0) (sw2) {SW 2}; 
+  \node [client, scale=0.5] at (4,0) (d) {D};
+
+  \foreach \n in {a, sw1, sw2, d} \draw (\n) -- ++ (0, -3);
+
+  % a to sw1: 1 latency, time per packet: 2
+  % sw1 to sw2: 1 latency, time per packet: 1
+  % sw2 to d: 2 latency, time per packet: 1
+  \begin{scope}[y=0.2cm,yshift=-0.5cm]
+  \draw [fill=hpiblue!20] (0, -1) -- ++ (1, -1) -- ++ (0, -2) -- ++ (-1, +1) -- ++ (0, +2) ; 
+
+  \draw [fill=hpiblue!20] (1, -4.5) -- ++ (1, -1) -- ++ (0, -1) -- ++ (-1, +1) -- ++ (0, +1) ; 
+
+  \draw [fill=hpiblue!20] (2, -7) -- ++ (2, -2) -- ++ (0, -1) -- ++ (-2, +2) -- ++ (0, +1) ; 
+  
+\end{scope}
+\end{tikzpicture}
+
+\begin{tikzpicture}
+  \label{fig:basics:msc:circuit:multihop}
+
+  \node [client, scale=0.5] at (0,0) (a) {A}; 
+  \node [switch, scale=0.5] at (1,0) (sw1) {SW 1}; 
+  \node [switch, scale=0.5] at (2,0) (sw2) {SW 2}; 
+  \node [client, scale=0.5] at (4,0) (d) {D};
+
+  \foreach \n in {a, sw1, sw2, d} \draw (\n) -- ++ (0, -8);
+
+
+  \begin{scope}[y=0.2cm,yshift=-0.5cm]
+  % establish circuit 
+  \draw [hpiyellow, fill=hpiyellow!20] (0, -1) -- ++ (1, -1) -- ++ (0, -0.1) -- ++ (-1, +1) -- ++ (0, +0.1) ; 
+
+  \draw [hpiyellow, fill=hpiyellow!20] (1, -2.2) -- ++ (1, -1) -- ++ (0, -0.1) -- ++ (-1, +1) -- ++ (0, +0.1) ; 
+
+  \draw [hpiyellow, fill=hpiyellow!20] (2, -3.8) -- ++ (2, -2) -- ++ (0, -0.1) -- ++ (-2, +2) -- ++ (0, +0.1) ; 
+
+  
+  %confirm circuit setup 
+  
+  \draw [hpiyellow, fill=hpiyellow!40] (4, -6) -- ++ (-2, -2) -- ++ (0, -0.1) -- ++ (+2, +2)-- ++ (0, -0.1);
+  
+  \draw [hpiyellow, fill=hpiyellow!40] (2, -8.3) -- ++ (-1, -1) -- ++ (0, -0.1) -- ++ (+1, +1)-- ++ (0, -0.1);
+
+  \draw [hpiyellow, fill=hpiyellow!40] (1, -9.6) -- ++ (-1, -1) -- ++ (0, -0.1) -- ++ (+1, +1)-- ++ (0, -0.1);
+
+
+  \node [align=center] (wait) at (-1,-6) {Wait for \\ processing};
+  \foreach \p in {(1, -2), (2, -3.6),  (2, -8.1),  (1, -9.5), (0, -10.9)} {
+    \draw [->, hpired] (wait.east) -- (\p) ; 
+  }
+  \draw [hpiorange, decorate,decoration={brace,amplitude=6pt, raise=1pt}] (4,0) -- (4, -12) node [midway, right=10pt,anchor=west,align=left] {Circuit\\setup}; 
+
+  
+  % data
+
+  \draw [fill=hpiblue!20]  (0, -11) -- ++ (+4, -4) -- ++ (0, -10)  -- ++(-4, +4) -- ++ (0, 10); 
+   
+  % destroy circuit
+  \begin{scope}[yshift=-5cm]
+  
+  \draw [hpired, fill=hpired!20] (0, -1) -- ++ (1, -1) -- ++ (0, -0.1) -- ++ (-1, +1) -- ++ (0, +0.1) ; 
+
+  \draw [hpired, fill=hpired!20] (1, -2.2) -- ++ (1, -1) -- ++ (0, -0.1) -- ++ (-1, +1) -- ++ (0, +0.1) ; 
+
+  \draw [hpired, fill=hpired!20] (2, -3.8) -- ++ (2, -2) -- ++ (0, -0.1) -- ++ (-2, +2) -- ++ (0, +0.1) ; 
+
+  %confirm circuit teardown
+  
+  \draw [hpired, fill=hpired!40] (4, -6) -- ++ (-2, -2) -- ++ (0, -0.1) -- ++ (+2, +2)-- ++ (0, -0.1);
+  
+  \draw [hpired, fill=hpired!40] (2, -8.3) -- ++ (-1, -1) -- ++ (0, -0.1) -- ++ (+1, +1)-- ++ (0, -0.1);
+
+  \draw [hpired, fill=hpired!40] (1, -9.6) -- ++ (-1, -1) -- ++ (0, -0.1) -- ++ (+1, +1)-- ++ (0, -0.1);
+
+    \draw [hpiorange, decorate,decoration={brace,amplitude=6pt, raise=1pt}] (4,-1) -- (4, -12) node [midway, right=10pt,anchor=west,align=left] {Circuit\\teardown}; 
+
+\end{scope}
+
+
+\end{scope}
+\end{tikzpicture}
+
+
+
+\end{document}

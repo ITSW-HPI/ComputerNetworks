@@ -1,0 +1,42 @@
+\documentclass[tikz]{standalone}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{ifthen} 
+
+\usepackage{../../templates/moeptikz}
+\input{../../templates/standalone_header}
+
+\usetikzlibrary{positioning,decorations.pathreplacing, calc, shapes.multipart, ext.positioning-plus}
+
+
+
+\begin{document}
+
+\newcommand{\topology}[0]{
+  \foreach \p [count=\pi] in {(0,0), (1,-1.5), (4,2), (3.5,-1.75), (7,1.5), (6, -1), (8,0)}
+  \node [client, scale=0.5] (n\pi) at \p {N\,\pi}; 
+
+  \foreach \s [count=\si] in {(1.5,0.5), (3.5,-0.5), (4, 1), (6, 0.5)} {\node [switch, scale=0.75] (s\si) at \s {Sw\,\si}; };
+
+  \draw [very thick] (s1) -- (s2) --(s3) --(s4) -- (s2);
+  \draw [] (n1) -- (s1) -- (n2)  (n3) -- (s3) (n4) --(s2) (s4) -- (n5) (s4)-- (n6) (s4)-- (n7) ; 
+
+  \node at (0,-2.5) {}; 
+}
+
+\begin{tikzpicture}
+  \label{page:basics:routing:topology}
+  \topology
+\end{tikzpicture}
+
+\begin{tikzpicture}
+  \label{page:basics:routing:interfaces}
+
+  \topology
+  
+  \foreach \a/\p/\n in {45/above/a, 160/above/b, 200/below/c, 270/right/d, 350/right/e} {
+    \node[\p, hpiblue] at (s4.\a) {\Circled{\n}};
+  }
+\end{tikzpicture}
+
+\end{document}

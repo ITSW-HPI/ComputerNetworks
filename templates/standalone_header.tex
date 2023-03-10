@@ -1,6 +1,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 
+\usepackage{circledsteps}
 
 \RequirePackage{xcolor}
 
@@ -27,6 +28,54 @@
   flipflop,
   flipflop def={t1=S, t2=C, c2=1, t3=R, t6=Q, t4={\ctikztextnot{Q}}}
 }}
+
+
+\tikzset{
+  mechanicalSwitch/.pic={
+    \coordinate (-inUp) at (135:2); 
+    \coordinate (-inDown) at (235:2);
+    \coordinate (-out) at (2,0);
+    \coordinate (-center) at (0,0);
+    
+    \draw (0,0) circle [radius = 2cm];
+    \draw [fill=gray!20] (0,0) circle [radius = 0.2cm];
+
+    \draw (0, 0) -- (2, 0);
+    \draw (135:.8) -- (135:2); 
+    \draw (225:.8) -- (225:2); 
+
+    \draw [fill=gray!20] (2, 0) circle [radius=0.05cm]; 
+    \draw [fill=gray!20] (135:2) circle [radius=0.05cm]; 
+    \draw [fill=gray!20] (225:2) circle [radius=0.05cm]; 
+
+    
+    \draw [thick] (0,0) -- (175:1.5); 
+
+    \draw [dashed, <->, domain=135:225] plot ({cos(\x)}, {sin(\x)}); 
+  },
+  mechanicalSwitchClosed/.pic={
+    \coordinate (-inUp) at (135:2); 
+    \coordinate (-inDown) at (255:2);
+    \coordinate (-out) at (2,0);
+    \coordinate (-center) at (0,0);
+    \draw (0,0) circle [radius = 2cm];
+    \draw [fill=gray!20] (0,0) circle [radius = 0.2cm];
+
+    \draw (0, 0) -- (2, 0);
+    \draw (135:.8) -- (135:2); 
+    \draw (225:.8) -- (225:2); 
+
+    \draw [fill=gray!20] (2, 0) circle [radius=0.05cm]; 
+    \draw [fill=gray!20] (135:2) circle [radius=0.05cm]; 
+    \draw [fill=gray!20] (225:2) circle [radius=0.05cm]; 
+
+    
+    \draw [thick] (0,0) -- (135:2); 
+
+    \draw [dashed, <->, domain=135:225] plot ({cos(\x)}, {sin(\x)}); 
+  }
+}
+
 
 \usetikzlibrary{calc}
 \usetikzlibrary{positioning}

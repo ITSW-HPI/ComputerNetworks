@@ -15,7 +15,7 @@
 # Graphics, Tikz, etc: 
 
 #+LATEX_HEADER: \usepackage{tikz}
-#+LATEX_HEADER: \usetikzlibrary{tikzmark}
+#+LATEX_HEADER: \usetikzlibrary{tikzmark,arrows.meta}
 #+LATEX_HEADER: \usepackage{tikzsymbols}
 #+LATEX_HEADER: \usepackage[export]{adjustbox}
 #+LATEX_HEADER: \graphicspath{{./figures/}{./standalone/}{../hpi-slides/backgrounds/}{../templates/}}

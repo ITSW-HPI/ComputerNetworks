@@ -5,3 +5,8 @@
 #+LATEX_HEADER: \externaldocument{../ch_org/ch_org}
 
 #+LATEX_HEADER: \externaldocument{../ch_basics/ch_basics}
+#+LATEX_HEADER: \externaldocument{../ch_basics/standalone/duplexing}
+#+LATEX_HEADER: \externaldocument{../ch_basics/standalone/multiplexing}
+#+LATEX_HEADER: \externaldocument{../ch_basics/standalone/switching}
+#+LATEX_HEADER: \externaldocument{../ch_basics/standalone/switchingMSC}
+#+LATEX_HEADER: \externaldocument{../ch_basics/standalone/routing}

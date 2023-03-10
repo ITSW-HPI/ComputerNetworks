@@ -1,0 +1,99 @@
+\documentclass[tikz]{standalone}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{ifthen} 
+
+\input{../../templates/standalone_header}
+
+\usetikzlibrary{positioning,decorations.pathreplacing, calc}
+
+\begin{document}
+
+\newcommand{\basicMSC}[2]{
+  \node (sender) {Transmitter};
+  \node [right=3cm of sender] (empfaenger) {Receiver};
+
+  \draw [->] ([shift={(-0.5, 0)}]sender.west) to node[left,near end] {t} ++(0, -0.75) ;
+
+
+  \coordinate (startSend) at ([yshift=-1cm]sender.south); 
+  \coordinate (endSend) at ([yshift=-1cm * #1]startSend); 
+  \coordinate (_startSend) at (startSend -| empfaenger.south); 
+  \coordinate (_endSend) at (endSend -| empfaenger.south); 
+
+
+  \coordinate (startReceive) at ([yshift=-1cm - 1cm* #2]empfaenger.south); 
+  \coordinate (endReceive) at ([yshift=-1cm * #1]startReceive); 
+  \coordinate (_startReceive) at (startReceive -| sender.south); 
+  \coordinate (_endReceive) at (endReceive -| sender.south); 
+
+  \coordinate (mscEnd) at ([yshift=-0.5cm]endReceive); 
+
+  \fill [hpiyellow!10] (startSend) -- (startReceive) -- (endReceive) -- (endSend); 
+
+  
+  \draw [thick] (sender) -- (sender |- mscEnd); 
+  \draw [thick] (empfaenger) -- (mscEnd);
+
+  
+  \draw [thick, ->] (startSend) -- (startReceive); 
+  \draw [thick, ->] (endSend) -- (endReceive); 
+
+  \draw [dotted] (startSend) -- (_startSend); 
+  \draw [dotted] (_endReceive) -- (endReceive); 
+
+  \node [left= of startSend, anchor=east] (startSendLabel) {Start transmitting}; 
+  \node [right= of startReceive, anchor=west]  (startReceiveLabel) {Start receiving}; 
+
+  \ifthenelse{#1>0}{
+    \node [left= of endSend, anchor=east]  (endSendLabel) {End transmitting}; 
+    \node [right= of endReceive, anchor=west] (endReceiveLabel) {End receiving}; 
+    \draw [hpiorange,decorate,decoration={brace,mirror,amplitude=6pt, raise=1pt}] (startSend) -- (endSend) node [midway,left=10pt,anchor=east] {Transmission duration}; 
+
+    \draw [hpiorange,decorate,decoration={brace,amplitude=6pt, raise=1pt}] (startReceive) -- (endReceive) node [midway,right=10pt,anchor=west] {Receiving duration}; 
+
+
+    \draw [->] (endSendLabel) -- (endSend);
+    \draw [->] (endReceive) -- (endReceiveLabel);
+
+  }{}
+
+  \draw [->] (startSendLabel) -- (startSend);
+  \draw [->] (startReceive) -- (startReceiveLabel);
+
+
+  
+  
+  \draw [hpiblue,
+  decorate,
+  decoration={brace,amplitude=6pt, raise=1pt, mirror}]
+  (endSend) -- (_endReceive)
+  node [midway,left=10pt,anchor=east] {Latency start of transmission}; 
+
+  \draw [hpiblue,
+  decorate,
+  decoration={brace,amplitude=6pt, raise=1pt}]
+  (_startSend) -- (startReceive)
+  node [midway,right=10pt,anchor=west] {Latency end of transmission};
+
+}
+
+\begin{tikzpicture}
+  \label{page:io2:msc:thick_long}
+  \basicMSC{0}{2}
+\end{tikzpicture}
+
+\begin{tikzpicture}
+  \label{page:io2:msc:thick_long}
+  \basicMSC{1}{4}
+\end{tikzpicture}
+
+\begin{tikzpicture}
+  \label{page:io2:msc:thin_short}
+  \basicMSC{4}{1}
+\end{tikzpicture}
+
+
+
+
+\end{document}

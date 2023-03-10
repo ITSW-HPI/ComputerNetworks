@@ -1,0 +1,69 @@
+\documentclass[tikz]{standalone}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{ifthen} 
+
+\input{../../templates/standalone_header}
+
+\usetikzlibrary{positioning,decorations.pathreplacing, calc}
+
+\begin{document}
+
+\begin{tikzpicture}
+  \label{page:mux:tdm}
+
+  \draw [->] (0,0) -- (0, 3); 
+  \draw [->] (0,0) -- (13, 0);
+  % \node [anchor=east] at (0,3) {$f$}; 
+  \node [anchor=north] at (13,0) {$t$}; 
+
+  \foreach \i in {0,4,8} {
+    \draw [fill=hpiblue!10] (\i,1) -- ++(2,0) -- ++(0,1) -- ++(-2,0) -- ++(0,-1); 
+    \node at (\i+1,1.5) {$A \leftrightarrow C$}; 
+    \draw [fill=hpiorange!10] (\i+2,1) -- ++(2,0) -- ++(0,1) -- ++(-2,0) -- ++(0,-1); 
+    \node at (\i+3,1.5) {$B \leftrightarrow D$}; 
+  }
+\end{tikzpicture}
+
+\begin{tikzpicture}
+  \label{page:mux:fdm}
+
+  \draw [->] (0,0) -- (0, 4); 
+  \draw [->] (0,0) -- (10, 0);
+  \node [anchor=east] at (0,4) {$f$}; 
+  \node [anchor=north] at (10,0) {$t$}; 
+
+  \draw [fill=hpiblue!10] (0,1) -- ++(10,0) -- ++(0,1) -- ++(-10,0) -- ++(0,-1); 
+  \draw [fill=hpiorange!10] (0,2.5) -- ++(10,0) -- ++(0,1) -- ++(-10,0) --++(0,-1); 
+
+  \node at (5,1.5) {$A \leftrightarrow C$}; 
+  \node at (5,3) {$B \leftrightarrow D$}; 
+\end{tikzpicture}
+
+
+\begin{tikzpicture}
+  \label{page:mux:fdm:tdd}
+
+  \draw [->] (0,0) -- (0, 4); 
+  \draw [->] (0,0) -- (12, 0);
+  \node [anchor=east] at (0,4) {$f$}; 
+  \node [anchor=north] at (12,0) {$t$}; 
+
+  \foreach \i in {0,4,...,8} {
+    \draw [fill=hpiblue!10] (\i,1) -- ++(2,0) -- ++(0,1) -- ++(-2,0) -- ++(0,-1); 
+    \draw [fill=hpiblue!30] (\i+2,1) -- ++(2,0) -- ++(0,1) -- ++(-2,0) -- ++(0,-1); 
+    \node at (\i+1,1.5) {$A \rightarrow C$}; 
+    \node at (\i+3,1.5) {$A \leftarrow C$}; 
+  }
+
+  \foreach \i in {0,4,...,8} {
+    \draw [fill=hpiorange!10] (\i,2.5) -- ++(2,0) -- ++(0,1) -- ++(-2,0) -- ++(0,-1); 
+    \draw [fill=hpiorange!30] (\i+2,2.5) -- ++(2,0) -- ++(0,1) -- ++(-2,0) -- ++(0,-1); 
+    \node at (\i+1,3) {$B \rightarrow D$}; 
+    \node at (\i+3,3) {$B \leftarrow D$}; 
+  }
+  
+\end{tikzpicture}
+
+
+\end{document}

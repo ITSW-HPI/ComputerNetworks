@@ -1,0 +1,102 @@
+\documentclass[tikz]{standalone}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{ifthen} 
+\usepackage{../../templates/moeptikz}
+\input{../../templates/standalone_header}
+
+\usetikzlibrary{positioning,decorations.pathreplacing, calc}
+
+\begin{document}
+
+
+\begin{tikzpicture}
+\foreach \i [count=\ni] in {0,30,...,330} {
+\node [client] at (\i:5) (cl\ni) {}; 
+}
+
+\foreach \i in {1,...,12} \foreach \j in {1,...,12} \draw (cl\i) -- (cl\j); 
+\end{tikzpicture}
+
+% Ring:
+
+\begin{tikzpicture}
+\foreach \i [count=\ni] in {0,30,...,330} {
+\node [client] at (\i:3) (cl\ni) {}; 
+}
+
+\foreach \i [evaluate=\i as \j using \i+1] in {1,...,11}  \draw (cl\i) -- (cl\j);
+\draw (cl12) -- (cl1); 
+\end{tikzpicture}
+
+
+% star: 
+
+\begin{tikzpicture}
+\foreach \i [count=\ni] in {0,30,...,330} {
+\node [client] at (\i:3) (cl\ni) {}; 
+}
+
+\node [switch] at (0,0) (sw) {}; 
+
+\foreach \i  in {1,...,12}  \draw (cl\i) -- (sw);
+\end{tikzpicture}
+
+
+% sub-stars 
+\begin{tikzpicture}
+\foreach \i [count=\ni] in {0,30,...,330} {
+\node [client] at (\i:3) (cl\ni) {}; 
+}
+
+\node [switch] at (-1,0) (sw1) {}; 
+\node [switch] at (1,0) (sw2) {}; 
+
+\foreach \i  in {1,...,6}  \draw (cl\i) -- (sw2);
+\foreach \i  in {7,...,12}  \draw (cl\i) -- (sw1);
+\draw [very thick] (sw1) -- (sw2); 
+\end{tikzpicture}
+
+
+
+
+
+\begin{tikzpicture}
+\foreach \i [count=\ni] in {0,30,...,330} {
+\node [client] at (\i:3) (cl\ni) {}; 
+}
+
+\node [switch] at (-1,0) (sw1) {}; 
+\node [switch] at (1,0) (sw2) {}; 
+\node [switch] at (0,1) (sw3) {}; 
+\node [switch] at (0,-1) (sw4) {}; 
+
+\foreach \i  in {1,...,3}  \draw (cl\i) -- (sw2);
+\foreach \i  in {4,...,6}  \draw (cl\i) -- (sw3);
+\foreach \i  in {7,...,9}  \draw (cl\i) -- (sw1);
+\foreach \i  in {10,...,12}  \draw (cl\i) -- (sw4);
+\draw [very thick] (sw1) -- (sw3) -- (sw2) --(sw4) -- (sw1); 
+\end{tikzpicture}
+
+
+
+
+% A bus
+
+\begin{tikzpicture}
+
+  \draw [ very thick, domain=0:335] plot ({cos(\x)}, {sin(\x)}); 
+  \draw [ very thick, domain=355:359] plot ({cos(\x)}, {sin(\x)}); 
+  
+  \foreach \i [count=\ni] in {0,30,...,330} {
+    \node [client] at (\i:3) (cl\ni) {};
+    \draw (cl\ni) -- (\i:1); 
+  }
+
+\end{tikzpicture}
+
+
+
+
+
+\end{document}

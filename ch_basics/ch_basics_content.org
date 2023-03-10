@@ -1,0 +1,1679 @@
+\label{ch:basics}
+
+\begin{frame}[title={bg=Hauptgebaeude_Tag}]
+ \maketitle 
+\end{frame}
+
+
+
+
+**** Plans for this chapter 
+
+
+- Basic ideas 
+
+
+\vskip-2.5em
+
+*****                     
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+
+
+
+*****                    
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+** Internet in ten minutes 
+
+**** Internet design choices 
+
+
+
+\cite{Mccauley2023-rp}
+
+** Exchanging data
+
+*** Information, data 
+
+**** Two core use cases 
+
+What happens when \dots 
+1. you type \url{https://hpi.de} into a browser
+   window?
+2. you make a phone call? 
+
+\pause 
+- What is the  same?
+- What is different? 
+
+**** Information vs. data 
+
+
+\vskip-2.5em
+
+*****                     
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+- Information
+  - A human interpretation of data, conferring meaning to data 
+  - In this sense, a human-oriented term
+- Data
+  - A formalized representation of facts, concepts, ideas, descriptions, … 
+  - Example: text, speech
+- Only data can be *transmitted* and *received*
+
+
+*****                    
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+
+
+#+caption: Information vs. data
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=1
+#+NAME: fig:basics:information_data
+[[./standalone/basics_examples.pdf]]
+
+
+
+      
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+*** Signals 
+
+**** Signals                                                   :B_definition:
+     :PROPERTIES:
+     :BEAMER_env: definition
+     :END:
+
+
+- Data has to be represented by signals
+
+
+***** *\Gls{signal}*                                          :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+ 
+- A characteristic change of a physical quantity 
+- Propagating in time and space 
+- Measurable 
+- Here:  deliberately caused  
+
+\pause 
+***** Examples 
+- Material example: Letters on paper
+- Immaterial example: 
+  - Acoustic waves when speaking 
+  - Current or voltage in a wire 
+
+**** Communication via signals 
+
+\vskip-2.5em
+
+*****                     
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+Immaterial signals in physical media enable data communication between remote senders and receivers
+
+
+*****                    
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+
+
+
+#+caption: From Information via data to signals 
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=2
+#+NAME: fig:basics:information_data_signals 
+[[./standalone/basics_examples.pdf]]
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+**** Examples for representation conventions 
+
+***** Representing information by data 
+
+Compare GDS! 
+- ASCII, Unicode, integer, floating point formats, \dots
+
+
+\pause 
+- All of them: sequences of bits 
+
+\pause 
+
+***** Representing bits (example)
+
+- Bit 0/1: Represented by -5V / +5V for a fixed duration 
+\pause 
+- Many more examples to come! 
+
+**** Signals: Propagation delay 
+
+\vskip-1.5em
+
+***** Propagation delay                                        :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :BEAMER_col: 0.48
+      :END:
+
+- *Propagation delay* $d$: Time it takes a signal to travel from
+  transmitter to receiver
+  - Synonym: *Latency* $l$ 
+\pause 
+- Depends on
+  - distance and
+  - *propagation speed* $v$
+    - Example speeds: $v = \mathrm{c}$ for EM waves in vacuum, 
+      $v \approx 2/3 \mathrm{c}$ in wires
+
+      
+*****                    
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+#+caption: Propagation delay/latency of a signal transmission 
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=1
+#+NAME: fig:basics:signal_latency
+[[./standalone/latencyRate.pdf]]
+
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+
+**** Message sequence chart 
+
+***** \Gls{msc}                                                :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+\Glsdesc{msc}
+
+**** Signals: Duration 
+
+
+\vskip-1.5em
+
+***** Transmission duration $T_\mathrm{tx}$                    :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :BEAMER_col: 0.48
+      :END:
+
+- Time to transmit a given amount of data
+- Depends on
+  - Size of the data / number of bits $n$ 
+  - Time per bit $T_\mathrm{bit}$
+    - Equivalently: *bit rate*: $r = 1/T_\mathrm{bit}$
+- $T_\mathrm{tx} = n\cdot T_\mathrm{bit} = n / r$ 
+
+
+
+*****                    
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+
+
+#+caption: Transmission duration 
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=2
+#+NAME: fig:basics:ttx
+[[./standalone/latencyRate.pdf]]
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+**** More examples 
+
+\vskip-2.5em
+
+*****                     
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+#+caption: Transmission duration 
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=2
+#+NAME: fig:basics:ttx
+[[./standalone/latencyRate.pdf]]
+
+
+
+*****                    
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+#+caption: Transmission duration (example 2)
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=3
+#+NAME: fig:basics:ttx2
+[[./standalone/latencyRate.pdf]]
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+
+**** Wires store data 
+
+What happens in the first $d$ seconds after start of transmission? 
+
+- First bit just about arrives at receiver 
+- We are still sending
+- Bits are *in flight*, *stored in the wire* 
+
+\pause 
+How many? 
+\pause 
+- In time $d$, sending at rate $r$, $n_\mathrm{in flight} = d \cdot r$
+  bits are in flight
+- Example: Optical transatlantic link 
+  - Data rate $r \approx$ = 30 Gbit/s; distance = 6000 km; $v \approx$ 200.000
+    km/s (compare e.g. [[https://en.wikipedia.org/wiki/TAT-14][TAT-14]])
+\pause 
+\[
+n_\mathrm{in flight} = d \cdot r =  \frac{\mathrm{distance}}{v} \cdot
+r \approx \frac{6000\,\mathrm{km}}{200.000 \mathrm{km/s}} \cdot 30\,\mathrm{Gbit/s} = 0,9 \mathrm{Gbit}
+\]
+
+** Direct exchange
+
+**** Scenario for direct connection 
+
+Let's assume: 
+
+- Two entities $A$ and $B$
+- Directly connected by some *physical medium* that can transport signals
+  - E.g., copper wires, optical fibre, air, \dots
+  - Details do not matter for this section 
+
+*** One-way 
+
+**** Scenario: $A$ transmits to $B$ 
+
+\begin{center}
+\begin{tikzpicture}
+\node [client] (a) {A}; 
+\node [client,right=2cm of a] (b) {B}; 
+\draw [thick, -{Straight Barb[scale=2]}] (a) -- (b); 
+\end{tikzpicture}
+\end{center}
+
+\pause 
+Questions:
+- What signal to use? How to map bits to signal?  
+\pause 
+- When does one bit start, end? 
+\pause 
+- Endless stream of bits, or finite message? 
+  - Rules for starting, ending a message
+
+
+
+*** Duplexing 
+
+**** Scenario: $A$, $B$ transmit to each other 
+
+\begin{center}
+\begin{tikzpicture}
+\node [client] (a) {A}; 
+\node [client,right=2cm of a] (b) {B}; 
+\draw [thick, {Straight Barb[scale=2]}-{Straight Barb[scale=2]}] (a) -- (b); 
+\end{tikzpicture}
+\end{center}
+
+\pause 
+
+Options: 
+
+1. Separate physical medium per direction
+   - *\gls{simplex}* use
+   - E.g., two pairs of copper wire; two optical fibres
+   - Often, too expensive! 
+\pause 
+2. Shared physical medium for both directions 
+
+
+**** Sharing a medium: half-duplex 
+
+\vskip-2.5em
+
+*****                     
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+
+- Common idea: when one talks, the other listens
+- At any one time, medium is used by *one* transmitter
+- But role of transmitter changes! 
+
+\pause 
+
+- Called *\gls{half-duplex}* operation 
+
+*****                    
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+
+#+caption: Alternating between two senders, no-latency case 
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=1
+#+NAME: fig:duplexing:half_duplex:no_latency
+[[./standalone/duplexing.pdf]]
+
+**** Examples for half-duplexing 
+
+\vskip-2.5em
+
+*****                     
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.3
+      :END:
+
+#+caption: Alternating between two senders, no-latency case 
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=1
+#+NAME: fig:duplexing:half_duplex:no_latency
+[[./standalone/duplexing.pdf]]
+
+
+*****                    
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.3
+      :END:   
+
+
+
+#+caption: Alternating between two senders, with small latency 
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=2
+#+NAME: fig:duplexing:half_duplex:small_latency
+[[./standalone/duplexing.pdf]]
+
+
+
+*****                    
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.3
+      :END:   
+
+
+
+#+caption: Alternating between two senders, with long latency 
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=3
+#+NAME: fig:duplexing:half_duplex:small_latency
+[[./standalone/duplexing.pdf]]
+
+
+
+**** Dividing time 
+
+- We have been dividing time to realize half-duplex operation
+- So-called *time-division duplexing* (*\gls{tdd}*)
+
+\pause 
+
+Diagram: 
+- Rotated to make it easier to display
+- We ignore latency here 
+
+
+#+caption: Full-duplex operation 
+#+attr_latex: :width 0.85\textwidth :height 0.4\textheight :options keepaspectratio,page=\getpagerefnumber{page:duplex:tdd}
+#+NAME: fig:duplex:tdd
+[[./standalone/duplexing.pdf]]
+
+
+
+**** Simultaneous transmission? 
+
+What if both $A$, $B$ want to transmit at the same time? 
+- Called *\gls{full-duplex}* operation 
+\pause 
+
+
+- Problem: $A$'s transmission would arrive at $B$ while $B$ transmits
+  itself
+\pause 
+- Possible consequences
+  - $B$ is not receiving, only transmitting: Pointless!
+  - $B$ is receiving, but would receive mix of $A$'s and $B$'s signal
+    \rightarrow not obvious this works
+    - Called *\gls{interference}* 
+\pause 
+- Problem really is: How to *send and receive* at the same time? 
+
+**** Options to simultaneously transmit and receive? 
+
+- Use different physical media
+  - E.g., two different optical fibres
+- Use different *parts* of the *same* physical medium
+  - E.g., different frequency bands
+- Don't do it, fake it! 
+
+
+**** Example: Full-duplexing by frequency division 
+
+- Give a certain frequency range to each transmitter
+- Technically, feasible (but not trivial) to transmit in one range,
+  receive in another 
+- Called *\gls{fdd}*
+  - Usually, but not exclusively used for full-duplex operation  
+
+
+#+caption: Full-duplex operation 
+#+attr_latex: :width 0.8\textwidth :height 0.4\textheight :options keepaspectratio,page=\getpagerefnumber{page:duplex:fdd}
+#+NAME: fig:duplex:fdd
+[[./standalone/duplexing.pdf]]
+
+
+
+**** Faking simultaneously transmitting and receiving              :noexport:
+
+
+Suppose: 
+- $A$, $B$ want to send each other data at a rate $r$
+- We have a half-duplex TDD medium capable setup with rate $2r$ 
+
+Idea: 
+- *Buffer* at $A$, $B$ to create *illusion* of full-duplex! 
+- When $A$ waits its turn: buffer fills at rate $r$
+- When $B$ sends: buffer fills with rate $r$ *and drains* with rate
+  $2r$ = drains with rate $r$
+
+
+
+#+caption: Faking full-duplex operation by combining fast half-duplex with buffers 
+#+attr_latex: :width 0.8\textwidth :height 0.3\textheight :options keepaspectratio,page=\getpagerefnumber{page:duplex:tdd:buffer}
+#+NAME: fig:duplex:fdd
+[[./standalone/duplexing.pdf]]
+
+
+
+**** Faking simultaneously transmitting and receiving 
+
+\vskip-2.5em
+
+*****                     
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+
+Suppose: 
+- $A$, $B$ want to send each other data at a rate $r$
+- We have a half-duplex TDD medium capable setup with rate $2r$ 
+
+Idea: 
+- *Buffer* at $A$, $B$ to create *illusion* of full-duplex! 
+- When $A$ waits its turn: buffer fills at rate $r$
+- When $B$ sends: buffer fills with rate $r$ *and drains* with rate
+  $2r$ = drains with rate $r$
+
+
+*****                    
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+
+#+caption: Faking full-duplex operation by combining fast half-duplex with buffers 
+#+attr_latex: :width 0.9\textwidth :height 1\textheight :options keepaspectratio,page=\getpagerefnumber{page:duplex:tdd:buffer}
+#+NAME: fig:duplex:fdd
+[[./standalone/duplexing.pdf]]
+
+
+**** From medium to channel
+
+In faked operation: 
+- $A$, $B$ see a full-duplex operation
+- But it is not the actual physical medium that does that 
+- We created a *logical abstraction*, a *channel* with the desired
+  behavior 
+
+\pause 
+
+***** Channel                                                  :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+A (communication) *\gls{channel}* is 
+- a *physical channel*: collection of resources needed to transmit
+  (location, physical medium, time, frequency band, and possibly code)
+- a *logical channel*: an abstraction of communication with desired
+  properties 
+
+**** Notes 
+
+- *Channel* is not the same as *frequency band* 
+- *Virtualization* is not a correct term here
+  - *Virtualize*: Fake *more of the same* 
+  - *Abstract*: Fake *different, more but not necessarily more* 
+\pause 
+- We will later describe that as *service* vs *protocol*
+  - Here: $A$, $B$ require a full-duplex service, which is provided by
+    a protocol comprising buffers and half-duplex channel 
+
+**** Protocol 
+
+***** \Gls{protocol}                                           :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+\Glsdesc{protocol}
+
+**** Summary: Key takeaways from duplexing 
+
+- We can change characteristics of a communication channel
+  - E.g., $A$, $B$ can use a full-duplex channel that does not really
+    exist, but is created out of buffers and a half-duplex channel 
+- Buffering is a key technique 
+
+
+**** Summary: Duplexing terms 
+
+***** Duplexing options                                        :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+\gls{duplexing} describes how two communicating entities can exchange
+data *with each other* 
+
+Typical options: 
+
+1. *Simplex*: Communication over a channel only in a single
+   direction
+2. *Half-duplex*: A channel is shared between two entities,
+   taking turns as transmitter and receivers
+3. *Full-duplex*: A channel is shared between two entities; 
+   both are allowed to use the channel at the same time to send each
+   other data
+   1. Conceptually, we create two simplex channels out of one full-duplex channel 
+
+
+*** Multiplexing 
+
+**** Multiple devices? 
+
+\begin{center}
+\begin{tikzpicture}
+\node [client] (a) {A}; 
+\node [client,below=1cm of a] (b) {B}; 
+\node [client,right=3cm of a] (c) {C}; 
+\node [client,right=3cm of b] (d) {D}; 
+
+\coordinate (tmp) at ([xshift=1cm,yshift=-1cm]a.east); 
+\coordinate (tmp2) at ([xshift=2cm,yshift=-1cm]a.east); 
+\draw [thick] (a.east) -| (tmp) |- (b.east); 
+\draw [thick] (c.east) -| (tmp2) |- (d.east); 
+\draw [thick] (tmp)  -- (tmp2); 
+\end{tikzpicture}
+\end{center}
+
+\vfill 
+
+What happens when multiple devices share a physical medium? 
+- E.g., connected to the same (pair of) copper wire, wireless in vicinity? 
+
+\pause 
+
+Can we reuse some insights from duplexing? 
+
+\pause 
+
+***** Multiplexing                                             :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+*\Gls{multiplexing}*  describes how to share a physical medium/a
+channel between *different pairs* of communication partners. It makes
+no statements about how to duplex within a pair! 
+
+**** Multiplexing in time 
+
+Idea: Use time slots for pairs -- \gls{tdm}
+
+#+caption: Multiplexing in time for pairs $A\leftrightarrow C$ and $B \leftrightarrow D$
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:mux:tdm}
+#+NAME: fig:mux:tdm
+[[./standalone/multiplexing.pdf]]
+
+
+
+**** Multiplexing in frequency 
+
+Idea: Use frequency bands for pairs
+- \gls{fdm}: \glsdesc{fdm}
+
+#+caption: Multiplexing in frequency for pairs $A\leftrightarrow C$ and $B \leftrightarrow D$
+#+attr_latex: :width 0.95\textwidth :height 0.4\textheight :options keepaspectratio,page=\getpagerefnumber{page:mux:fdm}
+#+NAME: fig:mux:fdm
+[[./standalone/multiplexing.pdf]]
+
+
+**** Combining duplexing, multiplexing 
+
+Duplexing and multiplexing can be +/- arbitrarily combined 
+- All four natural combinations make sense 
+- Figure \ref{fig:mux:fdm:tdd} shows FDM and TDD as example 
+
+#+caption: Example: Combination of FDM and TDD
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:mux:fdm:tdd}
+#+NAME: fig:mux:fdm:tdd
+[[./standalone/multiplexing.pdf]]
+
+**** Notes on combining duplexing, multiplexing 
+
+- Nothing needs to be fixed or static
+  - E.g., time slot length can differ across frequency bands, over
+    time, \dots 
+- But for simplicity, often is aligned 
+
+
+
+** Indirect exchange
+
+
+*** Network structures 
+
+**** Many devices? 
+
+
+\vskip-2.5em
+
+*****                     
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+
+
+
+#+caption: Connecting many devices to a bus, a single, shared physical medium 
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=6
+#+NAME: fig:basics:bus
+[[./standalone/graphs.pdf]]
+
+
+\pause 
+
+*****                    
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+
+#+caption: Fully meshed configuration of a number of nodes
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=1
+#+NAME: fig:basics:fully_meshed
+[[./standalone/graphs.pdf]]
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+
+
+
+**** Network structure 
+
+- No longer possible to use a single physical medium 
+  - Sharing reduces data rate per pair
+  - Distances attenuate signals
+  - Impractical to administrate 
+- No longer possible to use a fully-connected graph 
+
+\pause 
+
+\rightarrow We need some structure! And *indirect data exchange* 
+
+
+
+
+**** A ring  
+
+#+caption: A simple ring
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=2
+#+NAME: fig:graphs:ring
+[[./standalone/graphs.pdf]]
+
+
+
+
+
+**** A star  
+
+#+caption: A simple star with a single central point 
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=3
+#+NAME: fig:graphs:star
+[[./standalone/graphs.pdf]]
+
+
+
+**** Stockholm tower 
+
+#+caption: Stockholm telefone tower, connecting about 5500 phone lines, ca. 1890; by Unknown author - Tekniska museet, Public Domain, https://commons.wikimedia.org/w/index.php?curid=3877011 
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio
+#+NAME: fig:basics:stockholm_tower
+[[./figures/stockholm_tower.jpg]]
+
+
+
+**** Substructures 
+
+\vskip-2.5em
+
+*****                     
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+
+#+caption: Two stars, connected with each other 
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=4
+#+NAME: fig:graphs:two:switches
+[[./standalone/graphs.pdf]]
+
+
+
+
+*****                    
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+
+
+
+#+caption: Four stars, connected via a square 
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=5
+#+NAME: fig:graphs:four:switches
+[[./standalone/graphs.pdf]]
+
+
+
+
+**** Comparison 
+
+***** Graph properties 
+
+| Graph        | #Links   | Dependable  | Diameter |
+|--------------+----------+-------------+----------|
+| Fully meshed | $O(n^2)$ | fully       | 1        |
+| Ring         | $O(n)$   | 2-connected | $n/2$    |
+| Star         | $O(n)$   | 1-connected | 2        |
+| Others       | ?        | ?           | ?        |
+
+***** Pragmatical considerations 
+
+- Building structure 
+- Installation costs 
+- \dots 
+
+
+
+**** Connections in the real world? 
+
+\vskip-2.5em
+
+*****                     
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.3
+      :END:
+
+
+#+caption: Beirut phone setup (G. Carle, private communication)
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio
+#+NAME: fig:beirut_1
+[[./figures/beirut_1.png]]
+
+
+
+*****                    
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.3
+      :END:   
+
+
+#+caption: Beirut phone setup (G. Carle, private communication)
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio
+#+NAME: fig:beirut_2
+[[./figures/beirut_2.png]]
+
+
+*****                    
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.3
+      :END:   
+
+
+#+caption: Beirut phone setup (G. Carle, private communication)
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio
+#+NAME: fig:beirut_3
+[[./figures/beirut_3.png]]
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+
+
+
+
+
+
+
+
+*** Circuit switching 
+
+
+**** Switches 
+
+
+- Indirect data exchange necessitates devices between end systems
+- Let's call them *switches* for the moment
+  - (Will become more precise later)
+
+\pause 
+\vfill 
+
+***** Basic scenario for switches 
+
+A and C want to talk, as do B and D 
+
+#+caption: Basic switching scenario 
+#+attr_latex: :width 0.95\textwidth :height 0.3\textheight :options keepaspectratio,page=3
+#+NAME: fig:basics:basic_switching
+[[./standalone/switching.pdf]]
+
+
+
+
+**** What do switches do? 
+
+Option 1: A switch creates a physical medium 
+- along which a signal can travel from transmitter to receiver 
+- only by means of physics 
+- Example: close a circuit between two cables 
+
+***** A mechanical switch 
+
+\begin{figure}
+\hfill\includegraphics[page=1,width=0.2\textwidth]{standalone/switching.pdf}\hfill
+\includegraphics[page=2,width=0.2\textwidth]{standalone/switching.pdf}\hfill
+\caption{An open and a closed  mechanical switch}
+\label{fig:basics:mechanicalSwitch:open}
+\end{figure}
+
+
+
+
+
+
+**** Connecting by closing switches 
+
+\vskip-2.5em
+
+*****                     
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+#+caption: Two open mechanical switches to realize a switching device
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=4
+#+NAME: fig:basics:openSwitches
+[[./standalone/switching.pdf]]
+
+
+
+*****                    
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+
+#+caption: Two closed mechanical switches to realize a switching device, connecting end systems
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=5
+#+NAME: fig:basics:closedSwitches
+[[./standalone/switching.pdf]]
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+
+
+
+
+**** Switchboard 
+
+#+caption: Telephony switchboards, Bell Systems. https://www.rawpixel.com/image/8765682/photo-image-vintage-public-domain-women  
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio
+#+NAME: fig:basics:switchboards
+[[./figures/switchboard.jpg]]
+
+
+
+
+**** Circuit switching 
+
+
+
+***** Circuit                                                  :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+\Gls{circuit}: \glsdesc{circuit}
+
+ 
+Circuits need to be controlled; see Section ref:sec:basics:control:circuit
+\pause 
+
+***** Circuit switching                               :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+\Gls{circuitswitching}: \glsdesc{circuitswitching}
+
+**** Circuit switching: Pros and cons 
+
+***** Advantages 
+
+- Conceptually simple 
+- Once circuit is established, *no need* to share resources of the
+  circuit
+  - Performance is easy to predict 
+
+\pause 
+
+***** Disadvantages 
+
+- Can take a long time to create, destroy circuit
+- Once circuit is established, *no possibility* to share resources of
+  the circuit
+  - Even if circuit is not used for actual transmission!
+  - Especially bad with *bursty traffic*
+  - Circuit needs to be dimensioned for *peak rate*; is idle in
+    between 
+
+
+**** Bursty traffic 
+
+\vskip-2.5em
+
+*****                     
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+
+Traffic properties
+- *Average* required data rate: bit/s, averaged over long time horizon 
+- *Peak* data rate: bit/s, averaged over short windows; largest rate
+  in some window 
+
+
+*****                    
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+#+caption: Bursty traffic: Ratio of peak to average ratio is large
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=6
+#+NAME: fig:basics:bursty
+[[./standalone/switching.pdf]]
+
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+\pause 
+
+***** Bursty traffic                                           :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+
+\Glsdesc{bursty}
+
+
+
+
+*** Packet switching 
+
+**** Dealing with bursty traffic 
+
+- Bursty traffic is a consequence of Internet usage models
+  - It did not exist in telephony networks! 
+- Option 2a: Put a buffer at the transmitter
+  - Then, dimension circuit for *average* rate instead of *peak* rate
+  - Similar to faking full-duplex over faster half-duplex 
+  - Price to pay? \onslide<2->\textbf{Latency}!
+
+\onslide<3->
+- Option 2b: Buffer not only at transmitter? 
+
+**** Option 2b: Idea of packet switching
+
+- Do *not* provide a circuit between originator and destination
+- Instead:
+  - Circuits only between directly adjacent switches and end
+    nodes
+  - Switches have buffer 
+  - Group data into groups of bytes - a *packet*
+  - A packet carries (at least) data about its destination - an
+    *address*
+    - An example of *meta data* 
+
+
+**** A packet switch: simplest version 
+
+
+Simplest perspective: 
+- Packet switch is just memory
+- with *interfaces* to channels, directly
+  connected to adjacent nodes 
+
+#+caption: A packet switch conceived of as memory with in/outgoing channels
+#+attr_latex: :width 0.95\textwidth :height 0.5\textheight :options keepaspectratio,page=\getpagerefnumber{page:basics:switching:packet_just_memory}
+#+NAME: fig:basics:packet_just_memory
+[[./standalone/switching.pdf]]
+
+
+**** Forwarding 
+Lacking a physical medium stretching from one end of the other, 
+- *receive* the packet at an incoming interface 
+\pause 
+- we need to *store* a packet inside the switch, then 
+\pause 
+- *forward* it on the outgoing interface 
+
+\vfill 
+
+\begin{figure}
+  \centering
+\onslide<1->
+  \subcaptionbox{Transmitting packet from A to switch}[0.25\textwidth]{\includegraphics[page=\getpagerefnumber{page:basics:switching:packet_forwarding_1}]{standalone/switching.pdf}}
+\hfill
+\onslide<2->
+  \subcaptionbox{Storing  packet inside  switch memory}[0.25\textwidth]{\includegraphics[page=\getpagerefnumber{page:basics:switching:packet_forwarding_store}]{standalone/switching.pdf}}
+\hfill
+\onslide<3->
+  \subcaptionbox{Transmitting packet from switch to D}[0.25\textwidth]{\includegraphics[page=\getpagerefnumber{page:basics:switching:packet_forwarding_2}]{standalone/switching.pdf}}
+  \caption{Forwarding a packet}
+  \label{fig:basics:forwarding}
+\end{figure}
+
+
+**** Multiple hops in packet switching 
+
+#+caption: Switches can follow each other; packets are fowarded between them
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:basics:multi_hop_packet}
+#+NAME: fig:basics:multi_hop_packet 
+[[./standalone/switching.pdf]]
+
+
+**** Multiple hops in packet switching: MSC 
+
+#+caption: Message sequence chart for a packet being forwarded over two switches
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio
+#+NAME: fig:basics:msc:multiplehops
+[[./standalone/switchingMSC.pdf]]
+
+
+
+
+
+**** Packet switching: Definitions  
+
+***** \Gls{packetswitching}                                    :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+\Glsdesc{packetswitching}
+
+\pause 
+
+***** \Gls{storeandforward} network                            :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+*First* fully receive a packet, *then* analyze meta-data, *eventually*
+transmit again. 
+
+
+\pause 
+
+***** \Gls{metadata}                                           :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+- Describes how to process a packet 
+- E.g., source or destination address, checksums, sequence numbers,
+  \dots
+  - (To be defined later)
+
+
+**** Channels in packet switching 
+
+- *Physical* channel: Between interface at a switch and adjacent
+  device 
+\pause 
+- *Logical* channel (for the four-end devices, one-switch example from
+  above): Created out of 
+  - two physical channels (e.g., A-Switch and Switch-D)
+    - No signal travels from A to D! 
+  - resources in the switch (e.g., buffer space)
+  - the process of *forwarding* packets 
+\pause 
+- Logical channel generalizes to bigger setups! 
+
+
+
+
+
+
+
+
+
+
+
+
+
+**** Packet switching: Pros and cons 
+
+***** Advantages 
+
+- Easy to share physical channels 
+- Deals well with bursty traffic
+- No setup phase necessary before data is sent 
+
+\pause 
+
+***** Disadvantages 
+
+- Every packet has overhead (meta data)
+- Intermediate devices need buffers
+- Store-and-forward adds latency from source to destination 
+- Very hard to give guarantees on latency, data rate 
+
+
+
+**** A packet switch: Buffers at the interfaces 
+
+More details: 
+- Add some buffer to interfaces 
+- To store a *partial* packet while it is being received from/transmitted to neighbor 
+
+
+#+caption: A packet switch with buffer at each interface 
+#+attr_latex: :width 0.95\textwidth :height 0.5\textheight :options keepaspectratio,page=\getpagerefnumber{page:basics:switching:packet_buffers}
+#+NAME: fig:basics:switching:packet_buffers
+[[./standalone/switching.pdf]]
+
+
+**** A packet switch: many variations! 
+
+For example: channels are full-duplex 
+- Add separate buffers for incoming/outgoing traffic for each
+  interface 
+
+
+#+caption: A packet switch with separate in/out queues at each interface 
+#+attr_latex: :width 0.95\textwidth :height 0.5\textheight :options keepaspectratio,page=\getpagerefnumber{page:basics:switching:packet_in_out_queues}
+#+NAME: fig:basics:switching:packet_buffers
+[[./standalone/switching.pdf]]
+
+
+
+
+** Control  
+
+*** What to control? 
+
+**** Decisions? 
+So far: how to organize transmission of data 
+- e.g., how to duplex, multiplex,  switch 
+
+\pause 
+Open: Where do *decisions* come from? 
+- e.g., which pair uses which FDM band?
+- e.g., where to forward a packet? 
+
+\pause 
+\vfill 
+Recall *mechanism* vs. *strategy*
+
+**** Data plane vs. control plane 
+
+***** \Gls{dataplane}                                          :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+\Glsdesc{dataplane}
+
+***** \Gls{controlplane}                                       :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+
+\Glsdesc{controlplane}
+
+
+*** Packet switching control 
+
+**** Access to a shared medium 
+
+- Suppose we multiplex a physical medium
+  - TDM, FDM, \dots - does not matter
+- We need to control access to the medium
+  - Typical goal: at most one signal arrives at a receiver within the used
+    multiplexing option 
+- Challenge: which entities are affected by transmission; which do
+  share a physical medium?
+  - Usually obvious in wired media; very difficult in wireless media
+- Details later (Chapter \ref{ch:mac}): \gls{mac}
+
+
+**** Finding routes 
+
+- Forwarding needs to know the next hop for a given destination 
+- Example: Packet from N1 to N7 
+
+#+caption: Network with multiple intermediate switches 
+#+attr_latex: :width 0.95\textwidth :height 0.5\textheight :options keepaspectratio,page=\getpagerefnumber{page:basics:routing:topology}
+#+NAME: fig:basics:routing:topology
+[[./standalone/routing.pdf]]
+
+
+
+**** Forwarding table 
+
+\vskip-2.5em
+
+*****                     
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+
+For forwarding: Switch needs to match *destination address* to
+*outgoing interface* 
+- Stored in a *forwarding table* 
+
+#+caption: Forwarding table of Switch 4
+#+NAME: tag:basics:forwading
+| Destination | Interface |
+|-------------+-----------|
+| N 1         | c         |
+| N 2         | c         |
+| N 3         | b         |
+| N 4         | c         |
+| N 5         | a         |
+| N 6         | d         |
+| N 7         | e         |
+
+
+
+
+*****                    
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+\onslide<1->
+#+caption: Network with multiple intermediate switches 
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:basics:routing:interfaces}
+#+NAME: fig:basics:routing:interfaces
+[[./standalone/routing.pdf]]
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+ 
+
+\pause 
+Question:  How to find *a/the best* entries? 
+
+
+**** Routing tables 
+
+- Forwarding tables are computed from *routing tables* 
+- At each node, a routing table stores *all* information about *known*
+  paths to any destination
+  - Usually, with some sort of cost per option 
+
+\vskip-2.5em
+
+*****                     
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+#+caption: A possible routing table for switch 4 
+#+NAME: tab:basics:routing_table_sw4
+| Destination | a | b | c | d | e |
+|-------------+---+---+---+---+---|
+| N 1         | - | 4 | 3 | - | - |
+| N 2         | - | 4 | 3 | - | - |
+| N 3         | - | 2 | 3 | - | - |
+| N 4         | - | 3 | 2 | - | - |
+| N 5         | 1 | - | - | - | - |
+| N 6         | - | - | - | 1 | - |
+| N 7         | - | - | - | - | 1 |
+
+
+*****                    
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+
+\onslide<1->
+#+caption: Network with multiple intermediate switches 
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:basics:routing:interfaces}
+#+NAME: fig:basics:routing:interfaces
+[[./standalone/routing.pdf]]
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+**** Routing tables: Criteria 
+
+Routing tables jointly mandate *paths* 
+
+***** \Gls{path}                                               :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+\Glsdesc{path}
+
+\pause 
+
+***** Good routing tables?
+
+\pause 
+- No loops! 
+- Few hops, low latency, high rate 
+- *Small*! 
+
+
+**** Routing protocols
+
+Routing tables are filled by *routing protocols* 
+
+- Details in Chapter \ref{sec:routing}
+
+\pause 
+
+
+***** Good routing protocols?
+
+- Produces good routing tables 
+- Is efficient, converges, does not oscillate, \dots 
+
+**** Routing vs. forwarding 
+
+\vskip-2.5em
+
+*****  Routing                    
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+- *Control plane* 
+- *Updates*  routing tables, forwarding tables 
+- Reacts to changes in topology, load, policy 
+- Usually slow process
+  - 10s of seconds 
+
+*****          Forwarding           
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+- *Data plane* 
+- *Uses* forwarding tables 
+- Reacts to incoming packets 
+  - Possibly to buffer fill levels, policy, \dots 
+- Very fast process
+  - Once per packet 
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+
+
+*** Circuit switching control 
+\label{sec:basics:control:circuit}
+
+**** Circuit setup 
+
+Needs:  
+\pause 
+- Source and destination 
+- Required parameters: minimum data rate, maximum acceptable latency
+- Routing tables
+  - Can reuse ideas from packet switching routing protocols 
+- Confirmation that it is done 
+\pause 
+- some means to tell neighbors that a circuit is to be set up
+  - Weird???
+  - but feasible, since these are only neighbors talking with each
+    other directly!
+    - Hence, no switching involved! 
+
+**** Circuit teardown 
+
+At end of circuit usage: destroy circuit 
+- so that resources can be used again 
+
+
+
+
+**** Circuit setup and teardown: MSC 
+
+
+
+#+caption: Message sequence chart showing setup and teardown of a circuit across multiple switches, with usage of the circuit over a longer time. Note absence of any delays at intermediate switches once circuit is established. 
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=2
+#+NAME: fig:basics:circuit:msc
+[[./standalone/switchingMSC.pdf]]
+
+
+
+
+** Errors 
+
+**** Things go wrong 
+- So we are done building a network – unless something goes wrong!
+- Source of errors/abnormal situations
+  - Conversion from signals to bits can fail
+  - Access to a shared medium might not work
+  - Packets can be lost, e.g., because buffers overflow
+  - Packets can be misrouted (because of incorrect routing tables), delayed, reordered
+  - Receiver might not be able to keep up with incoming stream of packets
+  - Routers can fail, resulting in incorrect routing tables
+  - \dots and many more 
+
+
+**** Error control 
+- Error control at various abstraction levels needed
+- Between two direct neighbors, over a given connection
+- Between end systems, to compensate for errors not detected locally – e.g., incorrect order of packets
+
+**** Overload control
+- Protect the network against buffer overflows, regulate the number of packets injected into the network – Congestion control
+- Protect end system against too many packets coming in – Flow control
+
+**** How? 
+
+- *Where* and *how* to implement error and overload control is a principal architectural decision
+- Main options: in the end system or in the network
+- Big difference between telephony system and Internet
+- Telephony carriers are (traditionally) interested in network-based
+  solutions to be able to charge for it
+
+**** Intermediate summary: Basic required functions
+- Bit-to-signal and signal-to-bit conversion
+- Grouping bits into packets
+- Accessing a shared medium
+- Switching, duplexing, multiplexing
+- Controlling errors on a connection between two systems
+- Forwarding incoming packets, consulting routing tables
+- Constructing routing tables, maintaining them 
+- Controlling errors not detectable between two neighboring systems
+- Protecting the network against overload
+- Protecting end systems against overload
+- Ensuring correct order and possibly timeliness of packets
+- Making these functions accessible from application programs
+- Controlling the actual hardware that connects a wire to a computer
+- \dots and more!
+
+
+** Key take-aways                                                  :noexport:
+
+**** Service model 
+
+- Packets
+- Best-effort delivery
+  - Applications often do *not* have strict requirements 
+- Keep it simple! 
+
+
+**** Architecture 
+
+
+
+** Conclusion 
+
+**** Conclusion  
+
+- Communication networks have to solve many problems and need a lot of functionality 
+- The most basic of these problems, and an idea about their solution, should have become clear
+- How to group these functions, how to solve these problems: next
+  chapter 
+
+

@@ -1,0 +1,54 @@
+\newglossaryentry{signal}{name=signal, description={A (usually deliberately caused) change of a physical quantity; this change propagates in space and time and can be measured.}}
+
+\newglossaryentry{simplex}{name=simplex, description={Using a physical medium or a channel only in single direction; the roles of transmitter and receiver stay fixed.}}
+
+\newglossaryentry{half-duplex}{name=half-duplex, description={Using a physical medium or a channel alternatingly, with at most one participant, at any time, transmitting to the other participant.}}
+
+\newglossaryentry{full-duplex}{name=full-duplex, description={Allowing both participants to send data simultaneously; can be achieved by using multiple simplex channels or exploiting buffers and differences in data rates.}}
+
+\newglossaryentry{duplexing}{name=duplexing, description={How to organise the exchange of data between \emph{two} entities \emph{with each other}. }}
+
+\newglossaryentry{interference}{name=inference, description={Two or more \emph{signals} arriving at a receiver in the same channel (same physical medium, same location, same frequency band, same time, \dots); it is \emph{not} caused by noise.}}
+
+
+\newglossaryentry{fdd}{name={Frequency-division duplexing (FDD)}, description={Frequency-division duplexing divides a physical medium into two channels by assigning separate frequency bands to each transmitter in a communicating pair. }}
+
+\newglossaryentry{tdd}{name={Time-division duplexing (TDD)}, description={Time-division duplexing divides the use of a physical medium into discrete time slots, alternating per direction, to organize the communication between two entities in a communication pair.  }}
+
+\newglossaryentry{channel}{name=channel, description={A channel describes a collection of resources necessary for communication, in either a physical or logical sense. Physical channels (usually) comprise location, physical medium, time, frequency band, and possibly code. Logical channels can take on a wide range of characteristics, up to very abstract notions of the channel between, e.g., two humans. }}
+
+
+\newglossaryentry{multiplexing}{name=multiplexing, description={How to share a medium/channel between different \emph{pairs} of communication partners. In general it is allowed for one entity to participate in multiple pairs (e.g., a wireless access points forms pairs with each device in its wireless cell).}}
+
+\newglossaryentry{tdm}{name={Time-division multiplexing (TDM)}, description={Time-division multiplexing shares a resource in time, splitting it up in time slots. These time slots are often, but not necessarily, of constant length. Usually, but not always, some guard times are necessary between them.}}
+
+\newglossaryentry{fdm}{name={Frequency-division multiplexing (FDM)}, description={Frequency-division multiplexing shares a resource by dividing it in separate frequency bands. Usually, but not always, some guard bands are necessary between these useful bands, creating overhead. Frequency bands are usually, but not necessarily, of constant width.}}
+
+\newglossaryentry{circuit}{name=circuit, description={A continuous physical medium along which a signal can propagate from a transmitter to a receiver, created by configuring physical components in intermediate devices. Circuits typically need to be established before first use and can be destroyed after end of use.}}
+
+\newglossaryentry{circuitswitching}{name=circuit switching, description={
+ Organizing data exchange in a network via circuits, along with their creation and tearing down. 
+}}
+
+\newglossaryentry{packetswitching}{name=Packet switching, description={Organizing data exchange dividing data transmission into packets composed of payload and meta-data, using physical channels only between adjacent devices, and forwarding packets.} }
+
+\newglossaryentry{bursty}{name=bursty traffic, description=Traffic with a high ratio of peak to average required data rate.}
+
+\newglossaryentry{forwarding}{name=forwarding, description={In a packet-switched network, the act of receiving a packet, determining its next hop, preparing it for transmission, and transmitting it to the next hop. Forwarding is a data-plane activity.   Forwarding typically, but not necessarily, uses information prepared by control-plane protocols (e.g. routing tables).}  }
+
+\newglossaryentry{storeandforward}{name=store-and-forward, description={A variant of a packet-switched network where a packet first has to be received completely before its meta-data is analyzed, the outgoing interface is determined, the packet is moved to the outoing interface and eventually transmitted. Cut-through networks are the alternative.}}
+
+\newglossaryentry{metadata}{name={meta data}, description={Data that describes how to process a packet. Examples include source and destination address, sequence numbers, checksums, etc. Usually found in a header or trailer of a packet, sometimes implicitly represented by, e.g., a position of time slot within a periodic time structure.}}
+
+\newglossaryentry{dataplane}{name={data plane}, description={Concept to collect all functionality concerned with transporting data per se; not concerned with decisions}}
+
+\newglossaryentry{controlplane}{name={control place}, description={Concept to collect all functionality concerned with taking decisions to control data-plane functionality.}}
+
+\newglossaryentry{mac}{name={Medium Access Control (MAC)}, description={A control function that decides which entity is allowed to transmit, at which point in time, using which multiplexing option.}}
+
+
+\newglossaryentry{protocol}{name=protocol, description={A set of rules and data formats that mandate how two peers communicate with each other. Behavior of a peer is often described using a finite state machine.}}
+
+\newglossaryentry{path}{name=path, description={A sequence of network entities (e.g., end devices, switches, routers, \dots) that a packet traverses on its way from source to destination.}}
+
+\newglossaryentry{msc}{name={Message Sequence Chart (MSC)}, description={A message sequence chart shows the transmission of data (via circuits, packets, \dots) by drawing the time axis vertically, facing downwards, and a distance axis horizontally. Propation speed is then shown by the angle of signals.}}

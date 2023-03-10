@@ -1,0 +1,31 @@
+% Created 2016-08-17 Wed 14:38
+\documentclass[tikz]{standalone}
+
+\input{../../templates/tikzFigureHeader}
+
+
+
+\begin{document}
+
+\begin{tikzpicture}
+  \node[align=center, draw] (inf)  {\textbf{Information}\\ Facts, concepts,\\ideas,\dots}; 
+  \node[align=center, draw, below=2cm of inf] (data)  {\textbf{Data}\\  Formalized \\representation of\\information}; 
+
+  \draw [->] (inf) to node[align=center, midway, right=0.25cm] {Conventions for\\ representation} (data); 
+\end{tikzpicture}
+
+\begin{tikzpicture}
+  \node[align=center, draw] (inf)  {\textbf{Information}\\ Facts, concepts,\\ideas,\dots}; 
+  \node[align=center, draw, below=2cm of inf] (data)  {\textbf{Data}\\  Formalized \\representation of\\information}; 
+  \node[align=center, draw, below=2cm of data] (signal)  {\textbf{Signals}\\  Propagating\\ change of \\physical quantity}; 
+
+  \draw [->] (inf) to node[align=center, midway, right=0.25cm]
+  {Conventions for\\ representation}
+  (data)to node[align=center, midway, right=0.25cm]
+  {Conventions for\\ representation} (signal); 
+\end{tikzpicture}
+
+
+
+
+\end{document}
