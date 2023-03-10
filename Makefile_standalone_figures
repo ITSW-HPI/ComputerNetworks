@@ -9,9 +9,6 @@ TTFONTS=".:../../hpi-slides/src:./hpi-slides/src::"
 TEXSOURCES := $(wildcard *.tex)
 PDFTARGETS := $(patsubst %.tex,%.pdf,$(TEXSOURCES))
 
-# Annoying special case for ch_unterprogramme; minted in tikz: 
-ablauf.pdf: callsub.pdf
-
 all: $(PDFTARGETS)
 
 %.pdf: %.tex
