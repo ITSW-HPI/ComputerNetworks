@@ -1,0 +1,363 @@
+\label{ch:arch}
+
+\begin{frame}[title={bg=Hauptgebaeude_Tag}]
+ \maketitle 
+\end{frame}
+
+
+
+**** The story so far  
+
+
+- Understand basic mechanisms of transporting data
+  - Duplexing, multiplexing, switching, forwarding/routing 
+- Found out that a communication system easily becomes complex 
+
+**** Plans for this chapter 
+
+
+- Understand how a communication system is structured using layers,
+  planes, 
+  services and protocols
+- Look at some reference architectures 
+- Key design ideas of the Internet 
+
+
+** Layers 
+
+
+**** Reasons for complexity 
+
+- Many components 
+- Many connections between components 
+  - Especially: non-linear, feedback 
+- Many special cases and exceptions 
+- Huge description, huge volume of specification 
+  - \gls{rfc}: > 9360  (2023-03-10), compare https://ietf.org 
+- Many people needed to realize a system 
+
+
+**** Dealing with complexity 
+
+- Modularize 
+  - Divide a big system into smaller systems 
+  - Typical property: Changing a module is simple; changing
+    modularization itself is difficult 
+  - \dots but there are many ways to modularize 
+
+- Good: Abstract modularization 
+  - /abstract/ is a a property of a modularization: Modules should depend on each other as little as possible 
+  - Needs: Interface and internals; specification and implementation are separated
+  - Danger: /clever/ implementers try to circumvent module boundaries 
+  - Typical motto: /Be tolerant what you accept, be strict what you send out/
+
+**** Dealing with complexity: Layers 
+
+One way to foster abstractness: Layers
+- Structure abstract modules such that there is a higher and a lower
+  module ; can only interact with those neighbours 
+- Not necessarily exactly one upper/lower neighbouring layer 
+- Higher layers: more complex functions, wider scope 
+- Lower layers: simpler functions, smaller scope 
+
+
+**** Layers provide services 
+Each layer uses capabilities of a lower layer, adds own rules and procedures, to provide a more useful, advanced *service*
+- Services expose a well defined *interface* to higher layers
+- Services are accessible at their *Service Access Points* (SAP)
+- At a SAP, the interface can be accessed
+- A service is a promise what is going to happen to data when
+  delivered to/requests are made at the SAP
+
+**** Service
+- Service: Any act or performance that one party can offer to another
+  that is essentially intangible and does not result in the ownership
+  of anything. Its production may or may not be tied to a physical
+  product. /D. Jobber, Principles and Practice of Marketing/
+
+- Focus is on the output, the result of the service – *WHAT* is done 
+- NOT the means how to achieve it
+
+
+** Services 
+
+
+**** Services and layers
+- Layers provide services to their users, at their interface
+- Convention: consecutive numbering, higher numbers for more abstract layers/services
+- Service can be accessed at different places by different users
+
+**** Example service: Bit transmission 
+
+
+#+caption: Layer 1 offers to transmit bits, translate bits into different voltage levels, uses a phyiscal medium to propage that signal 
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio
+#+NAME: fig:arch:l0l1
+[[./standalone/services.pdf]]
+
+
+
+**** Service primitives
+- Service primitives: set of operations available at the interface of a service (``channel object API'')
+  - Formal definition of the service
+- Example for Bit Transmission Layer
+  - SEND-BIT – sender can ask for the delivery of a bit to the receiver
+  - RECEIVE-BIT – receive can wait for the arrival of a bit (blocking)
+  - INDICATE-BIT – indicate to the receiver that bit is now available (asynchronous)
+- Many different ways to structure service primitives conceivable
+  - Unit of data: individual bytes, messages, \dots 
+
+**** Service primitives – correctness requirements
+- For both message and byte stream-oriented (set of) service primitives, correctness requirements are important
+  - *Completeness*: All data that is sent is eventually delivered
+  - *Correctness*: If data is delivered, it is indeed correct, i.e., the data that has been actually sent
+    - Messages are not modified, original version is delivered
+    - Byte sequence is free of errors
+  - *In order*: Byte sequence/sequence of messages is delivered in the order it has been sent
+  - *Confirmed*: Reception of data is acknowledged to the sender
+  - *Dependable*: secure, available, … 
+- Not all requirements are always necessary
+
+**** Typical examples of services
+
+***** Datagram service
+- Unit of data are messages
+- Correct, but not necessarily complete or in order
+- Connection-less
+- Usually insecure/not dependable, not confirmed
+
+***** Reliable byte stream
+- Byte stream
+- Correct, complete, in order, confirmed
+- Sometimes, but not always secure/dependable
+- Connection-oriented
+- Almost all possible combinations are conceivable!
+
+**** Connection-oriented vs. connection-less service
+- Recall telephony vs. postal service
+  - Service can require a preliminary setup phase, e.g., to determine
+    receiver  $\leadsto$  connection-oriented service
+    - Three phases: connect, data exchange, release connection
+  - Alternative: Invocation of a service primitive can happen at any time, with all necessary information provided in the invocation $\leadsto$ connection-less service
+  - Note: This distinction does NOT depend on circuit or packet
+    switching –  connection-oriented services can be implemented on
+    top of packet switching (and vice versa)
+
+**** Connection-oriented SAP 
+- Connection-oriented services typically provide primitives to handle connection
+  - CONNECT – setup a connection to the communication partner
+  - LISTEN – wait for incoming connection requests
+  - INCOMING_CONN – indicate an incoming connection request
+  - ACCEPT – accept a connection
+  - DISCONNECT – terminate a connection
+
+**** Difference: circuit switching vs. connection oriented 
+
+- Circuit switching: Creates an end-to-end *physical* channel
+- Connection-oriented *service*:
+  - Describes how the service interface behaves
+  - About establishing *shared state* between both *ends*
+  - No statement about devices between the end devices 
+
+** Protocols
+**** Layers are distributed
+- Previous example: ``Bit sequence layer'' has to be present at both
+  transmitter (bit $\leftrightarrow$ electrical voltage) and at
+  receiver (electrical  $\leftrightarrow$ bit)  
+- *Exception*: Physical medium always needs to stretch across node
+  - Else: no signal propagating from sender to receiver 
+
+
+#+caption: Layer 1 distributed over two nodes, with entity present at either node; layer 0 stetching across both nodes
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=2
+#+NAME: fig:arch:layer0:layer1
+[[./standalone/services.pdf]]
+
+**** Peer entities 
+
+Collaborating entities in distributed layers: *peer entities*
+- Just *peers* for short 
+- Use the service of the underlying layer to exchange data with peer
+ 
+**** Distributed layers need to follow rules – protocols 
+- Peers of layer 1 implementation have to follow the same set of rules – protocols 
+- Example:  sender represented a ``1'' by ``voltage there''; receiver by
+  ``no voltage'' 
+
+**** Protocols
+- Protocols how two (or more) remote parts of a layer cooperate to implement the service of the given layer
+  - Behavior, packet formats, 
+
+
+
+
+**** Protocol specification
+- The formal behavior, the rules which constitute the protocol have to be precisely specified
+- One popular method: (Extended) Finite State Machine (FSM)
+- A protocol instance/protocol engine at each entity
+- Protocol instance (usually) has several states
+- E.g., for a protocol implementing a connection oriented service: IDLE, CONNECTED, RELEASING_CONNECTION
+**** Protocols and FSMs
+- Finite state machines implement actual behavioral rules of a protocol
+- Have to communicate with their remote peer 
+- Cannot do so directly, have to use service of the underlying communication layer
+- Via service primitives, which can also provide arriving data to the protocol 
+- E.g., indications from lower layer are events to higher layer protocol engine
+- 
+**** Protocols and messages
+- When using lower-layer services to communicate with the remote peer, administrative data is usually included in those messages
+**** Protocol stacks
+- Typically, there are several layers and thus several protocols in a real system
+- Layers/protocols are arranged as a (protocol) stack
+- One atop the other, only using services from directly beneath
+- This is called strict layering
+**** Traversing a protocol stack 
+- Downwards: Add headers 
+- Upwards: Remove headers 
+- SS 20, v 1.4.1
+- SSSP - Kap. 8b: Networks - Structuring
+- 24
+**** Protocol vs. service 
+- Service: WHAT happens
+- Protocol: HOW does it happen
+- SS 20, v 1.4.1
+- SSSP - Kap. 8b: Networks - Structuring
+- 25
+
+** Reference models                                                :noexport:
+
+**** How to structure functions/layers in real systems? 
+- Many functions have to be realized
+- How to actually group them so as to obtain a real, working communication system?
+- Layering structure, interfaces between them, and according protocols define the communication architecture
+- Two main reference models exist
+- ISO/OSI reference model  (International Standards Organization Open Systems Interconnection)
+- TCP/IP reference model (by IETF – Internet Engineering Taskforce)
+- Reference model = architecture – concrete protocols (roughly)
+
+
+*** ISO/OSI 
+
+**** ISO/OSI reference model
+- Basic design principles
+- One layer per abstraction
+- Each layer has a well-defined function
+- Choose layer boundaries such that information flow across the boundary is minimized (minimize inter-layer interaction)
+- Enough layers to keep separate things separate, few enough to keep architecture manageable
+- Result: 7-layer model
+- Not strictly speaking an architecture, because protocol details are not specified
+- Only general duties of each layer are defined
+- 
+**** ISO/OSI 7-layer reference model (two entities)
+**** ISO/OSI 7-layer reference model (complete network)
+**** 7 layers in brief
+- Physical layer: Transmit raw bits over a physical medium
+- Data Link layer: Provide a (more or less) error-free transmission service for data frames over a shared medium
+- Network layer: Solve the forwarding and routing problem for a network
+- Transport layer: Provide (possibly reliable, in order) end-to-end communication, overload protection, fragmentation
+- Session layer: Group communication into sessions which can be synchronized, checkpointed, …
+- Presentation layer: Ensure that syntax and semantic of data is uniform between all types of terminals
+- Application layer: Actual application, e.g., protocols to transport Web pages
+**** ISO/OSI reference model – Critique 
+- The reference model as such, in its structuring of functions into layers, is very influential until today
+- Actual protocols developed for it are irrelevant in practice
+- ISO failed in gaining actual market acceptance for its model
+- Bad timing – competing approaches already in market, lack of industry support
+- Bad technology – too big, too complex; some design flaws
+- Bad implementations – initial implementations low quality
+- Bad politics – ISO/OSI conceived of as a bureaucratic thing
+
+*** TCP/IP 
+
+**** TCP/IP reference model
+- Historically based on the ARPANET, later to become the Internet
+- Started out as little university networks, which had to be interconnected
+- In effect, only really defines two layers
+- Internet layer: packet switching, addressing, routing & forwarding. Particularly for hierarchically organized networks (``networks of networks'') – Internet Protocol (IP) defined
+- Transport layer: two services & protocols defined
+- Reliable byte stream: Transport Control Protocol (TCP)
+- Unreliable datagram: User Datagram Protocol (UDP)
+- In addition, (de)multiplexing
+- Lower and higher layers not really defined
+- ``Host to host'' communication assumed as a given
+- Applications assumed
+**** TCP/IP protocol stack
+**** TCP/IP – Suite of protocols
+- Over time, a suite of protocols has evolved around the core TCP/IP protocols 
+**** TCP/IP reference model – Critique 
+- No clear distinction between service, protocol, interface
+- Reliable byte stream is equated with TCP, although there is a clear difference
+- Particularly below IP
+- Very specialized stack, does not easily allow to generalize to other technologies/situations
+- Great void below IP
+- Many ad hoc, wildly hacked solutions in many places, without careful design 
+- Mobility support is a typical area where problems result later on 
+- 
+**** ISO/OSI versus TCP/IP
+- ISO/OSI: Very useful model, non-existing protocols
+- TCP/IP: Non-existing model, very useful protocols
+- Hence: Use a simplified ISO/OSI model, but treat the TCP/IP protocol stack in the context of this model
+- With suitable add-ons especially for the lower layers
+
+
+** Standardization                                                 :noexport:
+
+**** Standardization 
+- To build large networks, standardization is necessary
+- Traditional organization from a telecommunication/ telephony background
+- Well established, world-wide, relatively slow ``time to market''
+- Internet
+- Mostly centered around the Internet Engineering Task Force (IETF) with associated bodies (Internet Architectural Board IAB, Internet Research Task Force IRTF, Internet Engineering Steering Group IESG)
+- Consensus oriented, heavy focus on working implementations
+- Hope is quick time to market, but has slowed down considerably in recent years
+- Manufacturer bodies
+- 
+**** Standardization – Traditional organizations
+- ITU – International Telecommunication Union (formerly CCITT und CCIR)
+- CCITT – Consultative Committee on International Telegraphy and Telephony (Comité Consultatif International Télégraphique et Téléphonique)
+- CCIR – Consultative Committee on International Radio
+- CEPT – Conférence Européenne des Administrations des Postes et des Télécommunications
+- ISO – International Organization for Standardization  
+- DIN – Deutsches Institut für Normung
+- German partner organization of ISO
+- 
+**** ISO standardization work
+- WG-Meetings: 
+- Every 6-9 months
+- National organizations have time to accept proposed concepts
+- Then: actual standarization process
+- DP: Draft Proposal
+- DIS: Draft International Standard
+- IS: International Standard
+- Move a proposal to a higher level by incorporating all dissenting voices and international consensus
+- Very slow process
+**** IETF – http://www.ietf.org 
+- IETF is organized in areas and Working Groups
+- Volunteers from industry, academia, government organizations participate
+- Drafts/proposal can be made by anybody
+- An „on-demand`` process
+- To move beyond draft status, two independent, interoperating implementations are required
+- Informal voting in working groups
+- ``Humming''
+- Three meetings a year
+- Result: 
+- RFC – request for comment, the actual standard
+- FYI – informal or informational 
+- That‘s what the Internet is built on 
+
+
+** Conclusion 
+
+**** Conclusion  
+
+- To keep complexity of communication systems tractable, division in subsystems with clearly assigned responsibilities is necessary – layering 
+- Each layer (and the communication system as a whole) offers a particular service 
+- Services become more abstract and more powerful the higher up in the layering hierarchy
+- To provide a service, a layer has to be distributed over remote devices
+- Remote parts of a layer use a protocol to cooperate
+- Make use of service of the underlying layer to exchange data
+- Protocol is a horizontal relationship, service a vertical relationship
+- Two important reference models how to group functionalities into layers, which services to offer at each layer, how to structure protocols
+
+Lorem ipsum 
+

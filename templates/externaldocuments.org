@@ -10,3 +10,8 @@
 #+LATEX_HEADER: \externaldocument{../ch_basics/standalone/switching}
 #+LATEX_HEADER: \externaldocument{../ch_basics/standalone/switchingMSC}
 #+LATEX_HEADER: \externaldocument{../ch_basics/standalone/routing}
+#+LATEX_HEADER: \externaldocument{../ch_arch/ch_arch}
+#+LATEX_HEADER: \externaldocument{../ch_arch/ch_arch/standalone/services}
+#+LATEX_HEADER: \externaldocument{../ch_arch/ch_arch/standalone/protocols}
+#+LATEX_HEADER: \externaldocument{../ch_arch/ch_arch/standalone/referencemodels}
+

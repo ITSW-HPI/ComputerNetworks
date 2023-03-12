@@ -1,0 +1,133 @@
+% Created 2016-08-17 Wed 14:38
+\documentclass[tikz]{standalone}
+
+\input{../../templates/standalone_header}
+
+\usetikzlibrary{ext.positioning-plus,backgrounds}
+
+
+\begin{document}
+
+\begin{tikzpicture}
+  \node[fill=hpiyellow!10, draw=hpiyellow, align=center, rounded corners] (sap1) {SAP of Layer 1:\\Transmission of bit sequences};
+  \node[fill=hpiyellow!10, draw=hpiyellow, align=center, below=0 of -(sap1)] (l1) {Layer 1\\  Bit $\leftrightarrow$ Voltage };
+
+  \node[fill=hpiblue!10, draw=hpiblue, align=center, rounded corners, below=of -(l1)] (sap0) {SAP of Layer 0:\\Imperfect transmission of electric voltage};
+  \node[fill=hpiblue!10, draw=hpiblue, align=center, below=0 of -(sap0)] (l0) {Layer 0\\  Physical medium };
+
+
+  \draw [->, thick] (l1) to node[right] {Uses} (sap0); 
+\end{tikzpicture}
+
+
+\begin{tikzpicture}
+  \node[fill=hpiyellow!10, draw=hpiyellow, align=center, rounded corners] (sap1l)  {SAP Layer 1};
+  \node[fill=hpiyellow!10, draw=hpiyellow, align=center, below=0 of -(sap1l)] (l1l)  {Layer 1: Bit $\leftrightarrow$ Voltage \\conversion}; 
+
+  \node[fill=hpiyellow!10, draw=hpiyellow, align=center, rounded corners, right=6cm of sap1l] (sap1r)  {SAP Layer 1}; 
+  \node[fill=hpiyellow!10, draw=hpiyellow, align=center, below=0 of -(sap1r)] (l1r)  {Layer 1: Bit $\leftrightarrow$ Voltage \\conversion}; 
+
+
+  \node[fill=hpiblue!10, draw=hpiblue, below=1cm of -(l1l)(l1r)] (phy)  {Layer 0: Physical medium}; 
+
+
+  \draw [<->] (l1l) -- (phy.north -| l1l); 
+  \draw [<->] (l1r) -- (phy.north -| l1r); 
+
+  \node [above=0.5 of sap1l] (nodeA) {Node A}; 
+  \node [above=0.5 of sap1r] {Node B}; 
+  
+  \draw [dashed] (phy) -- (phy |- nodeA.north); 
+
+  
+\end{tikzpicture}
+
+\begin{tikzpicture}
+  \label{page:arch:saps_layers}
+
+  \node[fill=hpiyellow!10, draw=hpiyellow, align=center, rounded corners] (sap1l)  {SAP n+1};
+  \node[fill=hpiyellow!10, draw=hpiyellow, align=center, below=0 of -(sap1l)] (l1l)  {Layer n+1}; 
+
+  \node[fill=hpiyellow!10, draw=hpiyellow, align=center, rounded corners, right=6cm of sap1l] (sap1r)  {SAP n+1}; 
+  \node[fill=hpiyellow!10, draw=hpiyellow, align=center, below=0 of -(sap1r)] (l1r)  {Layer n+1}; 
+
+  
+  \node[fill=hpiorange!10, draw=hpiorange, align=center, rounded corners, below=of l1l] (sap0l)  {SAP n};
+  \node[fill=hpiorange!10, draw=hpiorange, align=center, below=0 of -(sap0l)] (l0l)  {Layer n}; 
+
+  \node[fill=hpiorange!10, draw=hpiorange, align=center, rounded corners, below=of l1r] (sap0r)  {SAP n}; 
+  \node[fill=hpiorange!10, draw=hpiorange, align=center, below=0 of -(sap0r)] (l0r)  {Layer n}; 
+
+
+  % \node[fill=hpiblue!10, draw=hpiblue, below=1cm of -(l1l)(l1r)] (phy)  {Layer 0: Physical medium}; 
+
+  % \draw [<->] (l1l) -- (phy.north -| l1l); 
+  % \draw [<->] (l1r) -- (phy.north -| l1r); 
+
+
+  \draw [->, thick] (l1l) to node[right] {Uses} (sap0l); 
+  \draw [->, thick] (l1r) to node[right] {Uses} (sap0r); 
+  \draw [<-, thick] (sap1l) to node[right] {Uses} ++ (0,1); 
+  \draw [<-, thick] (sap1r) to node[right] {Uses} ++ (0,1); 
+
+  % \coordinate (tmp) at 
+  % \draw [fill=hpiblue!10]   ($(sap0l)+(-1,0.5)$) -- (sap0r); 
+
+  \begin{scope}[on background layer]
+    \node [fill=hpiblue!10, draw=hpiblue, fit=(sap0l) (l0r) (sap0r) (l0l)] {}; 
+  \end{scope}
+
+  \draw [dashed] (l0l) to node[above] {Protocol} (l0r); 
+  \draw [dashed] (l1l) to node[above] {Protocol} (l1r); 
+
+\end{tikzpicture}
+
+
+\begin{tikzpicture}
+  \label{page:arch:layers:send_receive}
+
+  \node[fill=hpiyellow!10, draw=hpiyellow, align=center, rounded corners] (sap1l)  {SAP n+1};
+  \node[fill=hpiyellow!10, draw=hpiyellow, align=center, below=0 of -(sap1l)] (l1l)  {Layer n+1}; 
+
+  \node[fill=hpiyellow!10, draw=hpiyellow, align=center, rounded corners, right=6cm of sap1l] (sap1r)  {SAP n+1}; 
+  \node[fill=hpiyellow!10, draw=hpiyellow, align=center, below=0 of -(sap1r)] (l1r)  {Layer n+1}; 
+
+  
+  \node[fill=hpiorange!10, draw=hpiorange, align=center, rounded corners, below=of l1l] (sap0l)  {SAP n};
+  \node[fill=hpiorange!10, draw=hpiorange, align=center, below=0 of -(sap0l)] (l0l)  {Layer n}; 
+
+  \node[fill=hpiorange!10, draw=hpiorange, align=center, rounded corners, below=of l1r] (sap0r)  {SAP n}; 
+  \node[fill=hpiorange!10, draw=hpiorange, align=center, below=0 of -(sap0r)] (l0r)  {Layer n}; 
+
+
+  % \node[fill=hpiblue!10, draw=hpiblue, below=1cm of -(l1l)(l1r)] (phy)  {Layer 0: Physical medium}; 
+
+  % \draw [<->] (l1l) -- (phy.north -| l1l); 
+  % \draw [<->] (l1r) -- (phy.north -| l1r); 
+
+
+  \draw [<-, thick] (sap1l) to node[right] {Uses} ++ (0,1); 
+  \draw [<-, thick] (sap1r) to node[right] {Uses} ++ (0,1); 
+
+  % \coordinate (tmp) at 
+  % \draw [fill=hpiblue!10]   ($(sap0l)+(-1,0.5)$) -- (sap0r); 
+
+  \begin{scope}[on background layer]
+    \node [fill=hpiblue!10, draw=hpiblue, fit=(sap0l) (l0r) (sap0r) (l0l)] (l0) {}; 
+  \end{scope}
+
+  \draw [dashed] (l0l) to node[above] {Protocol} (l0r); 
+  \draw [dashed] (l1l) to node[above] {Protocol} (l1r); 
+
+
+  \draw [->] (l1l.south) to [out=210,in=150] node [left] {Sends} (l1l.south |- sap0l.north);
+  \draw [->] (l1l.south |- sap0l.north) to [out=30,in=330]  node [right] {Receives} (l1l.south) ;
+
+
+  \draw [->] (l1r.south) to [out=210,in=150] node [left] {Sends} (l1r.south |- sap0r.north);
+  \draw [->] (l1r.south |- sap0r.north) to [out=30,in=330]  node [right] {Receives} (l1r.south) ;
+
+  
+\end{tikzpicture}
+
+\end{document} 
