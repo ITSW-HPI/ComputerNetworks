@@ -9,6 +9,7 @@
 \begin{document}
 
 \begin{tikzpicture}
+  \label{page:arch:protocols:fsm}
   \node [draw, circle] (s1) {State 1}; 
   \node [draw, circle, right= 2.5cm of s1] (s2) {State 2};
 
@@ -17,7 +18,7 @@
 
 
 \begin{tikzpicture}
-  
+  \label{page:arch:protocols:two_fsms}  
   \begin{scope}[scale=0.5, every node/.append style={transform shape}]
     \node [draw, circle] (s1l) {$S_1$}; 
     \node [draw, circle, right=of s1l] (s5l) {$S_5$};
@@ -61,7 +62,38 @@
 \end{tikzpicture}
 
 \begin{tikzpicture}
-  \label{page:basics:headers}
+  \label{page:arch:one_header}
+  \node [fill=hpiyellow!10,draw=hpiyellow] (l3l) {Layer n+1};
+  \node [fill=hpiyellow!10,draw=hpiyellow, right=of l3l] (l3r) {Layer n+1};
+  
+  \node [fill=hpiorange!10,draw=hpiorange, below=of l3l] (l2l) {Layer n};
+  \node [fill=hpiorange!10,draw=hpiorange, below=of l3r] (l2r) {Layer n};
+
+  \draw [->] ([yshift=1cm]l3l.north) to
+  node [left,fill=gray!50, draw, minimum width=0.5] {\tiny Payload}
+  (l3l);
+  \draw [->] (l3l) to
+  node [left, anchor=east, 
+  rectangle split, rectangle split horizontal, rectangle split parts=2,
+  rectangle split part fill={hpiyellow!10,gray!50},
+  ] {\tiny L n+1 Hdr \nodepart{two} \tiny Payload }
+  (l2l);
+  
+  
+  \draw [<-] ([yshift=1cm]l3r.north)  to
+  node [right,fill=gray!50, draw, minimum width=0.5] {\tiny Payload} (l3r); 
+  \draw [<-] (l3r)  to
+  node [right, anchor=west, 
+  rectangle split, rectangle split horizontal, rectangle split parts=2,
+  rectangle split part fill={hpiyellow!10,gray!50},
+  ] {\tiny L n+1 Hdr \nodepart{two} \tiny Payload }
+  (l2r);
+  
+\end{tikzpicture}
+
+
+\begin{tikzpicture}
+  \label{page:arch:headers}
   \node [fill=hpiyellow!10,draw=hpiyellow] (l3l) {Layer 3};
   \node [fill=hpiyellow!10,draw=hpiyellow, right=of l3l] (l3r) {Layer 3};
   

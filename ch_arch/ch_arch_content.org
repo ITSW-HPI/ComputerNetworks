@@ -179,50 +179,235 @@ Collaborating entities in distributed layers: *peer entities*
 - Just *peers* for short 
 - Use the service of the underlying layer to exchange data with peer
  
-**** Distributed layers need to follow rules – protocols 
+**** Distributed layers need to follow rules: protocols 
 - Peers of layer 1 implementation have to follow the same set of rules – protocols 
 - Example:  sender represented a ``1'' by ``voltage there''; receiver by
   ``no voltage'' 
 
-**** Protocols
-- Protocols how two (or more) remote parts of a layer cooperate to implement the service of the given layer
-  - Behavior, packet formats, 
+Recall from previous chapter: 
 
+***** \Gls{protocol}                                           :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+\Glsdesc{protocol}
+
+
+
+**** Protocol implements service 
+
+- Protocol is implementation of service 
+- Not visible to service user! 
+- Gives rise to layered systems: services implemented by protocols,
+  which use lower-layer services 
+
+#+caption: Service implemented by a protocol, using a simpler service 
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:arch:saps_layers}
+#+NAME: fig:arch:protocol_uses_service
+[[./standalone/services.pdf]]
+
+
+**** Using a service means exchanging messages 
+
+Typical case: ``uses'' happens by sending/receiving messages over a
+service 
+
+
+#+caption: Protocol uses a service by sending/receiving messages across it 
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:arch:layers:send_receive}
+#+NAME: fig:arch:layers:send_receive
+[[./standalone/services.pdf]]
 
 
 
 **** Protocol specification
-- The formal behavior, the rules which constitute the protocol have to be precisely specified
+
 - One popular method: (Extended) Finite State Machine (FSM)
 - A protocol instance/protocol engine at each entity
 - Protocol instance (usually) has several states
-- E.g., for a protocol implementing a connection oriented service: IDLE, CONNECTED, RELEASING_CONNECTION
+- E.g., for a protocol implementing a connection oriented service:
+  IDLE, CONNECTED, RELEASING\_CONNECTION
+
+
+**** Protocols and FSM 
+
+\vskip-2.5em
+
+*****                     
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+
+- State changes triggered by *events*
+  - Event type 1: Message arrivals from lower layer
+  - Event type 2: Service invoked from higher layer 
+  - Event type 3: Real time / timer events
+- State change can have *conditions*
+  - Condition has to be true to allow transition, even if event occurs
+- State changes can have *actions* 
+  - Executed during state transition 
+  - Examples: Send message, set timer, delete timer
+
+*****                    
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+
+
+#+caption: Finite state machine specification 
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:arch:protocols:fsm}
+#+NAME: fig:arch:protocols:fsm
+[[./standalone/protocols.pdf]]
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+
+
 **** Protocols and FSMs
+\vskip-2.5em
+
+*****                     
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+
+
 - Finite state machines implement actual behavioral rules of a protocol
 - Have to communicate with their remote peer 
-- Cannot do so directly, have to use service of the underlying communication layer
-- Via service primitives, which can also provide arriving data to the protocol 
-- E.g., indications from lower layer are events to higher layer protocol engine
-- 
-**** Protocols and messages
-- When using lower-layer services to communicate with the remote peer, administrative data is usually included in those messages
+  - Cannot do so directly, have to use service of the underlying communication layer
+  - Via service primitives, which can also provide arriving data to the protocol 
+  - E.g., indications from lower layer are events to higher layer protocol engine
+
+
+*****                    
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+
+#+caption: A protocol ususally needs at least two FSMs (one per peer) to implement a service
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:arch:protocols:two_fsms}
+#+NAME: fig:arch:protocols:two_fsms
+[[./standalone/protocols.pdf]]
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+
+
+
+**** Protocols and meta data 
+\vskip-2.5em
+
+*****                     
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+- When using lower-layer services to communicate with the remote peer, meta data is usually included in those messages
+- Typical example
+  - Protocol receives data from higher layer
+  - Adds own administrative data
+  - Passes the extended message down to the lower layer
+  - Receiver will receive original message plus administrative data
+- *Encapsulating* a message with meta data 
+  - as *Header* or *trailer* 
+
+
+
+*****                    
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+#+caption: Adding meta data to a message as it travels between layers
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:arch:one_header}
+#+NAME: fig:arch:one_header
+[[./standalone/protocols.pdf]]
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+**** Terminology 
+
+***** \Gls{encapsulating}                                       :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+\Glsdesc{encapsulating}
+
+***** \Gls{payload}                                            :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+\Glsdesc{payload}
+
+
+***** \Gls{header}                                             :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+
+\Glsdesc{header}
+***** \Gls{trailer}                                            :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+\Glsdesc{trailer}
+
 **** Protocol stacks
 - Typically, there are several layers and thus several protocols in a real system
 - Layers/protocols are arranged as a (protocol) stack
 - One atop the other, only using services from directly beneath
-- This is called strict layering
+- This is called *strict layering* 
+
+
+
 **** Traversing a protocol stack 
 - Downwards: Add headers 
 - Upwards: Remove headers 
-- SS 20, v 1.4.1
-- SSSP - Kap. 8b: Networks - Structuring
-- 24
+
+
+#+caption: Adding meta data to a message as it travels down and up a protocol stack 
+#+attr_latex: :width 0.95\textwidth :height 0.5\textheight :options keepaspectratio,page=\getpagerefnumber{page:arch:headers}
+#+NAME: fig:arch:headers
+[[./standalone/protocols.pdf]]
+
+
+
+
 **** Protocol vs. service 
 - Service: WHAT happens
 - Protocol: HOW does it happen
-- SS 20, v 1.4.1
-- SSSP - Kap. 8b: Networks - Structuring
-- 25
 
 ** Reference models                                                :noexport:
 
