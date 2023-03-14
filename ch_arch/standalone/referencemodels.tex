@@ -51,7 +51,16 @@
   \draw [<->] (lr6) -- (l0.north -| lr6);
   \draw [<->] (lrouter1) -- (l0.north -| lrouter1);
   \draw [<->] (lswitch1) -- (l0.north -| lswitch1);
-%   \draw [dashed] (l0.north) -- (l0.north |- l7l.north) ; 
+  % \draw [dashed] (l0.north) -- (l0.north |- l7l.north) ;
+
+  \begin{scope}[every path/.style=dotted]
+    \coordinate (tmp) at ($(ll6)!0.5!(lrouter1)$);
+    \draw (tmp |- l0.north) -- (tmp |- l7l.north); 
+    \coordinate (tmp) at ($(lrouter1)!0.5!(lswitch1)$);
+    \draw (tmp |- l0.north) -- (tmp |- l7l.north); 
+    \coordinate (tmp) at ($(lswitch1)!0.5!(lr5)$);
+    \draw (tmp |- l0.north) -- (tmp |- l7l.north); 
+  \end{scope}
 }
 
 \begin{tikzpicture}[start chain=1 going below, start chain=2 going below,

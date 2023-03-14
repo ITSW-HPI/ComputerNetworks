@@ -23,7 +23,7 @@
 - Key design ideas of the Internet 
 
 
-** Layers 
+** Layers
 
 
 **** Reasons for complexity 
@@ -79,8 +79,9 @@ Each layer uses capabilities of a lower layer, adds own rules and procedures, to
 - NOT the means how to achieve it
 
 
-** Services 
+** Services
 
+*** Primitives 
 
 **** Services and layers
 - Layers provide services to their users, at their interface
@@ -158,6 +159,117 @@ Each layer uses capabilities of a lower layer, adds own rules and procedures, to
   - Describes how the service interface behaves
   - About establishing *shared state* between both *ends*
   - No statement about devices between the end devices 
+
+*** Sockets 
+
+**** API for communication: Sockets 
+     
+
+ Suitable for both messages and streams 
+ - Can express all synchronicity combinations
+ - Based on analogy: Communication with a remote partner is akin to reading from/writing to a file 
+ - For details see 
+   - Many online resources on the topic,
+     e.g. http://jan.newmarch.name/distjava/socket/lecture.html ;
+     \url{https://www.tutorialspoint.com/unix_sockets/index.htm} 
+   - Stevens, Unix Network Programming
+     \cite{Stevens:UnixNetworkProgramming}, \cite{9780131411555} -- old but still useful
+
+
+**** Plain socket example in C 
+
+\tiny
+*****  Sender                                                 :B_block:BMCOL:
+      :PROPERTIES:
+      :BEAMER_col: 0.5
+      :BEAMER_env: block
+      :BEAMER_opt: [t]
+      :END:
+
+
+
+#+BEGIN_SRC c
+int main(int argc, char **argv)
+{
+	int	sockfd;
+	struct sockaddr_un	cliaddr, servaddr;
+	char 	buffer[100];
+
+	sockfd = socket (AF_LOCAL, SOCK_DGRAM, 0);
+
+	bzero(&cliaddr, sizeof(cliaddr));	
+	cliaddr.sun_family = AF_LOCAL;
+	strcpy(cliaddr.sun_path, tmpnam(NULL));
+
+	bind(sockfd, (SA *) &cliaddr, sizeof(cliaddr));
+
+	bzero(&servaddr, sizeof(servaddr));	
+	servaddr.sun_family = AF_LOCAL;
+	strcpy(servaddr.sun_path, "kanalobjekt");
+
+	sendto (sockfd, "Hallo!", strlen("Hallo!"), 0, 
+		&servaddr, sizeof(servaddr);
+}
+#+END_SRC
+
+
+*****  Receiver                                               :B_block:BMCOL:
+      :PROPERTIES:
+      :BEAMER_col: 0.5
+      :BEAMER_env: block
+      :BEAMER_opt: [t]
+      :END:
+
+
+#+BEGIN_SRC c
+int main(int argc, char **argv)
+{
+	int	sockfd;
+	struct sockaddr_un	servaddr, claddr;
+	char	buffer[127];
+
+	sockfd = socket (AF_LOCAL, SOCK_DGRAM, 0);
+
+	bzero (&servaddr, sizeof(servaddr));
+	servaddr.sun_family = AF_LOCAL;
+	strcpy (servaddr.sun_path, "kanal");
+
+	bind (sockfd, (SA *) &servaddr, sizeof(servaddr));
+
+	recvfrom (sockfd, buffer, 127, 0, &claddr, sizeof(claddr));
+	printf ("Auftrag: %s \n", buffer); 
+}
+
+#+END_SRC
+
+
+
+
+**** Plain sockets -- good? 
+
+- Complex API, owing to its age 
+- But full control over all details 
+- Option: retain the basic interaction structure, but wrap it in nicer
+  API
+  - E.g., 0mq (http://zeromq.org)
+
+
+
+
+**** Sockets in C -- good? 
+
+- Even with 0mq (or similar), sockets stay cumbersome 
+  - Advantage: Full, detailed control
+  - E.g., ~select()~ call -- see homework 
+- Alternatives?
+  - Change programming language? Wrap sockets in an object-oriented
+    concept?
+  - Change paradigm? Raise abstraction level? 
+
+
+
+
+
 
 ** Protocols
 **** Layers are distributed
@@ -409,94 +521,195 @@ service
 - Service: WHAT happens
 - Protocol: HOW does it happen
 
-** Reference models                                                :noexport:
+** Reference models
 
 **** How to structure functions/layers in real systems? 
 - Many functions have to be realized
 - How to actually group them so as to obtain a real, working communication system?
-- Layering structure, interfaces between them, and according protocols define the communication architecture
+  - Layering structure, interfaces between them, and according protocols define the *communication architecture*
 - Two main reference models exist
-- ISO/OSI reference model  (International Standards Organization Open Systems Interconnection)
-- TCP/IP reference model (by IETF – Internet Engineering Taskforce)
-- Reference model = architecture – concrete protocols (roughly)
+  - *ISO/OSI* reference model  (International Standards Organization Open Systems Interconnection)
+  - *TCP/IP* reference model (by IETF – Internet Engineering Taskforce)
+  - Reference model = architecture – concrete protocols (roughly)
 
 
 *** ISO/OSI 
 
 **** ISO/OSI reference model
 - Basic design principles
-- One layer per abstraction
-- Each layer has a well-defined function
-- Choose layer boundaries such that information flow across the boundary is minimized (minimize inter-layer interaction)
-- Enough layers to keep separate things separate, few enough to keep architecture manageable
+  - One layer per abstraction
+  - Each layer has a well-defined function
+  - Choose layer boundaries such that information flow across the boundary is minimized (minimize inter-layer interaction)
+  - Enough layers to keep separate things separate, few enough to keep architecture manageable
 - Result: 7-layer model
-- Not strictly speaking an architecture, because protocol details are not specified
-- Only general duties of each layer are defined
-- 
+  - Not strictly speaking an architecture, because protocol details are not specified
+  - Only general duties of each layer are defined
+
 **** ISO/OSI 7-layer reference model (two entities)
-**** ISO/OSI 7-layer reference model (complete network)
+
+#+caption: The seven layers of the ISO/OSI reference models, shown for two entities
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:basics:reference:iso:twonodes}
+#+NAME: fig:arch:seven_layers
+[[./standalone/referencemodels.pdf]]
+
+
+
+**** ISO/OSI 7-layer reference model (intermediate nodes)
+
+#+caption: The seven layers of the ISO/OSI reference models, shown for four entities (dotted vertical lines show device boundaries)
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:basics:reference:iso:fournodes}
+#+NAME: fig:arch:seven_layers:fournodes
+[[./standalone/referencemodels.pdf]]
+
+
+**** ISO/OSI 7-layer reference model (horizontal communication)
+
+#+caption: The seven layers of the ISO/OSI reference models, showing horizontal communication within layers 
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:basics:reference:iso:logical}
+#+NAME: fig:arch:seven_layers:logical
+[[./standalone/referencemodels.pdf]]
+
+**** ISO/OSI 7-layer reference model (logical separation)
+
+#+caption: The seven layers of the ISO/OSI reference models, shown with logical separation 
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:basics:reference:iso:groups}
+#+NAME: fig:arch:seven_layers:groups
+[[./standalone/referencemodels.pdf]]
+
+
 **** 7 layers in brief
-- Physical layer: Transmit raw bits over a physical medium
-- Data Link layer: Provide a (more or less) error-free transmission service for data frames over a shared medium
-- Network layer: Solve the forwarding and routing problem for a network
+- Physical layer: Transmit raw *bits* over a physical medium
+- Data Link layer: Provide a (more or less) error-free transmission
+  service for *data frames* over a possibly shared medium
+- Network layer: Solve the forwarding and routing problem for a
+  network, works on *packets* 
 - Transport layer: Provide (possibly reliable, in order) end-to-end communication, overload protection, fragmentation
-- Session layer: Group communication into sessions which can be synchronized, checkpointed, …
+- Session layer: Group communication into sessions which can be synchronized, checkpointed, \dots
 - Presentation layer: Ensure that syntax and semantic of data is uniform between all types of terminals
 - Application layer: Actual application, e.g., protocols to transport Web pages
+
+
+**** 7 layers - function vs. scope? 
+
+- In a *very* abstract sense, all layers to do the same thing:
+  Transport data between their peers
+- But enrich some aspects:
+  - *Functionality*: what kind of data, functions like multicast, ... 
+  - *Assurances*: reliable or not
+  - *Scope*: At each layer, all peers can communicate directly with
+    each other
+    - But on top of the network layer, all peers = all devices 
+
 **** ISO/OSI reference model – Critique 
 - The reference model as such, in its structuring of functions into layers, is very influential until today
 - Actual protocols developed for it are irrelevant in practice
 - ISO failed in gaining actual market acceptance for its model
-- Bad timing – competing approaches already in market, lack of industry support
-- Bad technology – too big, too complex; some design flaws
-- Bad implementations – initial implementations low quality
-- Bad politics – ISO/OSI conceived of as a bureaucratic thing
+  - Bad timing – competing approaches already in market, lack of industry support
+  - Bad technology – too big, too complex; some design flaws
+  - Bad implementations – initial implementations low quality
+  - Bad politics – ISO/OSI conceived of as a bureaucratic thing
 
 *** TCP/IP 
 
 **** TCP/IP reference model
 - Historically based on the ARPANET, later to become the Internet
-- Started out as little university networks, which had to be interconnected
+  - Started out as little university networks, which had to be interconnected
 - In effect, only really defines two layers
-- Internet layer: packet switching, addressing, routing & forwarding. Particularly for hierarchically organized networks (``networks of networks'') – Internet Protocol (IP) defined
-- Transport layer: two services & protocols defined
-- Reliable byte stream: Transport Control Protocol (TCP)
-- Unreliable datagram: User Datagram Protocol (UDP)
-- In addition, (de)multiplexing
-- Lower and higher layers not really defined
-- ``Host to host'' communication assumed as a given
-- Applications assumed
+  - *Internet layer*: packet switching, addressing, routing & forwarding. Particularly for hierarchically organized networks (``networks of networks'') – Internet Protocol (IP) defined
+  - *Transport layer*: two services & protocols defined
+    - Reliable byte stream: Transport Control Protocol (TCP)
+    - Unreliable datagram: User Datagram Protocol (UDP)
+    - In addition, (de)multiplexing
+  - Lower and higher layers not really defined
+    - ``Host to host'' communication assumed as a given
+    - Applications assumed
+
 **** TCP/IP protocol stack
+
+#+caption: OSI stack vs. TCP/IP stack 
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:arch:reference:osi_vs_tcp}
+#+NAME: fig:arch:reference:osi_vs_tcp
+[[./standalone/referencemodels.pdf]]
+
+
+
 **** TCP/IP – Suite of protocols
-- Over time, a suite of protocols has evolved around the core TCP/IP protocols 
+- Over time, a suite of protocols has evolved around the core TCP/IP
+  protocols 
+- Noticeable: Only one protocol, IP, at network layer
+  - So-called *hourglass* model 
+
+#+caption: Suite of protocols in the TCP/IP reference models -- examples
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio ,page=\getpagerefnumber{page:arch:hourglass}
+#+NAME: fig:arch:hourglass
+[[./standalone/referencemodels.pdf]]
+
+
+
+
 **** TCP/IP reference model – Critique 
 - No clear distinction between service, protocol, interface
-- Reliable byte stream is equated with TCP, although there is a clear difference
-- Particularly below IP
+  - Reliable byte stream is equated with TCP, although there is a clear difference
+  - Particularly below IP
 - Very specialized stack, does not easily allow to generalize to other technologies/situations
 - Great void below IP
 - Many ad hoc, wildly hacked solutions in many places, without careful design 
-- Mobility support is a typical area where problems result later on 
-- 
+  - Mobility support is a typical area where problems result later on 
+
+
 **** ISO/OSI versus TCP/IP
+
+\vskip-2.5em
+
+*****                     
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+
 - ISO/OSI: Very useful model, non-existing protocols
 - TCP/IP: Non-existing model, very useful protocols
+\pause 
 - Hence: Use a simplified ISO/OSI model, but treat the TCP/IP protocol stack in the context of this model
-- With suitable add-ons especially for the lower layers
+  - With suitable add-ons especially for the lower layers
 
 
-** Standardization                                                 :noexport:
+*****                    
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+
+#+caption: Combined reference models, using aspects of both ISO/OSI and TCP/IP models
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio ,page=\getpagerefnumber{page:arch:reference:merged}
+#+NAME: fig:arch:reference:merged
+[[./standalone/referencemodels.pdf]]
+
+      
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+
+
+
+** Standardization
 
 **** Standardization 
 - To build large networks, standardization is necessary
 - Traditional organization from a telecommunication/ telephony background
 - Well established, world-wide, relatively slow ``time to market''
 - Internet
-- Mostly centered around the Internet Engineering Task Force (IETF) with associated bodies (Internet Architectural Board IAB, Internet Research Task Force IRTF, Internet Engineering Steering Group IESG)
-- Consensus oriented, heavy focus on working implementations
-- Hope is quick time to market, but has slowed down considerably in recent years
+  - Mostly centered around the Internet Engineering Task Force (IETF) with associated bodies (Internet Architectural Board IAB, Internet Research Task Force IRTF, Internet Engineering Steering Group IESG)
+  - Consensus oriented, heavy focus on working implementations
+  - Hope is quick time to market, but has slowed down considerably in recent years
 - Manufacturer bodies
-- 
+
 **** Standardization – Traditional organizations
 - ITU – International Telecommunication Union (formerly CCITT und CCIR)
 - CCITT – Consultative Committee on International Telegraphy and Telephony (Comité Consultatif International Télégraphique et Téléphonique)
@@ -504,31 +717,32 @@ service
 - CEPT – Conférence Européenne des Administrations des Postes et des Télécommunications
 - ISO – International Organization for Standardization  
 - DIN – Deutsches Institut für Normung
-- German partner organization of ISO
-- 
+  - German partner organization of ISO
+- 3GPPP - 3rd Generation Partnership Project (cellular systems)
+
 **** ISO standardization work
 - WG-Meetings: 
-- Every 6-9 months
-- National organizations have time to accept proposed concepts
-- Then: actual standarization process
-- DP: Draft Proposal
-- DIS: Draft International Standard
-- IS: International Standard
+  - Every 6-9 months
+  - National organizations have time to accept proposed concepts
+  - Then: actual standarization process
+    - DP: Draft Proposal
+    - DIS: Draft International Standard
+    - IS: International Standard
 - Move a proposal to a higher level by incorporating all dissenting voices and international consensus
 - Very slow process
 **** IETF – http://www.ietf.org 
 - IETF is organized in areas and Working Groups
-- Volunteers from industry, academia, government organizations participate
+  - Volunteers from industry, academia, government organizations participate
 - Drafts/proposal can be made by anybody
-- An „on-demand`` process
+  - An ``on-demand'' process
 - To move beyond draft status, two independent, interoperating implementations are required
 - Informal voting in working groups
-- ``Humming''
-- Three meetings a year
+  - ``Humming''
+  - Three meetings a year
 - Result: 
-- RFC – request for comment, the actual standard
-- FYI – informal or informational 
-- That‘s what the Internet is built on 
+  - RFC – request for comment, the actual standard
+  - FYI – informal or informational 
+- That's what the Internet is built on 
 
 
 ** Conclusion 
@@ -537,11 +751,11 @@ service
 
 - To keep complexity of communication systems tractable, division in subsystems with clearly assigned responsibilities is necessary – layering 
 - Each layer (and the communication system as a whole) offers a particular service 
-- Services become more abstract and more powerful the higher up in the layering hierarchy
+  - Services become more abstract and more powerful the higher up in the layering hierarchy
 - To provide a service, a layer has to be distributed over remote devices
 - Remote parts of a layer use a protocol to cooperate
-- Make use of service of the underlying layer to exchange data
-- Protocol is a horizontal relationship, service a vertical relationship
+  - Make use of service of the underlying layer to exchange data
+  - Protocol is a horizontal relationship, service a vertical relationship
 - Two important reference models how to group functionalities into layers, which services to offer at each layer, how to structure protocols
 
 Lorem ipsum 
