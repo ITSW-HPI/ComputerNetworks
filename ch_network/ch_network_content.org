@@ -1,0 +1,45 @@
+\label{ch:network}
+
+\begin{frame}[title={bg=Hauptgebaeude_Tag}]
+ \maketitle 
+\end{frame}
+
+
+
+**** The story so far  
+
+**** Plans for this chapter 
+
+
+\vskip-2.5em
+
+*****                     
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+
+****** Learning outcomes 
+
+*****                    
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+
+** Conclusion 
+
+**** Conclusion  
+
+Lorem ipsum 
+

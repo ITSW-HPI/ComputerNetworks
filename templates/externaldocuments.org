@@ -15,3 +15,4 @@
 #+LATEX_HEADER: \externaldocument{../ch_arch/standalone/services}
 #+LATEX_HEADER: \externaldocument{../ch_arch/standalone/referencemodels}
 
+#+LATEX_HEADER: \externaldocument{../ch_network/ch_network}
