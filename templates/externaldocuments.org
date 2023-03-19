@@ -16,3 +16,6 @@
 #+LATEX_HEADER: \externaldocument{../ch_arch/standalone/referencemodels}
 
 #+LATEX_HEADER: \externaldocument{../ch_network/ch_network}
+#+LATEX_HEADER: \externaldocument{../ch_network/standalone/routing}
+#+LATEX_HEADER: \externaldocument{../ch_network/standalone/dijkstra}
+#+LATEX_HEADER: \externaldocument{../ch_network/standalone/hierarchical}

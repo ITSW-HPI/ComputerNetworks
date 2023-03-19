@@ -11,22 +11,80 @@
 **** Plans for this chapter 
 
 
-\vskip-2.5em
+- Building larger networks by simply interconnecting LANs is limited, it does not scale
+- To build larger networks, the following questions have to be explicitly solved:
+- What are good paths that a packet should take to get from a source node to a destination node? 
+- How to represent these paths by routing tables and how to construct them efficiently? 
+- How to use routing tables (once constructed) efficiently?
+- How to organize larger networks with respect to an addressing structure that allows efficient & compact routing tables? 
+- In addition, we will look at how the Internet’s routing structure looks like as a case study
 
-*****                     
+
+** Routing 
+
+**** Goal: Build LARGE networks
+- The “internetworking” mechanisms described in previous chapter can help packets to reach their destination
+  - Hubs: broadcast; switch: send to directly connected network
+  - Bridge: Flooding causes problems; spanning tree solves some of them
+- Can we directly extend these mechanisms to large networks (millions or more nodes)?
+  - Flooding clearly not a good idea
+  - Need some structure to decide where a packet should go
+  - A single spanning tree is not good, can introduce considerable detours
+ 
+**** Desirable: Shortest paths!
+- Instead of a single spanning tree for an entire network, provide *shortest paths* 
+  - Given a source and destination node for a packet, what is the shortest way to deliver the packet? 
+- What does ``shortest'' mean?
+  - Fewest hops?
+  - Smallest delivery time? 
+  - Lowest cost?  
+- Choice to make: to which neighbor to forward a packet? 
+
+**** Routing tables expressing costs
+
+
+***** \Gls{routingtable}                                       :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+\Glsdesc{routingtable}
+
+\pause 
+
+
+**** Routing tables: Example 
+
+*****                Example graph      
       :PROPERTIES:
       :BEAMER_env: block
       :BEAMER_col: 0.48
       :END:
 
+#+caption: Example graph for networking (repeated from Chapter 1)
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio ,page=\getpagerefnumber{page:basics:routing:interfaces}
+#+NAME: fig:routing:example_graph
+[[../ch_basics/standalone/routing.pdf]]
 
-****** Learning outcomes 
 
-*****                    
+
+*****     Example routing table for node Sw 5                
       :PROPERTIES:
       :BEAMER_env: block
       :BEAMER_col: 0.48
       :END:   
+
+#+caption: A possible routing table for switch 4 (repeated from Table \ref{tab:basics:routing_table_sw4})
+#+NAME: tab:basics:routing_table_sw4
+| Destination | a | b | c | d | e |
+|-------------+---+---+---+---+---|
+| N 1         | - | 4 | 3 | - | - |
+| N 2         | - | 4 | 3 | - | - |
+| N 3         | - | 2 | 3 | - | - |
+| N 4         | - | 3 | 2 | - | - |
+| N 5         | 1 | - | - | - | - |
+| N 6         | - | - | - | 1 | - |
+| N 7         | - | - | - | - | 1 |
 
 
 
@@ -37,9 +95,839 @@
 
 
 
+
+
+
+**** Forwarding table 
+
+***** \gls{forwardingtable}                                    :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+      \Glsdesc{forwardingtable}
+
+
+
+
+- Trivial to construct from routing table, but smaller and quicker to search
+
+
+**** Forwarding table: Example 
+
+*****                Example graph      
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+#+caption: Example graph for networking (repeated from Chapter 1)
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio ,page=\getpagerefnumber{page:basics:routing:interfaces}
+#+NAME: fig:routing:example_graph
+[[../ch_basics/standalone/routing.pdf]]
+
+
+
+***** Forwarding table 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+#+caption: Forwarding table of Switch 4 (repeated from Table \ref{tag:basics:forwading})
+#+NAME: tab:routing:forwading
+| Destination | Interface |
+|-------------+-----------|
+| N 1         | c         |
+| N 2         | c         |
+| N 3         | b         |
+| N 4         | c         |
+| N 5         | a         |
+| N 6         | d         |
+| N 7         | e         |
+
+
+
+
+
+**** Properties for routing algorithms
+- Routing algorithm = an algorithm to compute routing tables
+- Properties/classifications
+  - Correct, simple
+  - Centralized/distributed
+  - Robustness
+  - Can compensate quickly for failing links
+  - Non-adaptive/adaptive to current situation of a network
+  - Also called: static/dynamic routing
+  - Stable – will converge to an equilibrium over time
+  - Optimality (in throughput, delay, … or some other metric)
+  - Fairness
+  - *Small routing tables* 
+
+
+**** Storing forwarding tables
+- How to store forwarding tables? 
+- Actually one entry per known destination clearly impossible 
+- Need to compress, group ``similar'' entries 
+
+
+
+**** Storing forwarding tables: Example 
+\vskip-2.5em
+
+*****                     
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+#+caption: Example topology for forwarding tables: Router R with 16 neighboring nodes, four interfaces I1, \dots I4 
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio ,page=\getpagerefnumber{page:network:star}
+#+NAME: fig:network:star
+[[./standalone/routing.pdf]]
+
+
+
+*****                    
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+#+caption: Example forwarding table 
+#+NAME: tab:network:forwarding_table
+
+
+\begin{table}[h]
+  \caption{Example forwarding table}
+  \label{tab:network:forwarding_table}
+  \begin{center}
+\maxsizebox{!}{0.3\textheight}{
+    \begin{tabular}{rlr}
+      Destination & Destination & Outgoing\\
+                  & (binary) & interface\\
+      \midrule
+      0 & 00 00 & 1\\
+      1 & 00 01 & 1\\
+      2 & 00 10 & 1\\
+      3 & 00 11 & 1\\
+      4 & 01 00 & 1\\
+      5 & 01 01 & 1\\
+      6 & 01 10 & 1\\
+      7 & 01 11 & 4\\
+      8 & 10 00 & 3\\
+      9 & 10 01 & 3\\
+      10 & 10 10 & 3\\
+      11 & 10 11 & 3\\
+      12 & 11 00 & 2\\
+      13 & 11 01 & 2\\
+      14 & 11 10 & 2\\
+      15 & 11 11 & 2\\
+    \end{tabular}}
+  \end{center}
+
+\end{table}
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+
+
+
+**** Compress to *prefixes* 
+
+- Naïve: Only look at prefixes that uniquely identify outgoing interface
+  - Ifce 1: 00*, 010*, 0110
+  - Ifce 2: 11*
+  - Ifce 3: 10*
+  - Ifce 4: 0111
+- *Lookup rule*: given a destination address, use the row with a matching prefix
+  - Use wildcards to compress several rows
+  - Row is uniquely determined
+\pause 
+- Problem: One exception for destination 0111 necessitates larger
+  table! 
+
+
+**** Compress to *longest prefixes*, ignoring wildcards  
+- Better: Compress even more by allowing to supersede incorrect info in other entries 
+  - Ifce 1: 00* 
+  - Ifce 2: 011*
+  - Ifce 3: 010*
+  - Ifce 4: 00111
+- *Lookup rule*: given a destination address, use row with the *longest prefix* that matches address to find interface 
+  - Ignore rows which match the destination by shorter entries with wildcards 
+
+**** Longest prefix matching and tree-like data structure 
+- Represent forwarding table by a tree, levels are bit positions in address to be matched
+- Note: Actual routers typically use tries, variation on this concept 
+- Default route in root node, typically 256-ary not binary, better compression properties  \dots 
+**** When can forwarding tables be well compressed? 
+
+\vskip-2.5em
+
+***** One more example                     
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+#+caption: A slightly different network with nodes attached to other interfaces (compared to example from Figure \ref{fig:network:star})
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio ,page=\getpagerefnumber{page:network:unsorted}
+#+NAME: fig:network:unsorted
+[[./standalone/routing.pdf]]
+
+
+
+*****  Assigned prefixes                   
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+- Ifce 1: *, 1110, 0101
+- Ifce 2: 0001, 0011, 0110, 1010
+- Ifce 3: 01*, 1011, 1100
+- Ifce 4: 11*, 1000
+
+(other solutions possible)
+
+\pause 
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+- Needs twelve rules instead of four
+- Reason Addresses not ``nicely'' laid out in topology (and:
+  simplistic approach?)
+
+**** Relationship between forwarding table size and name assignment 
+
+
+*Intuition 1*: When names can be smartly assigned to nodes in a
+  network, routing/forwarding tables can be kept small 
+  - Then, longest prefix matching needs few exceptions
+  - Else, forwarding tables need to express lot’s of special cases 
+
+\pause 
+
+Formalization: 
+  - *Name-dependent routing*: Routing algorithm/name assignment algorithm chooses names for nodes 
+  - *Name-independent routing*: Node names are arbitrarily assigned to
+    nodes
+    - Possibly even by an adversary 
+
+
+**** Relationship between forwarding table size and name assignment 
+
+*Intuition 2*: If we are willing to accept sub-optimal routes (take
+  detours), forwarding tables can be kept small  
+  - Trade-off between length of detours, forwarding table size
+
+\pause 
+Formalization: 
+  - *Stretch of a path between node a and b*: 
+     \[ \mathrm{strecht} (a, b) = \frac{\text{Lenght of path from $a$ to
+    $b$ according to routing tables}}{\text{Length of shortest path from
+    $a$ to $b$}} \]
+\pause 
+ - Stretch of a network:  The worst stretch between any two nodes 
+   \[ \text{stretch} = \max_{a, b} \text{stretch} (a,b) \]
+
+
+
+
+**** Results for network-dependent routing
+
+Compact routing gives excellent results [[cite:&Thorup2001-vn]]: 
+
+- Forwarding table size $\tilde{O}(\sqrt{n})$ per node, at stretch 3,
+  headers of size $(1+o(1)) \log_2(n)$, constant time for forwarding
+  decisions
+- Size $\tilde{O}(n^{1/3})$ for stretch 5 (with handshaking) or
+  stretch 7 (without)
+- For any scheme with stretch smaller 3, there exists a network with
+  space $\Omega(n^2)$
+- For any scheme with stretch smaller 5, there exists a network with
+  space $\Omega(n^{3/2})$
+
+Downside: requires centralized route computation, knowledge about
+entire network 
+
+**** Results for network-independent routing  
+
+
+With centralized schemes: 
+- Surprise: Stretch 3 with space $\tilde{O}(\sqrt{n})$ [[cite:&Abraham2008-mb]]
+- Stretch $O(k)$ with space $\tilde{O}(n^{1/k} \log \text{diameter})$
+  [[cite:&Abraham2004-zb]] 
+
+\pause 
+
+With distributed schemes: 
+- Space  $\tilde{O}(\sqrt{n})$ with stretch 7 on first packet, stretch
+  3 on subsequent packets (much lower on average)
+  - Routes on flat names, no name hierarchy needed [[cite:&Singla2010-cs]]
+
+
+** Computing routing tables 
+**** Computing routing tables – A centralized view
+- Given a graph $G=(V,E)$ and a cost function $c : E \rightarrow \mathbb{R}$
+- Compute, for each node $v \in V$, the routing table to each destination $u \in V$
+- Such that for each pair $(v,u)$ the path $(v, s_1, \dots, s_n, u)$
+  with the  smallest (known) cost can be easily derived from the routing table
+  - By simply choosing the neighbor with the smallest entry 
+  - *Cost of a path* is computed from  *costs of its edges*
+    - Typically, *sum* 
+- ``*Single-source shortest path problem*''
+  - Approach: Compute shortest paths from a given node to all possible destination nodes; do that for all nodes in the network
+  - ``Shortest path tree''
+  - *NOT* a minimum spanning tree computation
+
+**** Shortest-path tree vs. minimum spanning tree 
+
+#+caption: From node $A$: shortest-path tree in blue, minimum spanning tree in red  
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio ,page=\getpagerefnumber{page:routing:shortest_vs_spanning}
+#+NAME: fig:routing:shortest_vs_spanning
+[[./standalone/routing.pdf]]
+
+
+
+
+
+**** Centralized shortest path – Dijkstra 
+- Given graph $G=(V,E)$, cost $c : E \rightarrow \mathbb{R}$, source node $A$
+  - Algorithm can be applied to any source node, of course
+- Compute shortest paths to all destinations (and their cost)
+
+
+***** Dijkstra’s algorithm:
+  - Each node carries three labels: 
+    - Distance to source node A (or \infty, if not known)
+    - Are we done with this node? /Tentative/ or /permanent/
+      - Only nodes labeled /permanent/ have final distance estimates
+    - Predecessor in the path towards the source
+      - Or ``unknown''
+  - Initially, all labels are (\infty, tentative, unknown)
+
+**** Centralized shortest path – Dijkstra
+- Initial action: Make node $A$ permanent
+- Whenever a node $X$ is changed from tentative to permanent with label ($c_X$, permanent, $W$):
+  - For all neighbors $Y$ of $X$ with label (\infty, tentative,
+    unknown):  Label $Y$ as  ($c_X + c(X,Y)$, tentative, $X$)
+    - First time a path is found for node Y
+  - For all neighbors $Y$ of $X$ with label ($c_Y$, tentative, $U$):If $c_X + c(X,Y) < c_Y$, replace label by ($c_X + c(X,Y)$, tentative, $X$)
+    - A better path to $Y$ has been found, via $X$ instead of via $U$
+    - Else, $Y$'s label stays unchanged 
+- Once relabeling step is complete, search (in entire graph) tentative node with smallest cost – and make it permanent
+  - This is the closest node to A which is still uncertain, for any
+    other node a still cheaper path might be found 
+- Proceed until all nodes are labeled as ``permanent''
+
+**** Centralized routing – Dijkstra – Example 
+
+
+
+Interactive example at
+[[https://algorithms.discrete.ma.tum.de/graph-algorithms/spp-dijkstra/index_en.html][Dijsktar-Algorithmus at TUM]] 
+
+**** Centralized vs. distributed algorithms – Link-state routing
+- Dijkstra’s algorithm nice and well
+- But how to obtain centralized view of the entire network to be able to apply Dijkstra’s algorithm?
+- Assumption: only direct neighbors know the (current) cost of a link or know whether a link has failed/been restored/upgraded/\dots
+- Solution: Have each node distribute this information – state of all its links – in the entire network
+- Then, all nodes know entire network topology & can apply Dijkstra’s algorithm
+- Distribution itself can happen via flooding
+-  $\leadsto$ Link-state routing
+- Intuition: Little information (about direct neighbors) is spread over large distances (to the entire network)
+**** Link-state packets 
+
+
+**** Alternative approach: Distance-vector routing
+- Alternative idea to link state routing: Distribute lot’s of information over short distances
+- Distribute everything a node currently knows (or believes) about the entire network topology, but only to direct neighbors
+- This information is represented by the routing table (containing outgoing link and cost)
+- If reduced to cost only, also called a distance vector
+- Invented by Bellman & Ford (1957)
+- After receiving a routing table from a neighbor, compare whether it contains ``good news'', i.e., a shorter route than the one currently known
+- Assumption: each router knows cost to each of its direct neighbors
+- In practice: It suffices to exchange distance vectors 
+**** Distance-vector routing – Formally 
+- Suppose that node X 
+- Has distance vector (x1, \dots xn) for each of the n possible destinations in the network
+- Receives distance vector (y1, \dots , yn) from its neighbor Y
+- Has cost cXY to reach neighbor Y
+- Then: Node X compares, for every destination i,xi > yi + cXY 
+- i.e., is it cheaper to go first to Y and then to i rather than to go to node i via the so-far used neighbor? 
+- If yes, replace outgoing link for node i by y, update cost to yi + cXY
+- Algorithm keeps iterating
+**** Distance-vector routing – Example 
+
+
+** Hierarchical routing 
+**** Solution for LARGE networks? 
+- What happens to routing when networks grow?
+- Routing tables become longer and longer, requiring more memory
+- Searching through routing/forwarding tables takes more and more time, reducing throughput of a router/increasing delay
+- Run-time of routing algorithms becomes larger
+- But: does a given node really care about details of the route ``far away''?
+- Suppose you send a packet to an Australian university – do you care which route it takes from one campus router to the next? 
+- It suffices to get the packet towards Australia
+- For local packets, a router better should care!
+-  $\leadsto$ Hierarchical routing
+**** Hierarchical routing – Regions 
+- Group nodes/routers into regions
+- Routers know 
+  - How to reach each node/router in their own region
+  - How to reach every other region (but nothing inside that region)
+
+**** Hierarchical routing - Example network
+
+\vskip-2.5em
+
+***** Example network  with full visibility                    
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+#+caption: Example network with four regions; all fully visible to each other 
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio ,page=\getpagerefnumber{page:routing:hierarchy:full}
+#+NAME: fig:routing:hierarchy:full
+[[./standalone/hierarchical.pdf]]
+
+
+
+*****                    Limited visibility for the blue region
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+#+caption: Example network with four regions; blue region has no visibility into the other three regions 
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio ,page=\getpagerefnumber{page:routing:hierarchy:limited}
+#+NAME: fig:routing:hierarchy:limited
+[[./standalone/hierarchical.pdf]]
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+
+**** Hierarchical Routing – Example tables 
+\vskip-2.5em
+
+
+
+***** Table for $A_2$ without hierarchy 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+#+caption: Forwarding table (plus hop count) for node $A_2$ from Figure \ref{fig:routing:hierarchy:full}
+#+NAME: tab:routing:hierarchy:full
+| Destination | Next hop         | # Hops |
+|-------------+------------------+--------|
+| $A_1$       | $A_1$            |      1 |
+| $A_2$       | --               |     -- |
+| $A_3$       | $A_3$            |      1 |
+| $A_4$       | $A_4$            |      1 |
+| $B_1$       | $A_4$            |      2 |
+| $B_2$       | $A_4$            |      3 |
+| $B_3$       | $A_4$            |      3 |
+| $B_4$       | $A_4$            |      3 |
+| $C_1$       | $A_1$            |      3 |
+| $C_2$       | $A_1$            |      2 |
+| $C_3$       | $A_1$            |      3 |
+| $C_4$       | $A_1$            |      4 |
+| $C_5$       | $A_1$            |      5 |
+| $C_6$       | $A_1$            |      4 |
+| $D_1$       | $A_4$ (or $A_1$) |      5 |
+| $D_2$       | $A_4$ (or $A_1$) |      6 |
+| $D_3$       | $A_4$            |      4 |
+| $D_4$       | $A_4$ (or $A_1$) |      6 |
+| $D_5$       | $A_4$            |      5 |
+
+
+
+***** Table for $A_2$ with hierarchy 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+#+caption: Forwarding table (plus hop count) for node $A_2$ from Figure \ref{fig:routing:hierarchy:limited}
+#+NAME: tab:routing:hierarchy:limited
+| Destination | Next hop | # Hops |
+|-------------+----------+--------|
+| $A_1$       | $A_1$    |      1 |
+| $A_2$       | --       |     -- |
+| $A_3$       | $A_3$    |      1 |
+| $A_4$       | $A_4$    |      1 |
+| $B*$        | $A_4$    |      2 |
+| $C*$        | $A_1$    |      2 |
+| $D*$        | $A_1$    |      3 |
+
+
+
+**** Routing within and between regions
+- A router perceives all routers in a ``foreign'' region as the same node, does not distinguish in routing tables
+- Packet destined to own region: routed as normal
+- Packet destined to other region: get it to the region, don’t worry about details of routing there
+- Once a packet enters its destination region, router knows about the details how to reach the destination node
+- Necessary: Router must be able to easily infer the target region from packet’s destination!
+- Requires adequate addressing structure for a quick address $\leadsto$ region mapping
+- Treated a few slides later
+**** Price of hierarchy
+- Hierarchical routing good for algorithm runtime, memory required for routing tables, next-hop lookup times, \dots
+- What is the price to pay?
+- Routes become non-optimal
+- Since no longer all the details of the network are represented, routing algorithms might miss optimization potential
+- Can this overhead be bounded? Is it acceptable in practice? 
+**** Only regions? Or multiple levels of hierarchy?
+- If network becomes REALLY big, these two levels of hierarchy might again not suffice
+- Group regions into clusters, clusters into domains, domains into conglomerates, \dots (or whatever terminology pleases you)
+- Obvious question: 
+- How many levels of hierarchy?
+- How many entities should be grouped together to form the next-level conglomerate structure? 
+- Good rule of thumb: For n nodes, use ln n levels of hierarchy
+- Requires e ln n entries in each routing table
+- Then: Good balance between routing overhead and smaller routing table sizes
+- In practice: Internet uses two levels (kind of\dots) 
+**** Gateways between networks
+- Gateways are those nodes that connect to peer conglomerates
+- Such conglomerates arefairly independent of eachother
+- Different routing protocolscan be used – an interiorgateway protocol in each conglomerate
+- Between gateways, yet another protocol is conceivable – an exterior gateway protocol – operating only on the ``gateway graph''
+- Because of autonomy, the name autonomous system is used
+- 
+
+** Names and addresses 
+
+**** Names 
+**** Addressing – Failure of simple addresses
+- Think back to the MAC/LLC layer: Each device has a globally unique MAC address
+- Why is there then a need to talk about some other addressing scheme?
+- How did spanning tree algorithm for bridges work? 
+- Each bridge had to store a separate entry for each device to which is was routing packets 
+- Lot’s of memory, CPU overhead (for searching)
+-  $\leadsto$ Clearly, this does not scale to large networks
+- 
+**** Addressing and hierarchical routing
+- ``Flat'' addresses – addresses that express no structure – do not work well together with hierarchical routing
+- Necessary: Addresses that express/respect the hierarchical routing structure 
+- Essentially, something like: Group-IDn:Group-IDn-1:\dots:Group-ID1:Device-ID
+- Hierarchical addresses – addresses are relative to higher groups
+
+**** Names and addresses 
+
+
+** Case study: IP 
+
+*** IP addressing 
+
+**** An IPv4 packet header
+**** Addressing case study: Internet IP addresses
+- IP addresses as such distinguish two levels of hierarchy
+- Network interfaces/hosts
+- Note: ``hosts'' is somewhat incorrect since their interfaces are actually addressed; nonetheless common terminology
+- Networks or subnets
+- Nodes know to which subnet they belong
+- Routers have to know about all other subnets (or at least about a router that knows about all of them as a default solution to send a packet)
+**** IP addresses belong to interfaces, not machines 
+- Strictly speaking, an IP address designates a line card/interface 
+- Recall router example from early on: Interfaces of the router belong to different networks
+- (Actually, an interface can even have multiple IP addresses\dots) 
+**** Denoting Internet IP addresses
+- An IPv4 address is 32 bits
+- Usually written as dotted decimal, four decimals between 0 and 255
+- Historically: Split into a network part (with one out of three possible lengths) and an interface/host part
+- Routers only route packets based on the network part
+- Difficult to figure out where the network part ends and the host part starts
+- Problem: No space in IP packet header to explicitly identify this boundary  
+- Originally, only prefix lengths 8, 16, 24 in use, identified by the first two bits in an address 
+- So-called class A, B, C addresses 
+- 
+**** Denoting Internet IP addresses (II)
+- Distinction between network part and host part of an IP address
+- Aspect 1: Breaking down the hostid part of an address into smaller groups 
+- Done by subnet mask: Write x 1’s and 32-x 0’s, express as dotted decimal 
+- Subnets only the hostid part of an address into a subnet-id and the (proper) hostid 
+- E.g., a.b.c.d/20 -> 11111111 11111111 1111 0000 00000000 = 255.255.240.0
+- Subnet masks are configured on routers only inside the respective subnets; they are not transported in packets 
+- Subnet masks have little relevance for unicast routing; needed to construct smaller local broadcast domains 
+**** Denoting Internet IP addresses (III)
+- Aspect 2: Classless Interdomain Routing (CIDR): Number of bits indicating the network prefix is explicitly given in routing table 
+- A prefix P=B/M=a.b.c.d/M designates a network
+- Slash notation
+- B=a.b.c.d is the base address of a network
+- M is number of prefix bits; 32-M bits are hostid bits; host bits are irrelevant for routing 
+- The prefix mask BM = 111\dots..1100\dots0 (M 1’s ,32-M 0’s)
+- A prefix is only valid if the last 32-M bits are zero: B & BM = B
+- A router can test whether an address belongs to a network
+- Address A 2 P=B/M $ A & BM = B
+- Routers need to know the actual prefix of the networks for which they have routing table entries
+**** Some reserved IP addresses
+- Some IP addresses are set aside for special uses
+- Not all of the network/host combinations are available
+**** Forwarding using IP addresses/IP routing tables
+- A router is in charge of its ``own'' network, has to know how to handle packets for all destinations within
+- Upon a packet arrival, check if packet is destined for own network
+- If yes: Look at ``host'' bits of the destination address, look up corresponding outgoing link, forward packet to that host
+- If no: Look at ``network'' bits of the destination address, look up corresponding outgoing link, forward packet to that router
+- Use longest prefix matching rule 
+- Traverse list of prefix/interface pairs in descending order of prefix length
+- If no outgoing link known, use a ``default'', fallback peer router
+- Basically, fairly straightforward, two-level hierarchical forwarding and routing
+- But complications arise from network/host split
+**** Forwarding, address aggregation, longest prefix matching rule
+- CIDR and longest prefix matching rule in routers allow simple address aggregation 
+**** \dots even handles changes of network structure
+- Suppose subnet 200.23.18.0/23 moves to Router 2?
+- Router 1 can keep its \dots/20 prefix; the 200.23.18.18.0/23 subnet announcement via Router 2 supersedes it in Internet routers, longest prefix matching!
+**** Forwarding table of router 3 
+- Have a look at Linux ifconfig and route commands
+- Maybe easier: route –n
+- Note: prefix length is displayed via the netmask 
+**** Relationship of layer 2, 3? 
+- Suppose we send a layer 3 packet from A to Z
+- What are the layer 2, layer 3 addresses in the packet when it arrives or leaves at R1, R2 interfaces 1, 2? 
+- How is forwarding decided? Where do addresses come from? 
+
+**** Golden rule for forwarding: local or not? 
+- When a packet with a local destination address arrives at an interface: Try to send it directly over LAN 
+- Assumption: Directly connected; IP address can be directly mapped to a Layer 2 address 
+- Create L2 frame with that L2 address to send there 
+- Question: interface or node/router? How to tell apart? 
+- When destination address is not local: 
+- Consult routing table to find Outgoing interface and Next hop
+- Resolve next hop’s IP address into L2 address 
+- Create L2 frame with that L2 address to send there 
+- Question: what is local? 
+- Destination address matches interface’s netmask/prefix length  
+
+**** Bridging addressing gap: ARP
+- What happens once a packet arrives at its destination network / LAN? 
+- How to turn an IP address (which is all that is known about the destination) into a MAC address that corresponds to the MAC address?
+- Simple solution: Yell! 
+- Broadcast on the LAN, asking which node has IP address x
+- Comprise own MAC address to indicate where to send answer 
+- Node answers with its MAC address
+- Router/node can then address packet to that MAC address
+- Address Resolution Protocol (ARP)
+- Command line tool: arp 
+**** Relationship: Layer 2, 3
+- Must all interfaces in a LAN have IP addresses from the same prefix? 
+
+**** How to obtain IP addresses (v4)?  
+- Option 1: statically configured 
+- Option 2: upon boot, obtain from network 
+- Idea: YELL! 
+- Ask for IP address, announcing your MAC address 
+- Server should respond with an address assignment (in a L2 packet)  
+- Dynamic Host Configuration Protocol (DHCP) 
+- Formally: create an address binding 
+- Map L3 to L2 address 
+- Strictly speaking: DHCP is a layer violation, but few practical alternatives 
+
+**** IPv6
+**** IPv6 beyond ``more addresses''
+**** IPv6 addresses 
+- 128 bit address 
+- Typically written as 8 groups of four hexadecimal digits, groups separated by colon 
+- Trailing zeros or groups of zeros can be omitted, replaced by double-colon 
+- E.g.: 2001:0db8:85a3:0000:0000:8a2e:0370:7334 
+- Address 
+- Unicast: 64-bit network prefix; 64-bit interface identifier 
+- Link-local unicast (non-routable): fe80::
+- E.g.: fe80::a00:27ff:fe25:e18b/64
+- Corresponds to 192.168\dots. or 10.0....  addresses in v4 
+- Multicast addresses 
+
+**** IPv6 addresses – assignment  
+- Interface identifier 
+- From DHCPv6 server 
+- Computed from interface’s MAC address 
+- Careful, privacy issue! 
+- Randomly assigned
+- Manually assigned 
+**** IPV6 headers 
+- Only 7 header fields (compared to 13 in IPv4)
+- Simplified use of header options
+- Some support for real-time/separation of qualities
+- But who needs that\dots 
+
+*** Inter-/intra-domain 
+
+**** Autonomous systems in the IP world
+- Large organizations can own multiple networks that are under a single administrative control
+- Forming an autonomous system (AS)
+- AS: ``a connected group of one or more Internet Protocol (IP) prefixes run by one or more network operators which has a single and clearly defined routing policy'' (RFC 1930)
+- ASes form level of aggregating routing information
+- Gives raise to inter- and intra-domain routing
+- AS have an autonomous system number for inter-domain routing 
+- Inter-domain routing is hard
+- One organization not interested in carrying a competitor’s traffic, \dots
+- Routing metrics of different domains cannot be compared; only reachability can be expressed
+- Scale – currently, inter-domain routers have to know about 140.000 networks (rapidly outdated figure\dots)
+**** Structure of autonomous systems in IP
+- Resulting structure
+- Stub AS: Only a single connection to other AS; only carries local traffic
+- Multihomed AS: Has connections to multiple other ASs but refuses to carry non-local traffic for anybody else
+- Transit AS: Multiple connections, does carry both local and transit traffic – typical example of an Internet service provider (ISP)
+**** Number of unique ASes (16 bit numbers!) 
+**** Intra-domain routing: OSPF
+- Internet’s most prevalent intra-domain (=interior gateway) routing protocol: Open Shortest Path First
+- Main properties
+- Open, variety of routing distances, dynamic algorithm
+- Routing based on traffic type (e.g., real-time traffic uses different paths) – different metrics for a link for different traffic 
+- Load balancing: also put some packets on the 2nd, 3rd best path
+- Hierarchical routing, ``areas'' as additional level, some security in place, support tunneled routers
+- Essential operation: Compute shortest paths on graph abstraction of an autonomous system
+- Link state algorithm
+- Link state information reliably flooded, sequence numbers, triggered or periodically, with time to live  
+**** OSPF: Areas 
+- Network can be divided into areas 
+- One backbone area mandatory, connects multiple other areas 
+- Routers with different roles: 
+- Internal router in non-backbone areas 
+- Obtains knowledge about area by link advertisements from area border routers, containing past cost to other area 
+- Area border routers: in both backbone and ``normal'' area
+- Backbone router: internal router of backbone area, not an area router
+- Boundary router: connected to outside as well, in backbone 
+
+**** OSPF link weights 
+- Ordinary perspective of link-state routing protocols: 
+- Weights are given, e.g., by administrator 
+- Reflects hop count, data rate, \dots 
+- Figure out paths (Dijkstra or similar) 
+- Practical perspective: 
+- Administrator might know desirable paths 
+- E.g., traffic between different data centers, \dots 
+- Has to figure out link weights that then produce the desired paths 
+- ??? 
+- => Traffic engineering problem! 
+
+**** Inter-domain routing: BGPv4
+- Routing between domains: Border Gateway Protocols (BGP)
+- Routing complicated by politics, e.g., only route packets for paying customers, do not route transit traffic, \dots 
+- Legal constraints, e.g.: Traffic originating and ending in Canada must not leave Canada while in transit!
+- BGP’s perspective: only autonomous systems and their connections
+- Only talk about reachability, ``optimal'' is a vain hope 
+- Operation: Distance vector protocol
+- But not only keep track of cost via a given neighbor, but store entire paths to destination ASs
+- More robust, solves problems like count to infinity
+- Infernally complicated protocol\dots 
+**** Relationships between ASes
+**** BGP basics 
+- BGP routers exchange information with each other
+- Internally in an AS: iBGP session
+- Externally, among neighboring AS: eBGP session
+- Example: external sessions among 3a $ 1c and 1b $ 2a 
+- Routers of such a session are BGP peers
+**** BGP basics: Prefixes
+- Unit of BGP data exchange: subnetwork prefixes 
+- Prefixes can represent collection of networks by aggregation
+- Routers are assumed to apply longest prefix matching rule to allow aggressive aggregation 
+- Example:
+- AS2 announces aggregated prefix 138.16.64/22
+- But suppose 138.16.67/24 were attached to AS3 $\leadsto$ AS2 still announces 138.16.64/22 and AS3 announces 138.16.67/24
+**** BGP routing advertisements 
+**** BGP prefix advertisements 
+**** BGP basics: Prefix, attribute, route
+- eBGP session peers mutually announce lists of reachable network prefixes 
+- Gateway routers distribute prefixes over iBGP session inside their AS 
+- Announcements carry BGP attributes 
+- In BGP: prefix + attribute = route 
+- AS-PATH attribute: list of ASs through which the announcement has passed, extended by each gateway router upon receipt
+- Example: 138.16.64/22 announced from AS2 via AS1 to AS3: AS-PATH = AS2 AS1 
+**** BGP routes, NEXT-HOP
+- NEXT-HOP attribute: the router interface where the AS-PATH begins, i.e, from where the gateway router has received the announcement 
+- Example: 138.16.64/22 announced from AS2 to AS1 by means of 2a and 1b has IP address of router’s 2a interface to router 1b as NEXT-HOP
+- Usage: Router inside receiving AS can present the NEXT-HOP to its INTRA-AS routing protocol to get a route to the correct gateway 
+- Example: Router 1a wants to learn how to send packets to a host in 138.16.64/22 
+- Has received BGP route via iBGP, carrying router 2a interface as next hop
+- Intra-AS routing protocol has determined path to this IP address as being adjacent to an internal router – it is by necessity a subnet attached to one of its gateway routers (router 1b, in this example)! 
+- Essential part to tie inter- and intra-AS routing protocols together 
+- 
+**** BGP routing policy 
+- Consider the following ASes
+- AS X is multi-homed stub network; does not want to route traffic $\leadsto$ X will never advertise BGP routes traversing itself
+- AS B does not want to carry traffic going from W to Y (should go over the A-C link)
+- If B advertised a path BAW to C, C could route traffic to W via CBAW
+- No standard ways of handling such situations! 
+**** Some growing pains of Internet routing 
+- Number of BGP entries will outgrow currently deployed backbone routers
+- Aggregation of entries is not working as well as earlier!
+- Example: 
+**** Multi-homing causes problems
+- Suppose network 1.1 decides to multi-home with provider Y
+-  $\leadsto$ Forwarding table grows!
+**** Provider changes cause problems
+- Suppose network 2.1 changes to provider X
+- Renumbering of all nodes inside 2.1 is not an option!
+-  $\leadsto$ Forwarding table grows!
+- 
+**** Non-hierarchical address assignments cause problems
+- Suppose provider Y gets assigned a new block of addresses
+- $\leadsto$ Forwarding table grows! 
+- Overall, aggregation capability is deteriorating rapidly!
+**** Average BPG entries (FIB size) 
+**** BGP Table Size 
+
+**** Average AS path length
+
+**** #unique ASes
+
+**** Some internetworking issues
+- Other things to watch out for
+- Fragmentation
+- Connection-oriented vs. connection-less networks
+- Tunneling
+- Dynamic Host Configuration Protocol (DHCP)
+- IP version 6
+- Multicasting, broadcasting  
+- Network Address Translation
+- Virtual Circuits
+- Routing for Quality of Service support
+- QoS concepts: Integrated and Differentiated Services
+- ATM / Label switching / MPLS
+- Routing in ad hoc networks, peer-to-peer networks
+- \dots 
+- \dots but are not covered here due to lack of time
+
+
 ** Conclusion 
 
 **** Conclusion  
 
-Lorem ipsum 
+- Routing in large networks not only requires adequate routing algorithms for general graphs
+- Also an appropriate, hierarchical network structure is required
+- Network structure has to be reflected in the addressing structure
+- Flat addresses would result in prohibitive overhead
+- Different metrics and goals have to be fulfilled, in particular in inter-domain routing where optimality is only a single aspect 
+**** The Map of the Internet – Class A networks
+**** Some IP design principles – A historical side remark
+- RFC 1958, based on papers from mid-80s:
+- Make sure it works – before writing the standard
+- Keep it simple
+- Make clear choices
+- Exploit modularity
+- Expect heterogeneity
+- Avoid static options and parameters
+- Look for a good design; it need not be perfect (80-20 rule)
+- Be strict when sending and tolerant when receiving
+- Think about scalability
+- Consider performance and cost
 
