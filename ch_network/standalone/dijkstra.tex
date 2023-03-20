@@ -288,24 +288,20 @@
 \end{tikzpicture}
 
 
-\begin{tikzpicture}
+\begin{tikzpicture}[wordbox/.code={\\\wordbox{1}{#1}}]
   \label{page:routing:dijkstra:flooding}
 
   \dijkstraGraph{}{}{}{}{}{}
 
   % packet:
   \begin{scope}[every node/.style={scale=0.75,fill=gray!20}]
-    \foreach \n/\o/\fields in {a/left/{B/3,F/75,Z/150},{b/below/{A/3,F/4,C/5,D/20}}}{
+    \foreach \n/\o/\fields in {a/left/{B: 3,F: 75,Z: 150},{b/below/{A: 3,F: 4,C: 5,D: 20}},{z/right/{D: 2,A: 150, F: 60}},{d/above/{C: 10, B: 20, Z: 2}},{f/left/{A: 75,B: 4,C: 8,Z: 60}},{c/below right/{B: 5,D: 10,F: 8}}}{
       \node [\o=0.1cm of \n] {
         \begin{bytefield}{8}
-          \wordbox{1}{Src: \MakeUppercase \n}  \\
-          \wordbox{1}{Seq. num.} \\
-          \foreach \dest/\dist in \fields {
-            \show\dest
-            \wordbox{1}{x} \\
-          %   % \bitbox{4}{\dest} & \bitbox{4}{\dist}\\
-          %   \wordbox{1}{\dest} \\
-          }
+          \wordbox{1}{Src: \MakeUppercase \n}  
+          \\ \wordbox{1}{Seq. num.}
+          % expand once based on https://tex.stackexchange.com/questions/680093/using-foreach-to-add-variable-number-of-rows-to-a-bytefield-inside-a-tikz-node
+          \tikzset{wordbox/.list/.expand once=\fields}
         \end{bytefield}
       }; 
       }
