@@ -8,10 +8,21 @@
 
 \usepackage{expl3}
 
+% this is from https://tex.stackexchange.com/questions/680095/how-to-specify-number-of-leading-zeros-in-int-to-bin-expl3 
+
 \ExplSyntaxOn
-\cs_new:Npn \displayasdecimal#1 {(#1) \sb {10}}
-\cs_new:Npn \displayasoctal #1 {(\int_to_oct:n{#1}) \sb 8}
-\cs_new:Npn \displayasbinary #1 {0\mathrm{b}\int_to_bin:n{#1}}
+\cs_new:Npn \hk_int_to_bin:nn #1#2
+   {
+     \exp_args:Ne \__hk_int_to_bin:nn { \int_to_bin:n {#2} } {#1}
+   }
+\cs_new:Npn \__hk_int_to_bin:nn #1#2
+  {
+    0\ensuremath{\mathrm{b}}
+    \prg_replicate:nn { \int_max:nn { 0 } { (#2) -\tl_count:n {#1} } } { 0 }
+    #1
+  }
+\NewExpandableDocumentCommand \displayasbinary { O{4} m }
+  { \hk_int_to_bin:nn {#1} {#2} }
 \ExplSyntaxOff
 
 
