@@ -733,6 +733,7 @@ service
 **** IETF – http://www.ietf.org 
 - IETF is organized in areas and Working Groups
   - Volunteers from industry, academia, government organizations participate
+  - Example: \cite{Ermert2023-ab}
 - Drafts/proposal can be made by anybody
   - An ``on-demand'' process
 - To move beyond draft status, two independent, interoperating implementations are required
