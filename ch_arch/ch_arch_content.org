@@ -759,5 +759,4 @@ service
   - Protocol is a horizontal relationship, service a vertical relationship
 - Two important reference models how to group functionalities into layers, which services to offer at each layer, how to structure protocols
 
-Lorem ipsum 
 
