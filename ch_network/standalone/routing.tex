@@ -258,4 +258,55 @@
 \end{tikzpicture}
 
 
+\begin{tikzpicture}[every node/.style={circle, draw}]
+  \label{page:network:star:bubbles}
+  \node (r) {R};
+
+  \node [above left=2cm and 0.5cm of r] (n0) {$N_0$}; 
+  \node [above right=2cm and 0.5cm of r] (n6) {$N_6$}; 
+  \node [draw=none] at ($(n0)!0.5!(n6)$) {\dots}; 
+  \coordinate (i1) at ($(r.north)+(0,1)$);
+  \draw (r) to node[right, draw=none] {$I_1$} (i1); 
+  \draw (n0) |- (i1) -| (n6); 
+
+  
+  \node [above right=0.5cm and 3cm of r] (n12) {$N_{12}$}; 
+  \node [below right=0.5cm and 3cm of r] (n15) {$N_{15}$};  
+  \node [draw=none,rotate=90] at ($(n12)!0.5!(n15)$) {\dots}; 
+  \coordinate (i2) at ($(r.east)+(1.75,0)$);
+  \draw (r) to node[below, draw=none] {$I_2$} (i2); 
+  \draw (n12) -| (i2) |- (n15); 
+  
+  \node [below left=2cm and 0.5cm of r] (n8) {$N_8$}; 
+  \node [below right=2cm and 0.5cm of r] (n11) {$N_{11}$}; 
+  \node [draw=none] at ($(n8)!0.5!(n11)$) {\dots}; 
+  \coordinate (i3) at ($(r.south)+(0,-1)$);
+  \draw (r) to node[left, draw=none] {$I_3$} (i3); 
+  \draw (n8) |- (i3) -| (n11); 
+  
+  \node [left=2cm of r] (n7) {$N_7$};
+  \coordinate (i4) at ($(r.west)+(-1,0)$);
+  \draw (r) to node[above, draw=none] {$I_4$} (i4); 
+  \draw (n7) -- (i4); 
+
+
+  \begin{scope}[on background layer,every node/.style={draw=none,rectangle}]
+    % colored bubbles around networks
+    \node [fill=hpired!10,fit=(i2)(n12)(n15)] {};
+    \node [fill=hpired!10,fit=(i2)(r.east)] {};
+    
+    \node [fill=hpiorange!10,fit=(i1)(n0)(n6)] {};
+    \node [fill=hpiorange!10,fit=(i1)(r.north)] {};
+
+    \node [fill=hpiyellow!10,fit=(i3)(n8)(n11)] {};
+    \node [fill=hpiyellow!10,fit=(i3)(r.south)] {};
+
+    \node [fill=hpiblue!10,fit=(i4)(n7)(r.west)] {};
+    
+  \end{scope}
+  
+  
+\end{tikzpicture}
+
+
 \end{document} 

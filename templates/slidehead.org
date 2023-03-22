@@ -1,5 +1,5 @@
 #+LATEX_CLASS: beamerhpi
-#+LATEX_CLASS_OPTIONS:[navigation,compact]
+#+LATEX_CLASS_OPTIONS:[navigation,compact,xcolor=table]
 #+COLUMNS: %45ITEM %10BEAMER_env(Env) %10BEAMER_act(Act) %4BEAMER_col(Col) %8BEAMER_opt(Opt)
 #+OPTIONS: toc:nil H:3 prop:nil title:nil
 #+BEAMER_FRAME_LEVEL: 3

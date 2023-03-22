@@ -1,0 +1,798 @@
+
+\begin{table}
+    \caption{Distance vector  routing example, step 0, initial setup }
+    \label{tab:dv:step:0}
+\begin{tabular}{l|c|c|c|c|c|c|c|c|c|c|c|c}
+    \toprule
+      & \multicolumn{2}{c|}{A}&\multicolumn{2}{c|}{B}&\multicolumn{2}{c|}{C}&\multicolumn{2}{c|}{D}&\multicolumn{2}{c|}{F}&\multicolumn{2}{c|}{Z} \\
+    Destination & via&Cost&via&Cost&via&Cost&via&Cost&via&Cost&via&Cost \\ 
+    \midrule
+    A & A & 0 &B & 3 &--- & ---&--- & ---&F & 75 &Z & 150 
+ \\B & A & 3 &B & 0 &C & 5 &D & 20 &F & 4 &--- & ---
+ \\C & --- & ---&B & 5 &C & 0 &D & 10 &F & 8 &--- & ---
+ \\D & --- & ---&B & 20 &C & 10 &D & 0 &--- & ---&Z & 5 
+ \\F & A & 75 &B & 4 &C & 8 &--- & ---&F & 0 &Z & 60 
+ \\Z & A & 150 &--- & ---&--- & ---&D & 2 &F & 60 &Z & 0 
+    \\ \bottomrule 
+\end{tabular}
+\end{table}
+    
+
+\begin{table}
+    \caption{Distance vector  routing example, step 1, update from Z to F }
+    \label{tab:dv:step:1}
+\begin{tabular}{l|c|c|c|c|c|c|c|c|c|c|c|c}
+    \toprule
+      & \multicolumn{2}{c|}{A}&\multicolumn{2}{c|}{B}&\multicolumn{2}{c|}{C}&\multicolumn{2}{c|}{D}&\multicolumn{2}{c|}{F}&\multicolumn{2}{c|}{Z} \\
+    Destination & via&Cost&via&Cost&via&Cost&via&Cost&via&Cost&via&Cost \\ 
+    \midrule
+    A & A & 0 &B & 3 &--- & ---&--- & ---&F & 75 &Z & 150 
+ \\B & A & 3 &B & 0 &C & 5 &D & 20 &F & 4 &--- & ---
+ \\C & --- & ---&B & 5 &C & 0 &D & 10 &F & 8 &--- & ---
+ \\D & --- & ---&B & 20 &C & 10 &D & 0 &Z & 65 &Z & 5 
+ \\F & A & 75 &B & 4 &C & 8 &--- & ---&F & 0 &Z & 60 
+ \\Z & A & 150 &--- & ---&--- & ---&D & 2 &F & 60 &Z & 0 
+    \\ \bottomrule 
+\end{tabular}
+\end{table}
+    
+
+\begin{table}
+    \caption{Distance vector  routing example, step 2, update from A to Z }
+    \label{tab:dv:step:2}
+\begin{tabular}{l|c|c|c|c|c|c|c|c|c|c|c|c}
+    \toprule
+      & \multicolumn{2}{c|}{A}&\multicolumn{2}{c|}{B}&\multicolumn{2}{c|}{C}&\multicolumn{2}{c|}{D}&\multicolumn{2}{c|}{F}&\multicolumn{2}{c|}{Z} \\
+    Destination & via&Cost&via&Cost&via&Cost&via&Cost&via&Cost&via&Cost \\ 
+    \midrule
+    A & A & 0 &B & 3 &--- & ---&--- & ---&F & 75 &Z & 150 
+ \\B & A & 3 &B & 0 &C & 5 &D & 20 &F & 4 &A & 153 
+ \\C & --- & ---&B & 5 &C & 0 &D & 10 &F & 8 &--- & ---
+ \\D & --- & ---&B & 20 &C & 10 &D & 0 &Z & 65 &Z & 5 
+ \\F & A & 75 &B & 4 &C & 8 &--- & ---&F & 0 &Z & 60 
+ \\Z & A & 150 &--- & ---&--- & ---&D & 2 &F & 60 &Z & 0 
+    \\ \bottomrule 
+\end{tabular}
+\end{table}
+    
+
+\begin{table}
+    \caption{Distance vector  routing example, step 3, update from C to D }
+    \label{tab:dv:step:3}
+\begin{tabular}{l|c|c|c|c|c|c|c|c|c|c|c|c}
+    \toprule
+      & \multicolumn{2}{c|}{A}&\multicolumn{2}{c|}{B}&\multicolumn{2}{c|}{C}&\multicolumn{2}{c|}{D}&\multicolumn{2}{c|}{F}&\multicolumn{2}{c|}{Z} \\
+    Destination & via&Cost&via&Cost&via&Cost&via&Cost&via&Cost&via&Cost \\ 
+    \midrule
+    A & A & 0 &B & 3 &--- & ---&--- & ---&F & 75 &Z & 150 
+ \\B & A & 3 &B & 0 &C & 5 &C & 15 &F & 4 &A & 153 
+ \\C & --- & ---&B & 5 &C & 0 &D & 10 &F & 8 &--- & ---
+ \\D & --- & ---&B & 20 &C & 10 &D & 0 &Z & 65 &Z & 5 
+ \\F & A & 75 &B & 4 &C & 8 &C & 18 &F & 0 &Z & 60 
+ \\Z & A & 150 &--- & ---&--- & ---&D & 2 &F & 60 &Z & 0 
+    \\ \bottomrule 
+\end{tabular}
+\end{table}
+    
+
+\begin{table}
+    \caption{Distance vector  routing example, step 4, update from C to F }
+    \label{tab:dv:step:4}
+\begin{tabular}{l|c|c|c|c|c|c|c|c|c|c|c|c}
+    \toprule
+      & \multicolumn{2}{c|}{A}&\multicolumn{2}{c|}{B}&\multicolumn{2}{c|}{C}&\multicolumn{2}{c|}{D}&\multicolumn{2}{c|}{F}&\multicolumn{2}{c|}{Z} \\
+    Destination & via&Cost&via&Cost&via&Cost&via&Cost&via&Cost&via&Cost \\ 
+    \midrule
+    A & A & 0 &B & 3 &--- & ---&--- & ---&F & 75 &Z & 150 
+ \\B & A & 3 &B & 0 &C & 5 &C & 15 &F & 4 &A & 153 
+ \\C & --- & ---&B & 5 &C & 0 &D & 10 &F & 8 &--- & ---
+ \\D & --- & ---&B & 20 &C & 10 &D & 0 &C & 18 &Z & 5 
+ \\F & A & 75 &B & 4 &C & 8 &C & 18 &F & 0 &Z & 60 
+ \\Z & A & 150 &--- & ---&--- & ---&D & 2 &F & 60 &Z & 0 
+    \\ \bottomrule 
+\end{tabular}
+\end{table}
+    
+
+\begin{table}
+    \caption{Distance vector  routing example, step 5, update from A to Z }
+    \label{tab:dv:step:5}
+\begin{tabular}{l|c|c|c|c|c|c|c|c|c|c|c|c}
+    \toprule
+      & \multicolumn{2}{c|}{A}&\multicolumn{2}{c|}{B}&\multicolumn{2}{c|}{C}&\multicolumn{2}{c|}{D}&\multicolumn{2}{c|}{F}&\multicolumn{2}{c|}{Z} \\
+    Destination & via&Cost&via&Cost&via&Cost&via&Cost&via&Cost&via&Cost \\ 
+    \midrule
+    A & A & 0 &B & 3 &--- & ---&--- & ---&F & 75 &Z & 150 
+ \\B & A & 3 &B & 0 &C & 5 &C & 15 &F & 4 &A & 153 
+ \\C & --- & ---&B & 5 &C & 0 &D & 10 &F & 8 &--- & ---
+ \\D & --- & ---&B & 20 &C & 10 &D & 0 &C & 18 &Z & 5 
+ \\F & A & 75 &B & 4 &C & 8 &C & 18 &F & 0 &Z & 60 
+ \\Z & A & 150 &--- & ---&--- & ---&D & 2 &F & 60 &Z & 0 
+    \\ \bottomrule 
+\end{tabular}
+\end{table}
+    
+
+\begin{table}
+    \caption{Distance vector  routing example, step 6, update from B to C }
+    \label{tab:dv:step:6}
+\begin{tabular}{l|c|c|c|c|c|c|c|c|c|c|c|c}
+    \toprule
+      & \multicolumn{2}{c|}{A}&\multicolumn{2}{c|}{B}&\multicolumn{2}{c|}{C}&\multicolumn{2}{c|}{D}&\multicolumn{2}{c|}{F}&\multicolumn{2}{c|}{Z} \\
+    Destination & via&Cost&via&Cost&via&Cost&via&Cost&via&Cost&via&Cost \\ 
+    \midrule
+    A & A & 0 &B & 3 &B & 8 &--- & ---&F & 75 &Z & 150 
+ \\B & A & 3 &B & 0 &C & 5 &C & 15 &F & 4 &A & 153 
+ \\C & --- & ---&B & 5 &C & 0 &D & 10 &F & 8 &--- & ---
+ \\D & --- & ---&B & 20 &C & 10 &D & 0 &C & 18 &Z & 5 
+ \\F & A & 75 &B & 4 &C & 8 &C & 18 &F & 0 &Z & 60 
+ \\Z & A & 150 &--- & ---&--- & ---&D & 2 &F & 60 &Z & 0 
+    \\ \bottomrule 
+\end{tabular}
+\end{table}
+    
+
+\begin{table}
+    \caption{Distance vector  routing example, step 7, update from B to F }
+    \label{tab:dv:step:7}
+\begin{tabular}{l|c|c|c|c|c|c|c|c|c|c|c|c}
+    \toprule
+      & \multicolumn{2}{c|}{A}&\multicolumn{2}{c|}{B}&\multicolumn{2}{c|}{C}&\multicolumn{2}{c|}{D}&\multicolumn{2}{c|}{F}&\multicolumn{2}{c|}{Z} \\
+    Destination & via&Cost&via&Cost&via&Cost&via&Cost&via&Cost&via&Cost \\ 
+    \midrule
+    A & A & 0 &B & 3 &B & 8 &--- & ---&B & 7 &Z & 150 
+ \\B & A & 3 &B & 0 &C & 5 &C & 15 &F & 4 &A & 153 
+ \\C & --- & ---&B & 5 &C & 0 &D & 10 &F & 8 &--- & ---
+ \\D & --- & ---&B & 20 &C & 10 &D & 0 &C & 18 &Z & 5 
+ \\F & A & 75 &B & 4 &C & 8 &C & 18 &F & 0 &Z & 60 
+ \\Z & A & 150 &--- & ---&--- & ---&D & 2 &F & 60 &Z & 0 
+    \\ \bottomrule 
+\end{tabular}
+\end{table}
+    
+
+\begin{table}
+    \caption{Distance vector  routing example, step 8, update from B to D }
+    \label{tab:dv:step:8}
+\begin{tabular}{l|c|c|c|c|c|c|c|c|c|c|c|c}
+    \toprule
+      & \multicolumn{2}{c|}{A}&\multicolumn{2}{c|}{B}&\multicolumn{2}{c|}{C}&\multicolumn{2}{c|}{D}&\multicolumn{2}{c|}{F}&\multicolumn{2}{c|}{Z} \\
+    Destination & via&Cost&via&Cost&via&Cost&via&Cost&via&Cost&via&Cost \\ 
+    \midrule
+    A & A & 0 &B & 3 &B & 8 &B & 23 &B & 7 &Z & 150 
+ \\B & A & 3 &B & 0 &C & 5 &C & 15 &F & 4 &A & 153 
+ \\C & --- & ---&B & 5 &C & 0 &D & 10 &F & 8 &--- & ---
+ \\D & --- & ---&B & 20 &C & 10 &D & 0 &C & 18 &Z & 5 
+ \\F & A & 75 &B & 4 &C & 8 &C & 18 &F & 0 &Z & 60 
+ \\Z & A & 150 &--- & ---&--- & ---&D & 2 &F & 60 &Z & 0 
+    \\ \bottomrule 
+\end{tabular}
+\end{table}
+    
+
+\begin{table}
+    \caption{Distance vector  routing example, step 9, update from B to D }
+    \label{tab:dv:step:9}
+\begin{tabular}{l|c|c|c|c|c|c|c|c|c|c|c|c}
+    \toprule
+      & \multicolumn{2}{c|}{A}&\multicolumn{2}{c|}{B}&\multicolumn{2}{c|}{C}&\multicolumn{2}{c|}{D}&\multicolumn{2}{c|}{F}&\multicolumn{2}{c|}{Z} \\
+    Destination & via&Cost&via&Cost&via&Cost&via&Cost&via&Cost&via&Cost \\ 
+    \midrule
+    A & A & 0 &B & 3 &B & 8 &B & 23 &B & 7 &Z & 150 
+ \\B & A & 3 &B & 0 &C & 5 &C & 15 &F & 4 &A & 153 
+ \\C & --- & ---&B & 5 &C & 0 &D & 10 &F & 8 &--- & ---
+ \\D & --- & ---&B & 20 &C & 10 &D & 0 &C & 18 &Z & 5 
+ \\F & A & 75 &B & 4 &C & 8 &C & 18 &F & 0 &Z & 60 
+ \\Z & A & 150 &--- & ---&--- & ---&D & 2 &F & 60 &Z & 0 
+    \\ \bottomrule 
+\end{tabular}
+\end{table}
+    
+
+\begin{table}
+    \caption{Distance vector  routing example, step 10, update from F to C }
+    \label{tab:dv:step:10}
+\begin{tabular}{l|c|c|c|c|c|c|c|c|c|c|c|c}
+    \toprule
+      & \multicolumn{2}{c|}{A}&\multicolumn{2}{c|}{B}&\multicolumn{2}{c|}{C}&\multicolumn{2}{c|}{D}&\multicolumn{2}{c|}{F}&\multicolumn{2}{c|}{Z} \\
+    Destination & via&Cost&via&Cost&via&Cost&via&Cost&via&Cost&via&Cost \\ 
+    \midrule
+    A & A & 0 &B & 3 &B & 8 &B & 23 &B & 7 &Z & 150 
+ \\B & A & 3 &B & 0 &C & 5 &C & 15 &F & 4 &A & 153 
+ \\C & --- & ---&B & 5 &C & 0 &D & 10 &F & 8 &--- & ---
+ \\D & --- & ---&B & 20 &C & 10 &D & 0 &C & 18 &Z & 5 
+ \\F & A & 75 &B & 4 &C & 8 &C & 18 &F & 0 &Z & 60 
+ \\Z & A & 150 &--- & ---&F & 68 &D & 2 &F & 60 &Z & 0 
+    \\ \bottomrule 
+\end{tabular}
+\end{table}
+    
+
+\begin{table}
+    \caption{Distance vector  routing example, step 11, update from A to B }
+    \label{tab:dv:step:11}
+\begin{tabular}{l|c|c|c|c|c|c|c|c|c|c|c|c}
+    \toprule
+      & \multicolumn{2}{c|}{A}&\multicolumn{2}{c|}{B}&\multicolumn{2}{c|}{C}&\multicolumn{2}{c|}{D}&\multicolumn{2}{c|}{F}&\multicolumn{2}{c|}{Z} \\
+    Destination & via&Cost&via&Cost&via&Cost&via&Cost&via&Cost&via&Cost \\ 
+    \midrule
+    A & A & 0 &B & 3 &B & 8 &B & 23 &B & 7 &Z & 150 
+ \\B & A & 3 &B & 0 &C & 5 &C & 15 &F & 4 &A & 153 
+ \\C & --- & ---&B & 5 &C & 0 &D & 10 &F & 8 &--- & ---
+ \\D & --- & ---&B & 20 &C & 10 &D & 0 &C & 18 &Z & 5 
+ \\F & A & 75 &B & 4 &C & 8 &C & 18 &F & 0 &Z & 60 
+ \\Z & A & 150 &A & 153 &F & 68 &D & 2 &F & 60 &Z & 0 
+    \\ \bottomrule 
+\end{tabular}
+\end{table}
+    
+
+\begin{table}
+    \caption{Distance vector  routing example, step 12, update from D to B }
+    \label{tab:dv:step:12}
+\begin{tabular}{l|c|c|c|c|c|c|c|c|c|c|c|c}
+    \toprule
+      & \multicolumn{2}{c|}{A}&\multicolumn{2}{c|}{B}&\multicolumn{2}{c|}{C}&\multicolumn{2}{c|}{D}&\multicolumn{2}{c|}{F}&\multicolumn{2}{c|}{Z} \\
+    Destination & via&Cost&via&Cost&via&Cost&via&Cost&via&Cost&via&Cost \\ 
+    \midrule
+    A & A & 0 &B & 3 &B & 8 &B & 23 &B & 7 &Z & 150 
+ \\B & A & 3 &B & 0 &C & 5 &C & 15 &F & 4 &A & 153 
+ \\C & --- & ---&B & 5 &C & 0 &D & 10 &F & 8 &--- & ---
+ \\D & --- & ---&B & 20 &C & 10 &D & 0 &C & 18 &Z & 5 
+ \\F & A & 75 &B & 4 &C & 8 &C & 18 &F & 0 &Z & 60 
+ \\Z & A & 150 &D & 22 &F & 68 &D & 2 &F & 60 &Z & 0 
+    \\ \bottomrule 
+\end{tabular}
+\end{table}
+    
+
+\begin{table}
+    \caption{Distance vector  routing example, step 13, update from B to C }
+    \label{tab:dv:step:13}
+\begin{tabular}{l|c|c|c|c|c|c|c|c|c|c|c|c}
+    \toprule
+      & \multicolumn{2}{c|}{A}&\multicolumn{2}{c|}{B}&\multicolumn{2}{c|}{C}&\multicolumn{2}{c|}{D}&\multicolumn{2}{c|}{F}&\multicolumn{2}{c|}{Z} \\
+    Destination & via&Cost&via&Cost&via&Cost&via&Cost&via&Cost&via&Cost \\ 
+    \midrule
+    A & A & 0 &B & 3 &B & 8 &B & 23 &B & 7 &Z & 150 
+ \\B & A & 3 &B & 0 &C & 5 &C & 15 &F & 4 &A & 153 
+ \\C & --- & ---&B & 5 &C & 0 &D & 10 &F & 8 &--- & ---
+ \\D & --- & ---&B & 20 &C & 10 &D & 0 &C & 18 &Z & 5 
+ \\F & A & 75 &B & 4 &C & 8 &C & 18 &F & 0 &Z & 60 
+ \\Z & A & 150 &D & 22 &B & 27 &D & 2 &F & 60 &Z & 0 
+    \\ \bottomrule 
+\end{tabular}
+\end{table}
+    
+
+\begin{table}
+    \caption{Distance vector  routing example, step 14, update from D to C }
+    \label{tab:dv:step:14}
+\begin{tabular}{l|c|c|c|c|c|c|c|c|c|c|c|c}
+    \toprule
+      & \multicolumn{2}{c|}{A}&\multicolumn{2}{c|}{B}&\multicolumn{2}{c|}{C}&\multicolumn{2}{c|}{D}&\multicolumn{2}{c|}{F}&\multicolumn{2}{c|}{Z} \\
+    Destination & via&Cost&via&Cost&via&Cost&via&Cost&via&Cost&via&Cost \\ 
+    \midrule
+    A & A & 0 &B & 3 &B & 8 &B & 23 &B & 7 &Z & 150 
+ \\B & A & 3 &B & 0 &C & 5 &C & 15 &F & 4 &A & 153 
+ \\C & --- & ---&B & 5 &C & 0 &D & 10 &F & 8 &--- & ---
+ \\D & --- & ---&B & 20 &C & 10 &D & 0 &C & 18 &Z & 5 
+ \\F & A & 75 &B & 4 &C & 8 &C & 18 &F & 0 &Z & 60 
+ \\Z & A & 150 &D & 22 &D & 12 &D & 2 &F & 60 &Z & 0 
+    \\ \bottomrule 
+\end{tabular}
+\end{table}
+    
+
+\begin{table}
+    \caption{Distance vector  routing example, step 15, update from D to Z }
+    \label{tab:dv:step:15}
+\begin{tabular}{l|c|c|c|c|c|c|c|c|c|c|c|c}
+    \toprule
+      & \multicolumn{2}{c|}{A}&\multicolumn{2}{c|}{B}&\multicolumn{2}{c|}{C}&\multicolumn{2}{c|}{D}&\multicolumn{2}{c|}{F}&\multicolumn{2}{c|}{Z} \\
+    Destination & via&Cost&via&Cost&via&Cost&via&Cost&via&Cost&via&Cost \\ 
+    \midrule
+    A & A & 0 &B & 3 &B & 8 &B & 23 &B & 7 &D & 28 
+ \\B & A & 3 &B & 0 &C & 5 &C & 15 &F & 4 &D & 20 
+ \\C & --- & ---&B & 5 &C & 0 &D & 10 &F & 8 &D & 15 
+ \\D & --- & ---&B & 20 &C & 10 &D & 0 &C & 18 &Z & 5 
+ \\F & A & 75 &B & 4 &C & 8 &C & 18 &F & 0 &D & 23 
+ \\Z & A & 150 &D & 22 &D & 12 &D & 2 &F & 60 &Z & 0 
+    \\ \bottomrule 
+\end{tabular}
+\end{table}
+    
+
+\begin{table}
+    \caption{Distance vector  routing example, step 16, update from F to Z }
+    \label{tab:dv:step:16}
+\begin{tabular}{l|c|c|c|c|c|c|c|c|c|c|c|c}
+    \toprule
+      & \multicolumn{2}{c|}{A}&\multicolumn{2}{c|}{B}&\multicolumn{2}{c|}{C}&\multicolumn{2}{c|}{D}&\multicolumn{2}{c|}{F}&\multicolumn{2}{c|}{Z} \\
+    Destination & via&Cost&via&Cost&via&Cost&via&Cost&via&Cost&via&Cost \\ 
+    \midrule
+    A & A & 0 &B & 3 &B & 8 &B & 23 &B & 7 &D & 28 
+ \\B & A & 3 &B & 0 &C & 5 &C & 15 &F & 4 &D & 20 
+ \\C & --- & ---&B & 5 &C & 0 &D & 10 &F & 8 &D & 15 
+ \\D & --- & ---&B & 20 &C & 10 &D & 0 &C & 18 &Z & 5 
+ \\F & A & 75 &B & 4 &C & 8 &C & 18 &F & 0 &D & 23 
+ \\Z & A & 150 &D & 22 &D & 12 &D & 2 &F & 60 &Z & 0 
+    \\ \bottomrule 
+\end{tabular}
+\end{table}
+    
+
+\begin{table}
+    \caption{Distance vector  routing example, step 20, update from F to C }
+    \label{tab:dv:step:20}
+\begin{tabular}{l|c|c|c|c|c|c|c|c|c|c|c|c}
+    \toprule
+      & \multicolumn{2}{c|}{A}&\multicolumn{2}{c|}{B}&\multicolumn{2}{c|}{C}&\multicolumn{2}{c|}{D}&\multicolumn{2}{c|}{F}&\multicolumn{2}{c|}{Z} \\
+    Destination & via&Cost&via&Cost&via&Cost&via&Cost&via&Cost&via&Cost \\ 
+    \midrule
+    A & A & 0 &B & 3 &B & 8 &B & 23 &B & 7 &D & 28 
+ \\B & A & 3 &B & 0 &C & 5 &C & 15 &F & 4 &D & 20 
+ \\C & --- & ---&B & 5 &C & 0 &D & 10 &F & 8 &D & 15 
+ \\D & --- & ---&B & 20 &C & 10 &D & 0 &C & 18 &Z & 5 
+ \\F & A & 75 &B & 4 &C & 8 &C & 18 &F & 0 &D & 23 
+ \\Z & A & 150 &D & 22 &D & 12 &D & 2 &F & 60 &Z & 0 
+    \\ \bottomrule 
+\end{tabular}
+\end{table}
+    
+
+\begin{table}
+    \caption{Distance vector  routing example, step 21, update from Z to A }
+    \label{tab:dv:step:21}
+\begin{tabular}{l|c|c|c|c|c|c|c|c|c|c|c|c}
+    \toprule
+      & \multicolumn{2}{c|}{A}&\multicolumn{2}{c|}{B}&\multicolumn{2}{c|}{C}&\multicolumn{2}{c|}{D}&\multicolumn{2}{c|}{F}&\multicolumn{2}{c|}{Z} \\
+    Destination & via&Cost&via&Cost&via&Cost&via&Cost&via&Cost&via&Cost \\ 
+    \midrule
+    A & A & 0 &B & 3 &B & 8 &B & 23 &B & 7 &D & 28 
+ \\B & A & 3 &B & 0 &C & 5 &C & 15 &F & 4 &D & 20 
+ \\C & Z & 165 &B & 5 &C & 0 &D & 10 &F & 8 &D & 15 
+ \\D & Z & 155 &B & 20 &C & 10 &D & 0 &C & 18 &Z & 5 
+ \\F & A & 75 &B & 4 &C & 8 &C & 18 &F & 0 &D & 23 
+ \\Z & A & 150 &D & 22 &D & 12 &D & 2 &F & 60 &Z & 0 
+    \\ \bottomrule 
+\end{tabular}
+\end{table}
+    
+
+\begin{table}
+    \caption{Distance vector  routing example, step 22, update from A to Z }
+    \label{tab:dv:step:22}
+\begin{tabular}{l|c|c|c|c|c|c|c|c|c|c|c|c}
+    \toprule
+      & \multicolumn{2}{c|}{A}&\multicolumn{2}{c|}{B}&\multicolumn{2}{c|}{C}&\multicolumn{2}{c|}{D}&\multicolumn{2}{c|}{F}&\multicolumn{2}{c|}{Z} \\
+    Destination & via&Cost&via&Cost&via&Cost&via&Cost&via&Cost&via&Cost \\ 
+    \midrule
+    A & A & 0 &B & 3 &B & 8 &B & 23 &B & 7 &D & 28 
+ \\B & A & 3 &B & 0 &C & 5 &C & 15 &F & 4 &D & 20 
+ \\C & Z & 165 &B & 5 &C & 0 &D & 10 &F & 8 &D & 15 
+ \\D & Z & 155 &B & 20 &C & 10 &D & 0 &C & 18 &Z & 5 
+ \\F & A & 75 &B & 4 &C & 8 &C & 18 &F & 0 &D & 23 
+ \\Z & A & 150 &D & 22 &D & 12 &D & 2 &F & 60 &Z & 0 
+    \\ \bottomrule 
+\end{tabular}
+\end{table}
+    
+
+\begin{table}
+    \caption{Distance vector  routing example, step 23, update from F to A }
+    \label{tab:dv:step:23}
+\begin{tabular}{l|c|c|c|c|c|c|c|c|c|c|c|c}
+    \toprule
+      & \multicolumn{2}{c|}{A}&\multicolumn{2}{c|}{B}&\multicolumn{2}{c|}{C}&\multicolumn{2}{c|}{D}&\multicolumn{2}{c|}{F}&\multicolumn{2}{c|}{Z} \\
+    Destination & via&Cost&via&Cost&via&Cost&via&Cost&via&Cost&via&Cost \\ 
+    \midrule
+    A & A & 0 &B & 3 &B & 8 &B & 23 &B & 7 &D & 28 
+ \\B & A & 3 &B & 0 &C & 5 &C & 15 &F & 4 &D & 20 
+ \\C & F & 83 &B & 5 &C & 0 &D & 10 &F & 8 &D & 15 
+ \\D & F & 93 &B & 20 &C & 10 &D & 0 &C & 18 &Z & 5 
+ \\F & A & 75 &B & 4 &C & 8 &C & 18 &F & 0 &D & 23 
+ \\Z & F & 135 &D & 22 &D & 12 &D & 2 &F & 60 &Z & 0 
+    \\ \bottomrule 
+\end{tabular}
+\end{table}
+    
+
+\begin{table}
+    \caption{Distance vector  routing example, step 24, update from B to C }
+    \label{tab:dv:step:24}
+\begin{tabular}{l|c|c|c|c|c|c|c|c|c|c|c|c}
+    \toprule
+      & \multicolumn{2}{c|}{A}&\multicolumn{2}{c|}{B}&\multicolumn{2}{c|}{C}&\multicolumn{2}{c|}{D}&\multicolumn{2}{c|}{F}&\multicolumn{2}{c|}{Z} \\
+    Destination & via&Cost&via&Cost&via&Cost&via&Cost&via&Cost&via&Cost \\ 
+    \midrule
+    A & A & 0 &B & 3 &B & 8 &B & 23 &B & 7 &D & 28 
+ \\B & A & 3 &B & 0 &C & 5 &C & 15 &F & 4 &D & 20 
+ \\C & F & 83 &B & 5 &C & 0 &D & 10 &F & 8 &D & 15 
+ \\D & F & 93 &B & 20 &C & 10 &D & 0 &C & 18 &Z & 5 
+ \\F & A & 75 &B & 4 &C & 8 &C & 18 &F & 0 &D & 23 
+ \\Z & F & 135 &D & 22 &D & 12 &D & 2 &F & 60 &Z & 0 
+    \\ \bottomrule 
+\end{tabular}
+\end{table}
+    
+
+\begin{table}
+    \caption{Distance vector  routing example, step 25, update from D to Z }
+    \label{tab:dv:step:25}
+\begin{tabular}{l|c|c|c|c|c|c|c|c|c|c|c|c}
+    \toprule
+      & \multicolumn{2}{c|}{A}&\multicolumn{2}{c|}{B}&\multicolumn{2}{c|}{C}&\multicolumn{2}{c|}{D}&\multicolumn{2}{c|}{F}&\multicolumn{2}{c|}{Z} \\
+    Destination & via&Cost&via&Cost&via&Cost&via&Cost&via&Cost&via&Cost \\ 
+    \midrule
+    A & A & 0 &B & 3 &B & 8 &B & 23 &B & 7 &D & 28 
+ \\B & A & 3 &B & 0 &C & 5 &C & 15 &F & 4 &D & 20 
+ \\C & F & 83 &B & 5 &C & 0 &D & 10 &F & 8 &D & 15 
+ \\D & F & 93 &B & 20 &C & 10 &D & 0 &C & 18 &Z & 5 
+ \\F & A & 75 &B & 4 &C & 8 &C & 18 &F & 0 &D & 23 
+ \\Z & F & 135 &D & 22 &D & 12 &D & 2 &F & 60 &Z & 0 
+    \\ \bottomrule 
+\end{tabular}
+\end{table}
+    
+
+\begin{table}
+    \caption{Distance vector  routing example, step 27, update from C to D }
+    \label{tab:dv:step:27}
+\begin{tabular}{l|c|c|c|c|c|c|c|c|c|c|c|c}
+    \toprule
+      & \multicolumn{2}{c|}{A}&\multicolumn{2}{c|}{B}&\multicolumn{2}{c|}{C}&\multicolumn{2}{c|}{D}&\multicolumn{2}{c|}{F}&\multicolumn{2}{c|}{Z} \\
+    Destination & via&Cost&via&Cost&via&Cost&via&Cost&via&Cost&via&Cost \\ 
+    \midrule
+    A & A & 0 &B & 3 &B & 8 &C & 18 &B & 7 &D & 28 
+ \\B & A & 3 &B & 0 &C & 5 &C & 15 &F & 4 &D & 20 
+ \\C & F & 83 &B & 5 &C & 0 &D & 10 &F & 8 &D & 15 
+ \\D & F & 93 &B & 20 &C & 10 &D & 0 &C & 18 &Z & 5 
+ \\F & A & 75 &B & 4 &C & 8 &C & 18 &F & 0 &D & 23 
+ \\Z & F & 135 &D & 22 &D & 12 &D & 2 &F & 60 &Z & 0 
+    \\ \bottomrule 
+\end{tabular}
+\end{table}
+    
+
+\begin{table}
+    \caption{Distance vector  routing example, step 30, update from D to B }
+    \label{tab:dv:step:30}
+\begin{tabular}{l|c|c|c|c|c|c|c|c|c|c|c|c}
+    \toprule
+      & \multicolumn{2}{c|}{A}&\multicolumn{2}{c|}{B}&\multicolumn{2}{c|}{C}&\multicolumn{2}{c|}{D}&\multicolumn{2}{c|}{F}&\multicolumn{2}{c|}{Z} \\
+    Destination & via&Cost&via&Cost&via&Cost&via&Cost&via&Cost&via&Cost \\ 
+    \midrule
+    A & A & 0 &B & 3 &B & 8 &C & 18 &B & 7 &D & 28 
+ \\B & A & 3 &B & 0 &C & 5 &C & 15 &F & 4 &D & 20 
+ \\C & F & 83 &B & 5 &C & 0 &D & 10 &F & 8 &D & 15 
+ \\D & F & 93 &B & 20 &C & 10 &D & 0 &C & 18 &Z & 5 
+ \\F & A & 75 &B & 4 &C & 8 &C & 18 &F & 0 &D & 23 
+ \\Z & F & 135 &D & 22 &D & 12 &D & 2 &F & 60 &Z & 0 
+    \\ \bottomrule 
+\end{tabular}
+\end{table}
+    
+
+\begin{table}
+    \caption{Distance vector  routing example, step 31, update from B to C }
+    \label{tab:dv:step:31}
+\begin{tabular}{l|c|c|c|c|c|c|c|c|c|c|c|c}
+    \toprule
+      & \multicolumn{2}{c|}{A}&\multicolumn{2}{c|}{B}&\multicolumn{2}{c|}{C}&\multicolumn{2}{c|}{D}&\multicolumn{2}{c|}{F}&\multicolumn{2}{c|}{Z} \\
+    Destination & via&Cost&via&Cost&via&Cost&via&Cost&via&Cost&via&Cost \\ 
+    \midrule
+    A & A & 0 &B & 3 &B & 8 &C & 18 &B & 7 &D & 28 
+ \\B & A & 3 &B & 0 &C & 5 &C & 15 &F & 4 &D & 20 
+ \\C & F & 83 &B & 5 &C & 0 &D & 10 &F & 8 &D & 15 
+ \\D & F & 93 &B & 20 &C & 10 &D & 0 &C & 18 &Z & 5 
+ \\F & A & 75 &B & 4 &C & 8 &C & 18 &F & 0 &D & 23 
+ \\Z & F & 135 &D & 22 &D & 12 &D & 2 &F & 60 &Z & 0 
+    \\ \bottomrule 
+\end{tabular}
+\end{table}
+    
+
+\begin{table}
+    \caption{Distance vector  routing example, step 33, update from B to F }
+    \label{tab:dv:step:33}
+\begin{tabular}{l|c|c|c|c|c|c|c|c|c|c|c|c}
+    \toprule
+      & \multicolumn{2}{c|}{A}&\multicolumn{2}{c|}{B}&\multicolumn{2}{c|}{C}&\multicolumn{2}{c|}{D}&\multicolumn{2}{c|}{F}&\multicolumn{2}{c|}{Z} \\
+    Destination & via&Cost&via&Cost&via&Cost&via&Cost&via&Cost&via&Cost \\ 
+    \midrule
+    A & A & 0 &B & 3 &B & 8 &C & 18 &B & 7 &D & 28 
+ \\B & A & 3 &B & 0 &C & 5 &C & 15 &F & 4 &D & 20 
+ \\C & F & 83 &B & 5 &C & 0 &D & 10 &F & 8 &D & 15 
+ \\D & F & 93 &B & 20 &C & 10 &D & 0 &C & 18 &Z & 5 
+ \\F & A & 75 &B & 4 &C & 8 &C & 18 &F & 0 &D & 23 
+ \\Z & F & 135 &D & 22 &D & 12 &D & 2 &B & 26 &Z & 0 
+    \\ \bottomrule 
+\end{tabular}
+\end{table}
+    
+
+\begin{table}
+    \caption{Distance vector  routing example, step 34, update from Z to D }
+    \label{tab:dv:step:34}
+\begin{tabular}{l|c|c|c|c|c|c|c|c|c|c|c|c}
+    \toprule
+      & \multicolumn{2}{c|}{A}&\multicolumn{2}{c|}{B}&\multicolumn{2}{c|}{C}&\multicolumn{2}{c|}{D}&\multicolumn{2}{c|}{F}&\multicolumn{2}{c|}{Z} \\
+    Destination & via&Cost&via&Cost&via&Cost&via&Cost&via&Cost&via&Cost \\ 
+    \midrule
+    A & A & 0 &B & 3 &B & 8 &C & 18 &B & 7 &D & 28 
+ \\B & A & 3 &B & 0 &C & 5 &C & 15 &F & 4 &D & 20 
+ \\C & F & 83 &B & 5 &C & 0 &D & 10 &F & 8 &D & 15 
+ \\D & F & 93 &B & 20 &C & 10 &D & 0 &C & 18 &Z & 5 
+ \\F & A & 75 &B & 4 &C & 8 &C & 18 &F & 0 &D & 23 
+ \\Z & F & 135 &D & 22 &D & 12 &D & 2 &B & 26 &Z & 0 
+    \\ \bottomrule 
+\end{tabular}
+\end{table}
+    
+
+\begin{table}
+    \caption{Distance vector  routing example, step 35, update from B to A }
+    \label{tab:dv:step:35}
+\begin{tabular}{l|c|c|c|c|c|c|c|c|c|c|c|c}
+    \toprule
+      & \multicolumn{2}{c|}{A}&\multicolumn{2}{c|}{B}&\multicolumn{2}{c|}{C}&\multicolumn{2}{c|}{D}&\multicolumn{2}{c|}{F}&\multicolumn{2}{c|}{Z} \\
+    Destination & via&Cost&via&Cost&via&Cost&via&Cost&via&Cost&via&Cost \\ 
+    \midrule
+    A & A & 0 &B & 3 &B & 8 &C & 18 &B & 7 &D & 28 
+ \\B & A & 3 &B & 0 &C & 5 &C & 15 &F & 4 &D & 20 
+ \\C & B & 8 &B & 5 &C & 0 &D & 10 &F & 8 &D & 15 
+ \\D & B & 23 &B & 20 &C & 10 &D & 0 &C & 18 &Z & 5 
+ \\F & B & 7 &B & 4 &C & 8 &C & 18 &F & 0 &D & 23 
+ \\Z & B & 25 &D & 22 &D & 12 &D & 2 &B & 26 &Z & 0 
+    \\ \bottomrule 
+\end{tabular}
+\end{table}
+    
+
+\begin{table}
+    \caption{Distance vector  routing example, step 36, update from B to C }
+    \label{tab:dv:step:36}
+\begin{tabular}{l|c|c|c|c|c|c|c|c|c|c|c|c}
+    \toprule
+      & \multicolumn{2}{c|}{A}&\multicolumn{2}{c|}{B}&\multicolumn{2}{c|}{C}&\multicolumn{2}{c|}{D}&\multicolumn{2}{c|}{F}&\multicolumn{2}{c|}{Z} \\
+    Destination & via&Cost&via&Cost&via&Cost&via&Cost&via&Cost&via&Cost \\ 
+    \midrule
+    A & A & 0 &B & 3 &B & 8 &C & 18 &B & 7 &D & 28 
+ \\B & A & 3 &B & 0 &C & 5 &C & 15 &F & 4 &D & 20 
+ \\C & B & 8 &B & 5 &C & 0 &D & 10 &F & 8 &D & 15 
+ \\D & B & 23 &B & 20 &C & 10 &D & 0 &C & 18 &Z & 5 
+ \\F & B & 7 &B & 4 &C & 8 &C & 18 &F & 0 &D & 23 
+ \\Z & B & 25 &D & 22 &D & 12 &D & 2 &B & 26 &Z & 0 
+    \\ \bottomrule 
+\end{tabular}
+\end{table}
+    
+
+\begin{table}
+    \caption{Distance vector  routing example, step 37, update from Z to F }
+    \label{tab:dv:step:37}
+\begin{tabular}{l|c|c|c|c|c|c|c|c|c|c|c|c}
+    \toprule
+      & \multicolumn{2}{c|}{A}&\multicolumn{2}{c|}{B}&\multicolumn{2}{c|}{C}&\multicolumn{2}{c|}{D}&\multicolumn{2}{c|}{F}&\multicolumn{2}{c|}{Z} \\
+    Destination & via&Cost&via&Cost&via&Cost&via&Cost&via&Cost&via&Cost \\ 
+    \midrule
+    A & A & 0 &B & 3 &B & 8 &C & 18 &B & 7 &D & 28 
+ \\B & A & 3 &B & 0 &C & 5 &C & 15 &F & 4 &D & 20 
+ \\C & B & 8 &B & 5 &C & 0 &D & 10 &F & 8 &D & 15 
+ \\D & B & 23 &B & 20 &C & 10 &D & 0 &C & 18 &Z & 5 
+ \\F & B & 7 &B & 4 &C & 8 &C & 18 &F & 0 &D & 23 
+ \\Z & B & 25 &D & 22 &D & 12 &D & 2 &B & 26 &Z & 0 
+    \\ \bottomrule 
+\end{tabular}
+\end{table}
+    
+
+\begin{table}
+    \caption{Distance vector  routing example, step 38, update from A to Z }
+    \label{tab:dv:step:38}
+\begin{tabular}{l|c|c|c|c|c|c|c|c|c|c|c|c}
+    \toprule
+      & \multicolumn{2}{c|}{A}&\multicolumn{2}{c|}{B}&\multicolumn{2}{c|}{C}&\multicolumn{2}{c|}{D}&\multicolumn{2}{c|}{F}&\multicolumn{2}{c|}{Z} \\
+    Destination & via&Cost&via&Cost&via&Cost&via&Cost&via&Cost&via&Cost \\ 
+    \midrule
+    A & A & 0 &B & 3 &B & 8 &C & 18 &B & 7 &D & 28 
+ \\B & A & 3 &B & 0 &C & 5 &C & 15 &F & 4 &D & 20 
+ \\C & B & 8 &B & 5 &C & 0 &D & 10 &F & 8 &D & 15 
+ \\D & B & 23 &B & 20 &C & 10 &D & 0 &C & 18 &Z & 5 
+ \\F & B & 7 &B & 4 &C & 8 &C & 18 &F & 0 &D & 23 
+ \\Z & B & 25 &D & 22 &D & 12 &D & 2 &B & 26 &Z & 0 
+    \\ \bottomrule 
+\end{tabular}
+\end{table}
+    
+
+\begin{table}
+    \caption{Distance vector  routing example, step 39, update from F to B }
+    \label{tab:dv:step:39}
+\begin{tabular}{l|c|c|c|c|c|c|c|c|c|c|c|c}
+    \toprule
+      & \multicolumn{2}{c|}{A}&\multicolumn{2}{c|}{B}&\multicolumn{2}{c|}{C}&\multicolumn{2}{c|}{D}&\multicolumn{2}{c|}{F}&\multicolumn{2}{c|}{Z} \\
+    Destination & via&Cost&via&Cost&via&Cost&via&Cost&via&Cost&via&Cost \\ 
+    \midrule
+    A & A & 0 &B & 3 &B & 8 &C & 18 &B & 7 &D & 28 
+ \\B & A & 3 &B & 0 &C & 5 &C & 15 &F & 4 &D & 20 
+ \\C & B & 8 &B & 5 &C & 0 &D & 10 &F & 8 &D & 15 
+ \\D & B & 23 &B & 20 &C & 10 &D & 0 &C & 18 &Z & 5 
+ \\F & B & 7 &B & 4 &C & 8 &C & 18 &F & 0 &D & 23 
+ \\Z & B & 25 &D & 22 &D & 12 &D & 2 &B & 26 &Z & 0 
+    \\ \bottomrule 
+\end{tabular}
+\end{table}
+    
+
+\begin{table}
+    \caption{Distance vector  routing example, step 40, update from B to F }
+    \label{tab:dv:step:40}
+\begin{tabular}{l|c|c|c|c|c|c|c|c|c|c|c|c}
+    \toprule
+      & \multicolumn{2}{c|}{A}&\multicolumn{2}{c|}{B}&\multicolumn{2}{c|}{C}&\multicolumn{2}{c|}{D}&\multicolumn{2}{c|}{F}&\multicolumn{2}{c|}{Z} \\
+    Destination & via&Cost&via&Cost&via&Cost&via&Cost&via&Cost&via&Cost \\ 
+    \midrule
+    A & A & 0 &B & 3 &B & 8 &C & 18 &B & 7 &D & 28 
+ \\B & A & 3 &B & 0 &C & 5 &C & 15 &F & 4 &D & 20 
+ \\C & B & 8 &B & 5 &C & 0 &D & 10 &F & 8 &D & 15 
+ \\D & B & 23 &B & 20 &C & 10 &D & 0 &C & 18 &Z & 5 
+ \\F & B & 7 &B & 4 &C & 8 &C & 18 &F & 0 &D & 23 
+ \\Z & B & 25 &D & 22 &D & 12 &D & 2 &B & 26 &Z & 0 
+    \\ \bottomrule 
+\end{tabular}
+\end{table}
+    
+
+\begin{table}
+    \caption{Distance vector  routing example, step 41, update from D to Z }
+    \label{tab:dv:step:41}
+\begin{tabular}{l|c|c|c|c|c|c|c|c|c|c|c|c}
+    \toprule
+      & \multicolumn{2}{c|}{A}&\multicolumn{2}{c|}{B}&\multicolumn{2}{c|}{C}&\multicolumn{2}{c|}{D}&\multicolumn{2}{c|}{F}&\multicolumn{2}{c|}{Z} \\
+    Destination & via&Cost&via&Cost&via&Cost&via&Cost&via&Cost&via&Cost \\ 
+    \midrule
+    A & A & 0 &B & 3 &B & 8 &C & 18 &B & 7 &D & 23 
+ \\B & A & 3 &B & 0 &C & 5 &C & 15 &F & 4 &D & 20 
+ \\C & B & 8 &B & 5 &C & 0 &D & 10 &F & 8 &D & 15 
+ \\D & B & 23 &B & 20 &C & 10 &D & 0 &C & 18 &Z & 5 
+ \\F & B & 7 &B & 4 &C & 8 &C & 18 &F & 0 &D & 23 
+ \\Z & B & 25 &D & 22 &D & 12 &D & 2 &B & 26 &Z & 0 
+    \\ \bottomrule 
+\end{tabular}
+\end{table}
+    
+
+\begin{table}
+    \caption{Distance vector  routing example, step 42, update from A to B }
+    \label{tab:dv:step:42}
+\begin{tabular}{l|c|c|c|c|c|c|c|c|c|c|c|c}
+    \toprule
+      & \multicolumn{2}{c|}{A}&\multicolumn{2}{c|}{B}&\multicolumn{2}{c|}{C}&\multicolumn{2}{c|}{D}&\multicolumn{2}{c|}{F}&\multicolumn{2}{c|}{Z} \\
+    Destination & via&Cost&via&Cost&via&Cost&via&Cost&via&Cost&via&Cost \\ 
+    \midrule
+    A & A & 0 &B & 3 &B & 8 &C & 18 &B & 7 &D & 23 
+ \\B & A & 3 &B & 0 &C & 5 &C & 15 &F & 4 &D & 20 
+ \\C & B & 8 &B & 5 &C & 0 &D & 10 &F & 8 &D & 15 
+ \\D & B & 23 &B & 20 &C & 10 &D & 0 &C & 18 &Z & 5 
+ \\F & B & 7 &B & 4 &C & 8 &C & 18 &F & 0 &D & 23 
+ \\Z & B & 25 &D & 22 &D & 12 &D & 2 &B & 26 &Z & 0 
+    \\ \bottomrule 
+\end{tabular}
+\end{table}
+    
+
+\begin{table}
+    \caption{Distance vector  routing example, step 43, update from C to F }
+    \label{tab:dv:step:43}
+\begin{tabular}{l|c|c|c|c|c|c|c|c|c|c|c|c}
+    \toprule
+      & \multicolumn{2}{c|}{A}&\multicolumn{2}{c|}{B}&\multicolumn{2}{c|}{C}&\multicolumn{2}{c|}{D}&\multicolumn{2}{c|}{F}&\multicolumn{2}{c|}{Z} \\
+    Destination & via&Cost&via&Cost&via&Cost&via&Cost&via&Cost&via&Cost \\ 
+    \midrule
+    A & A & 0 &B & 3 &B & 8 &C & 18 &B & 7 &D & 23 
+ \\B & A & 3 &B & 0 &C & 5 &C & 15 &F & 4 &D & 20 
+ \\C & B & 8 &B & 5 &C & 0 &D & 10 &F & 8 &D & 15 
+ \\D & B & 23 &B & 20 &C & 10 &D & 0 &C & 18 &Z & 5 
+ \\F & B & 7 &B & 4 &C & 8 &C & 18 &F & 0 &D & 23 
+ \\Z & B & 25 &D & 22 &D & 12 &D & 2 &C & 20 &Z & 0 
+    \\ \bottomrule 
+\end{tabular}
+\end{table}
+    
+
+\begin{table}
+    \caption{Distance vector  routing example, step 45, update from C to B }
+    \label{tab:dv:step:45}
+\begin{tabular}{l|c|c|c|c|c|c|c|c|c|c|c|c}
+    \toprule
+      & \multicolumn{2}{c|}{A}&\multicolumn{2}{c|}{B}&\multicolumn{2}{c|}{C}&\multicolumn{2}{c|}{D}&\multicolumn{2}{c|}{F}&\multicolumn{2}{c|}{Z} \\
+    Destination & via&Cost&via&Cost&via&Cost&via&Cost&via&Cost&via&Cost \\ 
+    \midrule
+    A & A & 0 &B & 3 &B & 8 &C & 18 &B & 7 &D & 23 
+ \\B & A & 3 &B & 0 &C & 5 &C & 15 &F & 4 &D & 20 
+ \\C & B & 8 &B & 5 &C & 0 &D & 10 &F & 8 &D & 15 
+ \\D & B & 23 &C & 15 &C & 10 &D & 0 &C & 18 &Z & 5 
+ \\F & B & 7 &B & 4 &C & 8 &C & 18 &F & 0 &D & 23 
+ \\Z & B & 25 &C & 17 &D & 12 &D & 2 &C & 20 &Z & 0 
+    \\ \bottomrule 
+\end{tabular}
+\end{table}
+    
+
+\begin{table}
+    \caption{Distance vector  routing example, step 46, update from A to F }
+    \label{tab:dv:step:46}
+\begin{tabular}{l|c|c|c|c|c|c|c|c|c|c|c|c}
+    \toprule
+      & \multicolumn{2}{c|}{A}&\multicolumn{2}{c|}{B}&\multicolumn{2}{c|}{C}&\multicolumn{2}{c|}{D}&\multicolumn{2}{c|}{F}&\multicolumn{2}{c|}{Z} \\
+    Destination & via&Cost&via&Cost&via&Cost&via&Cost&via&Cost&via&Cost \\ 
+    \midrule
+    A & A & 0 &B & 3 &B & 8 &C & 18 &B & 7 &D & 23 
+ \\B & A & 3 &B & 0 &C & 5 &C & 15 &F & 4 &D & 20 
+ \\C & B & 8 &B & 5 &C & 0 &D & 10 &F & 8 &D & 15 
+ \\D & B & 23 &C & 15 &C & 10 &D & 0 &C & 18 &Z & 5 
+ \\F & B & 7 &B & 4 &C & 8 &C & 18 &F & 0 &D & 23 
+ \\Z & B & 25 &C & 17 &D & 12 &D & 2 &C & 20 &Z & 0 
+    \\ \bottomrule 
+\end{tabular}
+\end{table}
+    
+
+\begin{table}
+    \caption{Distance vector  routing example, step 47, update from A to B }
+    \label{tab:dv:step:47}
+\begin{tabular}{l|c|c|c|c|c|c|c|c|c|c|c|c}
+    \toprule
+      & \multicolumn{2}{c|}{A}&\multicolumn{2}{c|}{B}&\multicolumn{2}{c|}{C}&\multicolumn{2}{c|}{D}&\multicolumn{2}{c|}{F}&\multicolumn{2}{c|}{Z} \\
+    Destination & via&Cost&via&Cost&via&Cost&via&Cost&via&Cost&via&Cost \\ 
+    \midrule
+    A & A & 0 &B & 3 &B & 8 &C & 18 &B & 7 &D & 23 
+ \\B & A & 3 &B & 0 &C & 5 &C & 15 &F & 4 &D & 20 
+ \\C & B & 8 &B & 5 &C & 0 &D & 10 &F & 8 &D & 15 
+ \\D & B & 23 &C & 15 &C & 10 &D & 0 &C & 18 &Z & 5 
+ \\F & B & 7 &B & 4 &C & 8 &C & 18 &F & 0 &D & 23 
+ \\Z & B & 25 &C & 17 &D & 12 &D & 2 &C & 20 &Z & 0 
+    \\ \bottomrule 
+\end{tabular}
+\end{table}
+    
+
+\begin{table}
+    \caption{Distance vector  routing example, step 49, update from A to F }
+    \label{tab:dv:step:49}
+\begin{tabular}{l|c|c|c|c|c|c|c|c|c|c|c|c}
+    \toprule
+      & \multicolumn{2}{c|}{A}&\multicolumn{2}{c|}{B}&\multicolumn{2}{c|}{C}&\multicolumn{2}{c|}{D}&\multicolumn{2}{c|}{F}&\multicolumn{2}{c|}{Z} \\
+    Destination & via&Cost&via&Cost&via&Cost&via&Cost&via&Cost&via&Cost \\ 
+    \midrule
+    A & A & 0 &B & 3 &B & 8 &C & 18 &B & 7 &D & 23 
+ \\B & A & 3 &B & 0 &C & 5 &C & 15 &F & 4 &D & 20 
+ \\C & B & 8 &B & 5 &C & 0 &D & 10 &F & 8 &D & 15 
+ \\D & B & 23 &C & 15 &C & 10 &D & 0 &C & 18 &Z & 5 
+ \\F & B & 7 &B & 4 &C & 8 &C & 18 &F & 0 &D & 23 
+ \\Z & B & 25 &C & 17 &D & 12 &D & 2 &C & 20 &Z & 0 
+    \\ \bottomrule 
+\end{tabular}
+\end{table}
+    
+
+\begin{table}
+    \caption{Distance vector  routing example, step 50, update from A to B }
+    \label{tab:dv:step:50}
+\begin{tabular}{l|c|c|c|c|c|c|c|c|c|c|c|c}
+    \toprule
+      & \multicolumn{2}{c|}{A}&\multicolumn{2}{c|}{B}&\multicolumn{2}{c|}{C}&\multicolumn{2}{c|}{D}&\multicolumn{2}{c|}{F}&\multicolumn{2}{c|}{Z} \\
+    Destination & via&Cost&via&Cost&via&Cost&via&Cost&via&Cost&via&Cost \\ 
+    \midrule
+    A & A & 0 &B & 3 &B & 8 &C & 18 &B & 7 &D & 23 
+ \\B & A & 3 &B & 0 &C & 5 &C & 15 &F & 4 &D & 20 
+ \\C & B & 8 &B & 5 &C & 0 &D & 10 &F & 8 &D & 15 
+ \\D & B & 23 &C & 15 &C & 10 &D & 0 &C & 18 &Z & 5 
+ \\F & B & 7 &B & 4 &C & 8 &C & 18 &F & 0 &D & 23 
+ \\Z & B & 25 &C & 17 &D & 12 &D & 2 &C & 20 &Z & 0 
+    \\ \bottomrule 
+\end{tabular}
+\end{table}
+    

@@ -1,0 +1,213 @@
+% Created 2016-08-17 Wed 14:38
+\documentclass[tikz]{standalone}
+
+\input{../../templates/standalone_header}
+
+\usepackage{../../templates/moeptikz}
+\usepackage{bytefield}
+
+\usetikzlibrary{backgrounds,fit,shapes.symbols}
+\begin{document}
+
+
+\newcommand{\smallExampleNoNames}[0]{
+  \node [client, label={[align=center]below:Client}] (client) {}; 
+  \node [switch, right=of client, label={[align=center]below:Switch A}] (swA) {};
+  \node [router, right=of swA, label={[align=center]below:Router 1}] (r1) {};
+
+
+  \draw [thick] (client) -- (swA) -- (r1); 
+  
+}
+
+
+\newcommand{\smallExample}[0]{
+  \smallExampleNoNames
+
+  \node [above=1cm of client.east, align=center] (client_label) {IP: 1.2.3.4\\MAC: a:b };
+  \node [below=1cm of swA.west, align=center] (swA_west_label) {MAC: c:d };
+  \node [below=1.5cm of swA.east, align=center] (swA_east_label) {MAC: e:f };
+
+  \node [above=2cm of r1.west, align=center] (r1_west_label) {IP: 1.2.3.1\\MAC: g:h };
+
+  \begin{scope}[every path/.append style={very thick, ->, hpiyellow}]
+    \draw (client_label) to[out=330,in=30] (client.east); 
+    \draw (swA_west_label) to[out=120,in=210] (swA.west); 
+    \draw (swA_east_label) to[out=30,in=330] (swA.east); 
+    \draw (r1_west_label) to[out=210,in=150] (r1.west); 
+  \end{scope}  
+}
+
+
+\newcommand{\smallExamplePackets}[0]{
+  \begin{scope}[node distance=2cm, every node/.style={scale=0.75}]
+    \node [below=of $(client.east)!0.5!(swA.west)$] (ce_swAw)  {
+        \begin{bytefield}{10}
+          \wordbox{1}{IP Src: 1.2.3.4}\\
+          \wordbox{1}{IP Dest: 7.8.9.10}\\
+          \wordbox{1}{MAC Src: a:b}\\
+          \wordbox{1}{MAC Dest: g:h}\\
+        \end{bytefield}
+      }; 
+
+    \node [below=of $(swA.east)!0.5!(r1.west)$] (swAe_r1w) {
+        \begin{bytefield}{10}
+          \wordbox{1}{IP Src: 1.2.3.4}\\
+          \wordbox{1}{IP Dest: 7.8.9.10}\\
+          \wordbox{1}{MAC Src: e:f}\\
+          \wordbox{1}{MAC Dest: g:h}\\
+        \end{bytefield}
+      }; 
+    \end{scope} 
+}
+
+% simple scenario to explain ARP
+
+\begin{tikzpicture}[node distance=2cm]
+  \label{page:routing:ip_mac:small_example}
+  \smallExample 
+\end{tikzpicture}
+
+
+% small Example with packets
+\begin{tikzpicture}[node distance=2cm]
+  \label{page:routing:ip_mac:small_example:packets}
+  \smallExample 
+  \smallExamplePackets
+\end{tikzpicture}
+
+% -----------------
+% complex scenario for ARP
+
+\begin{tikzpicture}[node distance=2cm]
+
+  \label{page:routing:ip_mac:big_example}
+  
+  \smallExample
+  \node [switch, right=of r1, label={[align=center]below:Switch B}] (swB) {};  
+  \node [router, right=of swB, label={[align=center]below:Router 2}] (r2) {};
+  \node [switch, right=of r2, label={[align=center]below:Switch C}] (swC) {};
+  \node [server, right=of swC, label={[align=center]below:Server}] (server) {};
+
+  \draw [thick] (client) -- (swA) -- (r1) -- (swB) -- (r2) -- (swC) -- (server);
+  \draw [thick] (client) -- (swA) -- (r1) -- (swB) -- (r2) -- (swC) -- (server);
+
+  % labels:
+  \node [above=1cm of r1.east, align=center] (r1_east_label) {IP: 4.5.6.1\\MAC: i:j };
+  \node [below=1cm of swB.west, align=center] (swB_west_label) {MAC: k:l };
+  \node [below=1.5cm of swB.east, align=center] (swB_east_label) {MAC: m:n };
+  \node [above=2cm of r2.west, align=center] (r2_west_label) {IP: 4.5.6.2\\MAC: o:p};
+  \node [above=1cm of r2.east, align=center] (r2_east_label) {IP: 7.8.9.1\\MAC: q:r };
+  \node [below=1cm of swC.west, align=center] (swC_west_label) {MAC: s:t };
+  \node [below=1.5cm of swC.east, align=center] (swC_east_label) {MAC: u:v };
+  \node [above=1cm of server.west, align=center] (server_label) {IP: 7.8.9.10\\MAC: w:x };
+
+  % pointers to addresses
+  \begin{scope}[every path/.style={->, thick}]
+    % \begin{scope}[every path/.append style={hpiyellow}]
+    % \draw (client_label) -- (client.east); 
+    % \draw (swA_west_label) -- (swA.west); 
+    % \draw (swA_east_label) -- (swA.east); 
+    % \draw (r1_west_label) -- (r1.west); 
+    % \end{scope}
+
+    \begin{scope}[every path/.append style={hpiblue}]
+    \draw (swB_west_label) to[out=120,in=210] (swB.west); 
+    \draw (swB_east_label) to[out=30,in=330] (swB.east); 
+    \draw (r2_west_label) to[out=210,in=150] (r2.west); 
+    \draw (r1_east_label) to[out=330,in=30] (r1.east); 
+    \end{scope}
+
+    \begin{scope}[every path/.append style={hpiorange}]
+    \draw (swC_west_label) to[out=120,in=210] (swC.west); 
+    \draw (swC_east_label) to[out=30,in=330] (swC.east); 
+    \draw (r2_east_label) to[out=330,in=30] (r2.east); 
+    \draw (server_label) to[out=210,in=150] (server.west); 
+    \end{scope}
+    
+  \end{scope}
+  
+  \begin{scope}[on background layer]
+    \node [fill=hpiyellow!10, fit=(client)(swA)(r1.west)] {}; 
+    \node [fill=hpiblue!10, fit=(r1.east)(swB)(r2.west)] {}; 
+    \node [fill=hpiorange!10, fit=(r2.east)(swC)(server)] {}; 
+  \end{scope}
+
+
+
+  \smallExamplePackets
+  \begin{scope}[node distance=2cm, every node/.style={scale=0.75}]
+
+    \node [below=of $(r1.east)!0.5!(swB.west)$] (r1e_swBw) {
+        \begin{bytefield}{10}
+          \wordbox{1}{IP Src: 1.2.3.4}\\
+          \wordbox{1}{IP Dest: 7.8.9.10}\\
+          \wordbox{1}{MAC Src: i:j}\\
+          \wordbox{1}{MAC Dest: k:l}\\
+        \end{bytefield}
+      }; 
+
+
+    \node [below=of $(swB.east)!0.5!(r2.west)$] (swBe_r2w) {
+        \begin{bytefield}{10}
+          \wordbox{1}{IP Src: 1.2.3.4}\\
+          \wordbox{1}{IP Dest: 7.8.9.10}\\
+          \wordbox{1}{MAC Src: m:n}\\
+          \wordbox{1}{MAC Dest: o:p}\\
+        \end{bytefield}
+      }; 
+      
+
+    \node [below=of $(r2.east)!0.5!(swC.west)$] (r2e_swCw) {
+        \begin{bytefield}{10}
+          \wordbox{1}{IP Src: 1.2.3.4}\\
+          \wordbox{1}{IP Dest: 7.8.9.10}\\
+          \wordbox{1}{MAC Src: q:r}\\
+          \wordbox{1}{MAC Dest: s:t}\\
+        \end{bytefield}
+      }; 
+
+    \node [below=of $(swC.east)!0.5!(server.west)$] (swCe_sw) {
+        \begin{bytefield}{10}
+          \wordbox{1}{IP Src: 1.2.3.4}\\
+          \wordbox{1}{IP Dest: 7.8.9.10}\\
+          \wordbox{1}{MAC Src: u:v}\\
+          \wordbox{1}{MAC Dest: w:x}\\
+        \end{bytefield}
+      }; 
+    \end{scope}
+
+    \begin{scope}[every node/.style={anchor=north,align=center}]
+      \node [below=4cm of client.east] {Next Hop:\\ 1.2.3.1}; 
+      \node [below=4cm of r1.east] {Next Hop: \\ 4.5.6.2}; 
+      \node [below=4cm of r2.east] {Next Hop: \\ 7.8.9.10}; 
+    \end{scope}
+    
+\end{tikzpicture}
+
+
+\begin{tikzpicture}
+  \label{page:routing:ip_mac:complex_arp}
+
+  \smallExampleNoNames
+
+
+  \node [client, above=of swA, label=below:Client 2] (client2) {}; 
+  \node [switch, below=of swA, label=below:Switch D] (swD) {};
+  \node [client, below=of swD, label=below:Client 3] (client3) {};
+  \node [router, right=of swD, label=below:Router 3] (r3){};
+
+  \draw [thick] (client2) -- (swA) -- (swD)  edge (r3) -- (client3); 
+
+  % ARP Request
+  \foreach \n/\m in {client/swA,swA/client2,swA/r1,swA/swD,swD/r3,swD/client3} {
+    \draw [->, thick, hpired] (\n) to [bend left] (\m); 
+  }
+
+  % ARP Reply
+  \foreach \n/\m in {r1/swA,swA/client} {
+    \draw [->, thick, hpiblue] (\n) to [bend left] (\m); 
+  }
+
+\end{tikzpicture}
+\end{document}

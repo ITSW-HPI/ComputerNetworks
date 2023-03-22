@@ -1,0 +1,151 @@
+% Created 2016-08-17 Wed 14:38
+\documentclass[tikz,multi=msc]{standalone}
+
+\input{../../templates/tikzFigureHeader}
+
+
+
+\begin{document}
+
+% \begin{msc}{ARP}
+%   \label{b}
+%   \declinst{test}{a}{v}
+% \end{msc}
+% \begin{msc}{ARP2}
+%   \label{a}
+%   \declinst{test}{a}{v}
+% \end{msc}
+
+\setlength{\instdist}{3cm}
+
+\begin{msc}{ARP}
+  \declinst{client}{1.2.3.4 / a:b}{Client}
+  \declinst{swAw}{c:d}{Switch West}
+  \declinst{swAe}{e:f}{Switch East}
+  \declinst{r1e}{1.2.3.1 / g:h}{Router}
+
+  \mess{ARP Req: 1.2.3.1?}{client}{swAw}[1]
+  \nextlevel
+  \mess*{}{swAw}{swAe}
+  \mess{ARP Req: 1.2.3.1?}{swAe}{r1e}[1]
+  \nextlevel[2]
+  \mess{ARP Rply: 1.2.3.1 = g:h}{r1e}{swAe}[1]
+  \nextlevel
+  \mess*{}{swAe}{swAw}
+  \mess{ARP Rply: 1.2.3.1 = g:h}{swAw}{client}[1]
+  \nextlevel
+  \label{page:routing:arp:small}
+\end{msc}
+
+
+\begin{msc}{ARP}
+  
+  \declinst{client}{1.2.3.4 / a:b}{Client}
+  \declinst{swAw}{c:d}{Switch A West}
+  \declinst{swAe}{e:f}{Switch A East}
+  \declinst{r1w}{1.2.3.1 / g:h}{Router 1}
+  \declinst{r1e}{4.5.6.1 / i:j}{Router 1}
+
+  \declinst{swBw}{k:l}{Switch B West}
+  \declinst{swBe}{m:n}{Switch B East}
+  \declinst{r2w}{4.5.6.2 / o:p}{Router 2}
+  \declinst{r2e}{7.8.9.1 / q:r}{Router 2}
+
+  \declinst{swCw}{s:t}{Switch C West}
+  \declinst{swCe}{u:v}{Switch C East}
+  \declinst{server}{7.8.9.10 / w:x}{Server}
+
+  % ------ Client to R1 
+  \mess{to: 7.8.9.10}{envleft}{client}
+  \nextlevel
+  \action{Next hop: 1.2.3.1}{client}
+  \nextlevel[4]
+
+  \inlinestart{arp1}{ARP}{client}{r1w}
+  \nextlevel[2]
+  
+  \mess{ARP Req: 1.2.3.1?}{client}{swAw}[1]
+  \nextlevel
+  \mess*{}{swAw}{swAe}
+  \mess{ARP Req: 1.2.3.1?}{swAe}{r1w}[1]
+  \nextlevel[2]
+  \mess{ARP Rply: 1.2.3.1 = g:h}{r1w}{swAe}[1]
+  \nextlevel
+  \mess*{}{swAe}{swAw}
+  \mess{ARP Rply: 1.2.3.1 = g:h}{swAw}{client}[1]
+  \nextlevel[2]
+  \inlineend{arp1}
+  \nextlevel
+
+  \mess{data}{client}{swAw}[1]
+  \nextlevel
+  \mess*{data}{swAw}{swAe}
+  \mess{data}{swAe}{r1w}[1]
+  \nextlevel[2]
+
+  % ---------------- R1 to R2 
+
+  \action{Next hop: 4.5.6.2}{r1w}
+  \nextlevel[4]
+  \mess*{data}{r1w}{r1e}
+  \nextlevel 
+
+  \inlinestart{arp2}{ARP}{r1e}{r2w}
+  \nextlevel[2]
+  
+  \mess{ARP Req: 4.5.6.2?}{r1e}{swBw}[1]
+  \nextlevel
+  \mess*{}{swBw}{swBe}
+  \mess{ARP Req: 4.5.6.2?}{swBe}{r2w}[1]
+  \nextlevel[2]
+  \mess{ARP Rply: 4.5.6.2 = g:h}{r2w}{swBe}[1]
+  \nextlevel
+  \mess*{}{swBe}{swBw}
+  \mess{ARP Rply: 4.5.6.2 = g:h}{swBw}{r1e}[1]
+  \nextlevel[2]
+  \inlineend{arp2}
+  \nextlevel
+  
+  \mess{data}{r1e}{swBw}[1]
+  \nextlevel
+  \mess*{data}{swBw}{swBe}
+  \mess{data}{swBe}{r2w}[1]
+  \nextlevel[2]
+
+
+
+  % ---------------- R2 to server
+
+  \action{Next hop: 7.8.9.10}{r2w}
+  \nextlevel[4]
+  \mess*{data}{r2w}{r2e}
+  \nextlevel 
+
+  \inlinestart{arp2}{ARP}{r2e}{server}
+  \nextlevel[2]
+  
+  \mess{ARP Req: 4.5.6.2?}{r2e}{swCw}[1]
+  \nextlevel
+  \mess*{}{swCw}{swCe}
+  \mess{ARP Req: 4.5.6.2?}{swCe}{server}[1]
+  \nextlevel[2]
+  \mess{ARP Rply: 4.5.6.2 = g:h}{server}{swCe}[1]
+  \nextlevel
+  \mess*{}{swCe}{swCw}
+  \mess{ARP Rply: 4.5.6.2 = g:h}{swCw}{r2e}[1]
+  \nextlevel[2]
+  \inlineend{arp2}
+  \nextlevel
+  
+  \mess{data}{r2e}{swCw}[1]
+  \nextlevel
+  \mess*{data}{swCw}{swCe}
+  \mess{data}{swCe}{server}[1]
+  \nextlevel[2]
+
+  
+  \label{page:routing:arp:large}
+\end{msc}
+
+
+\end{document}

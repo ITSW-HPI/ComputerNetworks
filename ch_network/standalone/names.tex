@@ -1,0 +1,22 @@
+% Created 2016-08-17 Wed 14:38
+\documentclass[tikz]{standalone}
+
+\input{../../templates/standalone_header}
+
+\usetikzlibrary{backgrounds,fit}
+\begin{document}
+
+
+\begin{tikzpicture}
+  \node [align=center,fill=hpiyellow!10] (EU) {Entity $E_U$\\Name $N_U$};
+
+  \scoped [on background layer]\node [draw=hpiyellow, rounded corners, fill=hpiyellow!90,label=above:Layer $U$, fit=(EU)] (LU) {}; 
+
+  \node [align=center,fill=hpiorange!10,below=of EU] (EL) {Entity $E_L$\\Name $N_L$}; 
+  \scoped [on background layer]\node [draw=hpiorange, rounded corners, fill=hpiorange!90,label=above:Layer $L$, fit=(EL)] (LL) {};
+
+  \draw [->,thick] (EU.east)  to[out=0, in=0] ([xshift=-0.1cm,yshift=-0.2cm]EL.east); 
+\end{tikzpicture}
+
+
+\end{document}

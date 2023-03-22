@@ -1,0 +1,127 @@
+% Created 2016-08-17 Wed 14:38
+\documentclass[multi=bytefield,border={1pt 1pt 1pt 6pt}]{standalone}
+% \documentclass[multi=bytefield]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\RequirePackage{xcolor}
+
+%% HPI color definitions according to the design manual
+% These do not exactly match the RGB values used in the Powerpoint slide master due to unknown reasons
+\definecolor{hpiyellow}{RGB}{246,168,0}
+\definecolor{hpiorange}{RGB}{221,97,8}
+\definecolor{hpired}{RGB}{177,6,58}
+\definecolor{hpigray}{RGB}{90,96,101}
+\definecolor{hpiblue}{RGB}{0,122,158}
+
+\renewcommand{\sfdefault}{neosans}
+% Different font weights for neosans
+\newcommand{\textl}[1]{{\fontseries{l}\selectfont #1}} % light
+\newcommand{\textm}[1]{{\fontseries{m}\selectfont #1}} % medium, same as default weight
+\newcommand{\textsb}[1]{{\fontseries{sb}\selectfont #1}} % semibold
+\newcommand{\textmb}[1]{{\fontseries{mb}\selectfont #1}} % bold, same as \textbf
+\newcommand{\texteb}[1]{{\fontseries{eb}\selectfont #1}} % extra bold
+\newcommand{\textub}[1]{{\fontseries{ub}\selectfont #1}} % ultra bold
+
+
+\usepackage{bytefield}
+
+\begin{document}
+
+
+% Prefixes                        
+% \begin{bytefield}{32}
+%   \bitheader{0-31}\\
+%   \wordbox{1}{Test}\\
+%   \bitbox{8}{la} & 
+%   \bitbox{16}{bla}
+%   \label{routing:header:prefix}
+% \end{bytefield}
+
+
+\begin{bytefield}[endianness=little]{32}
+  \bitheader{0-31}\\
+  \bitbox{4}{Version}
+  \bitbox{4}{IHL}
+  \bitbox{6}{\small Type of Service}  
+  \bitbox{2}{ECN}
+  \bitbox{16}{Total length}
+  \\
+  \bitbox{16}{Identification}
+  \bitbox{1}[bgcolor=gray]{}
+  \bitbox{1}{\tiny DF}
+  \bitbox{1}{\tiny MF}
+  \bitbox{13}{Fragment offset}
+  \\
+  \bitbox{8}{Time to live}
+  \bitbox{8}{\small Protocol (demux)}
+  \bitbox{16}{Header checksum}
+  \\
+  \bitbox{32}{Source address}
+  \\
+  \bitbox{32}{Destination address}
+  \\
+  \bitbox{32}{Options, variable length}
+
+\label{routing:header:ipv4}
+\end{bytefield}
+
+
+\begin{bytefield}[endianness=big]{32}
+  \bitheader{0-31}\\
+  \begin{rightwordgroup}{This interface}
+    \bitbox{32}{ \, 0 0 \hfill \dots \hfill 0 0 \, }
+  \end{rightwordgroup} \\
+  \\
+  \begin{rightwordgroup}{Some host on ``this'' network}
+    \bitbox{8}{ \, 0 0 \hfill \dots \hfill 0 0 \, }
+    \bitbox{24}{ Host }
+  \end{rightwordgroup} \\
+  \\
+  \begin{rightwordgroup}{Local broadcast}
+    \bitbox{32}{ \, 1 1  \hfill \dots \hfill 1 1  \, }
+  \end{rightwordgroup} \\
+  \\
+  \begin{rightwordgroup}{Remote broadcast}
+    \bitbox{8}{ Network }
+    \bitbox{24}{ \, 1 1  \hfill \dots \hfill 1 1  \, }
+  \end{rightwordgroup} \\
+  \\
+  \begin{rightwordgroup}{Loopback}
+    \bitbox{8}{127 }
+    \bitbox{24}{ (anything) }
+  \end{rightwordgroup} \\
+  \\
+  \begin{rightwordgroup}{Private network prefix}
+    \bitbox{8}{10 }
+    \bitbox{24}{ (anything) }
+  \end{rightwordgroup} \\
+  \\
+  \begin{rightwordgroup}{Private network prefix}
+    \bitbox{8}{192 }
+    \bitbox{8}{168 }
+    \bitbox{16}{ (anything) }
+  \end{rightwordgroup} \\
+  \\
+  
+\label{routing:header:special_ipv4}
+\end{bytefield}
+
+
+\begin{bytefield}[endianness=little]{32}
+  \bitheader{0-31}\\
+  \bitbox{4}{Version}
+  \bitbox{8}{Diff Serv}
+  \bitbox{20}{Flow label}
+  \\
+  \bitbox{16}{Payload length}
+  \bitbox{8}{Next header}
+  \bitbox{8}{Hop limit}
+  \\
+  \wordbox{4}{Source address\\(16 bytes)}
+  \\
+  \wordbox{4}{Destination address\\(16 bytes)}
+\label{routing:header:ipv6}
+\end{bytefield}
+
+\end{document}

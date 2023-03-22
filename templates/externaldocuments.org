@@ -19,3 +19,9 @@
 #+LATEX_HEADER: \externaldocument{../ch_network/standalone/routing}
 #+LATEX_HEADER: \externaldocument{../ch_network/standalone/dijkstra}
 #+LATEX_HEADER: \externaldocument{../ch_network/standalone/hierarchical}
+#+LATEX_HEADER: \externaldocument{../ch_network/standalone/names}
+#+LATEX_HEADER: \externaldocument{../ch_network/standalone/ip}
+#+LATEX_HEADER: \externaldocument{../ch_network/standalone/headers}
+#+LATEX_HEADER: \externaldocument{../ch_network/standalone/ip_mac}
+#+LATEX_HEADER: \externaldocument{../ch_network/standalone/msc}
+#+LATEX_HEADER: \externaldocument{../ch_network/standalone/intra_inter}
