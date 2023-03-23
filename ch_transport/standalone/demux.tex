@@ -1,0 +1,43 @@
+% Created 2016-08-17 Wed 14:38
+\documentclass[tikz]{standalone}
+
+\input{../../templates/standalone_header}
+
+\usetikzlibrary {chains,shapes.geometric}
+
+
+\begin{document}
+
+\begin{tikzpicture}
+  \foreach \i in {0,1} {
+    \begin{scope}[every node/.style={draw,minimum width=3cm,on chain}, start chain=going below, node distance=0pt, xshift=\i*6cm]
+      \node [align=center] (tl\i) {Transport\\ \\ }; 
+      \node (nl\i) {Network}; 
+      \node (ll\i) {Link}; 
+      \node (pl\i) {Physical}; 
+    \end{scope}
+  }
+
+
+  \begin{scope}[every node/.style={circle, draw, fill=gray!10}]
+    \node [above=0.25cm of tl0.south, label=left:TSAP 1234] (ctsap) {}; 
+    \node [above left=0.25cm of tl1.south, label=left:TSAP 5678] (stsap) {}; 
+    \node [above right=0.25cm of tl1.south, label=right:TSAP 9101] (stsap2) {}; 
+  \end{scope}
+
+
+  \node [draw, rounded corners, above=of tl0.north] (client) {Client App}; 
+  \node [draw, rounded corners, above=of tl1.north] (server) {Server App}; 
+
+
+  \draw [->, very thick, hpiblue, rounded corners]  (client)-- (ctsap) -- (tl0.south) --  (pl0.south) -- ++(0, -1) -| (pl1.south)  -- (tl1.south) -- (stsap2) -- (server); 
+
+
+  
+\end{tikzpicture}
+
+
+
+
+
+\end{document}

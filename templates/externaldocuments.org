@@ -25,3 +25,8 @@
 #+LATEX_HEADER: \externaldocument{../ch_network/standalone/ip_mac}
 #+LATEX_HEADER: \externaldocument{../ch_network/standalone/msc}
 #+LATEX_HEADER: \externaldocument{../ch_network/standalone/intra_inter}
+#+LATEX_HEADER: \externaldocument{../ch_transport/ch_transport}
+#+LATEX_HEADER: \externaldocument{../ch_transport/standalone/demux}
+#+LATEX_HEADER: \externaldocument{../ch_transport/standalone/tl_msc}
+#+LATEX_HEADER: \externaldocument{../ch_transport/standalone/tcp_state_machine}
+#+LATEX_HEADER: \externaldocument{../ch_transport/standalone/transportFigures}

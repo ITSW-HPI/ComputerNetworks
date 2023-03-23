@@ -1,0 +1,293 @@
+% Created 2016-08-17 Wed 14:38
+\documentclass[tikz,multi=msc]{standalone}
+
+\input{../../templates/tikzFigureHeader}
+
+
+\begin{document}
+
+% TODO: why does this not work? 
+\tikzset{/msc/level offset/.default=2}
+
+\setlength{\instdist}{3cm}
+
+% \begin{msc}{ARP}
+%   \declinst{client}{1.2.3.4 / a:b}{Client}
+%   \declinst{swAw}{c:d}{Switch West}
+%   \declinst{swAe}{e:f}{Switch East}
+%   \declinst{r1e}{1.2.3.1 / g:h}{Router}
+
+%   \mess{ARP Req: 1.2.3.1?}{client}{swAw}[1]
+%   \nextlevel
+%   \mess*{}{swAw}{swAe}
+%   \mess{ARP Req: 1.2.3.1?}{swAe}{r1e}[1]
+%   \nextlevel[2]
+%   \mess{ARP Rply: 1.2.3.1 = g:h}{r1e}{swAe}[1]
+%   \nextlevel
+%   \mess*{}{swAe}{swAw}
+%   \mess{ARP Rply: 1.2.3.1 = g:h}{swAw}{client}[1]
+%   \nextlevel
+%   \label{page:routing:arp:small}
+% \end{msc}
+
+
+
+\begin{msc}[level height=4ex, level shift=1]{Naive connection establishment}
+
+  \label{page:transport:conn_est_naive}
+  \declinst{a}{}{A}
+  \declinst{b}{}{B}
+
+  \mess{ConnReq}{a}{b}
+  \nextlevel
+  \mess{ConnAcc}{b}{a}
+  \nextlevel
+  \mess{Data}{a}{b}
+\end{msc}
+
+
+\begin{msc}[level height=4ex, level shift=1,pos=0.5]{Failure of naive connection establishment}
+  \label{page:transport:conn_est_naive_failure}
+  \declinst{a}{}{A}
+  \declinst{b}{}{B}
+
+  \mess{Data}{envleft}{a}[0]
+  \mess{ConnReq}{a}{b}
+  \mess{ConnReq (dup)}{a}{b}[7]
+  \nextlevel
+  \mess{ConnAcc}{b}{a}
+  \nextlevel[1]
+  \mess{Data}{a}{b}
+  \mess{Data (dup)}{a}{b}[7]
+  \nextlevel[1]
+  \mess{Data}{b}{envright}[0]
+  \nextlevel[4]
+  \mess{ConnAcc}{b}{a}
+  \nextlevel[2]
+  \mess{Data (dup)}{b}{envright}[0]
+  \nextlevel
+
+
+\end{msc}
+
+\begin{msc}[level height=4ex, level shift=1]{Three-way handshake}
+  \label{page:transport:conn_est_threeway}
+  \declinst{a}{}{A}
+  \declinst{b}{}{B}
+
+  \mess{ConnReq}{a}{b}
+  \nextlevel
+  \mess{ConnAcc}{b}{a}
+  \nextlevel
+  \mess{Confirm, Data}{a}{b}
+
+\end{msc}
+
+
+\begin{msc}[level height=4ex, level shift=1]{Three-way handshake with sequence numbers}
+  \label{page:transport:conn_est_threeway_sequence}
+  \declinst{a}{}{A}
+  \declinst{b}{}{B}
+
+  \mess{ConnReq (seq=i)}{a}{b}
+  \nextlevel
+  \mess{ConnAcc (ack=i, seq=j)}{b}{a}
+  \nextlevel
+  \mess{Confirm, Data (seq=i, ack=j)}{a}{b}
+
+\end{msc}
+
+
+
+\begin{msc}[level height=4ex, level shift=1]{Spurious connection request}
+  \label{page:transport:conn_est_old_cr}
+  \declinst{a}{}{A}
+  \declinst{b}{}{B}
+
+  % \mess{ConnReq (seq=i)}{a}{b}
+  \found{ConnReq (seq=n}{old dup}{b}
+  \nextlevel
+  \mess{ConnAcc (ack=n, seq=j)}{b}{a}
+  \nextlevel
+  \mess{Reject (ack=j)}{a}{b}
+
+\end{msc}
+
+\begin{msc}[level height=4ex, level shift=2]{Spurious connection request and data}
+  \label{page:transport:conn_est_old_cr_data}
+  \declinst{a}{}{A}
+  \declinst{b}{}{B}
+
+  % \mess{ConnReq (seq=i)}{a}{b}
+  \found{ConnReq (seq=n}{old dup}{b}
+  \nextlevel
+  \mess{ConnAcc (ack=n, seq=j)}{b}{a}
+  \nextlevel[3]
+  \found{Data (seq=n, ack=z}{old dup}{b}
+  \msccomment[side=right]{ignored}{b}
+  \nextlevel
+  \mess{Reject (ack=j)}{a}{b}
+
+\end{msc}
+
+\begin{msc}[level height=4ex, level shift=1]{Disconnect}
+  \label{page:transport:disconnect}
+  \declinst{a}{}{A}
+  \declinst{b}{}{B}
+
+  \mess{DisconnReq}{a}{b}
+  \settimer{DR}{a}
+  \nextlevel[2]
+  \mess{DisconnReq}{b}{a}
+  \settimer[r]{DR}{b}
+  \nextlevel[2] 
+  \mess{ACK}{a}{b}
+  \stoptimer{DR}{a}
+  \nextlevel[1]
+  \msccomment[side=right]{ConnRel}{b}
+\end{msc}
+
+
+\begin{msc}[level height=4ex, level shift=1]{Disconnect with lost ACK}
+  \label{page:transport:disconnect:lost_ack}
+  \declinst{a}{}{A}
+  \declinst{b}{}{B}
+
+  \mess{DisconnReq}{a}{b}
+  \settimer{DR}{a}
+  \nextlevel[2]
+  \mess{DisconnReq}{b}{a}
+  \setstoptimer[r]{DR}{b}[4]
+  \nextlevel[2] 
+  \lost[side=right]{ACK}{}{a}
+  \stoptimer{DR}{a}
+  \nextlevel[2]
+  \msccomment[side=right]{ConnRel}{b}
+\end{msc}
+
+
+\begin{msc}[level height=4ex, level shift=1]{Disconnect with lost DR}
+  \label{page:transport:disconnect:lost_dr}
+  \declinst{a}{}{A}
+  \declinst{b}{}{B}
+
+  \mess{DisconnReq}{a}{b}
+  \setstoptimer{DR}{a}[4]
+  \nextlevel[2]
+  
+  \lost{DisconnReq}{}{b}
+  \settimer[r]{DR}{b}
+  \nextlevel[3]
+  \msccomment[side=left]{retry}{a}
+  \nextlevel[1]
+
+  \mess{DisconnReq}{a}{b}
+  \settimer{DR}{a}
+  \nextlevel[2]
+  
+  \mess{DisconnReq}{b}{a}
+  \settimer[r]{DR}{b}
+  \nextlevel[2]
+
+  \mess{ACK}{a}{b}
+  \stoptimer{DR}{a}
+  \nextlevel[1]
+  \msccomment[side=right]{ConnRel}{b}
+\end{msc}
+
+
+% --------- TCP establishment
+\begin{msc}[level height=3ex, level shift=1]{TCP connection establishment}
+  \label{page:transport:tcp_establish}
+  \declinst{srv}{}{Server}
+  \declinst{cl}{}{Client}
+
+  \inlinestart{po}{Listen Server}{srv}{srv}
+  \nextlevel[2]
+  \condition{CLOSED}{srv}
+  \nextlevel[2]
+  \mess{passive open}{envleft}{srv}[0]
+  \nextlevel
+  \condition{LISTEN}{srv}
+  \nextlevel[2]
+  \inlineend{po}
+  
+  \condition{CLOSED}{cl}
+  \nextlevel[2]
+  \mess{Active open}{envright}{cl}[0]
+  \nextlevel
+  \mess{SYN}{cl}{srv}
+  \nextlevel
+  \condition{SYN\_SENT}{cl}
+  \nextlevel
+
+  \mess{SYN+ACK}{srv}{cl}
+  \nextlevel
+  \condition{SYN\_RCVD}{srv}
+  \nextlevel[2]
+
+  \mess{ACK}{cl}{srv}
+  \nextlevel
+  \condition{ESTABLISHED}{cl}
+  \nextlevel[2]
+  \condition{ESTABLISHED}{srv}
+  \nextlevel[2]
+
+  \inlinestart{de}{Data Exchange}{srv}{cl}
+  \nextlevel[3]
+  \inlineend{de}
+  \nextlevel
+
+\end{msc}
+
+
+
+\begin{msc}[level height=3ex, level shift=1]{TCP connection release}
+  \label{page:transport:tcp_release}
+  \declinst{srv}{}{Server}
+  \declinst{cl}{}{Client}
+
+  \inlinestart{de}{Data Exchange}{srv}{cl}
+  \nextlevel[3]
+  \inlineend{de}
+  \nextlevel
+
+  \mess{Close}{envright}{cl}[0]
+  \nextlevel
+  \mess{FIN}{cl}{srv}
+  \nextlevel
+  \condition{FIN\_WAIT\_1}{cl}
+  \nextlevel
+
+  \nextlevel
+  \mess{ACK}{srv}{cl}
+  \nextlevel
+  \condition{CLOSE\_WAIT}{srv}
+  \nextlevel[2]
+
+  \condition{FIN\_WAIT\_2}{cl}
+  \nextlevel
+
+  \mess{Close}{envleft}{srv}[0]
+  \nextlevel
+  \mess{FIN}{srv}{cl}
+  \nextlevel 
+  \condition{LAST\_ACK}{srv}
+  \nextlevel[2]
+
+  \mess{ACK}{cl}{srv}
+  \nextlevel[2]
+  \condition{TIME\_WAIT}{cl}
+  \condition{CLOSED}{srv}
+  \nextlevel 
+  \nextlevel[2]
+  \condition{CLOSED}{cl}
+  \nextlevel
+
+  
+  
+  
+\end{msc}
+
+
+\end{document}

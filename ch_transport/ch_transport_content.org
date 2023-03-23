@@ -1,0 +1,821 @@
+\label{ch:transport}
+
+\begin{frame}[title={bg=Hauptgebaeude_Tag}]
+ \maketitle 
+\end{frame}
+
+
+
+**** The story so far  
+
+**** Plans for this chapter 
+
+
+- We will discuss the mechanisms in addition to congestion control that are required to build a reliable, connection-oriented, end-to-end transport protocol 
+  - With TCP as the evident case study, intermixed with the presentation
+  - We will draw heavily on material from the link layer, as many similar problems are solved there in similar fashion – e.g., sliding window for error control
+- A brief discussion of other transport protocols complements the chapter
+  - Namely, QUIC, UDP
+
+
+\vskip-2.5em
+
+*****                     
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+
+****** Learning outcomes 
+
+*****                    
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+** Services & addressing                                           :noexport:
+
+**** Transport protocols – Services to upper layer
+- Connection-less and connection-oriented transport service
+  - Connection management necessary as auxiliary service – setup and teardown
+- Reliable or unreliable transport
+  - In-order, all packets
+- Be a good citizen in the network – perform congestion control
+- Allow several transport endpoints in a single host 
+  - Demultiplexing 
+- Support different interaction models
+  - Byte stream, messages, remote procedure invocation
+
+**** Addressing
+- Provide multiple service access points to multiplex several data
+  streams 
+  - SAPs can identify connections or data flows
+- E.g., ``port numbers''
+  - Dynamically allocated
+  - Predefined for ``well-known services'' – e.g., port 80 for Web server
+
+**** Basic transport protocols 
+
+- TCP: reliable byte stream 
+- UDP: unreliable datagrams 
+- SCTP, QUIC: multiple, reliable streams of data over one connection 
+
+**** Header 
+
+\vskip-2.5em
+
+***** TCP 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+#+caption: TCP header
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:transport:tcp_header}
+#+NAME: fig:transport:tcp_header
+[[./standalone/transportFigures.pdf]]
+
+
+
+***** UDP 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+
+#+caption: UDP header
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:transport:udp_header}
+#+NAME: fig:transport:udp_header
+[[./standalone/transportFigures.pdf]]
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+
+** Connection setup                                                :noexport:
+
+**** Connection establishment
+- How to establish a joint context, a connection, between sender and receiver?
+- Note: only relevant in end-system, network layer assumed to be connection-less
+
+
+
+
+*****  Naïve solution 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+- Sender sends a CONNECTION REQUEST (ConnReq)  
+- Receiver answers by a CONNECTION ACCEPTED (ConnAcc)
+- Sender proceeds once that message is received
+
+
+*****                                                 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+
+#+caption: Naïve way of establishing a connection by two messages, directly followed by data 
+#+attr_latex: :width 0.95\textwidth :height 0.3\textheight :options keepaspectratio,page=\getpagerefnumber{page:transport:conn_est_naive}
+#+NAME: fig:transport:conn_est_naive
+[[./standalone/tl_msc.pdf]]
+
+
+
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+**** Failure of naïve solution
+
+\vskip-3.5em
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+
+
+- Naïve solution fails in realistic networks
+  - Where packets can be lost, stored/reordered, and duplicated
+- Example failure scenario
+  - All packets are duplicated and delayed
+  - Due to congestion, errors, ... and re-routing, e.g.
+  - In a banking application, e.g.
+  - Result: two independent transactions performed, where only one was intended 
+- Problem are *delayed duplicates*
+
+
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+#+caption: Failure of a simple two-way approach to connection establishment
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:transport:conn_est_naive_failure}
+#+NAME: fig:transport:conn_est_naive_failure
+[[./standalone/tl_msc.pdf]]
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+
+
+
+**** Adding an additional handshake
+
+
+\vskip-2.5em
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+
+
+- First idea: the sender has to re-confirm to the receiver that it actually wants to set up this connection
+- $\leadsto$ Add a third message to the connection setup phase
+- *Three-way handshake*
+- This third message can already carry data
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+#+caption: Three-way handshake, basic idea
+#+attr_latex: :width 0.95\textwidth :height 0.7\textheight :options keepaspectratio,page=\getpagerefnumber{page:transport:conn_est_threeway}
+#+NAME: fig:transport:conn_est_threeway
+[[./standalone/tl_msc.pdf]]
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+ 
+
+**** Is three-way handshake sufficient?
+- No, it does not protect against delayed duplicates!
+- Problem: If both the connection request and the connection confirmation are duplicated and delayed, receiver again has no way to ascertain whether this is a fresh or an old copy
+
+**** Three-way handshake + sequence numbers
+
+\vskip-2.5em
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+
+Solution: Have the sender answer a question that the receiver asks!
+- Actually: Put sequence numbers into 
+  - connection request 
+  - connection acknowledgement,
+  - and connection confirmation
+- Have to be copied by the receiving party to the other side
+- Connection only established if the correct number is provided
+
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+#+caption: Add sequence numbers to three-way handshake
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:transport:conn_est_threeway_sequence}
+#+NAME: fig:transport:conn_est_threeway_sequence
+[[./standalone/tl_msc.pdf]]
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+
+**** Three-way handshake + sequence numbers: Examples
+- Two examples for critical cases (which are handled correctly)
+
+
+***** Connection request appears as an old duplicate
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+#+caption: Connection request appears as an old duplicate
+#+attr_latex: :width 0.95\textwidth :height 0.5\textheight :options keepaspectratio,page=\getpagerefnumber{page:transport:conn_est_old_cr}
+#+NAME: fig:transport:conn_est_old_cr
+[[./standalone/tl_msc.pdf]]
+
+
+
+
+***** Connection request & confirmation both appear as old duplicates
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+#+caption: ConnReq and ConnAck both are old duplicates
+#+attr_latex: :width 0.95\textwidth :height 0.45\textheight :options keepaspectratio,page=\getpagerefnumber{page:transport:disconnect:lost_dr}
+#+NAME: fig:transport:disconnect:lost_dr
+[[./standalone/tl_msc.pdf]]
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+
+
+**** Connection setup – further issues 
+- Further problems due to crashing nodes, need some memory
+- Sequence numbers negotiated here are also used for the following data packets
+
+
+**** Terminology for TCP
+- Connection setup – SYN (synchronize) packet
+- Connection accepted – SYN/ACK packet (because both the previous sequence number is acknowledged and a new sequence number from the receiver is proposed)
+- Connection confirmation – ACK packet (combined with DATA, as a rule)
+- Problem: SYN attack – flooding with nonsense SYN packets
+
+**** Connection identification in TCP 
+- A TCP connection is set up 
+  - Between a single sender and a single receiver
+  - More precisely, between application processes running on these systems
+  - TCP can multiplex several such connections over the network layer, using the port numbers as Transport SAP identifiers
+
+- A TCP connection is thus identified by a *four tuple*: (Source Port,
+  Source IP Address, Destination Port, Destination IP Address) 
+  - Together with ``TCP'' as transport protocol: *five tuple* 
+
+
+** Connection release                                              :noexport:
+
+**** Connection release
+- Once connection context between two peers is established, releasing a connection should be easy
+  - Goal: Only release connection when both peers have agreed that they have received all data and have nothing more to say
+  - I.e., both sides must have invoked a ``Close''-like service primitive
+- It fact, it is impossible
+  - Problem: How to be sure that the other peer knows that you know that it knows that you know \dots that all data have been transmitted and that the connection can now safely be terminated?
+
+
+**** Two-army problem
+- Coordinated attack
+  - Two armies form up for an attack against each other 
+  - One army is split into two parts that have to attack together – alone they will lose 
+  - Commanders of the parts communicate via messengers who might be captured 
+- Which rules shall the commanders use to agree on an attack date? 
+
+\pause 
+- *Provably unsolvable* if the network can loose messages
+
+#+caption: Two-army problem
+#+attr_latex: :width 0.95\textwidth :height 0.3\textheight :options keepaspectratio,page=\getpagerefnumber{page:transport:two_army}
+#+NAME: fig:transport:two_army
+[[./standalone/transportFigures.pdf]]
+
+
+
+**** Connection release in practice
+- Two-army problem equivalent to connection release
+- But: when releasing a connection, maybe bigger risks can be taken? 
+
+\vskip-2.5em
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+- Usual approach: Three-wayhandshake again
+- Send disconnect request (DR), set timer, wait for DR from peer, acknowledge it
+
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+
+#+caption: Three-way handshake to release a connection
+#+attr_latex: :width 0.95\textwidth :height 0.4\textheight :options keepaspectratio,page=\getpagerefnumber{page:transport:disconnect}
+#+NAME: fig:transport:disconnect
+[[./standalone/tl_msc.pdf]]
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+**** Example problem cases for connection release with 3WHS
+
+
+\vskip-2.5em
+
+***** Lost ACK solved by (optimistic) timer in Host 2
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+#+caption: Host that does not receive ACK can timeout connection state
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:transport:disconnect:lost_ack}
+#+NAME: fig:transport:disconnect:lost_ack
+[[./standalone/tl_msc.pdf]]
+
+
+
+***** Lost 2nd ConnReq causes timeout 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+
+#+caption: Lacking confirmation of first connection disconnect request causes timeout and transmission
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:transport:disconnect:lost_dr}
+#+NAME: fig:transport:disconnect:lost_dr
+[[./standalone/tl_msc.pdf]]
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+
+
+
+**** State diagram of a TCP connection 
+
+\vskip-2em
+
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+- TCP uses three-way handshake for connection setup and release
+- FIN, FIN/ACK for release
+- Complicated by ability to have asymmetric, half-open connections and data in transit while close is in progress
+
+
+- (Partial) state diagram
+  - Expresses both ``server'' and ``client''aspects
+  - Each has a separate copy
+  - Legend: event/action, segments all caps, local events normal capitalization 
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+
+
+#+caption: TCP state machine (Author Ivan Griffin, \url{https://texample.net/tikz/examples/tcp-state-machine/})
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=1
+#+NAME: fig:transport:tcp_state_machine
+[[./standalone/tcp_state_machine.pdf]]
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+ 
+**** TCP state sequence – unfolding the state machine
+- Example scenario: Web server/client
+  - Web server opens a socket and listens on a connection
+  - Web browser connects to that socket
+  - Browser sends a request for a web page and then closes its socket for sending (remains open for receiving data)
+  - Server receives request, sends Web page, then closes its socket also for sending
+- How does the TCP state sequence look like?
+  - Simplifying assumption: 
+    - No errors
+    - No ``unusual'' behavior (closing a socket before establishing
+      connection, \dots) !
+
+**** TCP MSC – connection establishment
+
+#+caption: Establishing a TCP connection
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:transport:tcp_establish}
+#+NAME: fig:transport:tcp_establish
+[[./standalone/tl_msc.pdf]]
+
+
+
+**** TCP MSC – connection release 
+
+#+caption: Releasing a TCP connection
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:transport:tcp_release}
+#+NAME: fig:transport:tcp_release
+[[./standalone/tl_msc.pdf]]
+
+
+
+** Flow control                                                    :noexport:
+**** Flow control
+- Recall: Flow control = prevent a fast sender from overrunning a slow receiver
+  - Similar issue in link and transport layer
+- In transport layer more complicated
+  - Many connections, need to adapt the amount of buffer per connection dynamically (instead of just simply allocating a fixed amount of buffer space per outgoing link)
+  - Transport layer PDUs can differ widely in size, unlike link layer frames
+  - Network’s implicit packet buffering complicates the picture
+ 
+**** Flow control – buffer allocation
+- In order to support outstanding packets, the sender either
+  - Has to rely on the receiver to process packets as they come in (packets must not be reordered) – unrealistic, or 
+  - Has to assume that the receiver has sufficient buffer space available
+- The more buffer, the more outstanding packets
+  - Necessary to obtain highly efficient transmission, recall bandwidth-delay product!
+- How does sender have buffer assurance? 
+  - Sender can request buffer space
+  - Receiver can tell sender: ``I have X buffers available at the moment''
+    - For sliding window protocols: Influence size of sender’s send window
+ 
+**** Example of flow control with ACK/permit separation            :noexport:
+- Arrows show direction of transmission, ``\dots'' indicates lost packet
+- Potential deadlock in step 16 when control PDU is lost and not retransmitted
+**** Flow control – permits and acknowledgements
+- Distinguish 
+  - Receiver-Permits (``Receiver has buffer space, go ahead and send more data'')
+  - Acknowledgements (``Receiver has received certain packets'')
+- Should be separated in real-world protocols!
+  - Unfortunately, often intermixed – TCP, e.g., uses ACKs as Network-Permits; see congestion control chapter
+- Can be combined with dynamically changing buffer space at the receiver
+  - Due to, e.g., different speed with which the application actually retrieves received data from the transport layer
+  - Following example: TCP 
+ 
+**** Send and receive buffers in TCP 
+TCP maintains buffer at 
+- Sender, to assist in error control
+- Receiver, to store packets not yet retrieved by application or received out of order
+  - Note: only old TCP implementations used GoBack-N, discarded out-of-order
+    packets
+
+\vskip-1em
+
+\pause 
+***** Sender buffer
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+#+caption: Buffer at the sending side of a TCP protocol engine
+#+attr_latex: :width 0.95\textwidth :height 0.3\textheight :options keepaspectratio,page=\getpagerefnumber{page:transport:send_buffer}
+#+NAME: fig:transport:send_buffer
+[[./standalone/transportFigures.pdf]]
+
+\pause 
+
+
+***** Receiver buffer
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+
+#+caption: Buffer at the receiving side of a TCP protocol engine; note the gaps in the sequence of received packets
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:transport:receiver_buffer}
+#+NAME: fig:transport:receiver_buffer
+[[./standalone/transportFigures.pdf]]
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+
+
+**** TCP flow control: Advertised window
+
+- In TCP, receiver can *advertise* size of its receiving buffer
+  - Maximum buffer space available: MaxRcvdBuffer
+  - Advertised buffer space *Advertised window* =  MaxRcvdBuffer –
+    OccupiedBufferSpace 
+    - Buffer space occupied: (NextByteExpected-1) – LastByteRead
+
+\pause 
+
+- Recall: Advertised window limits the amount of data that a sender will inject into the network
+  - TCP sender ensures that LastByteSent – LastByteAcked <  AdvertisedWindow 
+
+**** Nagle’s algorithm – self-clocking and windows                 :noexport:
+- Recall TCP self-clocking: Arrival of an ACK is an indication that new data can be injected into the network
+- What happens when an ACK for only small amount of data (e.g., 1 byte) arrives?
+  - Send immediately? Network will be burdened by small packets (``silly window syndrome'') – inefficient 
+
+\pause 
+- Nagle’s algorithm describes *how much* data TCP is allowed to send
+- When application produces data to sendif both available data and advertised window ¸ MSS  send a full segmentelse  if there is unacked data in flight, buffer new data until MSS is full  else send all the new data now 
+
+
+** Timer and timeouts
+
+**** How to select timeout values?
+- Simple case: If round trip time between sender and receiver is a *known constant*
+  d: 
+     \[\text{Timeout} = d +  \epsilon\]
+  - $\epsilon$ small to allow for processing 
+\pause
+- Interesting case: What if round trip time is a random variable $\text{RTT}$?
+  - Simplifying assumption: Distribution $F_\text{RTT}$ of $\text{RTT}$ is known 
+\pause 
+- Select timeout 
+  - \dots small enough not to wait too long in case of packet error
+  - \dots big enough not to prematurely send out a retransmission
+
+
+**** Timeouts: Simple rule of thumb 
+- Full analysis is complicated 
+  - Need to take into account both packet error rate and distribution of D
+
+\pause 
+- Simple rule when ignoring packet errors:
+  - Fix an acceptable percentage $p_\text{premature}$ of premature timeouts
+\[ \text{Timeout} = \min_T \{ P (\text{RTT} > T) < p_\text{premature}
+\} + \epsilon  = \] 
+
+**** A simple timeout selection rule                               :noexport:
+- Possible rule: Timeout = c \mu for some constant c > 1
+- Suppose expected value E[D] = \mu is known
+- How to determine constant c? 
+- Case 1: Distribution function FD of D is known 
+- P (premature retrans.) = P (D > Timeout) = P (D > c\mu) = 1- FD (c\mu) 
+- Required: p > 1-FD(c\mu) $ c > 1/\mu FD-1(1-p)
+- Case 2: Distribution of D unknown 
+- P(D > timeout) = P (D - \mu > c\mu - \mu) < P(|D-\mu| > (c-1)\mu) < \sigma^2/ ((c-1)\mu)2  (Tschebyschow inqueality!)
+- Suppose this probability should be bounded by p
+- Implies c < 1 + \sigma / (\sqrt{p} \mu)
+- Or: Timeout = \mu + \sigma / \sqrt{p} 
+-  → Need also to know \sigma D for decent timeout selection!
+**** Timeout values depend on delay distribution                   :noexport:
+- Round trip time exponentially or lognormal distributed 
+**** Estimating delay parameters
+- Exact distribution knowledge usually not available, so only approximations feasible
+- Necessary: Estimates of   round-trip time mean and standard
+  deviation
+
+\pause 
+- Simple case: Suppose RTT is stable 
+  - Suppose $d_1, \dots, d_n$ RTT values have been observed
+  - Estimate average: $dd = 1/n \sum d_i$  
+  - Estimating standard deviation: sd = ( 1/(n-1) \sum _i(dd-d_i)^2 )^{1/2}
+\pause 
+- But: RTT can vary considerably over time (load patterns, failures,
+  \dots)
+
+
+**** Estimating parameters when distribution changes
+- What to do when the RTT distribution changes over time?
+- I.e., the samples di were not generated from independent, identically distributed random variables
+- There is no longer the expected delay, the standard deviation
+- At best: attempt to find a good approximation of the current distribution’s parameters 
+- Danger: tracking changes too slowly, overreacting to temporary
+  fluctuations 
+
+**** Autoregressive estimator 
+
+Popular approach: autoregressive model 
+- Specifically: $exponentially weighted moving average$ (EWMA)
+- $\text{EstimatedRTT} (i) = \alpha \text{EstimatedRTT}(i-1) + (1-\alpha) d_i$
+- $\alpha \in (0,1)$ controls agility of the model, how quickly it tracks changes in the underlying stochastic process
+- $\alpha = 0.8 \dots 0.9$ typical
+
+\pause 
+Similar approaches for standard deviation 
+- But: computationally and storage-wise expensive; alternative exists 
+
+
+
+**** Autoregressive estimation of mean values                      :noexport:
+- Example scenario: 
+- Mean of RTTs follows a sine function
+- Each RTT sample generated by an exponential distribution with appropriate mean 
+- \alpha = 0.8
+
+**** Problem: Variance not considered                              :noexport:
+- Previous estimation does not consider variance of RTTs
+- Autoregressive estimates of standard deviation have high overhead
+- Instead: use deviation as a simple approximation 
+- Jacobsen/Karels algorithm for new estimation: 
+- Differencen = SampleRTTn – EstimatedRTTn-1 
+- EstimatedRTTn = EstimatedRTTn-1 + (\delta Differencen) 
+- Deviationn = Deviationn-1 + \delta (|Difference|n – Deviationn-1) 
+- Timeoutn = \mu EstimatedRTTn + \phi Deviationn
+-  \delta 2 (0,1) a constant, \mu typically = 1, \phi = 4 (in TCP)
+- Deviation is an upper bound of standard deviation, but easier to compute 
+**** Jacobsen/Karels algorithm – Example                           :noexport:
+- Same scenario 
+- \alpha = 0.8 (for both mean and deviation estimation)
+- \phi = 4
+- 600 RTT samples
+- 5% larger than their determined timeout! 
+- Due to exponential distribution of RTTs!
+- Not a practical value! 
+**** Problem: ACKs cannot distinguish (re-)transmissions!          :noexport:
+- Simple algorithm described above cannot obtain correct RTT samples if packets have been retransmitted
+- ACKs refer to data/sequence numbers, not to individual packets!
+- Two examples: 
+**** Timer and packet loss                                         :noexport:
+- What happens after a packet loss? 
+- Recall Ethernet behavior: Become more and more careful, back off
+- Same idea here: After packet loss detected by timeout, use successively larger timeout values
+- Exponential  backoff: Double timeout value for each additional retransmission
+- The estimation of RTT and ``basic'' timeout value is performed as described on previous slide
+- The multiplicative factor for exponential backoff is reset upon ACK arrival 
+**** Timeouts & timer granularity
+- Timeout calculation can suffer from coarse-grained timer resolution in the operating system
+- Example: some old Unixes only had 500 ms resolution
+- Also: firing a timer heavily depends on relatively precise timer interrupts to be available 
+- Sometimes, timeouts can happen only seconds after a packet has been transmitted – far too sluggish 
+
+
+
+
+** UDP  
+
+**** A simple demultiplexer transport protocol – UDP 
+- An example for an unreliable, datagram protocol: User Datagram Protocol (UDP)
+- Only real function: (de)multiplex several data flows onto the IP layer and back to the applications
+- In addition: ensures packet’s correctness
+- Checksum out of UDP header + data + ``pseudoheader'' (pivotal IP header fields) 
+**** Remote Procedure Call (RPC)
+- UDP and TCP have essentially simple semantics: Transport data from A to B 
+- A bit like ``goto'' in sequential languages: no structure in data flow
+- More complex interactions can be directly captured in communication primitives
+- Example: Invocation of a procedure as a primitive, as opposed to two separate gotos
+-  ! Remote procedure call
+- Remote object invocation is really the same thing from a communication perspective  
+
+** QUIC 
+** Performance issues
+
+**** A few words on performance
+- Performance is still important \dots 
+- Measuring performance
+- Measure relevant metrics 
+- Make sure that the sample size is big enough
+- Make sure that samples are representative
+- Be careful when using a coarse-grained clock
+- Be sure that nothing unexpected is going on during your tests
+- Caching can wreak havoc with measurements
+- Understand what you are measuring and what is going on 
+- Be careful about extrapolating results 
+- Use a proper experimental design to finish in one human lifetime
+**** System design for better performance
+- CPU speed is more important than network speed
+- Or interfaces like NIC $ CPU 
+- Reduce packet count to reduce software overhead
+- Minimize context switches
+- Minimize copying 
+- You can buy more bandwidth but not lower delay
+- Avoiding congestion is better than recovering from it
+- Avoid timeouts
+- Optimize for the common case 
+- Depending on network: design for speed, not utilization 
+- Think about the right performance metric, it can be, e.g., energy efficiency rather than throughput or delay 
+
+**** TCP fairness & TCP friendliness 
+- TCP attempts to 
+  - Adjust dynamically to the available bandwidth 
+  - Fairly share this bandwidth among all connections
+  - I.e.: If n connections share a given bottleneck link, each connection obtains 1/n of its bandwidth
+- Interaction with other protocols
+  - Bottleneck bandwidth depends on load of other protocols as well, e.g., UDP – which is NOT congestion-controlled
+  - I.e., UDP traffic can ``push aside'' TCP traffic 
+- Consequence: Transport protocols should be TCP friendly 
+  - They should not consume more bandwidth than a TCP connection would consume in a comparable situation
+
+** Conclusion 
+
+
+
+**** TCP – Summary 
+- TCP consists of 
+  - Reliable byte stream – error control via GoBack-N or Selective Repeat (depending on version)
+  - Congestion control – window-based, AIMD, slow start, congestion threshold
+  - Flow control – advertised receiver window
+  - Connection management – three-way handshake for setup and teardown
+- TCP is perhaps the single most complicated and subtle protocol in
+  the internet (or BGP?)
+  - Many little details and extensions are not discussed here 
+  - Interaction of TCP with other layers is more complicated than it looks (e.g., wireless) because of hidden, implicit assumptions
+
+
+
+
+**** Conclusion 
+- Transport protocols can be anything from trivial to highly complex, depending on the purpose they serve
+- They determine to a large degree the dynamics of a network and – in particular – its stability
+- It is trivial to build ``faster'' than TCP protocols, but they are unstable
+- The interdependencies of various mechanisms in a transport protocols can be very subtle with big consequences
+- E.g., fairness, coexistence of different TCP versions  
+
+
+
