@@ -1,0 +1,77 @@
+% Created 2016-08-17 Wed 14:38
+\documentclass[tikz,multi=msc]{standalone}
+
+\input{../../templates/tikzFigureHeader}
+
+
+\begin{document}
+
+% TODO: why does this not work? 
+\tikzset{/msc/level offset/.default=2}
+
+\setlength{\instdist}{3cm}
+
+
+
+\begin{msc}[level height=4ex, level shift=1]{HTTP over TLS1.3 over TCP connection setup}
+
+  \label{page:quic:http11}
+  \declinst{a}{}{Client}
+  \declinst{b}{}{Server}
+
+  \mess{TCP SYN}{a}{b}
+  \nextlevel
+  \mess{TCP SYN + ACK}{b}{a}
+  \nextlevel
+
+
+  \mess{TCP ACK + TLS HELLO}{a}{b}
+  \nextlevel
+  \mess{TLS HELLO}{b}{a}
+  \nextlevel
+
+  \mess{TLS Finished}{a}{b}
+  \nextlevel
+  \mess{TLS Finished}{b}{a}
+  \nextlevel
+
+  \mess{HTTP GET}{a}{b}
+
+\end{msc}
+
+
+\begin{msc}[level height=4ex, level shift=6]{ TCP head-of-line blocking}
+
+  \label{page:quic:hol_tcp}
+  \declinst{a}{}{Server}
+  \declinst{b}{}{Client}
+
+  % t0
+  \mess{G1, G2}{envleft}{a}[0]
+  \lost[side=right]{G1}{}{a}
+  \nextlevel
+  \mess{G2}{a}{b}
+  \nextlevel
+  \mess{R1, R2}{envleft}{a}[0]
+  \mess{R1}{a}{b}
+  \nextlevel
+  \mess{R2}{a}{b}
+  \nextlevel[4]
+  \mess{G1?}{b}{a}
+  \nextlevel[1]
+  \mess{G1?}{b}{a}
+  \nextlevel[1]
+  \msccomment[side=right]{R complete, but not delivered}{b}
+  \mess{G1?}{b}{a}
+  \nextlevel[4]
+  \mess{G1}{a}{b}
+  \nextlevel[6]
+  \mess{G, R}{b}{envright}[0]
+  \nextlevel
+  \msccomment[side=right]{G, R delivered to app}{b}
+  
+  
+\end{msc}
+
+
+\end{document}

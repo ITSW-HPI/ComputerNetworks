@@ -43,7 +43,7 @@
       :END:
 
 
-** Services & addressing                                           :noexport:
+** Services & addressing                                           
 
 **** Transport protocols – Services to upper layer
 - Connection-less and connection-oriented transport service
@@ -107,7 +107,7 @@
 
 
 
-** Connection setup                                                :noexport:
+** Connection setup                                                
 
 **** Connection establishment
 - How to establish a joint context, a connection, between sender and receiver?
@@ -338,7 +338,7 @@ Solution: Have the sender answer a question that the receiver asks!
   - Together with ``TCP'' as transport protocol: *five tuple* 
 
 
-** Connection release                                              :noexport:
+** Connection release                                              
 
 **** Connection release
 - Once connection context between two peers is established, releasing a connection should be easy
@@ -514,7 +514,12 @@ Solution: Have the sender answer a question that the receiver asks!
 
 
 
-** Flow control                                                    :noexport:
+
+
+** Flow control                                                    
+
+
+
 **** Flow control
 - Recall: Flow control = prevent a fast sender from overrunning a slow receiver
   - Similar issue in link and transport layer
@@ -615,7 +620,49 @@ TCP maintains buffer at
 - When application produces data to sendif both available data and advertised window ¸ MSS  send a full segmentelse  if there is unacked data in flight, buffer new data until MSS is full  else send all the new data now 
 
 
-** Timer and timeouts
+** Acknowledgements 
+
+
+**** Conventional TCP: CumAck 
+
+- TCP sequence numbers in packets used in ACKs
+- Simplest/oldest: *cumulative* acknowledgements (CumAck)
+  - State the last sequence number up to which *all* data has been
+    received, without gaps
+- Consequence
+  - Sender does not have clear picture of which data has already been
+    received
+    - Compare discussion on FastRecovery in Chapter \ref{ch:cc}
+
+**** Selective acknowledgement 
+
+- Obvious idea: also tell sender about sequence numbers received
+  non-consecutively 
+- *Selective Acknowledgemet* (SACK) \cite{rfc2018}
+  - One block of continuously received data: Start and end of sequence numbers
+    - Takes 4 bytes 
+  - List of such blocks as options in TCP headers
+- Combined with CumAck
+- Incoming packets (hopefully) fill gaps; triggers ACK packets 
+
+**** CumAck and SACK: Example 
+
+- Example:
+  - All data up to and including sequence number 2780 has been
+    received
+  - Further data up to and including sequence number 2912
+  - With sequence numbers missing: 2781 - 2900, 2903 - 2906
+- TCP header specifies:
+  - CumAck 2780
+  - Announce SACK option (takes 2 bytes) 
+  - SACK Block 1: 2902 - 2903
+  - SACK Block 2: 2907 - 2912
+- Challenge: Only 40 bytes available for all options 
+
+
+
+
+** Timer and timeouts                                              
 
 **** How to select timeout values?
 - Simple case: If round trip time between sender and receiver is a *known constant*
@@ -682,7 +729,7 @@ TCP maintains buffer at
 **** Autoregressive estimator 
 
 Popular approach: autoregressive model 
-- Specifically: $exponentially weighted moving average$ (EWMA)
+- Specifically: exponentially weighted moving average (EWMA)
 - $\text{EstimatedRTT} (i) = \alpha \text{EstimatedRTT}(i-1) + (1-\alpha) d_i$
 - $\alpha \in (0,1)$ controls agility of the model, how quickly it tracks changes in the underlying stochastic process
 - $\alpha = 0.8 \dots 0.9$ typical
@@ -738,7 +785,7 @@ Similar approaches for standard deviation
 
 
 
-** UDP  
+** UDP                                                             
 
 **** A simple demultiplexer transport protocol – UDP 
 - An example for an unreliable, datagram protocol: User Datagram Protocol (UDP)
@@ -754,7 +801,221 @@ Similar approaches for standard deviation
 - Remote object invocation is really the same thing from a communication perspective  
 
 ** QUIC 
-** Performance issues
+
+*** TCP shortcomings 
+
+**** Typical use case: HTTP over TCP 
+
+\vskip-2.5em
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+
+- Common scenario: HTTP over TLS over  TCP 
+- Typical:
+  - Web page consists of many, small, independent components
+    (pictures, text, \dots )
+  - Each can be processed once complete
+  - Each is typically small (often fits into a few TCP segmentes,
+    within slow start)
+  - User-observable latency more important than throughput 
+
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+
+
+\begin{figure}[H]
+  \centering
+  \begin{tikzpicture}[every node/.style={draw, minimum width=10ex}, node distance=0pt]
+    \node (http) {HTTP}; 
+    \node [below=of http] (tls) {TLS}; 
+    \node [below=of tls] (tcp) {TCP}; 
+    \node [below=of tcp] (IP) {IP}; 
+  \end{tikzpicture}
+
+  \caption{Typical web protocol stack}
+  \label{fig:http_stack}
+\end{figure}
+
+
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+
+
+**** Challenge 1: Connection setup 
+
+\vskip-2.5em
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+
+Expensive 6-way handshake / 3 RTTs to establish TCP + TLS connection
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+
+
+
+#+caption: 6-way handshake to establish a TCP+TLS connection 
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:quic:http11}
+#+NAME: fig:quic:http11
+[[./standalone/quic_msc.pdf]]
+
+
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+
+**** Challenge 2: Head-of-line blocking 
+
+\vskip-2.5em
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+- Recall: TCP guarantees in-order delivery of packets to application 
+- Consequence: a missing packet stalls delivery of following packets
+  - So-called *head-of-line blocking* (HolB or HOL)
+  - Even if they have no semantic dependence; even if possible to
+    process separately
+  - TCP has no knowledge
+    about semantic boundaries 
+- Example: 
+  - Server sends two objects G, R, each two packets long (G1,
+    G2 and R1, R2)
+  - One packet is lost
+  - TCP cannot deliver second object to application
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+#+caption: Head-of-line blocking when one dropped packet stalls the delivery of a second, fully transmmitted object at the receiver
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:quic:hol_tcp}
+#+NAME: fig:quic:hol_tcp
+[[./standalone/quic_msc.pdf]]
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+**** Simple fix for HolB? 
+
+- Suggestion: Just use a separate TCP connection for each object 
+\pause 
+- Bad idea!
+  - Incurs setup latency for each object
+  - These small connections would not even get out of slow start
+  - Fairness!
+  - OS overhead (separate socket buffers, \dots)
+\pause 
+- Not used; e.g., Web browsers use at most 2-4 connections in parallel 
+\pause 
+- We need to make these separate objects visible to transport-layer
+  mechanisms! 
+
+*** Streams 
+
+**** Idea: Streams 
+
+- *Within one*  transport connection, multiplex several *streams*
+- Jointly per stream:
+  - Connection setup, TLS establishment
+  - Congestion control 
+- Separate per stream:
+  - Error control, interaction with application layer
+    - Needs: identifier which stream to use, new SAP!!
+\pause 
+- Pioneered in SCTP, picked up by QUIC 
+
+**** QUIC: Overview 
+
+QUIC \cite{rfc8999,rfc9000,rfc9001,rfc9002}
+  - Connection-oriented, TLS integrated 
+  - Streams within a connection
+    - Ordered, reliable byte stream
+    - Implicitly created when new stream ID is used
+    - *No* ordering guaranteed between several streams
+    - Can be prioritized
+    - Natural fit with HTTP/2 streams 
+  - Congestion-controlled
+  - Flow control for connection as a whole and streams individually 
+  - Support to migrate connections (using connection identifier)
+
+**** QUIC and TLS 
+
+- TLS and TCP: striclty layered
+- TLS and QUIC: more tightly integrated; cooperation, even
+  co-dependent 
+  - E.g., QUIC uses TLS keys, TLS uses relible/ordered delivery
+    provided by QUIC 
+  - E.g., so-called 0-RTT handshake without protection against replays
+  - 1-RTT handshake integrates separate TCP and TLS handshakes 
+
+
+
+**** QUIC and HTTP/3
+
+
+
+#+caption: HTTP/3 and QUIC, compared to conventional, TCP-based protocol stack, gray boxes typically implemented in kernel (figure inspired by B. Stiller, Uni Zurich)
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:quic:http3_stack}
+#+NAME: fig:quic:http3_stack
+[[./standalone/quic.pdf]]
+
+
+
+
+**** QUIC implementation 
+
+
+- To speed up adoption, originally implemented on top of UDP 
+- Congestion control algorithm is pluggable, can be (relatively)
+  easily be replaced 
+
+
+
+
+** Performance issues                                              
 
 **** A few words on performance
 - Performance is still important \dots 

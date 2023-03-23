@@ -30,3 +30,5 @@
 #+LATEX_HEADER: \externaldocument{../ch_transport/standalone/tl_msc}
 #+LATEX_HEADER: \externaldocument{../ch_transport/standalone/tcp_state_machine}
 #+LATEX_HEADER: \externaldocument{../ch_transport/standalone/transportFigures}
+#+LATEX_HEADER: \externaldocument{../ch_transport/standalone/quic}
+#+LATEX_HEADER: \externaldocument{../ch_transport/standalone/quic_msc}

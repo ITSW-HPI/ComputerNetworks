@@ -1,0 +1,41 @@
+% Created 2016-08-17 Wed 14:38
+\documentclass[tikz]{standalone}
+
+\input{../../templates/standalone_header}
+
+\usetikzlibrary {decorations.pathreplacing}
+
+\begin{document}
+
+\begin{tikzpicture}[every node/.style={draw, minimum width=10ex}, node distance=0pt]
+  \label{page:quic:http_tcp_stack}
+
+  \node (http) {HTTP}; 
+    \node [below=of http] (tls) {TLS}; 
+    \node [below=of tls] (tcp) {TCP}; 
+    \node [below=of tcp] (ip) {IP}; 
+  \end{tikzpicture}
+
+  \begin{tikzpicture}[every node/.style={draw, minimum width=12ex}, node distance=0pt]
+  \label{page:quic:http3_stack}
+  
+  \node (http2) {HTTP/2}; 
+  \node [below=of http2] (tls) {TLS}; 
+  \node [below=of tls, minimum height=1cm, fill=gray!10] (tcp) {TCP}; 
+  \node [below=of tcp, fill=gray!10] (ip) {IP}; 
+
+  \node [right=1cm of http2] (http3) {HTTP/3}; 
+  \node [below=of http3, minimum height=1cm] (quic) {QUIC}; 
+  \node [below=of quic, fill=gray!10] (udp) {UDP}; 
+  \node [below=of udp, fill=gray!10] (ip2) {IP}; 
+
+  \draw [decorate, decoration={brace,raise=10pt,mirror}] (http2.north west)  to node [midway,align=right, anchor=east, draw=none, xshift=-10pt] {Application} (http2.south west) ;
+
+  \draw [decorate, decoration={brace,raise=10pt,mirror}] (tls.north west)  to node [midway,align=right, anchor=east, draw=none, xshift=-10pt] {Transport} (tcp.south west) ;
+
+  \draw [decorate, decoration={brace,raise=10pt,mirror}] (ip.north west)  to node [midway,align=right, anchor=east, draw=none, xshift=-10pt] {Network} (ip.south west) ;  
+  
+  \end{tikzpicture}
+
+
+\end{document}
