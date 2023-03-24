@@ -1,4 +1,7 @@
 00. ch_org
 01. ch_basics 
 02. ch_arch
+06. ch_inter
 07. ch_network
+08. ch_congestion 
+09. ch_transport 

@@ -32,3 +32,4 @@
 #+LATEX_HEADER: \externaldocument{../ch_transport/standalone/transportFigures}
 #+LATEX_HEADER: \externaldocument{../ch_transport/standalone/quic}
 #+LATEX_HEADER: \externaldocument{../ch_transport/standalone/quic_msc}
+#+LATEX_HEADER: \externaldocument{../ch_inter/ch_inter}
