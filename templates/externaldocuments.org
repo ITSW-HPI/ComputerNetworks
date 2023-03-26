@@ -35,3 +35,4 @@
 #+LATEX_HEADER: \externaldocument{../ch_inter/ch_inter}
 #+LATEX_HEADER: \externaldocument{../ch_inter/standalone/internetworking}
 #+LATEX_HEADER: \externaldocument{../ch_inter/standalone/vlan_headers}
+#+LATEX_HEADER: \externaldocument{../ch_mac/ch_mac}
