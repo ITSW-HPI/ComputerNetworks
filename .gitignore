@@ -313,5 +313,9 @@ ch_test
 
 
 # allow handout and 169 symlinks
-!*/*_handout.tex
-!*/*_169.tex
+# !*/*_handout.tex
+# !*/*_169.tex
+
+# skip any bla test files in standalone
+*/standalone/bla.tex
+
