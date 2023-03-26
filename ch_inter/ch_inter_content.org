@@ -47,139 +47,495 @@
 ** LAN interconnection
 
 **** The problem
+
+\vskip-2.5em
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
 - Let’s start from classic Ethernet
-- Single wire, single collision domain
+  - Single wire, single collision domain
+\pause 
+\vfill*
 - Works fine for a limited number of stations
-- Collapses when number of nodes becomes too large
-- CSMA/CD will not keep up, limited bandwidth
--  $\leadsto$ Multiple LANs are necessary
-- Not an inherent Ethernet problem
-- Will happen on any medium, with any protocol
-**** Several reasons for multiple LANs
-- Limited number of users/throughput in a single LAN
+  - Collapses when number of nodes becomes too large
+  - CSMA/CD will not keep up, limited bandwidth
+
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+
+\onslide<1->
+#+caption: Small number of nodes / small load on a single collision domain are easy to handle, resulting in good performance
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:inter:happy_ether}
+#+NAME: fig:inter:happy_ether
+[[./standalone/internetworking.pdf]]
+
+
+\onslide<2->
+#+caption: Adding nodes or loads to a single collision domains leads to overload and inacceptable performance
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:inter:sad_ether}
+#+NAME: fig:inter:sad_ether
+[[./standalone/internetworking.pdf]]
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+
+**** Multiple LANs 
+- $\leadsto$ Multiple LANs are necessary
+- Not  inherently an Ethernet problem
+  - Will eventually happen on any medium, with any protocol
+
+**** Other reasons for multiple LANs
+- Limited number of supportable users/throughput in a single LAN
 - Historical reasons
-- Different groups started out individually setting up networks
-- Usually heterogeneous
+  - Different groups started out individually setting up networks
+    - Usually heterogeneous
 - Geographic distribution of different groups over different buildings, campus, …
-- Impractical/impossible to use a single LAN because of distance
-- Long round-trip delay will negatively influence performance
-- Reliability
-- Don’t put all your eggs into one basket
-- E.g., ``babbling idiot'' problem
+  - Impractical/impossible to use a single LAN because of distance
+  - Long round-trip delay will negatively influence performance
+- Dependability 
+  - Don’t put all your eggs into one basket
+  - E.g., ``babbling idiot'' problem
 - Security
-- Promiscuous operation – contain possible damage
+  - Promiscuous operation – contain possible damage
+
 **** Several options to overcome some of these limitations
-- Can be classified according to the layer in which they work
+Can be classified according to the layer in which they work
+
+#+caption: Terminology of interconnect devices at different layers
+#+attr_latex: :width 0.95\textwidth :height 0.4\textheight :options keepaspectratio,page=\getpagerefnumber{page:inter:gateway_names}
+#+NAME: fig:inter:gateway_names
+[[./standalone/internetworking.pdf]]
+
+
+
 
 
 ** Physical-layer interconnects
 
 **** Repeaters
-- Simplest option: Repeater
-- Physical layer device
+Simplest option: Repeater
+- Physical-layer device
 - Connected to two cables
-- Amplifies signal arriving on either one, puts on the other cable
-- Essentially an analog amplifier to extend physical reach of a cable
-- Combats attenuation
-- Neither understands nor cares about content (bits) of packets
+- Amplifies *signal* arriving on either one, puts on the other cable
+- Essentially an *analog* amplifier to extend physical reach of a
+  cable/a fibre/\dots 
+- Combats attenuation, but also amplifies noise 
+- Neither understands nor cares about, modulation, bits,  packets,
+  \dots 
+
+#+caption: Repeater to amplify a signal
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:inter:repeater}
+#+NAME: fig:inter:repeater
+[[./standalone/internetworking.pdf]]
+
+
+
+
 **** Hub
-- Similar to repeaters: Hubs
+Similar to repeaters: Hubs
 - Connects multiple cables electrically, not just two
-- Usually, does not amplify the signal
-- Also physical layer device
+  - Does not necessarily amplify the signal
+- Also physical-layer device
 - Also does not understand or process content of packets
 - All connected cables form a single collision domain
+
+#+caption: A hub as a phyiscal-layer device, forming a single collision domain
+#+attr_latex: :width 0.95\textwidth :height 0.4\textheight :options keepaspectratio,page=\getpagerefnumber{page:inter:hub}
+#+NAME: fig:inter:hub
+[[./standalone/internetworking.pdf]]
+
+
+
+
+**** Connector                                                     :noexport:
+
+***** Ethernet etc.: RJ 45
+
+https://commons.wikimedia.org/wiki/File:RJ45-Stecker-Netzwerk.jpg
+
+Uwe Schwöbel 
+
+
+
 **** Physical layer solutions not satisfactory
 - Physical layer devices – repeater, hub – do not solve the more interesting problems
-- E.g., how to handle load
+  - E.g., how to handle load
 - Some knowledge of the data link layer structure is necessary
-- To be able to inspect the content of the packets/frames and do something with that knowledge
--  $\leadsto$ Link-layer solutions
-- Bridge & switch
-- Historic distinction 
-- Switch: Interconnect several terminals
-- Bridge: Interconnect several networks
-- But terms nowadays often used interchangeably 
+  - To be able to inspect the content of the packets/frames and do something with that knowledge
+- $\leadsto$ Link-layer solutions
+
 
 ** Data-link-layer interconnects
+
+*** Architecture 
+
+**** Link-layer amplifiers 
+
+- Similar to a repeater
+  - One line in, one line out 
+- But: Converts signal to data, and resends the data
+  - Can apply, e.g. \gls{FEC} 
+
+**** Types of link-layer interconnects 
+
+
+- Bridge & switch
+- Historic distinction 
+  - Switch: Interconnect several terminals
+  - Bridge: Interconnect several networks
+- But terms nowadays often used interchangeably 
+
 
 **** Switch
 - Use a switch to connect several terminals
 - Without forming a single collision domain
 - Switch inspects an arriving packet’s destination addresses and forwards its only on the right cable
-- Does not bother the other terminals
-- Needs: buffer, knowledge where which terminal is connected
-- How to obtain knowledge about directions?
+  - Does not bother the other terminals
+  - Needs: buffer, knowledge where which terminal is connected
+
+**** Switch types: Bus-based 
+
+- Switch ports interconnected by a bus
+- The bus rate /should/ be as large as the sum of the line rates
+  - But not always the case; cost issue 
+
+#+caption: A bus-based switch
+#+attr_latex: :width 0.95\textwidth :height 0.4\textheight :options keepaspectratio,page=\getpagerefnumber{page_inter:switch:busbased}
+#+NAME: fig:page_inter:switch:busbased
+[[./standalone/internetworking.pdf]]
+
+
+**** Switch types: Crossbar-based
+
+- Alternative approach: Replace single bus by $n \times n$ switches to
+  connect all permutations of ports
+
+
+#+caption: A crossbar-based switch
+#+attr_latex: :width 0.95\textwidth :height 0.4\textheight :options keepaspectratio,page=\getpagerefnumber{page_inter:switch:crossbar_based}
+#+NAME: fig:page_inter:switch:crossbar_based
+[[./standalone/internetworking.pdf]]
+
+
+**** Collisions vs. broadcasts? 
+
+- Switches do *not* form a single collision domain
+  - Transmissions on each port use a *separate* instance of a MAC
+    protocol
+    - Or are full-duplex point-to-point like, anyway
+  - Unlike hubs
+  - Q: Is this statement true: ``A switched Ethernet by definition has
+    no collision''? 
+\pause 
+- Switches *do* form a single broadcast domain
+  - A broadcast packet arriving on one port is sent out one *all* other
+    ports
+  - Not necessarily at the same time; whenever a sending port's MAC
+    protocol allows it 
+
+
+*** Routing and forwarding 
+
+**** Backward learning 
+How to obtain knowledge about directions?
 - Simple: observe from where packets come to decide how to reach the sending terminal
-- Backward learning
-**** Backward learning, forwarding table  
+- *Backward learning*
+
+
+
+**** Scenario for backward learning
 - Packet with following parameters arrives at a switch: 
-- Source address X 
-- Destination address Y
-- Arrives at port P 
-- Switch concludes: X can be reached by sending to port P 
+  - Source address a:b
+  - Destination address g:h
+  - Arrives at port 
+- (Note: MAC addresses shown simplified here and in following
+  examples)
+
+#+caption: Scenario for backward learning in a switch
+#+attr_latex: :width 0.95\textwidth :height 0.4\textheight :options keepaspectratio,page=\getpagerefnumber{page:inter:backward:simple:before}
+#+NAME: fig:inter:backward:simple:before
+[[./standalone/internetworking.pdf]]
+
+
+**** Backward learning, forwarding table  
+- Switch concludes: a:b can be reached by sending *to* port c:d
 - Enters this is its forwarding table
 - Assumption: Symmetric network! 
-- Nothing concluded about Y! 
-- Forwarding table:  
+- *Nothing* concluded about g:h! 
+
+#+caption: Backward learning: reachability of a:b via port c:d has been determined and entered into forwarding table
+#+attr_latex: :width 0.95\textwidth :height 0.4\textheight :options keepaspectratio,page=\getpagerefnumber{page:inter:backward:simple:after}
+#+NAME: fig:inter:backward:simple:after
+[[./standalone/internetworking.pdf]]
+
+**** Bigger example: backward learning with two switches 
+
+#+caption: Backward learning for two switches: Starting point
+#+attr_latex: :width 0.95\textwidth :height 0.4\textheight :options keepaspectratio,page=\getpagerefnumber{page:inter:backward:two_switches:before}
+#+NAME: fig:inter:backward:two_switches:before
+[[./standalone/internetworking.pdf]]
+
+
+**** Bigger example: backward learning with two switches, step 1
+
+#+caption: Backward learning for two switches: Step 1
+#+attr_latex: :width 0.95\textwidth :height 0.4\textheight :options keepaspectratio,page=\getpagerefnumber{page:inter:backward:two_switches:step1}
+#+NAME: fig:inter:backward:two_switches:step1
+[[./standalone/internetworking.pdf]]
+
+
+
+
+**** Bigger example: backward learning with two switches, step 2
+
+#+caption: Backward learning for two switches: Step 2
+#+attr_latex: :width 0.95\textwidth :height 0.4\textheight :options keepaspectratio,page=\getpagerefnumber{page:inter:backward:two_switches:step2}
+#+NAME: fig:inter:backward:two_switches:step2
+[[./standalone/internetworking.pdf]]
+
+
+
+**** Bigger example: backward learning with two switches, step 3
+
+#+caption: Backward learning for two switches: Step 3
+#+attr_latex: :width 0.95\textwidth :height 0.4\textheight :options keepaspectratio,page=\getpagerefnumber{page:inter:backward:two_switches:step3}
+#+NAME: fig:inter:backward:two_switches:step3
+[[./standalone/internetworking.pdf]]
+
+
+
+**** Bigger example: backward learning with two switches, step 4
+
+#+caption: Backward learning for two switches: Step 4
+#+attr_latex: :width 0.95\textwidth :height 0.4\textheight :options keepaspectratio,page=\getpagerefnumber{page:inter:backward:two_switches:step4}
+#+NAME: fig:inter:backward:two_switches:step4
+[[./standalone/internetworking.pdf]]
+
+
+
+
 **** Bridges
-- Switches are limited in that they connect simple terminals
+
+\vskip-2.5em
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.58
+      :END:
+
+
+
+- Switches connect simple terminals
 - Sometimes, entire networks have to be connected: Bridges
-- Bridge also inspects incoming packet and forwards only towards destination
-- How to learn here where destination is? Does simple ``backward'' learning suffice? 
-- Each network connected to a bridge is a separate collision domain
-- Bridges can also interconnect different LAN types
-- Not possible on physical layer only
+- Bridge: basic operation very similar to switch 
+- Differences: 
+  - Each network connected to a bridge is a separate collision domain
+    *and* broadcast domain 
+  - Bridges can also interconnect different LAN types (e.g., Ethernet,
+    Token Ring, \dots)
+    - Not possible on physical layer only; usually not part of switches
+
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.38
+      :END:   
+
+
+#+caption: Bridge connecting two networks
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:inter:bridge}
+#+NAME: fig:inter:bridge
+[[./standalone/internetworking.pdf]]
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
 **** Switches & bridges
 - Typical combination: Bridge as ``just another terminal'' for a switch
-**** Backward learning in bridges
+
+#+caption: A bridge connecting two LANs, each realised by a switch. From switch perspective, bridge turns into a device with multiple MAC addresses.
+#+attr_latex: :width 0.95\textwidth :height 0.5\textheight :options keepaspectratio,page=\getpagerefnumber{page:inter:bridge_switch}
+#+NAME: fig:inter:bridge_switch
+[[./standalone/internetworking.pdf]]
+
+**** Two switches directly connected without a switch? 
+
+#+caption: Directly connecting switches leads to similar results
+#+attr_latex: :width 0.95\textwidth :height 0.5\textheight :options keepaspectratio,page=\getpagerefnumber{page:inter:two_switches}
+#+NAME: fig:inter:two_switches
+[[./standalone/internetworking.pdf]]
+
+
+
+**** Forwarding and backwarding learning in complex example
+
+#+caption: Complex example for backward learning and flooding, in combination of swtiches and brigdes with heterogeneous LAN technologies
+#+attr_latex: :width 0.95\textwidth :height 0.5\textheight :options keepaspectratio,page=\getpagerefnumber{page:inter:complex:backwardlearning}
+#+NAME: fig:inter:complex:backwardlearning
+[[./standalone/internetworking.pdf]]
+
+
+**** Backward learning in bridges                                  :noexport:
 - Backward learning is trivial in a switch – how about a bridge?
 - Example: A sends packet to E
 - Suppose bridges B1 and B2 know where E is
 - B2 will see A’s packet coming from LAN2
 - Since B2 does not know about LAN1, B2 will assume A to be on LAN2
 - Which is fine! B1 will forward any packet destined to A arriving at LAN2 to LAN1, so that works out nicely
-**** Backward learning in bridges – bootstrapping 
+
+**** Backward learning in bridges – bootstrapping                  :noexport:
 - In previous example: how does bridge B2 know initially where node E is?
 - Answer: It does NOT know
 - Option 1: Manual configuration – not nice!
 - Option 2: Do not care – simply forward the data everywhere for an unknown address
 - Except to the network where it came from 
 - Algorithm is thus: flood if not known, discard if known to be not necessary, forward specifically if destination is known
-**** Flooding by bridges – problems 
+
+
+
+**** Convergence: Switch and bridge
+- Traditionally, distinction between switch and bridge made sense
+  - Key difference: *Bridges can interconnect heterogeneous networks* 
+- Today: most devices contain both types of functionality
+  - Terms be treated more or less interchangeably today 
+  - Often more a marketing distinction than a technical one
+
+
+
+*** Flooding 
+
+
+**** Simplistic flooding  – problems 
+
 - Previous ``backward learning by flooding'' is simple, but problematic
-- Consider example topology:
-- Second bridge for reliability
+- Consider example topology with second switch (or bridge) for reliability
+
+\begin{figure}[h]
+  \centering
+\begin{tikzpicture}
+
+  \node [switch] at (2, 1)(sw1) {Switch 1};
+  \node [right=0.1 of sw1.south] {c:d}; 
+  \node [right=0.1cm of sw1.north] {e:f}; 
+  \node [switch] at (6, 1)(sw2) {Switch 2}; 
+  \node [left=0.1 of sw2.south] {g:h}; 
+  \node [left=0.1cm of sw2.north] {j:k}; 
+  \node [client,label=left:{a:b}] at (0, -2) (client) {};
+
+  \coordinate (tmp1) at (-1,3); 
+  \coordinate (tmp2) at (-1,-1.5);
+  
+  \draw (tmp1) -- ++(8,0); 
+  \draw (tmp2) -- ++(8,0); 
+ 
+  \draw (client.east) -- ++(0.5,0) to (\tikztostart |- tmp2); 
+  \draw (sw1) edge (sw1 |- tmp1) edge (sw1 |- tmp2); 
+  \draw (sw2) edge (sw2 |- tmp1) edge (sw2 |- tmp2); 
+
+  \onslide<2,6>
+  \node [draw, below left=1 and 0.1 of sw1.south]   (p) {Packet}; 
+  \draw [->] (p) -- ++(0,0.5);
+
+  \onslide<3,7>  
+  \node [draw, above left=1 and 0.1 of sw1.south]   (p) {Packet}; 
+  \draw [->] (p) -- ++(0,0.5);
+  \onslide<3->  
+  \node [left=1.35 of sw1] {
+    \small
+    \begin{tabular}{ll}
+      \toprule
+      Dest. & Out \\
+            % & port \\
+      \midrule
+      a:b & c:d \\
+      \bottomrule 
+    \end{tabular}
+  };
+
+
+  \onslide<4,8>  
+  \node [draw, above right=1 and 0.1 of sw2.south]   (p) {Packet}; 
+  \draw [->] (p) -- ++(0,-0.5);
+  
+  \onslide<5,9>  
+  \node [draw, below right=1 and 0.1 of sw2.south]   (p) {Packet}; 
+  \draw [->] (p) -- ++(0,-0.5);
+  \onslide<5->  
+  \node [right=1.35 of sw2] {
+    \small
+    \begin{tabular}{ll}
+      \toprule
+      Dest. & Out \\
+            % & port \\
+      \midrule
+      a:b & j:k \\
+      \bottomrule 
+    \end{tabular}
+  };
+
+  
+\end{tikzpicture}
+  \caption[Packet loops caused by backward learning]{Simplistic backward learning causes packets to circle indefinitely in topologies with loops; packet destination address does not matter}
+\label{fig:inter:packet_loop}
+\end{figure}
+
+
 **** Solution 1: Somehow restrict flooding
 - Unrestricted, brute-force flooding evidently fails
 - Avoid packet looping indefinitely by remembering which packets have already been forwarded 
-- If already seen and forwarded a packet, simply drop it
+  - If already seen and forwarded a packet, simply drop it
 - Requires: State & uniqueness
-- Bridges have to remember which packets have passed through 
-- Packets must be uniquely identifiable – at least source, destination, and sequence number are necessary to distinguish packets 
--  $\leadsto$ Big overhead! 
-- Especially state is a problem, as is time to search this amount of state 
-- Usually not used 
+  - Switches/bridges have to remember which packets have passed through 
+  - Packets must be uniquely identifiable – at least *source,
+    destination, and sequence number* are necessary to distinguish
+    packets 
+
+**** Solution 1: Restricted flooding only for control 
+- $\leadsto$ Big overhead! 
+  - Especially state is a problem, as is time to search this amount of state 
+  - Usually not used for *data* packets 
+- Sometimes, necessary for control packets
+  - E.g., topology discovery, distributing link information, \dots 
+
 **** Solution 2: Spanning trees
 - Packet loops are caused by cycles in the graph defined by the bridges
-- Think of bridges as edges, LANs as nodes in this graph
-- Redundant bridges form loops in this graph
+  - Think of bridges as edges, LANs as nodes in this graph
+  - Redundant bridges form loops in this graph
 - Idea: Turn this into a loop-free, acyclic graph
+\pause 
 - Simplest approach: Compute a spanning tree on this LAN-bridge graph
-- Simple, self-configured, no manual intervention
-- But not optimal: actual capacity of installed bridges might not be fully exploited
-- Buzzword: IEEE 802.1dIEEE 802.1w
-- 
-**** Spanning tree of bridges 
-**** Spanning trees: Bridges as edges in graph 
-**** Rapid Spanning Tree Protocol (RSTP)
-**** Convergence: Switch and bridge
-- Traditionally, distinction between switch and bridge made sense
-- Today: most devices contain both types of functionality
-- Terms be treated more or less interchangeably today 
-- Often more a marketing distinction than a technical one
-- 
-**** Addresses in packet? 
+  - Simple, self-configured, no manual intervention
+  - But not optimal: actual capacity of installed bridges might not be fully exploited
+  - Buzzword: IEEE 802.1dIEEE 802.1w
+- Not further explored here 
+
+
+**** Spanning tree of bridges                                      :noexport:
+**** Spanning trees: Bridges as edges in graph                     :noexport:
+**** Rapid Spanning Tree Protocol (RSTP)                           :noexport:
+
+
+**** Addresses in packet?                                          :noexport:
 - Suppose we send a packet from A to H
 - Which addresses (source, destination) are in the packet when it 
 - Arrives or leaves at B1, B2?
@@ -188,61 +544,127 @@
 
 ** Higher-layer interconnects
 
-**** Routers
+
+**** Routers and addresses 
 - All devices so far either ignored addresses (repeaters, hubs) or worked on MAC-layer addresses (switches, bridges)
 - For interconnection outside a single LAN/connection of LAN, these simple addresses are insufficient
 - Main issue: ``flat'', unstructured addresses do not scale 
-- In spanning tree, there is an entry for every device’s designated output port!
--  $\leadsto$ Need more sophisticated addressing structure and devices that operate on it
--  $\leadsto$ Routers and routing!
-- Treated in the next chapter
+  - E.g., In spanning tree, there is an entry for every device’s designated output port!
+  - $\leadsto$ Need more sophisticated addressing structure and devices that operate on it
+- $\leadsto$ Routers and routing!
+  - Structurally, very similar and very different to switches 
+  - Treated in the Chapter \ref{ch:network}
+
 **** Gateways
 - If even routers will not do, higher-layer interconnection is necessary: Gateways
 - Work at transport level and upwards
-- E.g., application gateways transforming between HTML $ WML or HTTP $ WAP
-- E.g., transcoding gateways for media content
+  - E.g., application gateways transforming between HTML $\leftrightarrow$ WML or HTTP $\leftrightarrow$ WAP
+  - E.g., transcoding gateways for media content
 
-** VLAN operation 
-- Switch knows: 
-- Which VLANs exist on which ports 
-- VLAN of incoming packet, determined by: 
-- Fixed port $\leadsto$  VLAN mapping 
-- MAC address! VLAN mapping
-- IP address $\leadsto$ VLAN mapping
-- But: layer violation!!! 
-- Alternative: IEEE 802.1Q ``tagged'' VLANs
-- Make VLAN explicit! 
+** VLAN operation
+
+**** Further topic in LAN/LAN interconnection: virtual LANs 
+- Problem: LANs/switches are geared towards *physical* proximity of devices
+- But: LANs should respect *logical* proximity
+  - E.g., connect devices of working groups together, irrespective where they happen to be located
+  - E.g., limit broadcasts to devices that should receive them 
+
+
+**** Virtual LANs: Basic idea 
+
+
+\vskip-2.5em
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+- Idea: put a *virtual LAN* on top of an existing physical LAN
+- Switches (or bridges) need configuration tables which port belongs to which VLAN(s)
+  - Only forward packets to ports of correct VLAN
+  - In particular, limit broadcasts to color of originating interface 
+
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+#+caption: Basic idea of VLANs: Use colors to express membership of devices/interfaces in a specific VLAN
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:inter:vlan}
+#+NAME: fig:inter:vlan
+[[./standalone/internetworking.pdf]]
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+**** VLAN operation, using legacy packets  
+- Basic assumption: no change to packet format is allowed
+  - Legacy operation! 100s of millions of cars, switches deployed
+    (ca. 1995)
+- VLAN-capable switch knows: 
+  - Which VLANs exist on which ports
+  - VLAN of incoming packet, determined by, e.g.: 
+    - Fixed port $\leadsto$  VLAN mapping 
+    - MAC address $\leadsto$ VLAN mapping
+    - IP address $\leadsto$ VLAN mapping
+  - But: layer violation!!! 
+
+\pause 
 - Forwarding: 
-  - Broadcasts: only on ports which carry the packet’s VLAN 
+  - Broadcasts: only on ports that carry the packet’s VLAN 
   - Unicast: Use VLAN-specific forwarding table 
 - Effectively, one forwarding table per VLAN 
 
-**** Further topic in LAN/LAN interconnection: VLAN
-- Problem: LANs/switches are geared towards physical proximity of devices
-- But: LANs should respect logical proximity
-- Connect devices of working groups together, irrespective where they happen to be located
-- Idea: put a virtual LAN on top of an existing physical LAN
-- Switches (or bridges) need configuration tables which port belongs to which VLAN
-- Only forward packets to ports of correct VLAN
-**** IEEE 802.1q packet format 
+**** VLAN operation with changes to packet : IEEE 802.1q 
+
+- 802.1q header inserted, remove by first, last 802.1q-capable switch
+  - Signaled via a length larger than previously allowed
+  - Should never be seen by a non-802.1q capable device 
+- Maximum frame length extended! 
+
+***** IEEE 802.1q packet format 
+
+#+caption: Legacy IEEE 802.3 header
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:inter:8023_header}
+#+NAME: fig:inter:8023_header
+[[./standalone/internetworking.pdf]]
+
+
+#+caption: IEEE 802.1q header with extension for VLAN identifieers (12 bits for color)
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:inter:8021q_header}
+#+NAME: fig:inter:8021q_header
+[[./standalone/internetworking.pdf]]
+
+
+
+
 **** IEEE 802.11q – discussion 
 - It changed the Ethernet header!!! 
-- Big legacy issue at the time (ca. 1995)
-- Compatibility with existing cards? Who generates header? Maximum frame size exceeded when inserting new field? …? 
+  - Big legacy issue at the time (ca. 1995)
+  - Compatibility with existing cards? Who generates header? Maximum frame size exceeded when inserting new field? \dots? 
 - Observation: End machines do not really use the VLAN fields, only switches/bridges 
-- VLAN tags not needed on end hosts – switch links 
-- Can be inserted by first switch, removed by last one, if necessary
-- And here, use one of the three options from previous slide 
+  - VLAN tags not needed on links between end hosts and switch 
+  - Can be inserted by first switch, removed by last one, if necessary
+  - And here, use one of the three options from previous slide 
 
 ** Conclusion 
 **** Conclusion
 - Single LANs are insufficient to provide communication for all but the simplest installations
 - Interconnection of LANs necessary
-- Interconnect on purely physical layer: Repeater, hub
-- Interconnect on data link layer: Bridges, switches
-- Interconnect on network layer: Router
-- Interconnect on higher layer: Gateway
+  - Interconnect on purely physical layer: Repeater, hub
+  - Interconnect on data link layer: Bridges, switches
+  - Interconnect on network layer: Router
+  - Interconnect on higher layer: Gateway
 - Problems
-- E.g., redundant bridges can cause traffic floods; need spanning tree algorithm
-- Simple addresses do not scale; need routers
+  - E.g., redundant bridges can cause traffic floods; need spanning tree algorithm
+  - Simple addresses do not scale; need routers
 

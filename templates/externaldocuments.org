@@ -33,3 +33,5 @@
 #+LATEX_HEADER: \externaldocument{../ch_transport/standalone/quic}
 #+LATEX_HEADER: \externaldocument{../ch_transport/standalone/quic_msc}
 #+LATEX_HEADER: \externaldocument{../ch_inter/ch_inter}
+#+LATEX_HEADER: \externaldocument{../ch_inter/standalone/internetworking}
+#+LATEX_HEADER: \externaldocument{../ch_inter/standalone/vlan_headers}
