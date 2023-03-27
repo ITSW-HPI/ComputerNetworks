@@ -46,46 +46,136 @@
 ** Baseband 
 
 **** Basic service of physical layer: transport bits
-- Physical layer should enable the transport of bits between two locations A and B
-- Abstraction: Bit sequence – correct, in order delivery
-**** A bit $\leadsto$ signal conversion rule
-- A simple conversion rule
+- Physical layer  transports bits between two locations A and B
+
+#+caption: Bits get turned into voltage levels over a physical medium by an example PHY protocol
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:phy:service}
+#+NAME: fig:phy:service
+[[./standalone/phy.pdf]]
+
+
+
+
+**** A bit $\leftrightarrow$ signal conversion rule
+A simple conversion rule
 - For a ``1'' bit, apply voltage to the pair of wires
 - For a ``0'' bit, no voltage
-- 
+
+
+
+
 **** Example: Transmit bit pattern for character ``b''
 - Character ``b'' needs a representation as a sequence of bits
 - One option: Use the ASCII code of ``b'', 98, as a binary number 01100010
-- Resulting voltage put on the wire: 
+- Resulting voltage put on wire
+
+
+#+caption: Turning a bit sequence into voltage changes
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:phy:ascii_b}
+#+NAME: fig:phy:ascii_b
+[[./standalone/plots.pdf]]
+
+
+
+
 **** What arrives at the receiver?
 - Typical pattern at the receiver:
-- What is going on here? 
+
+#+caption: Typical pattern arriving at a receiver when sending the voltage pattern from Figure \ref{fig:phy:ascii_b}
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:phy:fourier:lowpass:noisy}
+#+NAME: fig:phy:fourier:lowpass:noisy
+[[./standalone/plots.pdf]]
+
+
+\pause 
+What is going on here? 
+
+
+
 **** Physical media transmit waves! 
-- Fact: Most signals are ``travelling oscillations'' 
-- I.e., a wave 
-- E.g.: sound, radiomagnetic waves, … 
-- And different waves travel differently 
-- So what do our signals have to do with waves? 
-- To understand signal propagation in a physical medium, some background is required how signals can be described as oscillations/waves 
+- Fact: Most signals create  ``coupled oscillations'' 
+  - I.e., a wave 
+    - E.g.: sound, radiomagnetic waves, … 
+  - And different waves travel differently 
+\pause 
+- To understand signal propagation in a physical medium, some
+  background is required how signals can be described as
+  oscillations/waves 
+
+
 **** Some background: Fourier analysis
-- First: Fourier’s theoremAny periodic function g(t) (with period T) can be written as a (possibly infinite) sum of sine and cosine functions; the frequencies of these functions are integer multiples of the fundamental frequency f = 1/T. 
-- 
-- 
-- Constants c, an, bn are to be determined. 
+
+***** Fourier’s theorem                                           :B_theorem:
+      :PROPERTIES:
+      :BEAMER_env: theorem
+      :END:
+
+Any (reasonable, e.g., partially continuous)  *periodic* function g(t) with period $T$ can be *written as* a (possibly infinite) sum of sine and cosine functions; the frequencies of these functions are integer multiples of the fundamental frequency f = 1/T. 
+
+\begin{equation}
+\label{eq:fourier}
+g(t) = 1/2c + \sum_{n=1}^\infty a_n \sin(2\pi n f t) + \sum _{n=1}^\infty b_n \cos(2\pi n f t )
+\end{equation}
+
+\pause
+- Eq. \ref{eq:fourier} is called the *Fourier series* representation
+  of $g$
+\pause 
+- Constants c, an, bn are to be determined - the *Fourier analysis* of $g$
+
+
+
 **** Good news: Orthogonal base system
-- 
-- Function family  {sin(2n pi ft), cos(2n pi ft) } forms an orthogonal base system of all functions with period 1/f 
-- For fixed base frequency f, n=0, …, infinity 
-- Scalar product: Integral over 0 .. 2pi 
+ 
+- Function family  ${\sin(2n \pi f t), \cos(2n \pi ft) }$ forms an *orthogonal base system* of all functions with period $1/f$ 
+  - For fixed base frequency $f$, $n=1, \dots, \infty$ 
+  - Orthogonal under scalar product $<f, g> = \int_{t=0}^T f(t) g(t)  \mathrm{d}t$
+\pause 
 - Allows to calculate coefficients! 
-- WS 19/20, v 1.11
-- Computer Networks - Physical layer
-- 10
+
 **** Fourier analysis – computing coefficients
-- Coefficients c, an, bn in the Fourier series can be computed: 
-- The nth summary terms are called harmonics
-- The sum of the squares of the nth coefficients – an2 + bn2 – is proportional to the energy contained in this harmonic
-- Why squares? Say, g(t) shows voltage $\leadsto$ Power P = U¢ I = U ¢ (U/R) $\leadsto$ energy E / P ¢ T / U2 T  
+- Coefficients c, an, bn in the Fourier series can be computed using
+  orthogonality 
+- Homework: convince yourself that
+  - $\int_{t=0}^\infty \sin (2\pi n f t) \cos (2\pi m f t) \mathrm{d}t = 0$ for
+    any $n, m$. 
+  - $\int_{t=0}^\infty \sin (2\pi n f t) \sin (2\pi m f t) \mathrm{d}t = 0$ for
+    any $n \not= m$. 
+  - $\int_{t=0}^\infty \sin (2\pi n f t) \sin (2\pi n f t) \mathrm{d}t = T/2$ for
+    any $n$.
+  - Hint: Standard trigonometric identities 
+\pause 
+- Use these identities to calculate $a_n$, $b_$ 
+
+**** Fourier analysis – computing coefficients
+ 
+We find: 
+
+- $c = \frac{2}{T} \int_{t=0}^T g(t) \mathrm{d}t$
+- $a_n = \frac{2}{T} \int_{t=0}^T g(t) \sin(2\pi nf t) \mathrm{d}t$
+- $b_n = \frac{2}{T} \int_{t=0}^T g(t) \cos(2\pi nf t) \mathrm{d}t$
+
+**** Fourier analysis - Compute! 
+
+- Compute $a_1$ for the function 
+
+#+caption: Example function with period $T$ to compute Fourier coefficients 
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:phy:simple_fourier}
+#+NAME: fig:phy:simple_fourier
+[[./standalone/plots2.pdf]]
+
+
+
+
+
+**** Terminology for Fourier series 
+
+- The $n$th terms of these sums  are called *harmonics*
+- The sum of the squares of the $n$th coefficients (i.e., $a_n^2 + b_n^2$) is proportional to the power contained in this harmonic
+- Why squares? Say, $g(t)$ shows voltage $\leadsto$ Power 
+  $P = U \cdot I = U \cdot (U/R) = \frac{1}{R} g^2(t)$
+
+
 **** Compute Fourier transform for square wave
 - Consider a square wave as function g(t) 
 **** Applying Fourier analysis to example

@@ -134,94 +134,94 @@
 \pgfplotstableread{fourier_data}\ftable
 
 
-% \begin{tikzpicture}
-%   \label{page:phy:fourier:all_harmonics}
-%   \begin{axis}[no markers,
-%     xlabel=Time,
-%     ylabel=Voltage,
-%     domain=0:8,
-%     trig format plots=rad,
-%     samples=100,
-%     ]
-%     \addplot coordinates { (0,0) (1,0) (1,1) (3,1) (3,0) (6,0) (6,1) (7,1) (7,0) (8,0)};
-%     \foreach \harmonics in {0, 1, 2, 4, 8, 16, 32, 64, 128, 1024} {
-%       \addplot table [x=t, y=\harmonics] {\ftable};
-%     }
-%   \end{axis}
-% \end{tikzpicture}
+\begin{tikzpicture}
+  \label{page:phy:fourier:all_harmonics}
+  \begin{axis}[no markers,
+    xlabel=Time,
+    ylabel=Voltage,
+    domain=0:8,
+    trig format plots=rad,
+    samples=100,
+    ]
+    \addplot coordinates { (0,0) (1,0) (1,1) (3,1) (3,0) (6,0) (6,1) (7,1) (7,0) (8,0)};
+    \foreach \harmonics in {0, 1, 2, 4, 8, 16, 32, 64, 128, 1024} {
+      \addplot table [x=t, y=\harmonics] {\ftable};
+    }
+  \end{axis}
+\end{tikzpicture}
+ 
+\foreach \harmonics in {0, 1, 2, 4, 8, 16, 32, 64, 128, 1024} {
+  \begin{tikzpicture}
+    \label{page:phy:fourier:h_\harmonics}
+  \begin{axis}[no markers,
+    xlabel=Time,
+    ylabel=Voltage,
+    domain=0:8,
+    trig format plots=rad,
+    samples=100,
+    ]
+    \addplot coordinates { (0,0) (1,0) (1,1) (3,1) (3,0) (6,0) (6,1) (7,1) (7,0) (8,0)};
+    \addplot table [x=t, y=\harmonics] {\ftable}; 
+  \end{axis}
+\end{tikzpicture}
+}
 
-% \foreach \harmonics in {0, 1, 2, 4, 8, 16, 32, 64, 128, 1024, att} {
-%   \begin{tikzpicture}
-%     \label{page:phy:fourier:h_\harmonics}
-%   \begin{axis}[no markers,
-%     xlabel=Time,
-%     ylabel=Voltage,
-%     domain=0:8,
-%     trig format plots=rad,
-%     samples=100,
-%     ]
-%     \addplot coordinates { (0,0) (1,0) (1,1) (3,1) (3,0) (6,0) (6,1) (7,1) (7,0) (8,0)};
-%     \addplot table [x=t, y=\harmonics] {\ftable}; 
-%   \end{axis}
-% \end{tikzpicture}
-% }
+\begin{tikzpicture}
+  \label{page:phy:fourier:lowpass}
+  \begin{axis}[no markers,
+    xlabel=Time,
+    ylabel=Voltage,
+    domain=0:8,
+    trig format plots=rad,
+    samples=100,
+    ]
+    \addplot coordinates { (0,0) (1,0) (1,1) (3,1) (3,0) (6,0) (6,1) (7,1) (7,0) (8,0)};
+    \addplot table [x=t, y=low] {\ftable}; 
+  \end{axis}
+\end{tikzpicture}
 
-% \begin{tikzpicture}
-%   \label{page:phy:fourier:lowpass}
-%   \begin{axis}[no markers,
-%     xlabel=Time,
-%     ylabel=Voltage,
-%     domain=0:8,
-%     trig format plots=rad,
-%     samples=100,
-%     ]
-%     \addplot coordinates { (0,0) (1,0) (1,1) (3,1) (3,0) (6,0) (6,1) (7,1) (7,0) (8,0)};
-%     \addplot table [x=t, y=low] {\ftable}; 
-%   \end{axis}
-% \end{tikzpicture}
-
-% \begin{tikzpicture}
-%   \label{page:phy:fourier:lowpass:noisy}
-%   \begin{axis}[no markers,
-%     xlabel=Time,
-%     ylabel=Voltage,
-%     domain=0:8,
-%     trig format plots=rad,
-%     samples=100,
-%     ]
-%     \addplot coordinates { (0,0) (1,0) (1,1) (3,1) (3,0) (6,0) (6,1) (7,1) (7,0) (8,0)};
-%     \addplot table [x=t, y=lowNoise] {\ftable}; 
-%   \end{axis}
-% \end{tikzpicture}
+\begin{tikzpicture}
+  \label{page:phy:fourier:lowpass:noisy}
+  \begin{axis}[no markers,
+    xlabel=Time,
+    ylabel=Voltage,
+    domain=0:8,
+    trig format plots=rad,
+    samples=100,
+    ]
+    \addplot coordinates { (0,0) (1,0) (1,1) (3,1) (3,0) (6,0) (6,1) (7,1) (7,0) (8,0)};
+    \addplot table [x=t, y=lowNoise] {\ftable}; 
+  \end{axis}
+\end{tikzpicture}
 
 
-% \begin{tikzpicture}
-%   \label{page:phy:fourier:bandpass}
-%   \begin{axis}[no markers,
-%     xlabel=Time,
-%     ylabel=Voltage,
-%     domain=0:8,
-%     trig format plots=rad,
-%     samples=100,
-%     ]
-%     \addplot coordinates { (0,0) (1,0) (1,1) (3,1) (3,0) (6,0) (6,1) (7,1) (7,0) (8,0)};
-%     \addplot table [x=t, y=band] {\ftable}; 
-%   \end{axis}
-% \end{tikzpicture}
+\begin{tikzpicture}
+  \label{page:phy:fourier:bandpass}
+  \begin{axis}[no markers,
+    xlabel=Time,
+    ylabel=Voltage,
+    domain=0:8,
+    trig format plots=rad,
+    samples=100,
+    ]
+    \addplot coordinates { (0,0) (1,0) (1,1) (3,1) (3,0) (6,0) (6,1) (7,1) (7,0) (8,0)};
+    \addplot table [x=t, y=band] {\ftable}; 
+  \end{axis}
+\end{tikzpicture}
 
-% \begin{tikzpicture}
-%   \label{page:phy:fourier:bandpass:noisy}
-%   \begin{axis}[no markers,
-%     xlabel=Time,
-%     ylabel=Voltage,
-%     domain=0:8,
-%     trig format plots=rad,
-%     samples=100,
-%     ]
-%     \addplot coordinates { (0,0) (1,0) (1,1) (3,1) (3,0) (6,0) (6,1) (7,1) (7,0) (8,0)};
-%     \addplot table [x=t, y=bandNoise] {\ftable}; 
-%   \end{axis}
-% \end{tikzpicture}
+\begin{tikzpicture}
+  \label{page:phy:fourier:bandpass:noisy}
+  \begin{axis}[no markers,
+    xlabel=Time,
+    ylabel=Voltage,
+    domain=0:8,
+    trig format plots=rad,
+    samples=100,
+    ]
+    \addplot coordinates { (0,0) (1,0) (1,1) (3,1) (3,0) (6,0) (6,1) (7,1) (7,0) (8,0)};
+    \addplot table [x=t, y=bandNoise] {\ftable}; 
+  \end{axis}
+\end{tikzpicture}
 
 % -----
 % receive bits:
@@ -343,5 +343,13 @@
   \end{axis}
 \end{tikzpicture}
 
+
+\begin{tikzpicture}
+  \label{page:phy:simple_fourier}
+  \begin{axis}
+    [grid=major]
+    \addplot coordinates { (-2, 1) (-1,-1) (-1,1) (1,1) (1, -1) (2,-1) (2,1) (3,1) (3,-1) }
+  \end{axis}
+\end{tikzpicture}
 
 \end{document}

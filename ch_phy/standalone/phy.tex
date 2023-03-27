@@ -3,7 +3,7 @@
 
 \input{../../templates/standalone_header}
 
-\usetikzlibrary{decorations.pathreplacing, chains}
+\usetikzlibrary{decorations.pathreplacing, chains,ext.positioning-plus}
 
 \begin{document}
 
@@ -116,5 +116,21 @@
   
 \end{tikzpicture}
 
+
+\begin{tikzpicture}
+  \label{page:phy:service}
+
+  \node [fill=hpiyellow!10, draw=hpiyellow,  rounded corners, minimum width=5cm] (sapl) {SAP of PHY};
+  \node [fill=hpiyellow!10, draw=hpiyellow, below=0 of sapl, minimum width=5cm] (protl) {Bit to voltage};
+
+  \node [fill=hpiyellow!10, draw=hpiyellow,  rounded corners, minimum width=5cm, right=of sapl] (sapr) {SAP of PHY};
+  \node [fill=hpiyellow!10, draw=hpiyellow, below=0 of sapr, minimum width=5cm] (protr) { Voltage to bit};
+
+  \node [fill=hpiblue!10, draw=hpiblue, below=0 of -(protl)(protr)] {Layer 0 Physical medium}; 
+
+  \draw [<-] (sapl) -- ++ (0,1) node[left] {bits}; 
+  \draw [->] (sapr) -- ++ (0,1) node[right] {bits}; 
+  
+\end{tikzpicture}
 
 \end{document}
