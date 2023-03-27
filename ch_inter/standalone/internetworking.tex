@@ -102,9 +102,17 @@
 
   }
 
-  \draw  [very thick] ($(port5)+(1,0.5)$) -- ($(port1) +(1,-0.5)$) ;
+  \coordinate (tmp) at ($(port5) + (1,0.25)$); 
+
+  \draw  [very thick] (tmp) -- ($(port1) +(1,-0.5)$) ;
   \node [above right=of port5] (buslabel) {Switch-internal bus};
-  \draw [->] (buslabel) -- ($(port5) + (1,0.25)$); 
+  \draw [->] (buslabel) -- (tmp); 
+
+
+  \node [below left=of switch.north east, draw, align=center] (buffer) {Buffer \\ memory};
+  \draw [very thick] (buffer) -- (buffer -| tmp); 
+  
+
 
 \end{tikzpicture}
 
@@ -129,8 +137,10 @@
   
 %   \draw  [very thick] ($(port5)+(1,0.5)$) -- ($(port1) +(1,-0.5)$) ;
   \node [above right=of port5] (buslabel) {Switch-internal crossbar};
-  \draw [->] (buslabel) -- ($(port5) + (1,0.25)$); 
 
+  \coordinate (tmp) at ($(port5) + (1,0.25)$); 
+  \draw [->] (buslabel) -- (tmp); 
+  
 \end{tikzpicture}
 
 \begin{tikzpicture}
