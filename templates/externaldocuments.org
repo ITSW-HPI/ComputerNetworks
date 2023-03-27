@@ -44,3 +44,7 @@
 #+LATEX_HEADER: \externaldocument{../ch_mac/standalone/protocols}
 
 #+LATEX_HEADER: \externaldocument{../ch_phy/ch_phy}
+#+LATEX_HEADER: \externaldocument{../ch_phy/standalone/constellation}
+#+LATEX_HEADER: \externaldocument{../ch_phy/standalone/modulation}
+#+LATEX_HEADER: \externaldocument{../ch_phy/standalone/phy}
+#+LATEX_HEADER: \externaldocument{../ch_phy/standalone/plots}
