@@ -1,0 +1,106 @@
+% Created 2016-08-17 Wed 14:38
+\documentclass[tikz]{standalone}
+
+\input{../../templates/standalone_header}
+
+\usetikzlibrary{automata}
+\usetikzlibrary{arrows}       %                 ...customizing arrows
+
+
+\tikzset{node distance=5cm, % Minimum distance between two nodes. Change if necessary.
+  every node/.style={           align=center,
+},
+         every state/.style={ % Sets the properties for each state
+           semithick,
+           fill=gray!10},
+         initial text={},     % No label on start arrow
+         double distance=2pt, % Adjust appearance of accept states
+         every edge/.style={  % Sets the properties for each transition
+           draw, ->, 
+           % ->,>=stealth’,     % Makes edges directed with bold arrowheads
+           auto,
+           semithick}}
+
+\begin{document}
+
+
+\begin{tikzpicture}
+  \label{page:mac:onepersistent}
+  
+  \node [state, initial] (qidle) {Idle};
+  \node [state, below left=of qidle] (qwait) {Wait for\\ channel};
+  \node [state, below right=of qidle] (qsending) {Sending\\packet};
+
+  \draw (qidle) edge node[above left] {Channel busy \& \\packet from above;\\enqueue packet } (qwait);
+  \draw (qidle) edge[bend right=15] node[left] {Channel idle \& \\packet from above;\\start sending } (qsending);
+  \draw (qwait) edge [loop left] node {Channel busy \& \\packet from above;\\enqueue packet } (qwait);
+  \draw (qwait) edge node[below] {-- \& \\Channel  becomes idle;\\Start sending } (qsending);
+
+  \draw (qsending) edge[loop right] node {Queue not empty \&\\sending done; \\Send next packet} (qsending);
+
+  \draw (qsending)  edge [bend right=30] node[above right] {Queue empty \&\\sending done; \\--} (qidle);
+
+  
+  \draw (qsending) edge[loop below]  node[below] {-- \& Packet from above;\\enqueue packet} (qsending);
+
+  
+\end{tikzpicture}
+
+
+\begin{tikzpicture}
+  \label{page:mac:nonpersistent}
+  
+  \node [state, initial] (qidle) {Idle};
+  \node [state, below left=of qidle] (qwait) {Wait for\\ timeout};
+  \node [state, below right=of qidle] (qsending) {Sending\\packet};
+
+  \draw (qidle) edge node[above left] {Channel busy \& \\packet from above;\\enqueue packet,\\start timeout
+  } (qwait);
+  \draw (qidle) edge[bend right=15] node[left] {Channel idle \& \\packet from above;\\start sending } (qsending);
+  \draw (qwait) edge [loop left] node {Channel busy \& \\packet from above;\\enqueue packet } (qwait);
+  \draw (qwait) edge[bend left=15] node[below] {Channel idle \&\\timeout expires;\\Start sending } (qsending);
+  \draw (qwait) edge [loop below] node[below] {Channel busy \&\\timeout expires;\\restart timeout } (qwait);
+
+  
+  \draw (qsending) edge[bend left=15] node[below] {Queue not empty \&\\sending done; \\start timeout} (qwait);
+
+  \draw (qsending)  edge [bend right=30] node[above right] {Queue empty \&\\sending done; \\--} (qidle);
+
+  
+  \draw (qsending) edge[loop below]  node[below] {-- \& Packet from above;\\enqueue packet} (qsending);
+
+  
+\end{tikzpicture}
+
+
+\begin{tikzpicture}
+  \label{page:mac:ppersistent}
+  
+  \node [state, initial] (qidle) {Idle};
+  \node [state, below left=of qidle] (qwait) {Wait for\\ idle slot};
+  \node [state, below right=of qidle] (qsending) {Sending\\packet};
+
+  \draw (qidle) edge node[above left] {Channel busy \& \\packet from above;\\enqueue packet,\\wait one slot
+  } (qwait);
+  \draw (qidle) edge[bend right=15] node[left] {Channel idle \& \\packet from above;\\start sending } (qsending);
+  \draw (qwait) edge [loop left] node {-- \& \\packet from above;\\enqueue packet } (qwait);
+  \draw (qwait) edge[bend left=15] node[below] {Channel idle and coin=heads \&\\slot done;\\start sending } (qsending);
+  \draw (qwait) edge [loop below] node[below] {Channel busy \&\\slot done;\\wait one slot } (qwait);
+
+
+  \draw (qwait) edge [loop above] node[left] {Channel idle and coin=tail \&\\slot done;\\wait one slot } (qwait);
+  
+  
+  \draw (qsending) edge[bend left=15] node[below] {Queue not empty \&\\sending done; \\wait one slot} (qwait);
+
+  \draw (qsending)  edge [bend right=30] node[above right] {Queue empty \&\\sending done; \\--} (qidle);
+
+  
+  \draw (qsending) edge[loop below]  node[below] {-- \& Packet from above;\\enqueue packet} (qsending);
+
+  
+\end{tikzpicture}
+
+% \end{tikzpicture}
+
+\end{document}

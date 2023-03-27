@@ -1,0 +1,95 @@
+% Created 2016-08-17 Wed 14:38
+\documentclass[tikz]{standalone}
+
+\input{../../templates/standalone_header}
+
+\usepackage{pgfplots}
+
+\begin{document}
+
+\begin{tikzpicture}
+  \label{page:mac:plot:basic_aloha}
+\begin{axis}[
+  domain=0:5,
+  extra tick style={grid=major},
+  xlabel={Offered load},
+  ylabel={Throughput},
+  legend pos=outer north east,  
+  very thick,
+  ]
+  \addplot {x*exp(-2*x)};
+  \addlegendentry{ALOHA}
+  \addplot {x*exp(-x)}; 
+  \addlegendentry{Slotted ALOHA}
+  \addplot [teal] {x > 1 ? 1 : x };
+  \addlegendentry{Hypothetical ideal}
+  
+\end{axis}
+\end{tikzpicture}
+
+
+\begin{tikzpicture}
+  \label{page:mac:plot:nonpersistent}
+\begin{axis}[
+  domain=0:5,
+  extra tick style={grid=major},
+  xlabel={Offered load},
+  ylabel={Throughput},
+  samples=100,
+  legend pos=outer north east,
+  no markers, very thick, 
+  ]
+  \addplot {x*exp(-2*x)};
+  \addlegendentry{ALOHA}
+  \addplot {x*exp(-x)}; 
+  \addlegendentry{Slotted ALOHA}
+
+  % nonpersisentent 
+  \addplot { (x*exp(-1/100*x)) / ( x*(1+2*1/100)+ exp(-1/100*x)) }; 
+  \addlegendentry{Non persistent}
+
+  % 1persistent
+  \addplot { ( (1+x+1/100*x*(1+x+1/100*0.5*x))*x*exp(-x*(1+2*1/100))) / ( x*(1+2*1/100) - (1-exp(-1/100*x)) + (1+1/100*x)*exp(-x*(1+1/100))) }; 
+  \addlegendentry{1-persistent}
+  
+  
+  % ideal 
+  \addplot  [teal] {x > 1 ? 1 : x };
+  \addlegendentry{Hypothetical ideal}
+\end{axis}
+\end{tikzpicture}
+
+\begin{tikzpicture}
+  \label{page:mac:plot:nonpersistent:log}
+\begin{semilogxaxis}[
+  domain=0.1:1000,
+  extra tick style={grid=major},
+  xlabel={Offered load},
+  ylabel={Throughput},
+  % samples=100,
+  legend pos=outer north east,
+  very thick,
+  ]
+  \addplot {x*exp(-2*x)};
+  \addlegendentry{ALOHA}
+  \addplot {x*exp(-x)}; 
+  \addlegendentry{Slotted ALOHA}
+
+  % nonpersisentent 
+  \addplot { (x*exp(-1/100*x)) / ( x*(1+2*1/100)+ exp(-1/100*x)) }; 
+  \addlegendentry{Non persistent}
+
+  % 1persistent
+  \addplot { ( (1+x+1/100*x*(1+x+1/100*0.5*x))*x*exp(-x*(1+2*1/100))) / ( x*(1+2*1/100) - (1-exp(-1/100*x)) + (1+1/100*x)*exp(-x*(1+1/100))) }; 
+  \addlegendentry{1-persistent}
+  
+  
+  % ideal 
+  \addplot [teal] {x > 1 ? 1 : x };
+  \addlegendentry{Hypothetical ideal}
+\end{semilogxaxis}
+\end{tikzpicture}
+
+
+
+\end{document}

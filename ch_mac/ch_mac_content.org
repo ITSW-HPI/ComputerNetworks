@@ -4,11 +4,19 @@
  \maketitle 
 \end{frame}
 
-
+#+LATEX_HEADER: \usetikzlibrary{fit}
 
 **** The story so far  
 
 **** Plans for this chapter 
+
+- The medium access problem and main options for solutions
+- Understand performance problems of fixed multiplexing schemes 
+- Important performance metrics
+- Options for MAC protocols: sending, receiving, listening, synchronizing; environment in which they work
+- Classification & examples of MAC protocols, performance aspects
+  - An important example: Ethernet 
+
 
 
 \vskip-2.5em
@@ -35,11 +43,1179 @@
       :BEAMER_env: ignoreheading
       :END:
 
+** Static multiplexing                                             :noexport:
+**** Static multiplexing
+- Given a single resource, it can be statically multiplexed
+  - Assigning fixed time slots to multiple communication pairs
+  - Assigning fixed frequency bands
+  - \dots 
+\pause 
+- Assigning fixed resources to different sources is fine if
+  - Data rate of source and multiplexed link are matched
+  - Sources can always saturate the link
 
+**** Bursty traffic
+- What happens if sources have bursty traffic?
+- Definition: Large difference between peak and average rate
+- In computer networks: Peak : average = 1000 : 1 quite common
+
+#+caption: Bursty traffic: Ratio of peak to average ratio is large (repetition of Figure \ref{fig:basics:bursty})
+#+attr_latex: :width 0.95\textwidth :height 0.4\textheight :options keepaspectratio,page=6
+#+NAME: fig:mac:bursty
+[[../ch_basics/standalone/switching.pdf]]
+
+
+
+**** Static multiplexing & bursty traffic
+*Statically* multiplexed resources must:
+\pause
+- Be large enough to cope with the *peak data rate immediately*
+  - $\leadsto$ Big waste, since on average the link/channel will not
+    be utilized
+\pause
+- or be dimensioned for *average rate*, but then need a buffer
+  - $\leadsto$ What is the delay until a packet is transmitted?
+\pause 
+- (or a combination thereof)
+
+
+**** Statically multiplexed bursty traffic – delay 
+- Compare the delay resulting from static multiplexing
+\pause 
+- Base case: $No multiplexing$, a single traffic source with average rate \rho (bits/s), link capacity $C$ bits/s
+  - Write average delay as $T$
+    - In case you really want to know: $T = 1/(\mu C-\lambda), \rho=\lambda/\mu)$
+\pause 
+- $Multiplexed case$: Split the single source in $N$ sources with same total rate, statically multiplex over the same link (e.g., FDM)
+  - Resulting average delay $T_\text{FDM} = N\cdot T$
+  - Irrespective of FDM, TDM, - essentially, a queuing theory result!
+  - Intuition: Because some channels are idle sometimes
+\pause 
+- Hence: static multiplexing of $N$ sources increases average delay of a packet $N$-fold
+  - $\leadsto$ Static multiplexing often unacceptable
+
+
+** Dynamic channel allocation                                      :noexport:
+
+**** Dynamic channel allocation – MAC 
+- Because of the bad delay properties – caused by idle sub-channels – static multiplexing is not appropriate for bursty traffic sources
+  - Telephony or automation networks are not bursty
+  - Internet is  bursty 
+- Alternative: Assign channel/link/resource to that source that *currently* has data to send
+  - *Dynamic medium allocation*
+  - Instead of fixed assignments of parts of a shared resource
+- Terminology: Access to the transmission has to be organized – a
+  *medium access control protocol (MAC)* is required 
+
+**** MAC vs. multiplexing 
+
+- Multiplexing: How to share a particular resource?
+  - E.g., in time, spectrum, \dots
+  - A *mechanism* 
+- Medium access control: How to *control* sharing, how to take
+  decisions?
+  - A *policy* 
+- Multiplexing and MAC need to fit together (obviously)
+
+
+**** Assumptions for dynamic channel allocation
+*Station model* (or terminal model, load model)
+- $N$ *independent* stations want to share a given resource
+- One possible load model: probability of generating a packet in
+  interval $\Delta t$ is $\lambda \cdot \Delta t$, for some $\lambda = const$
+
+\pause 
+\vfill
+
+*Single channel* assumption
+- Only a single channel for all stations
+- No possibility to communicate/signal anything via other means
+  - Leads to so-called *inband signaling* 
+
+
+**** Assumptions for dynamic channel allocation (2)
+
+\vskip-2.5em
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+
+
+*Collision assumption*
+- Only a single frame can be successfully transmitted at a time
+- Two (or more) frames overlapping in time *at a receiver*  will collide and are both destroyed 
+  - No station can receive either frame
+
+\onslide<5->
+
+- Note: it is an assumption – we can build systems that work even with collisions 
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+\onslide<2->
+
+
+\begin{figure}[h]
+  \centering
+  \begin{tikzpicture}[scale=0.8]
+
+%   \draw [step=0.5, very thin] (0,0) grid (10,-10); 
+  \node [fill=hpiyellow!20] (a) {A}; 
+  \node [fill=hpiorange!20] (b) at (4,0) {B}; 
+  \node [fill=hpiblue!20](c) at (8,0) {C};
+
+  \foreach \n in {a,b,c} \draw [thick] (\n) -- ++(0, -10); 
+
+  % packet from A: 
+  \draw [fill=hpiyellow!20] (0,-0.75) -- ++(8,-2) -- ++(0,-1) --++ (-8,+2); 
+
+  % packet form B:
+  \draw [fill=hpiorange!20] (4,-1) -- ++(4,-1) -- ++(0,-0.5) --++ (-4,+1) -- ++(-4,-1) -- ++(0,0.5) --++(4, 1); 
+
+\onslide<3->
+
+  % second example
+  
+  % packet form C:
+  \draw [fill=hpiblue!20] (8,-4.75) -- ++(-8,-2) -- ++(0,-0.5) --++ (+8,+2); 
+
+  % packet form B:
+  \draw [fill=hpiorange!60, semitransparent] (4,-5.5) -- ++(4,-1) -- ++(0,-0.5) --++ (-4,+1) -- ++(-4,-1) -- ++(0,0.5) --++(4, 1); 
+
+  % collisions:
+
+  \node [draw=hpired, very thick, circle, fit={(0,-6.75)(0,-7)}] (col1) {}; 
+  \node [draw=hpired, very thick, circle, fit={(4,-5.75)(4,-6)}] (col2) {}; 
+  \node [draw=hpired] at (2,-8) (collabel) {Collision!}; 
+
+  \draw [->, hpired, thick] (collabel) edge (col1) edge (col2); 
+
+  
+  % no collision  
+  \onslide<4->
+  
+  \node [draw] at (6,-8) (nocollabel) {No collision!};
+  \draw [->, hpired, thick] (nocollabel) -- (8,-7); 
+
+  
+\end{tikzpicture}
+\caption{Collision assumptions: the first two packets can be received at all nodes; the packet from C collides at A and B; the second packet from B actually could be received at C but not at A. }
+\label{fig:mac:collisions}
+\end{figure}
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+**** Assumptions for dynamic channel allocation (3)
+
+\vskip-2.5em
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+*Time model*
+- Continuous time: Transmissions can begin at any time; no central clock
+- Slotted time: Time is divided in slots; transmissions can only start at a slot boundary. Slot can be idle, a successful transmission, or a collision
+
+
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+
+#+caption: Continuous-time model
+#+attr_latex: :width 0.95\textwidth :height 0.2\textheight :options keepaspectratio,page=\getpagerefnumber{page:mac:continuous_time}
+#+NAME: fig:mac:continuous_time
+[[./standalone/timeModel.pdf]]
+
+
+#+caption: Slotted-time model
+#+attr_latex: :width 0.95\textwidth :height 0.2\textheight :options keepaspectratio,page=\getpagerefnumber{page:mac:slotted_time}
+#+NAME: fig:mac:slotted_time
+[[./standalone/timeModel.pdf]]
+
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+
+**** Assumptions for dynamic channel allocation (3)
+*Carrier Sensing*
+- Can stations detect whether the channel is currently used by some
+  other station? 
+- There might be imperfections involved in this detection (e.g.,
+  incorrectly missing an ongoing detection)
+
+
+
+**** Figures of merit
+- How to judge the efficiency of a dynamic channel allocation system?
+  - Intuition: transmit as many packets as quickly as possible
+- At *high load* (many transmission attempts per unit time): *Throughput* is crucial
+  - Number of packets delivered per time unit 
+  - Ensure that many packets get through
+- At *low load* (few attempts per time): *Delay* is crucial
+  - Ensure that a packet does not have to wait for a long time
+- *Fairness*: Is every station treated equally? Or justifiable
+  inequality? 
+
+
+**** Throughput vs. offered load
+
+
+\vskip-2.5em
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.58
+      :END:
+
+
+- *Offered load* $G$: The number of packets per unit packet time that the protocol is asked to handle
+  - Normalized to packet attempts per packet time 
+  - More than one packet per packet time equals overload
+- Ideal protocol: 
+  - Throughput S equals offered load G as long as G<1
+  - Throughput S = 1 as soon as G>1
+\pause 
+- And: have constant small delay, be perfectly fair, \dots for an arbitrary number of terminals
+  - Not very realistic hope!
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.38
+      :END:   
+
+
+#+caption: Throughput over offer-load behavior of an idaeal MAC protocol
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:mac:ideal_throughtput}
+#+NAME: fig:mac:ideal_throughtput
+[[./standalone/timeModel.pdf]]
+
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+**** Principal options for MAC protocols
+- Main distinction: Does the protocol allow collisions to occur?
+  - As a deliberately taken risk, not as an effect of an error
+    - Often called *contention-based* systems
+  - If yes: for every type of packet, or only in some restricted form?
+\vfill
+\begin{figure}
+  \begin{tikzpicture}
+    \node (mac) {MAC protocols};
+    \onslide<2->
+    \node [align=center, below left=of mac](cont) {Contention-\\(or Collision-)\\based\\protocols}; 
+    \draw (mac) -- (cont); 
+    \onslide<3->
+    \node [align=center, below=of mac] (free) {Contention-\\free\\protocols}; 
+    \draw (mac) -- (free); 
+    
+    \onslide<4->
+    \node [align=center, below right=of mac] (lim) {Limited-\\contention\\protocols};
+    \draw (mac) -- (lim); 
+    
+  \end{tikzpicture}
+  \caption{Options for MAC protocol design}
+  \label{fig:mac:protocol_options}
+\end{figure}
+
+
+** Collision-based protocols                                       :noexport:
+
+**** ALOHA
+- The simplest possible medium access protocol:  /Just talk when you feel like it/
+- Formally: Whenever a packet should be transmitted, it is transmitted immediately
+- Introduced in 1985 by Abrahmson et al., University of Hawaii
+- Goal: Use of satellite networks with *very* long RTT 
+
+
+**** ALOHA – Analysis 
+- ALOHA advantages
+  - Trivially simple
+  - No coordination between participants necessary
+- ALOHA disadvantages
+  - Collisions can and will occur – sender does not check channel state
+  - Sender has no (immediate) means of learning about the success of its transmission – link layer mechanisms (ACKs) are needed
+    - ACKs can collide as well :-(
+
+**** ALOHA – Performance under Poisson arrivals 
+- Assume a Poisson arrival process to describe packet transmissions,
+  i.e., 
+  - Infinite number of stations, all behave identically, independently
+  - Time between two attempts is exponentially distributed, independent for any pairs of events
+  - All packets are of unit time length
+  - Let G be the mean number of transmission attempts per unit time
+  - Then: \[ \text{P}(k \text{ attempt in time } t) = \frac{(Gt)^k}{k!} \text{e}^{-Gt}  \]
+  - (Details: Mathe 3)  
+
+**** ALOHA - Packet successful? 
+
+\vskip-2.5em
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+- For a packet transmission to be successful, it *must not collide*
+  with any other packet
+\pause 
+- How likely is such a collision?
+- Question: How long is a packet “vulnerable” to other transmissions?
+
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+#+caption: Vulnerabilities of a packet in an ALOHA protocol
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:mac:vulnerable}
+#+NAME: fig:mac:vulnerable
+[[./standalone/timeModel.pdf]]
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+**** ALOHA – Performance 
+- A packet X is destroyed by another packet either
+  - Starting *up to one packet time before* X
+  - Starting *up to immediately before the end of* X
+\pause
+- Hence: Packet is successful if there is *no additional transmission in two packet times*
+\pause
+- Throughput $S(G) = G \cdot$ probability $P_0$ of a packet not colliding 
+- Probability: \[ P_0 = \text{P} (\text{0 transmission in two packet times by other
+  nodes}) = \text{e}^{-2G} \]
+- Throughput $S (G) = G \cdot P_0 = G \text{e}^{-2G}$
+- Optimal for $G = 0.5 \rightarrow S = 1/(2e) \approx 0.184$ 
+
+
+**** A slight improvement: Slotted ALOHA
+
+- ALOHA’s problem: Long vulnerability period of a packet
+- Reduce it by introducing time slots – transmissions may only start at the start of a slot
+\pause 
+- Slot synchronization is assumed to be “somehow” available
+
+**** Slotted ALOHA performance 
+
+- Result: Vulnerability period is halved, throughput is doubled
+- $S(G) = G\text{e}^{-G}$
+- Optimal at $G=1$, $S=1/e$ 
+  - Detailed analysis: Exercise! 
+  - Hint: think of Binomial distribution, look at $n$ terminals before
+    looking at $n \rightarrow \infty$ 
+
+**** Performance dependence on offered load
+
+#+caption: Throughput as function of offered load for ALOHA and Slotted ALOHA
+#+attr_latex: :width 0.95\textwidth :height 0.5\textheight :options keepaspectratio,page=\getpagerefnumber{page:mac:plot:basic_aloha}
+#+NAME: fig:mac:plot:basic_aloha
+[[./standalone/plots.pdf]]
+
+\pause 
+- $\leadsto$ Anything but a high-performance protocol
+- In particular: throughput collapses as load increases!
+
+
+**** Carrier sensing
+- (Slotted) ALOHA is simple, but not satisfactory
+- Be a bit more polite: *Listen before talk*
+  - Sense the medium to check whether it is idle before transmitting
+  - Medium also called ``carrier'', hence:  *Carrier Sense Multiple Access* (CSMA)
+  - Abstain from transmitting if carrier not idle (some other sender is currently transmitting)
+- Crucial question: How to behave in detail when carrier is busy?
+  - In particular: When to retry a transmission?
+
+**** 1-persistent CSMA
+Idea 1: Be persistent 
+- When channel is idle, transmit
+- When carrier is busy, wait until it is idle
+- Then, *immediately* transmit
+  - “Persistent” waiting
+\pause 
+- Obvious problem: if more than one station wants to transmit, they are guaranteed to collide!
+  - Just too impatient
+- But certainly better than pure ALOHA or slotted ALOHA
+- Still open question: What to do when packets collide?
+  - Some form of retransmission required, after some random time
+
+
+**** 1-persistent CSMA – Finite State Machine 
+#+caption: Finite state machine for a 1-persistent MAC protocol
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:mac:onepersistent}
+#+NAME: fig:mac:onepersistent
+[[./standalone/fsm.pdf]]
+
+
+
+
+**** Non-persistent CSMA
+- When channel is idle, transmit
+- When channel is busy, wait a random time before checking again whether the channel is idle
+  - Do not continuously monitor carrier to greedily grab it once it is idle
+  - Conscious attempt to be less greedy
+  - Typically formulated in a continuous-time model 
+\pause 
+- Performance depends a bit on the random waiting time
+  - Main influence is mean value; distribution not very important 
+  - Mean value has to be “large enough” compared to packet time, propagation delay 
+  - But in general better throughput than persistent CSMA for higher loads
+  - At low loads, long random waiting is not necessary and wasteful
+
+**** Non-persistent CSMA – Finite State Machine 
+
+#+caption: Finite state machine for non-persistent MAC protocol
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:mac:nonpersistent}
+#+NAME: fig:mac:nonpersistent
+[[./standalone/fsm.pdf]]
+
+
+
+
+**** p-persistent CSMA
+
+
+- Combines ideas from persistent and non-persistent CSMA
+  - Uses a slotted time model
+- When channel is idle when packet arrives to MAC, send
+- When channel is busy when packet arrives to MAC, continuously monitor channel 
+  - Think in terms of tiny timeslots, much shorter than a packet
+  - If channel is found busy in one such tiny timeslot, check again in next timeslot 
+  - If channel is found idle in one such tiny timeslot, do not always transmit immediately, rather: flip a coin! 
+  - Transmit with probability $p$
+  - With probability $1-p$, do not send and wait for the next slot
+
+**** p-persistent CSMA - Finite State Machine 
+
+#+caption: Finite state machine of a $p$-persistent MAC protocol
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:mac:ppersistent}
+#+NAME: fig:mac:ppersistent
+[[./standalone/fsm.pdf]]
+
+
+
+**** CSMA and propagation delay                                    :noexport:
+- Any CSMA scheme suffers from a fundamental complication: The propagation delay d
+- Suppose two stations become ready to send at time t and t+\epsilon
+- At t, the channel is completely idle
+- The stations are separated by a propagation delay d > \epsilon
+- Second station cannot detect the already started transmission of first station
+- Will sense an idle channel, send, and collide (at each other, or at a third station)
+
+
+**** Performance of CSMA
+
+
+#+caption: Throughput as function of offered load for various CSMA-based MAC protocols [[cite:&Kleinrock1975-iq]]
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:mac:plot:nonpersistent}
+#+NAME: fig:mac:plot:nonpersistent
+[[./standalone/plots.pdf]]
+
+
+**** Performance of CSMA II
+
+#+caption: Throughput as function of offered load for various CSMA-based MAC protocols, logarithmic scale [[cite:&Kleinrock1975-iq]]
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:mac:plot:nonpersistent:log}
+#+NAME: fig:mac:plot:nonpersistent:log
+[[./standalone/plots.pdf]]
+
+
+**** Collision detection – CSMA/CD 
+- When two packets collide, lots of time is wasted by completing their transmission
+- If it were possible to detect a collision when it happens, transmission could be aborted and a new attempt made
+  - Wasted time reduced, no need to wait for (destroyed) packets to complete
+- Depending on physical layer, collisions can be detected!
+  - Necessary: Sender must be able to listen to the medium when sending, compare what it sends with what it receives
+  - If different: declare a collision
+- $\leadsto$ *CSMA/CD – Carrier Sense Multiple Access/Collision Detection*
+
+**** CSMA/CD 
+
+#+caption: Illustration of collision detection and aborting a transmission
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:mac:collision_detect_msc}
+#+NAME: fig:mac:collision_detect_msc
+[[./standalone/collisions.pdf]]
+
+
+
+**** What to do after a collision happens? 
+- Stations do want to transmit their packets, despite detecting a
+  collision
+  - Note: Unlike in non-persistent or $p$-persistent CSMA, here we *know*
+that a competing sender exists! 
+\pause 
+- Have to try again
+  - Immediately? Would again ensure another collision :-( 
+  - Coordinate somehow? Difficult, no communication medium available
+  - Wait a random time! 
+    - Randomization “de-synchronizes” medium access, reduces collisions
+    - However: will result in some idle time, occasionally
+- $\leadsto$ Alternation between contention and transmission phases
+
+
+
+**** How to choose random waiting time?
+- Simplest approach to choose a random waiting time: Pick any one of $k$ slots
+  - Assumes a slotted time model for simplicity
+  - Uniformly distributed from $[0,\dots, k-1]$ – the *contention
+    window*
+
+**** Contention slots to react to collision 
+
+#+caption: Contention slots after a collision detection (red X), randomizing channel access in certain presence of competitor 
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:mac:contentionslots}
+#+NAME: fig:mac:contentionslots
+[[./standalone/protocols.pdf]]
+
+
+**** Choosing number of contention slots? 
+
+Question: How to choose upper bound $k$?
+- Small $k$: Short delay, but high risk of repeated collisions
+- Large $k$: Low risk of collisions (as stations’ access attempts are spread over a large time interval), but needlessly high delay if few stations want to access the channel
+- With large contention window, collisions become less likely
+- $\leadsto$ Let k *adapt* to the current number of stations/traffic
+  load
+
+**** How to adapt k to traffic load? 
+- One option: somehow /explicitly/ find out number of stations, compute an optimal $k$, signal that to all stations
+  - Difficult, high overhead, \dots 
+  - An /implicit/ approach possible? 
+\pause 
+- What is the (likely) consequence of a small $k$ when load is high?
+  - Collisions (again)!
+  - Hence: Use a collision as an indication that the contention window is too small – increase it!
+    - Will reduce probability of collisions, automatically adapt to higher load
+\pause 
+- Question: How to increase k after collision, how to decrease it
+  again?
+
+**** How to adapt k – Binary exponential backoff
+- Increase after collisions: Many possibilities
+  - Commonly used: Double the contention window size $k$
+  - But only up to a certain limit, say, 1024 slots – start out with
+    e.g. $k=2$
+  - This is called *binary exponential backoff*
+\pause 
+- Decreasing $k$: Also many options possible
+  - E.g., if sufficiently many frames have not collided reduce k
+    (subtract a constant, cut in half, \dots)
+    - Complicated, might waste resources by not being agile enough,
+      \dots 
+  - Or play it simple: Just start every time at k=2!
+    - Common option
+
+
+** Contention-free protocols                                       :noexport:
+**** Contention-free protocols
+- Since collisions cause problems, how about using protocols without contention for the medium?
+- Simplest example: *Static Time-Division Multiple Access*  (TDMA)
+  - Each station/terminal is assigned a fixed time slot in a periodic schedule
+\pause 
+- Terminology:
+  - All protocols above were *dynamic* TDMA protcols
+    - They controlled a TDM scheme
+  - Often, TDMA is used as shorthand for ``static TDMA'', but that is
+    not really correct 
+
+**** Contention-free protocols: Examples 
+
+- Polling by a central station
+- Negotiating time slot lengths dynamically
+- Bit-map protocol 
+- \dots 
+
+**** Bit-map protocol
+- Problem of static TDMA: When a station has nothing to send, its time slot is idling and wastes resources
+- Possible to only have time slots assigned to stations that have data to transmit? 
+  - Needs some information exchange which station is ready to send
+  - They should reserve resources/time slots
+- $\leadsto$ *Bit-map protocol*
+  - Short reservation slots, only used to announce desire to transmit
+  - Must be received by every station
+
+**** Bit-map protocol - illustration 
+#+caption: Bit-map protocol, example round
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:mac:bitmap}
+#+NAME: fig:mac:bitmap
+[[./standalone/protocols.pdf]]
+
+
+
+
+**** Bit-map protocol – properties 
+- Behavior at low load
+  - For (hardly) any packet, the medium will repeat the (empty) contention slots
+  - A station that wants to transmit has to wait its turn before it can do so
+  - $\leadsto$ Relatively high delay
+- Behavior at high load
+  - At high load, medium is dominated by data packets (which are long compared to contention slots)
+  - Overhead is negligible
+\pause 
+- $\leadsto$ Good and stable throughput
+  - Yet practically irrelevant - why?
+  - \pause Synchronization issues, how to recover from errors, how to
+    change number of terminals, \dots 
+\pause
+- Note: Bit-map is a carrier-sense protocol!
+
+
+** Limited contention protocols                                    :noexport:
+
+
+**** Best of both worlds? 
+- Desirable: Protocol with
+- Low delay at low load – like a contention protocol
+- High throughput at high load – like a contention-free protocol
+- Hybrid or *adaptive* solution?
+  - Limited-contention protocols do exist
+\pause 
+- One possible idea: adapt number of stations per contention slot
+  - Contention slots are nice for throughput, but at low load, we cannot afford to wait a long time for every station’s slot 
+  - Several stations have to share a slot, dynamically
+
+**** Adaptive tree walk
+Idea: Use several “levels of resolution” for the contention slots
+- Inspired by levels in a tree
+- At highest level, all nodes share a single slot
+- If only one node from this group claims the contention slot, it may transmit
+- If more than one, collision in contention slot$\leadsto$ double slots, half the stations assigned to the slot
+- And recurse
+
+
+** Case study: Ethernet
+
+
+*** Old versions 
+
+**** A case study: Ethernet
+- A practical example, dealing (mostly) with MAC: Ethernet
+  - Standardized by IEEE as standard 802.3
+  - Part of the 802 family of standards dealing with MAC protocols
+  - Also contains PHY and DLC specifications
+- Aspects
+  - Cabling
+  - Physical layer
+  - MAC sublayer
+  - Switched Ethernet
+  - Fast & gigabit Ethernet
+
+**** Ethernet design
+
+#+caption: Original Ethernet design document (Bob Metcalfe, ca. 1973)
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio
+#+NAME: fig:label
+[[./figures/metcalfe.png]]
+
+
+
+**** Ethernet cabling                                              :noexport:
+
+| Name     | Cable        | Max. seg. length | Nodes/seg | Notes            |
+|----------+--------------+------------------+-----------+------------------|
+| 10Base5  | Thick coax   | 500m             |       100 | ``Yellow cable'' |
+| 10Base-T | Twisted pair | 100m             |      1024 | Cheap!           |
+| 10Base-F | Fibre optics | 2000m            |      1024 | Inter-building   |
+
+
+
+**** Ethernet physical layer
+
+- Details depend on medium, variant of the standard 
+- Common: Manchester encoding
+  - At +/- 0.85 V (typically) to ensure DC freeness
+- With option for signal violations
+  - Used to demarcate frames
+
+**** Ethernet MAC sublayer
+- Original MAC for shared medium: CSMA/CD with binary exponential backoff
+- Frame format in Figure \ref{fig:mac:ethernet_header}
+  - Preamble for clock synchronization at receiver
+  - Addresses are link-layer addresses
+  - Pad: to ensure minimum packet  length 
+
+#+caption: Ethernet header
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:mac:ethernet_header}
+#+NAME: fig:mac:ethernet_header
+[[./standalone/headers.pdf]]
+
+
+**** Practical cabling: Yellow cable and hubs 
+
+
+- Oldest option: a single cable to which *all* terminals are attached
+  - All stations form a *single collision domain*
+  - So-called ``yellow cable'', or based on specific connectors 
+\onslide<3->
+- More practical: a ``hub'', usually with RJ-45 plugs 
+  - But still a single collision domain; still a single physical
+    medium 
+
+\vskip-1.5em
+\onslide<2->
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.3
+      :END:
+
+
+#+caption: Yellow cable with Vampire tap ([[https://commons.wikimedia.org/wiki/File:VampireTap.jpg][Wikimedia commons]])
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio
+#+NAME: fig:mac:vampire
+[[./figures/VampireTap.jpeg]]
+
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.3
+      :END:   
+
+#+caption: So-called BNC connectors; © Raimond Spekking / CC BY-SA 4.0 (via [[https://commons.wikimedia.org/wiki/File:BNC_Tee_connector,_with_Ethernet_cable_connected-92166.jpg][Wikimedia Commons]]), CC BY-SA 4.0
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{label}
+#+NAME: fig:mac:bnc
+[[./figures/BNC.jpeg]]
+
+
+
+\onslide<3->
+
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.3
+      :END:   
+
+
+#+caption: RJ-45 standard connector ([[https://commons.wikimedia.org/wiki/File:Rj45.png][Wikimedia commons]]) 
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio
+#+NAME: fig:mac:rj45
+[[./figures/RJ45.png]]
+
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+
+
+**** Switched Ethernet
+  - Packets from all these stations might potentially collide
+  - Big collision domains stress the CSMA/CD mechanism, reducing performance
+- How to reduce collision domains but still maintain connectivity of
+  local stations? 
+\pause 
+- Use smaller collision domains! 
+
+**** An Ethernet switch
+- Replace medium shared by *all* terminals with:
+  - a device - called ``an Ethernet switch''
+  - a dedicated medium between each terminal and the switch to which
+    it is attached 
+  - Needs buffers, forwards packets
+- Unlike a hub, not a simple electrical connection for a star-wired topology
+- Transmissions to/from several terminals to same switch can happen in
+  parallel! 
+\pause 
+- Details in Section \ref{sec:inter:dll:architecture}
+
+
+**** Fast Ethernet
+- “Normal” (even switched) Ethernet “only” achieves 10 MBit/s
+- 1992: Build a faster Ethernet!
+  - Goals: Backward compatible, stick with the old protocol to avoid hidden traps, get job done quickly
+  - Result: 802.3u – aka “Fast Ethernet”
+- Fast Ethernet
+  - Keep almost everything the same (frame format, protocol rules)
+  - Reduce bit time from 100 ns to 10 ns
+  - Consequences for maximum length of a wiring segment, minimum
+    packet sizes? (Recall unavoidable collisions in CSMA!)
+
+
+**** Fast Ethernet – Cabling                                       :noexport:
+- 
+- Standard category 3 twisted pairs (telephony cables) cannot support 200 MBaud over 100 m cable length
+- Solution: use 2 pairs of wires in this case, reduce baud rate
+- Also, Fast Ethernet/cat 5 cabling does not use Manchester, but 4B/5B
+- 
+
+
+
+*** Current versions 
+
+**** Gigabit Ethernet
+
+- Ok: can we go another factor of 10 faster?
+  - 1995 – gigabit Ethernet
+  - Goal: again, keep basic scheme as it is
+- Works, but price to pay: *No more multi-drop configurations* as in classic Ethernet
+  - In gigabit Ethernet, each wire has exactly two machines attached to it
+  - Terminal and/or switch/hub
+
+**** Gigabit Ethernet
+- With a switch
+  - No shared collision domains$\leadsto$ no collision$\leadsto$ no need for CSMA/CD
+  - Allows full-duplex operation of each link
+  - Much simpler operation per link 
+- With a hub (really just legacy support!)
+  - Collisions, half duplex, CSMA/CD
+  - Maximum cable distance is reduced to 25 m 
+  - Actually: not very sensible combination from a cost/performance
+    perspective
+
+**** Gigabit Ethernet – Cabling 
+
+#+caption: Cable types for Gigabit Ethernet (adapted from Table 4-21, \cite{Tanenbaum_computer_networks_2021})
+#+name: tab:mac:gigabit_cables
+| Name        | Cable          | Max. segment length | Remarks             |
+|-------------+----------------+---------------------+---------------------|
+| 1000Base-SX | Fibre optics   | 550\,m              | Multimode fibre     |
+| 1000Base-LX | Fibre optics   | 5000\,m             | Monomode            |
+| 1000Base-T  | 4 Pairs of UTP | 100 m               | Standard Cat5 cable |
+
+Note: \gls{utp}
+
+
+**** 1000BASE-T Topology                                           :noexport:
+- Four pairs, each at 250 MBps 
+
+
+**** 10-Gigabit Ethernet 
+
+Same idea: slightly better PHY, functionality largely unchanged 
+
+
+#+caption: Cable types for 10-Gigabit Ethernet (adapted from Table 4-22, \cite{Tanenbaum_computer_networks_2021})
+#+name: tab:mac:10gigabit_cables
+| Name       | Cable        | Max. segment length | Remarks   |
+|------------+--------------+---------------------+-----------|
+| 10GBase-SR | Fibre optics | 300\,m              | Multimode |
+| 10GBase-LR | Fibre optics | 10\,km              | Monomode  |
+| 10GBase-ER | Fibre optics | 40\,km              | Monomode  |
+| 10GBase-T  | 4 Pairs UTP  | 100\,m              | CAt 6a UTP |
+
+
+
+
+**** 40G, 100G Ethernet
+
+- Currently standardized (IEEE 802.3ba), market introduction a bit sluggish (cost!) 
+- Various profiles and target markets, e.g., 40G: 
+  - Server access: 4x10G twin copper, about 7m 
+  - Data centre: parallel optics – 4x 10G in 4 fibres per direction, 100-150m 
+  - Metro-area: coarse WDM, four wavelengths each one at 10G, about 10
+    km; or 40G over one wavelengths, about 2 km 
+- 100G with similar factors 
+
+\pause 
+- Recently released: 2.5G over cable 
+  - Main tricks: More spectrum (resulting in shorter distances), better error coding 
+
+
+*** Traffic characteristics 
+
+**** And how does traffic on an Ethernet look like? 
+- How many packets are there, per time unit, transmitted over a typical Ethernet? 
+- Assumptions: 
+  - Many sources connected to a single Ethernet
+  - Sources independently generate traffic (=try to transmit a packet)
+- Intuition: 
+  - Average number of transmitted packets might be bursty over short time windows
+  - The longer the considered time window, the smoother the number of
+    transmissions should become, right?  
+
+
+**** Measurements: 
+
+\vskip-2.5em
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.28
+      :END:
+
+- Based on measurements, smoothed over incresing time windows 
+- Hence: too bursty to be easily smoothed!
+
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.68
+      :END:   
+
+#+caption: Ethernet traffic, aggregated over increasingly large windows (Fig 4 in [[cite:&Leland1994-ih]])
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio
+#+NAME: fig:mac:leland_traces
+[[./figures/Leland.png]]
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+  
 
 ** Conclusion 
 
-**** Conclusion  
+**** Conclusion
+- MAC protocols are a crucial ingredient, pivotal for good performance
+  - Static multiplexing just won’t do for bursty traffic
+- Main categories: Collision, collision-free, limited contention
+- Main figures of merit: Throughput, delay, fairness
+  - There hardly is a “best” solution
+- Important case study: Ethernet
+  - Main lesson to be learned: Keep it simple!
 
-Lorem ipsum 
+
+** Performance analysis                                            :noexport:
+
+**** Additional material 
+- In case you are interested: Some material from older versions of this chapter
+- Analysis of non-persistent CSMA via a typical Poisson process-based analysis
+- Analysis of a back off scheme by a Markov model 
+- WS 19/20, v 2.5
+- Computer Networks - Medium Access Control
+- 64
+**** Performance of nonpersistent CSMA – analytic derivation 
+- Nonpersistent CSMA protocol
+- A terminal with a packet to send senses an idle channel: transmit
+- A terminal with a packet to send senses a busy channel: reschedule the packet to some random later transmission time
+- Average mean retransmission delay is X*   
+- At this later time, repeat the process
+- Traffic model – where do packets come from? 
+- All packets are of constant length with T seconds for transmission 
+- Infinite population of users generates new packets according to a Poisson process with aggregate rate ¸ packets/s
+- Hence: S = ¸ T is average number of new packets generated per transmission time 
+- Additionally, packets are retransmitted 
+- $\leadsto$ Total transmission attempts G per transmission time T (G ¸ S)
+**** Performance of nonpersistent CSMA – traffic model
+- For a tractable traffic model, two further assumptions are necessary
+- Assumption 1: Average retransmission delay X* is large compared to T 
+- Assumption 2: Interarrival times of all packet start times (including retransmissions!) are independent and exponentially distributed 
+- THIS IS WRONG! 
+- … but not to a large degree, and makes analysis much simpler
+- Assumption 1 is necessary to make this an acceptable approximation 
+- I.e.: all packet transmissions form a Poisson process of rate G!
+**** Performance of nonpersistent CSMA – parameters
+- Summary of parameters
+- S: rate of new packets injected
+- G: traffic offered to the channel (new packets plus retransmissions)
+- It is the rate of the Poisson traffic according to assumption 2 
+- S/G: probability of a successful transmission 
+- G/S: average number of transmissions for a given packet
+- T: packet transmission time on the channel
+- For convenience: Let’s set T=1
+- X*: average retransmission delay
+- Precise distribution does not matter, must be large compared to T 
+-  ¿: (maximum) propagation delay of the channel 
+- Normalize this to packet duration: a = ¿ / T (for convenience) 
+- Goal of analysis: What is relation of S and G?
+- 
+**** Performance of nonpersistent CSMA – idle and busy periods
+- Observation: nonpersistent CSMA alternates between idle and busy
+- Busy periods start with transmission of a packet at some time t by some terminal on an idle channel 
+- Additional transmissions can only start within time t+a 
+- At t+a, start of first packet has propagated to all other terminals and prevents them from transmitting (carrier sense rule) 
+- Say, at t+Y the last packet starts in this busy period
+- Channel is sensed as idle after t+Y+1+a
+- Packet duration and propagation delay to all stations
+**** Performance of nonpersistent CSMA – average busy period
+- What is the average length of a busy period?
+- Randomness comes from the point Y of the last packet starting transmission in the busy period
+- These arrivals of packet transmission were assumed to form a Poisson process of rate G
+- Distribution function of random variable Y:
+- Expected value of Y: 
+- $\leadsto$ Average busy period: 
+**** Performance of nonpersistent CSMA – average idle period
+- Probability that idle period I is at least c long (0 terminals transmit during c):
+- Average value E[I] = 1/G 
+- $\leadsto$ On average, a busy/idle cycle lasts: 
+- 
+**** Performance of nonpersistent CSMA – successful packets
+- Number U of correct packets per busy/idle cycle: 
+- Expected number of successful packets per busy/idle cyle then simply: 
+- 
+**** Performance of nonpersistent CSMA – throughput 
+- Putting it together
+- Throughput S is expected number of successful packets / expected duration for transmission cylce
+- Hence: 
+**** Performance analysis: 1-Persistent CSMA/CD
+- Assumptions
+- Time is slotted 
+- Packet duration T slots 
+- Backoff window fixed size k slots 
+- Propagation delay negligible 
+- Channel sensing requires one time slot 
+- Collision detection requires one time slot 
+- Goal: Derive relevant performance metrics via a Markov chain 
+**** Recall: Discrete time Markov chain with finite state space 
+- Definition: 
+- Finite state space S = {s1, …, sn}
+- State transition matrix P = [pij], 1 <= i,j <= n, 0 <= pij <= 1
+- P is a stochastic matrix, i.e.,  j=1n pij = 1 8 i 
+- Interpretation: pij is the probability to go from state i to state j 
+- Markov chain has Markov property
+- Interpretation: the probability which state to choose next only depends on the current state, not on any previous state 
+- Formally, with Xk random variable for the kth state: 
+- Strictly speaking, this is a first-order Markov chain
+**** Recall: Probability vector
+- Each Xk has a finite probability density, written as probability vector ¹k 
+-  ¹k is a simple shorthand: ¹k(i) = P(Xk = si) 
+- With ¹0 initial distribution, ¹k = ¹0 Pk
+- If ¹ = limk! 1 ¹k exists, it is the steady-state probability distribution of the Markov chain 
+- Under reasonable assumptions, it exists and is independent of initial distribution 
+- Possible to show: ¹ is any row of limk$\leadsto$ 1 Pk 
+- Hence: to know steady state, we only need to know lim k! 1 Pk  
+- And then pick any arbitrary row 
+**** Example Markov chain 
+- Consider simple three-state Markov chain 
+- Initial state: s1 
+- State transition matrix
+- Probability distribution after one step: ¹1 = ¹0 P = [0.8 0.2 0] 
+- Probability distribution after two steps: ¹2 = ¹1 P =  ¹0 P2 = [0.64 0.28 0.08] 
+- Probability distribution after three steps: ¹2 = ¹2 P =  ¹0 P3 = [0.568 0.296 0.136] 
+**** Example Markov chain (II)
+- Probability distribution in steady state: ¹ = ¹0 lim k! 1Pk 
+- Use Eigenvalue decomposition of P to compute lim k! 1Pk : 
+- Hence: 
+- 
+**** Backoff Markov model – state description 
+- State of one terminal:
+- With previous parameters: k+1+T states for each terminal
+- State of system: Product of individual terminal states
+- E.g., two terminals: (i1, i2) 
+- Initial state: E.g., (0, …, 0)   
+**** Backoff Markov model – state transitions (I) 
+- Note: This is only done for two terminals here – generalization is simple (yet a bit tedious) 
+- Both terminals idle: (0, 0)$\leadsto$ (T, T) 
+- Collision 
+- With probability 1 
+- After collision, both terminals backoff: (T,T)$\leadsto$ (-i1, -i2) 
+- i1, i2 chosen at random, independently, uniformly from U(1,k)
+- Hence, each possible backoff state is entered with probability 1/k2
+- Only place of randomness!
+**** Backoff Markov model – state transitions (II)
+- In backoff state, count-down happens until one terminal reaches 0
+- (i1, i2)$\leadsto$ (i1 + 1, i2 + 1) if i1, i2 < 0
+- Once one terminal has reached 0 and the other is still in backoff, terminal will start to transmit
+- (0, i2)$\leadsto$ (T, i2+1) if i2 < 0 
+- (i1, 0)$\leadsto$ (i1+1, T) if i1 < 0 
+- If both terminals reach (0,0): see above!
+- 
+**** Backoff Markov model – state transitions (III)
+- Terminal transmitting, the other still in backoff: 
+- (i1, i2)$\leadsto$ (i1-1, i2+1) if i1 > 0, i2 < 0 
+- (i1, i2)$\leadsto$ (i1+1, i2-1) if i1 < 0, i2 > 0 
+- Terminal transmitting, the other checks channel:
+- (i1, 0)$\leadsto$ (i1-1, 0) if i1 > 0
+- (0, i2)$\leadsto$ (0, i2-1) if i2 > 0
+- Other states not reached! 
+- 
+**** State transitions – Overview 
+**** State transition matrix 
+- Previous rules give the state transitions 
+- We have (k+1+T) states per terminal, i.e., (k+1+T)2 system states for two terminals 
+- State transition matrix maps each state to possible followup state for the next time slot$\leadsto$ ((k+1+T)2)2 entries! 
+- For n terminals: ((k+1+T)n)2 entries
+- Technicality: Markov models written via a state matrix
+- With linear index for states; we have pair of numbers for state
+- Convention here: Map state (i1, i2) to “state index”(i1 + (k+1) -1) (k+T+1) + (i2 + (k+1))
+- Rewrite all the above state transition rules with this transformation 
+**** State transition matrix
+**** Obtain steady state distributions
+- Look at Pk for k$\leadsto$ 1
+- We only do this numerically, analytically it is possible but a bit of work 
+- All rows converge to steady state vector 
+- Here: a bit cumbersome to interpret this vector; need to translate it back into a state matrix to understand it 
+- 
+**** Deriving performance metrics 
+- Collision probability: Steady state probability of state (T,T)
+- Probability of a timeslot where a transmission completes successfully: Sum of steady state probabilities of states (1,0) and (0, 1)
+- Average number of time slots between transmission completions: 1 / success probability 
+- Throughput: T / average number of time slots between transmission completions 
+**** Performance results
+**** Performance results 
+
+
+** stuff                                                           :noexport:
+
+**** Vampire tap 
+
+https://commons.wikimedia.org/wiki/File:VampireTap.jpg
+
+Alistair1978 
+
+
+**** BNC 
+
+
+© Raimond Spekking / CC BY-SA 4.0 (via Wikimedia Commons), BNC Tee
+connector, with Ethernet cable connected-92166, CC BY-SA 4.0
+
+© Raimond Spekking / CC BY-SA 4.0 (via Wikimedia Commons)
+(https://commons.wikimedia.org/wiki/File:BNC_Tee_connector,_with_Ethernet_cable_connected-92166.jpg),
+„BNC Tee connector, with Ethernet cable connected-92166“,
+https://creativecommons.org/licenses/by-sa/4.0/legalcode
+
+
+© Raimond Spekking / CC BY-SA 4.0 (via Wikimedia Commons)
+
+**** Metcalfe
+
+http://acm.org/ubiquity/interviews/r_metcalfe_1.html
+
+The original Ethernet design document: Robert Metcalfe, 1973
+
 

@@ -1,0 +1,61 @@
+% Created 2016-08-17 Wed 14:38
+\documentclass[tikz]{standalone}
+
+\input{../../templates/standalone_header}
+
+\usetikzlibrary{decorations.pathreplacing}
+
+
+\begin{document}
+
+
+\begin{tikzpicture}
+  \label{page:mac:contentionslots}
+  
+  \draw [->] (0,0.5) -- ++(14,0) node [below right] {Time};
+
+  % \node [fill=gray!10] ()
+  \draw [fill=gray!10,draw=none] (0,1) rectangle node{Idle} (2,3);
+  \draw [fill=hpiblue!10,draw=hpiblue] (2,1) rectangle node{Packet} (4,3);
+  \draw [fill=hpired!10,draw=hpired] (4,1) rectangle node{Slot} (5,3);
+  \draw [fill=hpired!10,draw=hpired] (6,1) rectangle node{ Slot} (7,3);
+  \draw [fill=hpired!10,draw=hpired] (8,1) rectangle node{ Slot} (9,3);
+  \node [hpired] at (4,3) {\textbf{X}};
+
+  
+  \draw [fill=hpiblue!10,draw=hpiblue] (9,1) rectangle node{Packet} (13,3);
+  \node [green] at (13,3.5) {\textbf{no contention}};
+
+  \draw [decorate,decoration={brace, raise=5pt}] (4,3) to node[above=0.25cm] {Contention} (9,3); 
+  
+\end{tikzpicture}
+
+
+\begin{tikzpicture}
+  \label{page:mac:bitmap}
+  \foreach \i in {3,5,6} {
+    \draw [fill=green!20] (\i,0) rectangle node {\i} (\i+1,2); 
+  }
+  
+  \foreach \i in {1,...,8} {
+    \draw (\i,0) rectangle node {\i} (\i+1,2); 
+  }
+
+  \foreach \i [count=\ci] in {3,5,6} {
+    \draw [fill=hpiblue!20,draw=hpiblue] (4+4*\ci,0) rectangle node {Packet from \i} (4+4*\ci +4, 2); 
+  }
+
+  \foreach \i in {1,...,8} {
+    \draw (20+\i-1,0) rectangle node {\i} (20+\i+1-1,2); 
+  }
+
+  \draw [decorate, decoration={brace, raise=5pt, mirror}] (1,0) to node (cs1) {} (9,0); 
+  \draw [decorate, decoration={brace, raise=5pt, mirror}] (20,0) to node (cs2) {} (28,0); 
+  \node at (15,-1) (cslabel){Contention slots}; 
+
+  \draw [->] (cslabel) -- (5, -0.5); 
+  \draw [->] (cslabel) -- (24, -0.5); 
+\end{tikzpicture}
+
+\end{document}
+

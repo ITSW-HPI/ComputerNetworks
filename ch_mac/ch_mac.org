@@ -1,7 +1,7 @@
 #+TITLE: Computer Networks  \newline Kapitel \thechapter: \newline  Medium Access Control
 #+include: "../templates/slidehead.org"
 # if you want to add a short title as well: 
-#+BEAMER_HEADER: % \title[Short title]{copy title from above}
+#+BEAMER_HEADER: \title[MAC]{Computer Networks  \newline Kapitel \thechapter: \newline  Medium Access Control}
 #+BEAMER_HEADER: \author[H.\ Karl]{Holger Karl}
 #+BEAMER_HEADER: \date{SS 23}
 

@@ -1,0 +1,85 @@
+% Created 2016-08-17 Wed 14:38
+\documentclass[tikz]{standalone}
+
+\input{../../templates/standalone_header}
+
+
+\usetikzlibrary{decorations.pathreplacing}
+
+
+\begin{document}
+
+\begin{tikzpicture}
+  \label{page:mac:continuous_time}
+  \draw [very thin] (0,0) grid (5.4,5.4); 
+  \draw [->] (0,0) edge (0,5.5) -- (5.5,0) node[below right] {Time};
+
+  \begin{scope}[every node/.style={minimum width=1cm, minimum height=1cm, anchor=south west, draw}]
+    \node [fill=hpiyellow!20, ] at (0.8, 3) {}; 
+    \node [fill=hpiorange!20, ] at (1.7, 1) {}; 
+    \node [fill=hpiblue!20, ] at (2.3, 4) {}; 
+    \node [fill=hpired!20, ] at (2.9, 2) {}; 
+  \end{scope}
+
+\end{tikzpicture}
+
+
+\begin{tikzpicture}
+  \label{page:mac:slotted_time}
+
+  \draw [very thin] (0,0) grid (5.4,5.4); 
+  \draw [->] (0,0) edge (0,5.5) -- (5.5,0) node[below right] {Time};
+
+  \begin{scope}[every node/.style={minimum width=1cm, minimum height=1cm, anchor=south west, draw}]
+    \node [fill=hpiyellow!20, ] at (0.8, 3) {}; 
+    \node [fill=hpiorange!20, ] at (1.7, 1) {}; 
+    \node [fill=hpiblue!20, ] at (2.3, 4) {}; 
+    \node [fill=hpired!20, ] at (2.9, 2) {}; 
+  \end{scope}
+
+\end{tikzpicture}
+
+\begin{tikzpicture}
+  \label{page:mac:ideal_throughtput}
+  \draw [->] (0,0) -- (0,1.2) node [left] {Throughput};
+  \draw [->] (0,0)  -- (2,0) node[below right] {Offered load};
+  \draw (1,0.1) -- (1,-0.1) node [below] {1}; 
+  \draw (-0.1,1) -- (0.1,1) node [left] {1}; 
+      
+  \draw [thick] (0,0) -- (1,1) -- (2,1); 
+\end{tikzpicture}
+
+
+
+\begin{tikzpicture}
+  \label{page:mac:vulnerable}
+  % \draw [very thin] (0,0) grid (4.4,4.4); 
+  \draw [->] (0,0) edge (0,4.5) -- (4.5,0) node[below right] {Time};
+
+  \begin{scope}[every node/.style={minimum width=1cm, minimum height=1cm, anchor=south west, draw}]
+    \node [fill=hpiyellow!20, ] at (0.8, 3) {}; 
+    \node [fill=hpiorange!20, ] at (2.2, 3) {}; 
+    \node [fill=hpiblue!20, ] at (1.5, 1) {}; 
+
+    \draw [dashed] (0.5, 0) -- (0.5,4); 
+    \draw [dashed] (1.5, 0) -- (1.5,3); 
+    \draw [dashed] (2.5, 0) -- (2.5,3);
+
+  \end{scope}
+
+  \draw [decorate, decoration={brace,mirror,raise=3pt}] (0.5, 0) to node[below=0cm, align=center] (ll) {} (1.5,0); 
+
+  \node [below left=1cm and 0cm of ll, align=center] (lll) {Packets starting \\here overlap \\with beginning \\of blue packet}; 
+
+
+  \draw [decorate, decoration={brace,mirror,raise=3pt}] (1.5, 0) to node[below=0cm, align=center] (rl) {} (2.5,0); 
+
+  \node [below right=of ll, align=center] (rll) {Packets starting \\here overlap \\with tail  \\of blue packet}; 
+
+  \draw[->] (rll) -- (rl); 
+  \draw[->] (lll) -- (ll); 
+\end{tikzpicture}
+
+
+
+\end{document}

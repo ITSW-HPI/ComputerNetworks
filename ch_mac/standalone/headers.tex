@@ -1,0 +1,48 @@
+% Created 2016-08-17 Wed 14:38
+\documentclass[tikz]{standalone}
+
+\input{../../templates/standalone_header}
+
+\usetikzlibrary{chains}
+
+% TODO: This should be turned into a proper tikz decoration :-/ 
+\newcommand{\variableLength}[1]{
+  \foreach \o in {north,south} {
+  \draw[line width=1.6pt, -] 
+  ($(#1.\o)+(0pt,4pt)$) .. controls + (2pt,-2pt) and + (-2pt,2pt) .. ++(0pt,-8pt);
+  \draw[white, line width=1pt, solid, -]
+  ($(#1.\o)+(0pt,4.1pt)$) .. controls + (2pt,-2pt) and + (-2pt,2pt) .. ++(0pt,-8.2pt);
+  }
+}
+
+
+
+\begin{document}
+
+
+\begin{tikzpicture}[start chain=1,node distance=0]
+  \label{page:mac:ethernet_header}
+  \begin{scope}[every node/.style={on chain=1,draw,align=center,minimum height=6ex}]
+    % \node[label=above:8] {Preamble};
+    % \node[label=above:1] {SOF};
+
+    \node (preamble) {Preamble};
+    \node (sof) {SOF};
+    \node (da) {Destination\\address};
+    \node (sa) {Source\\address};
+    \node (length) {Length};
+    \node [minimum width=6cm] (data) {Data};
+    \node (pad) {Pad};
+    \node (checksum) {Checksum};
+  \end{scope}
+
+  \foreach \l/\t in {preamble/8,sof/1,da/6,sa/6,length/2,data/0-1500,pad/0-46,checksum/4}{
+    \node [above=0.25 of \l] {\t}; 
+  }
+
+  \variableLength{data}
+  \variableLength{pad}
+  
+\end{tikzpicture}
+
+\end{document}

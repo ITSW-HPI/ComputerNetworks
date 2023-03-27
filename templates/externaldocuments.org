@@ -36,3 +36,10 @@
 #+LATEX_HEADER: \externaldocument{../ch_inter/standalone/internetworking}
 #+LATEX_HEADER: \externaldocument{../ch_inter/standalone/vlan_headers}
 #+LATEX_HEADER: \externaldocument{../ch_mac/ch_mac}
+#+LATEX_HEADER: \externaldocument{../ch_mac/standalone/timeModel}
+#+LATEX_HEADER: \externaldocument{../ch_mac/standalone/collisions}
+#+LATEX_HEADER: \externaldocument{../ch_mac/standalone/fsm}
+#+LATEX_HEADER: \externaldocument{../ch_mac/standalone/headers}
+#+LATEX_HEADER: \externaldocument{../ch_mac/standalone/plots}
+#+LATEX_HEADER: \externaldocument{../ch_mac/standalone/protocols}
+
