@@ -43,7 +43,7 @@
       :BEAMER_env: ignoreheading
       :END:
 
-** Static multiplexing                                             :noexport:
+** Static multiplexing                                             
 **** Static multiplexing
 - Given a single resource, it can be statically multiplexed
   - Assigning fixed time slots to multiple communication pairs
@@ -87,7 +87,7 @@
     - In case you really want to know: $T = 1/(\mu C-\lambda), \rho=\lambda/\mu)$
 \pause 
 - $Multiplexed case$: Split the single source in $N$ sources with same total rate, statically multiplex over the same link (e.g., FDM)
-  - Resulting average delay $T_\text{FDM} = N\cdot T$
+  - Resulting average delay $T_\mathrm{FDM} = N\cdot T$
   - Irrespective of FDM, TDM, - essentially, a queuing theory result!
   - Intuition: Because some channels are idle sometimes
 \pause 
@@ -95,7 +95,7 @@
   - $\leadsto$ Static multiplexing often unacceptable
 
 
-** Dynamic channel allocation                                      :noexport:
+** Dynamic channel allocation                                      
 
 **** Dynamic channel allocation – MAC 
 - Because of the bad delay properties – caused by idle sub-channels – static multiplexing is not appropriate for bursty traffic sources
@@ -353,7 +353,9 @@
 \end{figure}
 
 
-** Collision-based protocols                                       :noexport:
+** Collision-based protocols                                       
+
+*** ALOHA 
 
 **** ALOHA
 - The simplest possible medium access protocol:  /Just talk when you feel like it/
@@ -378,7 +380,7 @@
   - Time between two attempts is exponentially distributed, independent for any pairs of events
   - All packets are of unit time length
   - Let G be the mean number of transmission attempts per unit time
-  - Then: \[ \text{P}(k \text{ attempt in time } t) = \frac{(Gt)^k}{k!} \text{e}^{-Gt}  \]
+  - Then: \[ \mathrm{P}(k \mathrm{ attempt in time } t) = \frac{(Gt)^k}{k!} \mathrm{e}^{-Gt}  \]
   - (Details: Mathe 3)  
 
 **** ALOHA - Packet successful? 
@@ -425,9 +427,9 @@
 - Hence: Packet is successful if there is *no additional transmission in two packet times*
 \pause
 - Throughput $S(G) = G \cdot$ probability $P_0$ of a packet not colliding 
-- Probability: \[ P_0 = \text{P} (\text{0 transmission in two packet times by other
-  nodes}) = \text{e}^{-2G} \]
-- Throughput $S (G) = G \cdot P_0 = G \text{e}^{-2G}$
+- Probability: \[ P_0 = \mathrm{P} (\mathrm{0 transmission in two packet times by other
+  nodes}) = \mathrm{e}^{-2G} \]
+- Throughput $S (G) = G \cdot P_0 = G \mathrm{e}^{-2G}$
 - Optimal for $G = 0.5 \rightarrow S = 1/(2e) \approx 0.184$ 
 
 
@@ -441,7 +443,7 @@
 **** Slotted ALOHA performance 
 
 - Result: Vulnerability period is halved, throughput is doubled
-- $S(G) = G\text{e}^{-G}$
+- $S(G) = G\mathrm{e}^{-G}$
 - Optimal at $G=1$, $S=1/e$ 
   - Detailed analysis: Exercise! 
   - Hint: think of Binomial distribution, look at $n$ terminals before
@@ -459,6 +461,7 @@
 - In particular: throughput collapses as load increases!
 
 
+*** Carrier sensing 
 **** Carrier sensing
 - (Slotted) ALOHA is simple, but not satisfactory
 - Be a bit more polite: *Listen before talk*
@@ -545,6 +548,8 @@ Idea 1: Be persistent
 - Will sense an idle channel, send, and collide (at each other, or at a third station)
 
 
+
+
 **** Performance of CSMA
 
 
@@ -561,6 +566,8 @@ Idea 1: Be persistent
 #+NAME: fig:mac:plot:nonpersistent:log
 [[./standalone/plots.pdf]]
 
+
+*** Collision detection 
 
 **** Collision detection – CSMA/CD 
 - When two packets collide, lots of time is wasted by completing their transmission
@@ -648,7 +655,7 @@ Question: How to choose upper bound $k$?
     - Common option
 
 
-** Contention-free protocols                                       :noexport:
+** Contention-free protocols                                       
 **** Contention-free protocols
 - Since collisions cause problems, how about using protocols without contention for the medium?
 - Simplest example: *Static Time-Division Multiple Access*  (TDMA)
@@ -702,7 +709,7 @@ Question: How to choose upper bound $k$?
 - Note: Bit-map is a carrier-sense protocol!
 
 
-** Limited contention protocols                                    :noexport:
+** Limited contention protocols                                    
 
 
 **** Best of both worlds? 
