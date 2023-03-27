@@ -182,7 +182,10 @@ Uwe Schwöbel
 
 ** Data-link-layer interconnects
 
+
 *** Architecture 
+
+\label{sec:inter:dll:architecture}
 
 **** Link-layer amplifiers 
 
