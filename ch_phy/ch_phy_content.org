@@ -1,0 +1,65 @@
+\label{ch:phy}
+
+\begin{frame}[title={bg=Hauptgebaeude_Tag}]
+ \maketitle 
+\end{frame}
+
+
+
+**** The story so far  
+
+**** Plans for this chapter 
+
+
+\vskip-2.5em
+
+*****                     
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+
+****** Learning outcomes 
+
+*****                    
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+
+** Conclusion 
+
+**** Conclusion  
+
+Lorem ipsum 
+
+** Stuff                                                           :noexport:
+
+Optical_fiber_cable.jpg
+
+https://commons.wikimedia.org/wiki/File:Optical_fiber_cable.jpg
+
+
+
+fibre_modes.jpg
+https://en.wikipedia.org/wiki/File:Optical_Fiber_Modes.jpg
+Kebes
+
+
+
+CAT6_twisted_pair.JPG
+https://commons.wikimedia.org/wiki/File:CAT6_twisted_pair.JPG
+Agott, CC BY-SA 3.0 <https://creativecommons.org/licenses/by-sa/3.0>,
+via Wikimedia Commons
+
+

@@ -43,3 +43,4 @@
 #+LATEX_HEADER: \externaldocument{../ch_mac/standalone/plots}
 #+LATEX_HEADER: \externaldocument{../ch_mac/standalone/protocols}
 
+#+LATEX_HEADER: \externaldocument{../ch_phy/ch_phy}

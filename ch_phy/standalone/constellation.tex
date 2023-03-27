@@ -1,0 +1,77 @@
+% Created 2016-08-17 Wed 14:38
+\documentclass[tikz]{standalone}
+
+\input{../../templates/standalone_header}
+
+
+\usetikzlibrary{decorations.pathreplacing}
+
+\usepackage{pgfplots}
+
+\begin{document}
+
+\begin{tikzpicture}
+  \label{page:phy:constellation:qpsk}
+
+  \draw (-2,0) node [left] {$\pi$} -- (2,0) node [right] {0}; 
+  \draw (0, -2) node [below] {$3/2 \pi$} -- (0,2) node [above] {$\pi/2$}; 
+
+  \foreach \n in {(-1,-1),(1,1),(-1,1),(1,-1)} \node [circle, fill, scale=.5]at \n {}; 
+
+  \draw [dotted] (0,0) -- (2,2);
+
+  \draw (1,0) arc [start angle=0, end angle=45, radius=1]  node [near start, left] {$\phi$}; 
+
+  \draw [decorate, decoration={brace,raise=3pt}] (0,0) to node [above left] {$A$} (1,1); 
+
+\end{tikzpicture}
+
+
+\begin{tikzpicture}
+  \label{page:phy:constellation:qpsk:channel}
+
+  \draw (-2,0) node [left] {$\pi$} -- (2,0) node [right] {0}; 
+  \draw (0, -2) node [below] {$3/2 \pi$} -- (0,2) node [above] {$\pi/2$}; 
+
+  \foreach \n in {(-1,-1),(1,1),(-1,1),(1,-1)} \node [circle, fill, scale=.5]at \n {}; 
+
+  \draw [dotted] (0,0) -- (2,2);
+
+  % \draw (1,0) arc [start angle=0, end angle=45, radius=1]  node [near start, left] {$\rho$}; 
+
+  % \draw [decorate, decoration={brace,raise=3pt}] (0,0) to node [above left] {$A$} (1,1); 
+
+  \node [fill=red, circle, scale=0.5] at (110:0.7cm) (att) {};
+
+  \draw [->, red] (1,1) -- (att); 
+  \draw [decorate, decoration={brace,raise=3pt, mirror}] (1,1) to node [above=0.25] {$a\mathrm{e}^{\mathrm{i}\phi'}$} (att); 
+
+  
+\end{tikzpicture}
+
+
+\begin{tikzpicture}
+  \label{page:phy:constellation:16qam}
+
+  \draw (-2,0) node [left] {$\pi$} -- (2,0) node [right] {0}; 
+  \draw (0, -2) node [below] {$3/2 \pi$} -- (0,2) node [above] {$\pi/2$}; 
+
+  \foreach \n in {-1,-0.33,0.33,1}
+  \foreach \m in {-1,-0.33,0.33,1}
+  \node [circle, fill, scale=.5]at (\n,\m) {}; 
+
+
+
+\end{tikzpicture}
+
+
+
+\begin{tikzpicture}
+  \begin{loglogaxis}
+    [no markers, samples=100, domain=0.1:100, ymax=1]
+    \addplot expression {1/2*exp(-x)}; 
+    \addplot expression {1/2*exp(-x*0.3)}; 
+  \end{loglogaxis}
+\end{tikzpicture}
+
+\end{document}

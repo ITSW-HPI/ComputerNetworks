@@ -1,0 +1,120 @@
+% Created 2016-08-17 Wed 14:38
+\documentclass[tikz]{standalone}
+
+\input{../../templates/standalone_header}
+
+\usetikzlibrary{decorations.pathreplacing, chains}
+
+\begin{document}
+
+\begin{tikzpicture}
+  \label{page:phy:channel_bandwidth}
+  \draw [->] (0,0) -- (0,5) node [left] {Attenuation}; 
+  \draw [->] (0,0) -- (10,0) node [below] {Frequency};
+
+  \draw (0.1,1) -- (-0.1,1)  node [left] {1}; 
+  \draw (0.1, 2) -- (-0.1, 2)  node [left] {2}; 
+
+  \draw [dashed] (0,2)  -- (10,2);
+  \draw [dotted] (3,0) -- (3,2) (7,0) -- (7,2); 
+  
+  \draw (3, 0.1) -- (3, -0.1) node [below] {$f_1$}; 
+  \draw (7, 0.1) -- (7, -0.1) node [below] {$f_2$};
+
+  \draw (1, 5)  -- (3, 2) -- (4, 1.3) -- (5, 1.2) -- (6, 1.4)--  (7, 2) -- (8, 2.7) -- (9, 5) ;
+
+  \draw [decorate, decoration={brace,mirror,raise=3pt}] (3,-1)  to node[below=0.5cm, align=center] (ll) {Channel bandwidth} (7, -1); 
+  
+\end{tikzpicture}
+
+\begin{tikzpicture}[start chain=1, start chain=2, every join/.style={->}]
+  \label{page:phy:structure:baseband}
+  
+  \begin{scope}[every node/.style={on chain=1, draw, align=center, join}]
+    \node [circle] (source) {Source};
+    \node (sencode) {Source\\encode};
+    \node (chencode) {Channel\\encode};
+    \node (tx) {Physical \\transmit};
+  \end{scope}
+
+  \begin{scope}[every node/.style={on chain=2, draw, align=center, join}]
+    \node [below right=of tx] (rx) {Physical\\receive};
+    \node (chdecode) {Channel\\decode};
+    \node (sdecode) {Source\\decode};
+    \node [circle] (sink) {Sink};
+  \end{scope}
+
+  \draw [->, dashed] (tx) -- (rx);
+
+  \node [below=4 of chencode] (bits) {Data bits};
+  \node [below=2.5 of tx] (symbols) {Channel symbols};
+
+  \draw [->] (bits) edge (sencode.south east) edge (chdecode.south east); 
+  \draw [->] (symbols) edge (chencode.south east) edge (rx.south east); 
+\end{tikzpicture}
+
+\begin{tikzpicture}[start chain=1, start chain=2, every join/.style={->}]
+  \label{page:phy:structure:baseband}
+  
+  \begin{scope}[every node/.style={on chain=1, draw, align=center, join}]
+    \node [circle] (source) {Source};
+    \node (sencode) {Source\\encode};
+    \node (chencode) {Channel\\encode};
+    \node (modulate) {Modulate}; 
+    \node (tx) {Physical \\transmit};
+  \end{scope}
+
+  \begin{scope}[every node/.style={on chain=2, draw, align=center, join}]
+    \node [below right=of tx] (rx) {Physical\\receive};
+    \node (demodulate) {Demodulate}; 
+    \node (chdecode) {Channel\\decode};
+    \node (sdecode) {Source\\decode};
+    \node [circle] (sink) {Sink};
+  \end{scope}
+
+  \draw [->, dashed] (tx) -- (rx);
+
+  \node [below=5 of modulate] (bits) {Data bits};
+  \node [below=3.5 of tx] (symbols) {Channel symbols};
+  \node [below=0.5 of rx.south west] (waves) {Waveforms};
+
+  \draw [->] (bits) edge (sencode.south east) edge (chdecode.south east); 
+  \draw [->] (symbols) edge (chencode.south east) edge (demodulate.south east); 
+  \draw [->] (waves) edge (modulate.south east) edge (rx.south east); 
+\end{tikzpicture}
+
+
+\begin{tikzpicture}
+  \label{page:phy:media}
+
+
+  \draw [->] (2,0) --  (16,0) node[below right] {frequency/Hz};
+
+  \foreach \p in {3,5,...,15} {
+    \draw (\p,0) -- (\p, -0.1) node [below] {$10^{\p}$};
+  }
+
+
+  \draw [decorate,decoration={brace, raise=3pt}] (2,0.5) to node[above=0.25] {Twisted pair} (6,0.5);  
+
+  \draw [decorate,decoration={brace, raise=3pt}] (5,0.75) to node[above=0.25] {Coax cable} (8,0.75);  
+
+  \draw [decorate,decoration={brace, raise=3pt}] (14,0.5) to node[above=0.25] {Light in fibre} (15,0.5);  
+
+  \node at (10,2) {Guided transmission media};
+  \node at (10,-4) {Free-space media};
+
+  \draw [decorate,decoration={brace, mirror, raise=-3pt}] (5.5,-1) to node[below=0.25] {AM radio} (6.5,-1);  
+  \draw [decorate,decoration={brace, mirror, raise=-3pt}] (7.5,-1) to node[below=1] {TV broadcast} (8.5,-1);  
+  \draw [decorate,decoration={brace, mirror, raise=-3pt}] (8.5,-1) to node[below=1.75] {WiFi, cellular} (9.5,-1);  
+  \draw [decorate,decoration={brace, mirror, raise=-3pt}] (9.5,-1) to node[below=0.25] {Satellite, WiFi} (10.5,-1);  
+  \draw [decorate,decoration={brace, mirror, raise=-3pt}] (10.5,-1) to node[below=1] {Microwaves} (11.5,-1);  
+  \draw [decorate,decoration={brace, mirror, raise=-3pt}] (11.5,-1) to node[below=0.25] {Infrared} (14.6,-1);  
+  \draw [decorate,decoration={brace, mirror, raise=-3pt}] (14.6,-1) to node[below=1] {Visible light} (14.9,-1);  
+
+  % https://en.wikipedia.org/wiki/Radio_spectrum
+  
+\end{tikzpicture}
+
+
+\end{document}

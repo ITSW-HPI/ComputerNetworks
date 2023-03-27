@@ -1,0 +1,121 @@
+% Created 2016-08-17 Wed 14:38
+\documentclass[tikz]{standalone}
+
+\input{../../templates/standalone_header}
+
+
+\usepackage{pgfplots}
+
+\begin{document}
+
+\begin{tikzpicture}
+  \label{page:phy:xonxoff}
+  \begin{axis}
+    [no markers,
+    % samples=500,
+    domain=0:10,
+    trig format plots=rad,    
+    ]
+    \addplot coordinates {(0,0) (1,0) (1,1) (2,1) (2,0) (3,0) (3,1) (5,1) (5,0) (7,0) (7,1) (8,1) (8,0) (10,0)};
+
+    \addplot [domain=0:1] expression { 0}; 
+    \addplot [domain=1:2, samples=200] expression { 1*sin(20*x) }; 
+    \addplot [domain=2:3] expression { 0}; 
+    \addplot [domain=3:5, samples=200] expression { 1*sin(20*x) }; 
+    \addplot [domain=5:7] expression { 0}; 
+    \addplot [domain=7:8, samples=200] expression { 1*sin(20*x) }; 
+    \addplot [domain=8:10] expression { 0}; 
+
+  \end{axis}
+
+\end{tikzpicture}
+
+
+\begin{tikzpicture}
+  \label{page:phy:freqmod}
+
+  \begin{axis}
+    [no markers,
+    samples=1000,
+    domain=0:10,
+    trig format plots=rad,    
+    ]
+    \addplot coordinates {(0,0) (1,0) (1,1) (2,1) (2,0) (3,0) (3,1) (5,1) (5,0) (7,0) (7,1) (8,1) (8,0) (10,0)};
+
+    \addplot [domain=0:1] expression { 1*sin(5*x) }; 
+    \addplot [domain=1:2] expression { 1*sin(20*x) }; 
+    \addplot [domain=2:3] expression { 1*sin(5*x) }; 
+    \addplot [domain=3:5] expression { 1*sin(20*x) }; 
+    \addplot [domain=5:7] expression { 1*sin(5*x) }; 
+    \addplot [domain=7:8] expression { 1*sin(20*x) }; 
+    \addplot [domain=8:10] expression { 1*sin(5*x) }; 
+
+  \end{axis}
+
+\end{tikzpicture}
+
+
+\begin{tikzpicture}
+  \label{page:phy:phasemod}
+
+  \begin{axis}
+    [no markers,
+    samples=1000,
+    domain=0:10,
+    trig format plots=rad,    
+    ]
+    \addplot coordinates {(0,0) (1,0) (1,1) (2,1) (2,0) (3,0) (3,1) (5,1) (5,0) (7,0) (7,1) (8,1) (8,0) (10,0)};
+
+    \addplot [domain=0:1] expression { 1*sin(5*x) }; 
+    \addplot [domain=1:2] expression { 1*sin(5*x + pi/2) }; 
+    \addplot [domain=2:3] expression { 1*sin(5*x) }; 
+    \addplot [domain=3:5] expression { 1*sin(5*x + pi/2) }; 
+    \addplot [domain=5:7] expression { 1*sin(5*x + pi/2) }; 
+    \addplot [domain=7:8] expression { 1*sin(5*x) }; 
+    \addplot [domain=8:10] expression { 1*sin(5*x + pi/2) }; 
+
+  \end{axis}
+
+\end{tikzpicture}
+
+
+\begin{tikzpicture}
+  \label{page:phy:qpsk}
+
+  \begin{axis}
+    [no markers,
+    samples=1000,
+    domain=0:10,
+    trig format plots=rad,    
+    ]
+    \addplot coordinates { (0,1) (1,1) (1,2) (2,2) (2,0) (3,0) (3,1) (4,1)}; 
+
+    \addplot [domain=0:1] expression { 0.5*sin(10*x +pi/2) }; 
+    \addplot [domain=1:2] expression { 1*sin(10*x) }; 
+    \addplot [domain=2:3] expression { 0.5*sin(10*x) }; 
+    \addplot [domain=3:4] expression { 0.5*sin(10*x + pi/2) }; 
+
+  \end{axis}
+
+\end{tikzpicture}
+
+
+
+% \begin{tikzpicture}
+%   \begin{axis}
+%     [no markers,
+%     % samples=500,
+%     domain=0:10,
+%     trig format plots=rad,    
+%     ]
+%     \addplot [domain=0:1] expression { 0}; 
+%     \addplot [domain=1:2, samples=200] expression { 1*sin(20*x) }; 
+%     \addplot [domain=2:3] expression { 0}; 
+%     \addplot [domain=3:5, samples=200] expression { 1*sin(20*x) }; 
+    
+%   \end{axis}
+% \end{tikzpicture}
+
+
+
+\end{document}
