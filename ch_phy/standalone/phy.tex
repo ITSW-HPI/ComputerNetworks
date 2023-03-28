@@ -109,7 +109,7 @@
 %    f1 = 1/8 Hz, alpha = 1
   % f2 = 2 * 1/8 Hz, alpha = (1/2*2)^2 
   \begin{axis}
-    [xlabel=Frequency/Hz, ylabel=Attenuation]
+    [xlabel=Frequency/Hz, ylabel=1/Attenuation]
     \addplot coordinates {(0, 1) (0.125, 1)
       (2*0.125, 1)
       (3*0.125, 1)
@@ -136,7 +136,7 @@
 %    f1 = 1/8 Hz, alpha = 1
   % f2 = 2 * 1/8 Hz, alpha = (1/2*2)^2 
   \begin{semilogyaxis}
-    [xlabel=Frequency/Hz, ylabel=Attenuation]
+    [xlabel=Frequency/Hz, ylabel=1/Attenuation]
     \addplot coordinates {(0, 1) (0.125, 1) (2*0.125, 1/2*1/2*1/2*1/2)
       (3*0.125, 1/3*1/3*1/3*1/3)
       (4*0.125, 1/4*1/4*1/4*1/4)
@@ -177,7 +177,7 @@
 \end{tikzpicture}
 
 \begin{tikzpicture}[start chain=1, start chain=2, every join/.style={->}]
-  \label{page:phy:structure:baseband}
+  \label{page:phy:structure:broadband}
   
   \begin{scope}[every node/.style={on chain=1, draw, align=center, join}]
     \node [circle] (source) {Source};

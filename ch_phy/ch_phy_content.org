@@ -5,6 +5,8 @@
 \end{frame}
 
 
+#+LATEX_HEADER: \usepackage{tcolorbox}
+#+LATEX_HEADER: \tcbset{colback=hpiblue!10,colframe=hpiblue,before skip=2ex,after skip=2ex}
 
 **** The story so far  
 
@@ -43,7 +45,7 @@
       :END:
 
 
-** Baseband 
+** Baseband
 
 *** Observations 
 
@@ -107,6 +109,8 @@ What is going on here?
 
 *** Fourier 
 
+
+
 **** Some background: Fourier analysis
 
 ***** Fourier’s theorem                                           :B_theorem:
@@ -116,17 +120,18 @@ What is going on here?
 
 Any (reasonable, e.g., partially continuous)  *periodic* function g(t) with period $T$ can be *written as* a (possibly infinite) sum of sine and cosine functions; the frequencies of these functions are integer multiples of the fundamental frequency f = 1/T. 
 
+\begin{tcolorbox}
 \begin{equation}
 \label{eq:fourier}
 g(t) = 1/2c + \sum_{n=1}^\infty a_n \sin(2\pi n f t) + \sum _{n=1}^\infty b_n \cos(2\pi n f t )
 \end{equation}
+\end{tcolorbox}
 
 \pause
 - Eq. \ref{eq:fourier} is called the *Fourier series* representation
   of $g$
 \pause 
 - Constants $c$, $a_n$, $b_n$ are to be determined - the *Fourier analysis* of $g$
-
 
 
 **** Good news: Orthogonal base system
@@ -296,7 +301,7 @@ Compute  $a_n, b_n, c$ for $n \leq 1024$
 
 - *Almost* no discernible difference between original function and Fourier series
 \pause 
-- Signal bandwidth of red function? \pause $1024 \cdot  \frac{1}{8\,\mathrm{8}}  = 128\,\mathrm{Hz}$
+- Signal bandwidth of red function? \pause $1024 \cdot  \frac{1}{8\,\mathrm{s}}  = 128\,\mathrm{Hz}$
 
 
 **** Applying Fourier analysis to example: The spectrum 
@@ -434,12 +439,14 @@ What is attenuation in Figure \ref{fig:phy:attenuated_simple_fourier}?
   - So-called *frequency-selective attenuation*, $\alpha(f)$ 
 - Formally: 
 
+\begin{tcolorbox}
 \[
-\tilde{g}(t) = 1/2 \alert{\frac{1}{\alpha(0)}} c + \sum_{n=1}^\infty 
+\tilde{g}(t) = 1/2 \alert{\frac{1}{\sqrt{\alpha(0)}}} c + \sum_{n=1}^\infty 
 \alert{\frac{1}{\sqrt{\alpha(n f)}}} a_n \sin(2\pi n f t) + \sum _{n=1}^\infty
 \alert{\frac{1}{\sqrt{\alpha(n f)}}} b_n \cos(2\pi n f t )
 \label{eq:fourier:freq_sel}
 \]
+\end{tcolorbox}
 
 \pause 
 - Example in Figure \ref{fig:phy:attenuated_simple_fourier} assumed
@@ -660,12 +667,15 @@ We will revisit the third case in Section \ref{sec:phy:broadband}
 - Consequence: Harmonics arrive at receiver out of phase
   - Amount of phase shift in the medium depends on frequency
   - I.e., at receivers sees something like 
+
+\begin{tcolorbox}
 \[
 \tilde{g}(t) = 1/2 \frac{1}{\alpha(0)} c + \sum_{n=1}^\infty 
 \frac{1}{\sqrt{\alpha(n f)}} a_n \sin(2\pi n f t + \alert{\phi_f}) + \sum _{n=1}^\infty
 \frac{1}{\sqrt{\alpha(n f)}} b_n \cos(2\pi n f t + \alert{\phi_f} )
 \label{eq:fourier:distorted}
 \]
+\end{tcolorbox}
 
 
 
@@ -681,25 +691,77 @@ We will revisit the third case in Section \ref{sec:phy:broadband}
 
 *** Noise 
 
-**** Fact 5: Real systems are noisy
-- A receiver exhibits random (thermal) noise
-- Random fluctuations of electrons in the receiver circuitry
-- 
-**** Example with frequency-dependent attenuation and distortion, random noise
-- When taking all five facts into account, the received wave form can be satisfyingly explained: 
+**** Remaining issue: Noise 
+
+\vskip-2.5em
+
+***** Behavior explained so far 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+#+caption: Semi-realistic lowpass channel transmitting ASCII b (repetition of Figure)
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:phy:fourier:lowpass}
+#+NAME: fig:phy:fourier:lowpass
+[[./standalone/plots.pdf]]
+
+
+
+***** Yet to be explained
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+#+caption: Remaming effect to explain: noise
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:phy:fourier:lowpass:noisy}
+#+NAME: fig:phy:fourier:lowpass:noisy
+[[./standalone/plots.pdf]]
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+
+
+
+
+
+
 **** Noise – source? 
 - Where does noise come from? 
-- Physics – in particular, random fluctuations inside the receiver 
-- Noise is not an effect of the channel; it happens inside the receiver
-- Causes mis-measurement of signal at receiver around the ``actual'' (noise-free) signal amplitude 
-- Models? 
-- Look at physics, measure effects, count how often how big a deviation occurs 
-- Typical model: noise adds to signal a Gaussian random variable 
-- Zero mean and some standard deviation ¾, N(0, ¾2), uncorrelated in time
-- Standard deviation proportional to temperature (in Kelvin!)
-- This is Additive White Gaussian Noise (AWGN)
-- 
-**** Noise – quantitatively? 
+  - Physics – in particular, random fluctuations of electrons  inside the receiver 
+  - Noise is not an effect of the channel; it happens inside the receiver
+  - Causes mis-measurement of signal at receiver around the ``actual'' (noise-free) signal amplitude 
+
+\pause 
+\vfill
+***** Noise is not inference, interference is not noise        :B_alertblock:
+      :PROPERTIES:
+      :BEAMER_env: alertblock
+      :END:
+
+- Noise: an effect *inside the receiver*
+- Interference: effect of *other transmitters*
+  - Deliberate or by chance 
+
+
+
+**** Models for noise 
+  - Look at physics, measure effects, count how often how big a deviation occurs 
+  - Typical model: noise adds to signal a Gaussian random variable 
+    - Zero mean and some standard deviation \sigma, distribution $N(0, \sigma^2)$, uncorrelated in time
+    - Standard deviation proportional to temperature (in Kelvin!)
+  - This is *Additive White Gaussian Noise* (AWGN)
+    - ``white'': if we look at each harmonic separately, we see the
+      same effect; homogeneous across frequency 
+ 
+**** Noise – quantitatively?                                       :noexport:
 - What is the quantitatively relevant effect of noise on a signal? 
 - Detour: Amplitude vs. power 
 - At the end, a receiver will collect energy for each bit (see later for details) 
@@ -715,45 +777,230 @@ We will revisit the third case in Section \ref{sec:phy:broadband}
 - Computer Networks - Physical layer
 - 28
 **** Noise – quantitatively? 
-- Hence: a noise disturbance of some DU corresponds to a power of (DU)2 
-- The average power of the noise N is the average over time of all the instantaneous noise powers
-- 
-- WS 19/20, v 1.11
-- Computer Networks - Physical layer
-- 29
+- Hence: a noise disturbance of some $\Delta U$ corresponds to a power of $(\Delta U)^2$ 
+- The average power of the noise $\bar{N}$ is the average over time of all the instantaneous noise powers
+
+\begin{tcolorbox}
+\[
+\bar{N} = \lim_{T\rightarrow T} \frac{1}{T} \int_{0}^T (\Delta U(t))^2
+\mathrm{d} t
+\label{eq:avg_noise_power}
+\]
+\end{tcolorbox}
+
 **** Noise – quantitatively? 
-- Since we know the distribution of DU(t) (and assume independence over time) we can rewrite this as:
-- where fDU is the density of the Gaussian random variable representing noise, with distribution N(0, ¾2)
-- But this is just the definition of the variance ¾2 !
-- Hence: Noise power is (proportional to) the variance of the noise  
-- WS 19/20, v 1.11
-- Computer Networks - Physical layer
-- 30
+- Since we know the distribution of $\Delta U(t)$ to be Gaussian (and assume
+  independence over time) we can rewrite this as:
+
+\begin{tcolorbox}
+
+\[
+\bar{N} =  \int_{n=-\infty}^\infty f_{\Delta U(t)} n^2 \mathrm{d} n
+\label{eq:avg_noise_power_density}
+\]
+\end{tcolorbox}
+
+- where $f_{\Delta U}$ is the density of the Gaussian random variable representing noise, with distribution $N(0, \sigma^2)$
+  - But this is just the definition of the variance of the random variable !
+  - Hence: Noise power is (proportional to) the variance of the noise  
+
+
+
 **** Noise vs. signal: Compare power 
 - Why is noise power relevant? 
-- Power is what matters! 
-- Specifically: the Signal-to-Noise Ratio (SNR)
-- Ratio of average signal power to average noise power
+  - Power is what matters! 
+- Specifically: the *Signal-to-Noise Ratio* (SNR)
+  - Ratio of average signal power to average noise power
 - Intuition: 
-- The louder the noise, the harder is to understand 
-- Receiver takes some time to receive a bit 
-- During that time, power is integrated and collected into energy 
-- For the signal, and the noise – this energy is what REALLY matters 
-- 
+  - The louder the noise, the harder is to understand 
+  - Receiver takes some time to receive a bit 
+    - During that time, power is integrated and collected into energy 
+    - For the signal, and the noise – this energy is what REALLY matters 
 
-
-** Limitations                                                     :noexport:
+** Limitations
 
 **** Converting signals to data: Sampling
-- Suppose we have a channel with ``sufficient'' bandwidth available, free of noise, no distortion
+- Suppose we have a channel with ample bandwidth, no noise, no distortion
 - How does a receiver convert the signal back to data? 
-- Easy: Look at the signal 
-- If high, bit is a 1
-- If low, bit is a 0
+
+\vskip-1em
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+- Easy: Look at the signal
+- Decision rule: 
+  - If signal above 0.5, consider bit  a 1
+  - If signal below 0.5, consider bit  a 0
+- When? E.g., in the middle of a bit duration 
+
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+
+#+caption: Sampling a signal at the reciever to reconstruct transmitted bits
+#+attr_latex: :width 0.95\textwidth :height 0.4\textheight :options keepaspectratio,page=\getpagerefnumber{page:phy:fourier:correct_bits}
+#+NAME: fig:phy:fourier:correct_bits
+[[./standalone/plots.pdf]]
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+
+**** Sampling in a bandwidth-limited channel
+
+- Even looking at an entire bit duration can fail: Bit 7 incorrectly
+  considered a 0  
+
+#+caption: In a bandwidth-limited channel, some bits cannot be recovered correct (even when looking at an entire bit duration)
+#+attr_latex: :width 0.95\textwidth :height 0.4\textheight :options keepaspectratio,page=\getpagerefnumber{page:phy:fourier:wrong_bits:nonoise}
+#+NAME: fig:phy:fourier:wrong_bits:nonoise
+[[./standalone/plots.pdf]]
+
+- Option: Make interval longer
+  - Gives signal more time to cross over the decision line
+  - *Inherent limitation from channel bandwidth* 
+
+**** Sampling in a noisy channel 
+
+- With noise added, additional errors can occur
+  - Even when, e.g., sampling multiple times per interval and
+    averaging 
+
+#+caption: In a noisy channel, additional errors can occur
+#+attr_latex: :width 0.95\textwidth :height 0.4\textheight :options keepaspectratio,page=\getpagerefnumber{page:phy:fourier:wrong_bits:noisy}
+#+NAME: fig:phy:fourier:wrong_bits:noisy
+[[./standalone/plots.pdf]]
+
+**** Shannon limit on achievable data rate
+- Achievable data rate is fundamentally limited by noise and channel bandwidth $H$
+  - More precisely: by the relationship of average signal strength $S$
+    compared to average noise $N$ and spectral efficiency $\eta$ 
+
+***** Shannon capacity [[cite:&Shannon1948-nc]]                                          :B_theorem:
+      :PROPERTIES:
+      :BEAMER_env: theorem
+      :END:
+
+  - *Capacity* of a channel: 
+
+\begin{tcolorbox}
+\[
+C =  H \log_2(1 + \frac{S}{N})
+\]
+\end{tcolorbox}
+
+ - \pause Achievable data rate: 
+\begin{tcolorbox}
+\[
+\text{maximum \onslide<3->{\alert{error-free}} data rate} < \eta    C
+\label{eq:shannon}
+\]
+\end{tcolorbox}
+
+
+**** Spectral efficiency 
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+ 
+- Spectral efficiency $\eta$ relates bandwidth to data rate
+  - In a normal AWGN channel, only $\eta<1$ feasible 
+  - \pause Note: terminology varies here; sometimes, $\eta$ is already
+    absorbed in $C$ 
+
+**** Terminology 
+
+\begin{center}
+\begin{tikzpicture}
+\node[scale=5,align=center]{\textbf{Bandwidth}\\is not the same as \\ \textbf{data rate}!};
+\end{tikzpicture}
+\end{center}
+
+
+*** Symbols vs. bits 
+
+****  Use more than just 0 and 1 in the channel
+- Who says we can only use 0 and 1 as possible levels for the transmitted signal? 
+- Suppose the transmitter can generate signals (current, voltage, \dots) at four different levels, instead of just two
+- Then: two bits can be used to select one of the four signal levels = one signal step can transmit two bits
+
+**** Bits vs. symbols 
+Distinction:
+- *Bits* are 0 or 1, used in ``higher'' layers
+- *Symbols* can have 2 or more values, are transmitted over the channel
+  - If more than two symbol values, symbols group bits together for transmission
+- *Symbol rate*: Rate at which symbols are transmitted
+  - Measured in *baud* (symbols/s)
+- *Data rate*: Rate at which physical layer sends incoming data bits
+  - Measured in *bit/s*
+
+**** Example: Use four-level symbols to encode two bits
+
+- Map 00 $\leadsto$ 0, 01 $\leadsto$ 1, 10 $\leadsto$ 2, 11 $\leadsto$ 3
+- Symbol rate is then only half the data rate as each symbol encodes two bits
+
+#+caption: Grouping two consecutive bits into one of four possible symbols
+#+attr_latex: :width 0.95\textwidth :height 0.5\textheight :options keepaspectratio,page=\getpagerefnumber{page:phy:ascii_b:2bits_per_symbol}
+#+NAME: fig:phy:ascii_b:2bits_per_symbol
+[[./standalone/plots.pdf]]
+
+
+
+**** Data rate with multi-valued symbols – Nyquist 
+
+- Using symbols with multiple values, the data rate can be increased
+
+***** *Nyquist formula*                                           :B_theorem:
+      :PROPERTIES:
+      :BEAMER_env: theorem
+      :END:
+
+\begin{tcolorbox}
+\[
+\text{maxmimum data rate} < 2 \frac{\text{bit/s}}{\mathrm{Hz}} H
+\log_2 V
+\label{eq:nyquist}
+\]
+\end{tcolorbox}
+
+- where V is the number of discrete symbol values
+
+**** Unlimited data rate with many symbol levels?	
+- Nyquist’s theorem appears to indicate that unlimited data rate can be achieved when only enough symbol levels are used
+- Is this plausible?
+  - More and more symbol levels have to be spaced closer and closer together
+- What then about noise? 
+  - Even small random noise would then result in one symbol being
+    misinterpreted for another
+\pause 
+- So, not unlimited? 
+  - No, of course not: *both* Nyquist *and* Shannon bounds must hold
+    at the same time 
+
+
+*** Old limitations                                                :noexport:
+
 **** Sampling over a noisy or bandwidth-limited channel
 - In presence of noise or limited bandwidth (or both), signal will not likely be exactly 0 or 1
 - Or whatever 0 and 1 amounts to after attenuation
 - Instead of comparing to these precise values, receiver has to use some thresholds within which a signal is declared as a 0 or a 1 
+
+
 **** Sampling & low bandwidth
 - What happens when little bandwidth is available?
 - I.e., channel bandwidth < signal bandwidth 
@@ -776,49 +1023,7 @@ We will revisit the third case in Section \ref{sec:phy:broadband}
 - This is a fundamental limitation and cannot be circumvented 
 - Formally: maximum data rate < 2H bits/swhere H is the channel bandwidth
 - Basic reason: need to sample sufficiently often
-**** Way out 3: Use more than just 0 and 1 in the channel
-- Who says we can only use 0 and 1 as possible levels for the transmitted signal? 
-- Suppose the transmitter can generate signals (current, voltage, …) at four different levels, instead of just two
-- Then: two bits can be used to select one of the four signal levels = one signal step can transmit two bits
-- Distinction:
-- Bits are 0 or 1, used in ``higher'' layers
-- Symbols can have 2 or more values, are transmitted over the channel
-- If >2 symbol values, symbols group bits together for transmission
-- Symbol rate: Rate at which symbols are transmitted
-- Measured in baud
-- Data rate: Rate at which physical layer sends incoming data bits
-- Measured in bit/s 
-**** Terminology note 
-- Bandwidth is not the same as data rate!!
-- WS 19/20, v 1.11
-- Computer Networks - Physical layer
-- 39
-**** Way out 3: Use four-level symbols to encode two bits
-- Example:
-- Map 00 $\leadsto$ 0, 01 $\leadsto$ 1, 10 $\leadsto$ 2, 11 $\leadsto$ 3
-- Symbol rate is then only half the data rate as each symbol encodes two bits
-- 
-**** Data rate with multi-valued symbols – Nyquist 
-- Using symbols with multiple values, the data rate can be increased
-- Nyquist formula summarizes: where V is the number of discrete symbol values
-- 
-**** Unlimited data rate with many symbol levels?	
-- Nyquist’s theorem appears to indicate that unlimited data rate can be achieved when only enough symbol levels are used
-- Is this plausible?
-- More and more symbol levels have to be spaced closer and closer together
-- What then about noise? 
-- Even small random noise would then result in one symbol being misinterpreted for another
-- So, not unlimited? 
-- 
-**** Shannon limit on achievable data rate
-- Achievable data rate is fundamentally limited by noise
-- More precisely: by the relationship of signal strength S compared to noise N 
-- The relatively fewer noise there is at the receiver, the easier it is for the receiver to distinguish between different symbol levels
-- Relationship characterized by Shannon, 1948
-- 
-- where S is average signal power, N is average noise power 
-- Measured in metric units, not dB
-- This theorem formed the basis for information theory
+
 **** Definition summary, terminology note
 - Signal bandwidth: Difference between lowest and highest frequency considered in a signal 
 - Channel bandwidth: Range of frequencies that pass through a channel with acceptable attenuation 
@@ -826,127 +1031,185 @@ We will revisit the third case in Section \ref{sec:phy:broadband}
 - Data rate: The number of bits sent per time unit (usually, second) 
 - (Shannon) Capacity: An (unreachable) upper bound on the data rate achievable over a channel of a given bandwidth and at a given noise level so that error-free communication is possible. 
 - At higher rates, errors cannot be avoided; at lower rates, error-freeness can be guaranteed. 
-- 
-- WS 19/20, v 1.11
-- Computer Networks - Physical layer
-- 44
 
 
-** Clock extraction                                                :noexport:
+** Clock extraction
 
 **** When to sample the received signal?
 - How does the receiver know WHEN to check the received signal for its value?
-- One typical convention: in the middle of each symbol
-- But when does a symbol start?
-- The length of a symbol is usually known by convention via the symbol rate
-- The receiver has to be synchronized with the sender at the symbol level
-- (``Symbol'' if more than one bit per symbol; if only one bit per symbol, then ``bit synchronization'' is the usual, yet still sloppy term)
-- The link layer will have to deal with frame synchronization
-- There is also ``character'' synchronization – omitted here
+  - One typical convention: in the middle of each symbol
+  - But when does a symbol start?
+    - The length of a symbol is usually known by convention via the symbol rate
+- The receiver has to be *synchronized* with the sender at the symbol level
+  - (``Symbol'' if more than one bit per symbol; if only one bit per symbol, then ``bit synchronization'' is the usual, yet still sloppy term)
+  - The link layer will have to deal with frame synchronization
+  - There is also ``character'' synchronization – omitted here
+
 **** Overly simplistic bit synchronization
 - One simple option: 
-- Assume that sender and receiver at some point in time are synchronized
-- That both have an internal clock that tics at every symbol step
+  - Assume that sender and receiver at some point in time are synchronized
+  - That both have an internal clock that tics at every symbol step
 - Usually, this does not work
-- Clock drift is major problem – two different clocks never stay in perfect synchrony 
-- Errors if synchronization is lost:
-- 
+  - *Clock drift* is major problem – two different clocks never stay in perfect synchrony 
+
 **** Options to tell the receiver when to sample
 - Relying on permanently synchronized clocks does not work
 - Provide an explicit clock signal 
-- Needs parallel transmission over some additional channel
-- Must be in synch with the actual data, otherwise pointless
--  !Useful only for short-range communication
+  - Needs parallel transmission over some additional channel
+  - Must be in synch with the actual data, otherwise pointless
+  - $\leadsto$ Useful mostly for short-range communication
 - Synchronize the receiver at crucial points (e.g., start of a character or of a block)
 - Otherwise, let the receiver clock run freely
 - Relies on short-term stability of clock generators (do not diverge too quickly) $\leadsto$ Often reasonable 
 - Extract clock information from the received signal itself
-- Treated next in more detail
+  - Treated next in more detail
 **** Extract clock information from signal itself
 - Put enough information into the data signal itself so that the receiver can know immediately when a bit starts/stops
-- Would the simple 0 $\leadsto$ low, 1 $\leadsto$ high mapping of bit! symbol work?
+- Would the simple 0 $\leadsto$ low, 1 $\leadsto$ high mapping of
+  bit $\leadsto$ symbol work?
 - It should – after all, receiver can use 0-1-0 transitions to detect the length of a bit
 - But it fails depending on bit sequences: think of long runs of 1s or 0s – receiver can loose synchronization
 - Not nice not to be able to transmit arbitrary data
+
 **** Extract clock information from signal itself – Manchester 
+
 - Idea: At each bit, provide indication to receiver that this is where a bit {starts/stops/has its middle}
-- Example: Manchester encoding 
-- For a 0 bit, have the signal change in the middle of a symbol (=bit) from low to high
-- For a 1 bit, have the signal change in the middle of a symbol (=bit) from high to low 
+  - Example: Manchester encoding 
+  - For a 0 bit, have the signal change in the middle of a symbol (=bit) from low to high
+  - For a 1 bit, have the signal change in the middle of a symbol (=bit) from high to low 
 - Ensures sufficient number of signal transitions
-- Independent of what data is transmitted!
-- 
+  - Independent of what data is transmitted!
+- Price to pay: cuts data rate in half 
 
 
-** Broadband vs. baseband                                          :noexport:
+** Broadband vs. baseband
 \label{sec:phy:broadband}
 
+*** Modulation 
 
 **** Baseband versus broadband transmission
-- The transmission schemes described so far: Baseband transmission
-- Baseband transmission directly puts the digital symbol sequences onto the wire
-- At different levels of current, voltage, …
+- The transmission schemes described so far: *Baseband transmission*
+  - Baseband transmission directly puts the digital symbol sequences onto the wire
+  - At different levels of current, voltage, \dots 
 - Baseband transmission suffers from the problems discussed above
-- Direct current components have to be avoided
-- Limited bandwidth reshapes the signal at receiver
-- Attenuation and distortion depend on frequency and baseband transmissions have many different frequencies because of their wide Fourier spectrum
-- Possible alternative: broadband transmission
-- More precise name: bandpass transmission 
-- Examples: Wireless communication, DSL, …
+  - Direct current components have to be avoided
+  - Signal bandwidth not included in  channel bandwidth, reshaping
+    received signal 
+- Possible alternative: *broadband transmission*
+  - Examples: Wireless communication, DSL, \dots 
 **** Broadband transmission
 - Idea: Shift signal into channel bandwidth! 
-- Use a sine wave as a carrier for the symbols to be transmitted
-- Typically, the sine wave has high frequency 
-- But only a single frequency! 
-- Pure sine wave has no information, so its shape has to be influenced according to the symbols to be transmitted
-- The carrier has to be modulated by the symbols (widening the spectrum)
-- Three parameters that can be influenced
-- Amplitude a
-- Frequency f
-- Phase \phi
+- Use a sine wave as a *carrier* for the signal  to be transmitted
+  - Typically, the sine wave has high frequency and is well within the
+    channel bandwidth 
+  - But only a single frequency! 
+\pause 
+- Pure sine wave carries no information, so its shape has to be influenced according to the symbols to be transmitted
+  - The carrier has to be *modulated* by the symbols (widening its spectrum)
+- Three parameters that can be influenced: $a \sin(2 \pi f t + \phi)$
+  - Amplitude $a$
+  - Frequency $f$
+  - Phase $\phi$
 **** Amplitude modulation
-- Given a sine wave f(t) and a time-varying signal s(t)
--  
-- Signal can be analog (i.e., a continuous function of time) or digital (i.e., a discrete function of time)
-- Signal can be e.g. the symbol levels discussed above
-- The amplitude modulated sine wave fA(t) is given as:
-- I.e., the amplitude is given by the signal to be transmitted
-- Receiver can extract s(t) from fA(t)
+- Given a sine wave $f(t) = a \sin(2\pi ft + \phi)$ and a time-varying signal s(t)
+  - Signal can be e.g. the symbol levels discussed above
+- The *amplitude modulated sine wave* $f_\mathrm{A}(t)$ is given as:
+\[ f_\mathrm{A}(t) = \alert{s(t)} \sin (2\pi f t + \phi)\]
+
+- Receiver can extract $s(t)$ from $f_\mathrm{A}(t)$
 - Special cases: 
-- s(t) is an analog signal – amplitude modulation
-- s(t) is a digital signal – also called amplitude keying
-- s(t) only takes 0 and 1 (or 0 and a) as values – on/off keying
+  - $s(t)$ is an analog signal – *amplitude modulation*
+  - $s(t)$ is a digital signal –  *amplitude keying*
+  - $s(t)$ only takes 0 and 1 (or 0 and a) as values – *on/off keying*
+
 **** Amplitude modulation – example 
-- Question: How to solve bit synchronization here? Is Manchester applicable? 
+
+#+caption: Amplitude modulation
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:phy:xonxoff}
+#+NAME: fig:phy:xonxoff
+[[./standalone/modulation.pdf]]
+
+
 **** Frequency modulation
-- The frequency-modulated sine wave fF(t) is given by
+- The frequency-modulated sine wave $f_\mathrm{F}(t)$ is given by
+\[ f_\mathrm{F}(t) = a \sin (2\pi \alert{s(t)} t + \phi)\]
+
+- Typically, $s(t)$ oscillates around the carrier's frequency
 - Modulation/keying terminology like for AM
-- Example
+
+**** Frequency modulation: Example
+
+#+caption: Frequency modulation
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:phy:freqmod}
+#+NAME: fig:phy:freqmod
+[[./standalone/modulation.pdf]]
+
+
+
+
 **** Phase modulation
-- Similarly, a phase modulated carrier is given by 
+- Similarly, a phase modulated signal is given by 
+
+\[ f_\mathrm{P}(t) = a \sin (2\pi f t +  \alert{s(t)})\]
+
 - Modulation/keying terminology again similar
 - Example:
-- 
+  - Two phase values used, $s(t) \in \{0, \pi\}$: *Binary Phase Shift
+    Keying* (BPSK)
+
+
+**** Phase modulation: Example 
+#+caption: Phase-modulated signal
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:phy:phasemod}
+#+NAME: fig:phy:phasemod
+[[./standalone/modulation.pdf]]
+
+
+
 **** Phase modulation with multiple values per symbol
 - A receiver can usually distinguish phase shifts quite well 
-- Hence: Use phases \pi/4, 3/4\pi, 5/4\pi, 7/4\pi  to encode two bits per symbol
+- Hence: Use phases, e.g.,  \pi/4, 3/4\pi, 5/4\pi, 7/4\pi  to encode two bits per symbol
+  - Four functions to choose from 
 - Result: Data rate is twice the symbol rate
-- Technique is called Quadrature Phase Shift Keying  (QPSK)
-**** Visualization: Constellation diagrams
-**** Constellation diagrams: Justification 
+- Technique is called *Quadrature Phase Shift Keying*  (QPSK)
+
+*** Constellation diagrams 
+
+**** Visualization: 
+
+- How to represent QPSK (and generalizations)? 
+\pause
+- Suppose: we use only step-functions to modulate amplitude,
+  frequency, or phase  
+  - Fixed combination for each symbol
+\pause
+- Suppose: We work at a fixed carrier frequency (no FM)
+\pause
+- Then: a symbol corresponds to an (amplitude, phase) combination 
+  - Which is just a complex number in polar coordinates! 
+
+
+**** Constellation diagrams
+
+#+caption: Visualizing QPSK modulation as a constellation diagram
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:phy:constellation:qpsk}
+#+NAME: fig:phy:constellation:qpsk
+[[./standalone/constellation.pdf]]
+
+
+
+
+**** Constellation diagrams: Justification                         :noexport:
 - Justification for constellation diagrams: Euler’s formula 
 - Relevance here: Think of the signal as the real part of a complex function 
 - With amplitude, phase, and frequency
-- 
-- WS 19/20, v 1.11
-- Computer Networks - Physical layer
-- 60
-**** Constellation diagrams: Justification 
+
+**** Constellation diagrams: Justification                         :noexport:
 - Rewrite shorthand:  
 - WS 19/20, v 1.11
 - Computer Networks - Physical layer
 - 61
-**** Complex channel models
+**** Complex channel models                                        :noexport:
 - Channel effects in this model? 
 - At given frequency f, what happens to a constellation point? 
 - It changes amplitude, it changes phase 
@@ -954,101 +1217,289 @@ We will revisit the third case in Section \ref{sec:phy:broadband}
 - Channel is a multiplication by a complex number!  
 - The channel coefficient 
 - Assumption here: constant over time 
-- WS 19/20, v 1.11
-- Computer Networks - Physical layer
-- 62
-**** Channel coefficient in constellation diagram 
-- WS 19/20, v 1.11
-- Computer Networks - Physical layer
-- 63
+
+
+
+**** Channel effect in constellation diagram 
+
+\vskip-2.5em
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+
+
+
+- Transmission: Attenuates and delays a signal
+  - Changes amplitude by $a'$ and phase $\phi'$!
+- More details: Master course on mobile communications 
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+#+caption: Effect of a channel on signal, visualized as a shift of a constellation point
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:phy:constellation:qpsk:channel}
+#+NAME: fig:phy:constellation:qpsk:channel
+[[./standalone/constellation.pdf]]
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+
+
+*** Combined modulations 
+
 **** Combinations of different modulations
-- Amplitude, frequency, and phase modulations can be combined
-- Example: 16-QAM (Quadrature Amplitude Modulation)
-- Use 16 different combinations of phase change and amplitude for each symbol
-- Per symbol, 24 = 16 states; 4 bits are encoded and transmitted in one step
-- Price to pay? 
+
+
+
+
+\vskip-2.5em
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+
+- Constellation diagrams lend themselves easily to more sophisticated
+  modulation techniques 
+- Example: Combination of amplitude and phase keying into a 16-QAM
+  scheme, supporting 4 bits/symbol 
+\pause 
+- Price to  pay: more susceptible to noise
+  - Compared against QPSK under same maximum / average signal power 
+
+\onslide<1->
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+#+caption: 16-QAM as combination of amplitude and phase modulation, visualized as constellation diagram
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:phy:constellation:16qam}
+#+NAME: fig:phy:constellation:16qam
+[[./standalone/constellation.pdf]]
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+
+
+
+*** Error rates 
 **** Bit error rate as function of SNR 
 - The higher the SNR, the better the reception
-- The more reliably can signals be converted to bits at receiver
-- Actually: Energy per bit Eb – takes into account data rate, #bits/symbol 
+  - The more reliably can signals be converted to bits at receiver
+  - Actually: *Energy per bit* $E_b$ – takes into account data rate, #bits/symbol
+    - We simplify here to signal power
 - Concrete bit error probability/rate (BER) depends on SNR and used modulation 
 - Example: differential phase shift keying (DPSK)
-- Note: SNR measured in metric units, not dB 
-**** Example derivation for SNR dependency 
-**** Example derivation for SNR dependency 
+
+\[
+\mathrm{BER}(\mathrm{SNR}) < \frac{1}{2}\mathrm{e}^{-\mathrm{SNR}}
+\label{eq:dpsk:snr:bound}
+\]
+
+**** Example derivation for SNR dependency                         :noexport:
+**** Example derivation for SNR dependency                         :noexport:
 **** Examples for SNR $\leadsto$ BER mappings
 
+#+caption: Example BER curves for two modulation techniques (blue: DPSK, red: fictional) as function of SNR
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:phy:ber:snr}
+#+NAME: fig:phy:ber:snr
+[[./standalone/constellation.pdf]]
 
-** Structure                                                       :noexport:
+
+** Structure
 
 **** Digital vs. analog signals
 - A sender has two principal options what types of signals to generate
-- It can choose from a finite set of different signals – digital transmission 
-- There is an infinite set of possible signals – analog transmission
+  - It can choose from a *finite set* of different signals – *digital transmission* 
+  - There is an *infinite set* of possible signals – *analog transmission*
 - Simplest example: Signal corresponds to current/voltage level on the wire
-- In the digital case, there are finitely many voltage levels to choose from
-- In the analog case, any voltage is legal
-- More complicated example: finite/infinitely many sinus functions
-- In both cases, the resulting wave forms in the medium can well be continuous functions of time!
+  - In the digital case, there are finitely many voltage levels to choose from
+  - In the analog case, any voltage is legal
+- More complicated example: finite/infinitely many sine functions
+  - In both cases, the resulting *wave forms* in the medium can well
+    be continuous functions of time! 
 - Advantage of digital signals: There is a principal chance that the receiver can precisely reconstruct the transmitted signal 
 **** Structure of digital communication systems 
 - How to put these functions together into a working digital communication system? 
 - How to structure transmitter and receiver?  
-- How to bridge from a data source to a data sink? 
+- How to bridge from a *data source* to a *data sink*? 
 - Essential functions for baseband transmission
+
+#+caption: Structure of a baseband system
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:phy:structure:baseband}
+#+NAME: fig:phy:structure:baseband
+[[./standalone/phy.pdf]]
+
+
 **** Functions
-- Format: Bring source information in digital form
-- E.g., sample and quantize an analog voice signal, represent text as ASCII
 - Source encode: Remove redundant or irrelevant data
-- E.g., lossy compression (MP3, MPEG 4); lossless compression (Huffmann coding, runlength coding)
+  - E.g., lossy compression (MP3, MPEG 4); lossless compression (Huffmann coding, runlength coding)
 - Channel encode: Map source bits to channel symbols
-- Potentially several bits per symbol
-- May add redundancy to protect against errors 
-- Tailored to channel characteristics
+  - Potentially several bits per symbol
+  - May add redundancy to protect against errors 
+  - Tailored to channel characteristics
 - Physically transmit: Turn the channel symbols into physical signals
 - At receiver: Reverse all these steps
+
 **** Structure of a (digital) broadband system
 - Previous example assumed a simple physical transmission in baseband 
 - Using broadband transmission adds complexity to signal generation
+
+
+#+caption: Structure of a broadband system
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:phy:structure:broadband}
+#+NAME: fig:phy:structure:broadband
+[[./standalone/phy.pdf]]
+
+
 **** Separation of source and channel coding? 
+
+- Is it actually a good idea to separate source coding and channel coding? 
+  - Better results available when combining these two coding steps?
+  - That would mean: depending on the channel, information has to be
+    represented differently  
+
+- Good news: In many important settings, separating source and channel coding is indeed optimal 
+  - In particular, single sender, single receiver 
+  - Shannon’s source-channel separation theorem 
+
+- Interesting news: In many other situations, joint source/channel coding is superior
+  - In particular, broadcast, multiple senders, relays, \dots 
+
 **** Tricky part: Receiver!
 - Difficult: How to decide, given an incoming, noisy version of a channel symbol (=a waveform) what the originally sent symbol/waveform was? 
 - Receiver (channel decoder) knows, for each channel symbol
-- All legal waveforms s1(t), …, sm(t)
-- The actual, incoming, distorted waveform r(t) = si(t) + n(t)
-- Where n(t) is noise, i is unknown index of transmitted channel symbol
-- How to determine i? 
+  - All *legal* waveforms $s_1(t), …, s_m(t)$
+  - The actual, incoming, distorted waveform $r(t) = s_i(t) + n(t)$
+  - Where $n(t)$ is noise, $i$ is *unknown* index of transmitted channel symbol
+- How to determine $i$? 
+
 **** Example: Coherent receiver
 - Coherent receiver: Receiver has perfect time synchronization with transmitter, perfect phase
-- Not true in practice, a simplification
-- Conceptually: Receiver compares r(t) with all si(t), computes distance measure
-- T is length of a channel symbol
-- Result is that waveform i that minimizes this distance measure 
-- This waveform is assumed to be the one that the transmitter has sent
+  - Not true in practice, a simplification
+- Conceptually: Receiver compares $r(t)$ with *all* $s_i(t)$, computes
+  distance measure
+  - E.g.: \[  d_i = || r(\cdot) - s_i(\cdot) ||_2 ^2 = \int_0^T
+    (r(t) - s_i(t))^2 \mathrm{d} t  \]
+  - T is length of a channel symbol
+- Result is that waveform $i^*$ that minimizes this distance measure, 
+\[ i^* = \mathrm{argmin}_i d_i  \]
+ - This waveform is assumed to be the one that the transmitter has sent
 
 ** Conclusion 
 
 **** Example physical layers
+\vskip-2.5em
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+
+
+
 - Guided transmission media
-- Copper wire – twisted pair
-- Copper wire – coaxial cable
-- Fiber optics
-- Wireless transmission 
-- Radio transmission
-- Microwave transmission
-- Infrared
-- Lightwave 
-- 
+  - Copper wire – twisted pair
+  - Copper wire – coaxial cable
+  - Fiber optics
+- Wireless transmission
+  - Electromagnetic in various frequency bands
+  - Ultrasound 
+
+
+
+#+caption: Twisted pair CAT6 cable [[https://commons.wikimedia.org/wiki/File:Optical_fiber_cable.jpg][(Wikimedia)]]
+#+attr_latex: :width 0.95\textwidth :height 0.2\textheight :options keepaspectratio
+#+NAME: fig:phy:cat6
+[[./figures/CAT6_twisted_pair.jpg]]
+
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+
+#+caption: Optical fibre [[https://en.wikipedia.org/wiki/File:Optical_Fiber_Modes.jpg][(Wikipedia)]]
+#+attr_latex: :width 0.95\textwidth :height 0.2\textheight :options keepaspectratio
+#+NAME: fig:phy:optical_fibre
+[[./figures/Optical_fiber_cable.jpg]]
+
+#+caption: Transmission modes in an optical fibre [[https://commons.wikimedia.org/wiki/File:CAT6_twisted_pair.JPG][(Wikimedia)]]
+#+attr_latex: :width 0.95\textwidth :height 0.2\textheight :options keepaspectratio
+#+NAME: fig:phy:optical_fibre
+[[./figures/fibre_modes.jpg]]
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+
 **** Electromagnetic spectrum
+
+#+caption: Various frequency bands for transmission in guided and unguided physical media
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:phy:media}
+#+NAME: fig:phy:media
+[[./standalone/phy.pdf]]
+
+
+
 **** Conclusion
 - The physical layer is responsible for turning a logical sequence of bits into a physical signal that can propagate through space
 - Many different forms of physical signals are possible
 - Signals are limited by their propagation in a physical medium (limited bandwidth, attenuation, dispersion) and by noise
 - Bits can be combined into multi-valued symbols for transmission
-- Gives rise to the difference in data rate and baud rate
 - Baseband transmission is fraught with problems, partially overcome by modulating a signal onto a carrier (broadband transmission)
-
+  
 ** Stuff                                                           :noexport:
+**** figure
+Optical_fiber_cable.jpg
+
+https://commons.wikimedia.org/wiki/File:Optical_fiber_cable.jpg
+
+
+
+fibre_modes.jpg
+https://en.wikipedia.org/wiki/File:Optical_Fiber_Modes.jpg
+Kebes
+
+
+
+CAT6_twisted_pair.JPG
+https://commons.wikimedia.org/wiki/File:CAT6_twisted_pair.JPG
+Agott, CC BY-SA 3.0 <https://creativecommons.org/licenses/by-sa/3.0>,
+via Wikimedia Commons
+
+
 
 *** Old attenuation material                                       :noexport:
 **** Fact 1: Signals are attenuated in a physical medium           :noexport:
@@ -1099,24 +1550,5 @@ We will revisit the third case in Section \ref{sec:phy:broadband}
 - WS 19/20, v 1.11
 - Computer Networks - Physical layer
 - 22
-
-
-**** figure
-Optical_fiber_cable.jpg
-
-https://commons.wikimedia.org/wiki/File:Optical_fiber_cable.jpg
-
-
-
-fibre_modes.jpg
-https://en.wikipedia.org/wiki/File:Optical_Fiber_Modes.jpg
-Kebes
-
-
-
-CAT6_twisted_pair.JPG
-https://commons.wikimedia.org/wiki/File:CAT6_twisted_pair.JPG
-Agott, CC BY-SA 3.0 <https://creativecommons.org/licenses/by-sa/3.0>,
-via Wikimedia Commons
 
 

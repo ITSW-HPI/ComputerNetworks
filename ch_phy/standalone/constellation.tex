@@ -44,7 +44,7 @@
   \node [fill=red, circle, scale=0.5] at (110:0.7cm) (att) {};
 
   \draw [->, red] (1,1) -- (att); 
-  \draw [decorate, decoration={brace,raise=3pt, mirror}] (1,1) to node [above=0.25] {$a\mathrm{e}^{\mathrm{i}\phi'}$} (att); 
+  \draw [decorate, decoration={brace,raise=3pt, mirror}] (1,1) to node [above=0.25] {$a'\mathrm{e}^{\mathrm{i}\phi'}$} (att); 
 
   
 \end{tikzpicture}
@@ -67,6 +67,7 @@
 
 
 \begin{tikzpicture}
+  \label{page:phy:ber:snr}
   \begin{loglogaxis}
     [no markers, samples=100, domain=0.1:100, ymax=1]
     \addplot expression {1/2*exp(-x)}; 
