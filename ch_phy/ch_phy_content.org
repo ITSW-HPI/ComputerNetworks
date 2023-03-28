@@ -45,6 +45,8 @@
 
 ** Baseband 
 
+*** Observations 
+
 **** Basic service of physical layer: transport bits
 - Physical layer  transports bits between two locations A and B
 
@@ -67,11 +69,11 @@ A simple conversion rule
 **** Example: Transmit bit pattern for character ``b''
 - Character ``b'' needs a representation as a sequence of bits
 - One option: Use the ASCII code of ``b'', 98, as a binary number 01100010
-- Resulting voltage put on wire
+- Resulting voltage put on wire: Figure \ref{fig:phy:ascii_b}
 
 
 #+caption: Turning a bit sequence into voltage changes
-#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:phy:ascii_b}
+#+attr_latex: :width 0.95\textwidth :height 0.5\textheight :options keepaspectratio,page=\getpagerefnumber{page:phy:ascii_b}
 #+NAME: fig:phy:ascii_b
 [[./standalone/plots.pdf]]
 
@@ -82,7 +84,7 @@ A simple conversion rule
 - Typical pattern at the receiver:
 
 #+caption: Typical pattern arriving at a receiver when sending the voltage pattern from Figure \ref{fig:phy:ascii_b}
-#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:phy:fourier:lowpass:noisy}
+#+attr_latex: :width 0.95\textwidth :height 0.5\textheight :options keepaspectratio,page=\getpagerefnumber{page:phy:fourier:lowpass:noisy}
 #+NAME: fig:phy:fourier:lowpass:noisy
 [[./standalone/plots.pdf]]
 
@@ -103,6 +105,8 @@ What is going on here?
   oscillations/waves 
 
 
+*** Fourier 
+
 **** Some background: Fourier analysis
 
 ***** Fourier’s theorem                                           :B_theorem:
@@ -121,7 +125,7 @@ g(t) = 1/2c + \sum_{n=1}^\infty a_n \sin(2\pi n f t) + \sum _{n=1}^\infty b_n \c
 - Eq. \ref{eq:fourier} is called the *Fourier series* representation
   of $g$
 \pause 
-- Constants c, an, bn are to be determined - the *Fourier analysis* of $g$
+- Constants $c$, $a_n$, $b_n$ are to be determined - the *Fourier analysis* of $g$
 
 
 
@@ -145,7 +149,7 @@ g(t) = 1/2c + \sum_{n=1}^\infty a_n \sin(2\pi n f t) + \sum _{n=1}^\infty b_n \c
     any $n$.
   - Hint: Standard trigonometric identities 
 \pause 
-- Use these identities to calculate $a_n$, $b_$ 
+- These identities help  calculating $a_n$, $b_n$ 
 
 **** Fourier analysis – computing coefficients
  
@@ -162,7 +166,7 @@ We find:
 #+caption: Example function with period $T$ to compute Fourier coefficients 
 #+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:phy:simple_fourier}
 #+NAME: fig:phy:simple_fourier
-[[./standalone/plots2.pdf]]
+[[./standalone/plot2.pdf]]
 
 
 
@@ -170,80 +174,513 @@ We find:
 
 **** Terminology for Fourier series 
 
-- The $n$th terms of these sums  are called *harmonics*
-- The sum of the squares of the $n$th coefficients (i.e., $a_n^2 + b_n^2$) is proportional to the power contained in this harmonic
+- The representation of $g$ as in Eq. \ref{eq:fourier} is also called
+  the *frequency-domain representation*
+\pause
+- Constant term $1/2 c$ also called the *Direct Current component* (DC)
+\pause
+- The $n$ th terms of these sums  are called *harmonics*
+\pause
+- The sum of the squares of the $n$ th coefficients (i.e., $a_n^2 + b_n^2$) is proportional to the *power* contained in this harmonic
+\pause
 - Why squares? Say, $g(t)$ shows voltage $\leadsto$ Power 
   $P = U \cdot I = U \cdot (U/R) = \frac{1}{R} g^2(t)$
 
+**** Functions with finite Fourier transform 
 
-**** Compute Fourier transform for square wave
-- Consider a square wave as function g(t) 
-**** Applying Fourier analysis to example
-- The transmitted waveform of ‘b’ is not a periodic signal – Fourier not applicable directly
-- Use a trick: Suppose waveform is repeatedinfinitely often, resulting in a periodic waveform with period 8 bit times
-- 
-**** Applying Fourier analysis to example
-- Result of computing an, bn, c and using first 512 Fourier terms to represent the signal: 
-- 
+- Eq \ref{eq:fourier} tells us that this sum exists
+- But it says nothing about how many terms these sums have!
+\pause 
+- Case 1: $g$ can be written as a *finite sum*
+  - Then, there is $n_\mathrm{lower}$ and $n_\mathrm{upper}$ with smallest
+    and largest non-zero coefficients
+  - \pause Corresponds to
+    - Lower frequency $f_\mathrm{lower} = n_\mathrm{lower} \cdot f$
+    - Upper frequency $f_\mathrm{upper} = n_\mathrm{upper} \cdot f$
+
+**** Functions with infinite Fourier transform 
+
+- Case 2: The Fourier series of $g$ is infinite
+  - I.e., for any $n$, there is some $m> n$ such that $a_m \not = 0$
+    or $b_m \not= 0$
+  - \pause *Practically, however, often $a_n$, $b_n$ fall off quickly
+    (often, exponentially)
+    - Power in high harmonics quickly goes  to zero 
+  - \pause Cutting off above some $n_\mathrm{upper}$ *does* introduce
+    an error, but often an acceptably small one
+    - Size of acceptable error is more or less arbitrary
+  - \pause Hence, we can still define $n_\mathrm{lower}$ and
+    $n_\mathrm{upper}$ like above! 
+
 **** Signal bandwidth 
-**** Fact 1: Signals are attenuated in a physical medium
-- Attenuation \alpha: Ratio of transmitted to received power
--  
-- High attenuation $\leadsto$ low power arrives at receiver
-- Attenuation depends on 
-- Actual medium
-- Distance between sender and receiver
--  … other factors
-- Normalized, typically given in dB 
-- dB: logarithmic expressionof ratio
-- 
-**** Fact 2: Not all frequencies pass through a medium
-- Previous picture assumed that all frequencies travel unhindered through a physical medium
-- This is not the case for real media!
-- Simplified behavior: frequencies up to given upper bound fc  can pass; higher frequencies are suppressed
-- Mathematically: the Fourier series is cut off at a certain harmonic
-- High frequencies are attenuated to zero
-- Intuition: Range of frequencies that can pass through a medium is relevant 
-**** Channel with limited frequency range – example 
-- Result when fewer and fewer harmonics are transported
-**** Fact 3: Frequency-selective attenuation, bandwidth
-- Strictly speaking: channel bandwidth is caused by frequency-selective attenuation 
-- Often: both small and large frequencies are attenuated 
-- Assuming a cut-off frequency fc is too simple-minded
-**** Example with frequency-dependent attenuation
-- Suppose attenuation is 2, 2.5, 3.333… , 5, 10, 1 for the 1st, 2nd, … harmonic
+
+***** \Gls{signalbw}                                           :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+      \Glsdesc{signalbw}
+
+\pause 
+***** Example? 
+
+So what is the signal bandwidth for ASCII letter ~b~ ? 
+
+
+*** Example 
+
+**** Challenging:  Fourier analysis for non-periodic signals? 
+
+\vskip-2.5em
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+
+- The transmitted waveform of ‘b’ is not a periodic signal – Fourier
+  analysis not applicable directly
+  - (Remark: The *continuous* Fourier *transform* is needed here; for
+    time-discrete signals, there is also a discrete Fourier transform)
+\pause 
+- We just a simplification here: *Pretend* waveform is repeated infinitely often, resulting in a periodic waveform with period 8 bit times
+
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+
+\onslide<1->
+
+
+#+caption: The direction representation of an ASCII b is not periodic and hence not directly amenable to Fourier analysis (copy of Figure \ref{fig:phy:ascii_b})
+#+attr_latex: :width 0.95\textwidth :height 0.2\textheight :options keepaspectratio,page=\getpagerefnumber{page:phy:ascii_b}
+#+NAME: fig:phy:ascii_b_2
+[[./standalone/plots.pdf]]
+
+
+
+\onslide<2->
+#+caption: Simplification: pretend the signal is indefinitly, periodically repeated 
+#+attr_latex: :width 0.95\textwidth :height 0.2\textheight :options keepaspectratio,page=\getpagerefnumber{page:phy:repeated_fourier}
+#+NAME: fig:phy:repeated_fourier
+[[./standalone/plot2.pdf]]
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+
+
+
+
+**** Applying Fourier analysis to example
+
+Compute  $a_n, b_n, c$ for $n \leq 1024$ 
+
+#+caption: Showing $g(t)$ (in blue) and the first 1024 terms of the Fourier series (in red)
+#+attr_latex: :width 0.95\textwidth :height 0.4\textheight :options keepaspectratio,page=\getpagerefnumber{page:phy:fourier:h_1024}
+#+NAME: fig:phy:fourier:h_1024
+[[./standalone/plots.pdf]]
+
+\pause 
+
+- *Almost* no discernible difference between original function and Fourier series
+\pause 
+- Signal bandwidth of red function? \pause $1024 \cdot  \frac{1}{8\,\mathrm{8}}  = 128\,\mathrm{Hz}$
+
+
+**** Applying Fourier analysis to example: The spectrum 
+
+***** Time-domain representation of ASCII b 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+#+caption: ASCII b in time domain (repetition from Figure \ref{fig:phy:ascii_b})
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:phy:ascii_b}
+#+NAME: fig:phy:ascii_b_3
+[[./standalone/plots.pdf]]
+
+
+
+***** Frequency-domain  representation of ASCII b 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+#+caption: ASCII b in frequency domain 
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:phy:spectrum:ascii_b}
+#+NAME: fig:phy:spectrum:ascii_b
+[[./standalone/plots.pdf]]
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+
+**** Reducing signal bandwidth 
+
+What happens when we just use 128 terms instead of 1024? 
+
+#+caption: Showing $g(t)$ (in blue) and the first 128 terms of the Fourier series (in red)
+#+attr_latex: :width 0.95\textwidth :height 0.4\textheight :options keepaspectratio,page=\getpagerefnumber{page:phy:fourier:h_128}
+#+NAME: fig:phy:fourier:h_128
+[[./standalone/plots.pdf]]
+
+\pause 
+
+Characteristic: ``wiggling'' at the points of discontinuitiy 
+- Unavoidable when using finite Fourier series to approximate discontinuous signals! 
+- Formally, so-called *Gibbs ringing*
+
+**** Less and less signal bandwidth 
+
+\begin{figure}
+  \centering  \subfloat[][$n_\mathrm{upper}=64$]{\includegraphics[width=0.2\textwidth,page=\getpagerefnumber{page:phy:fourier:h_64}]{standalone/plots.pdf}}
+  \hfill
+\subfloat[][$n_\mathrm{upper}=32$]{\includegraphics[width=0.2\textwidth,page=\getpagerefnumber{page:phy:fourier:h_32}]{standalone/plots.pdf}}
+  \hfill
+\subfloat[][$n_\mathrm{upper}=16$]{\includegraphics[width=0.2\textwidth,page=\getpagerefnumber{page:phy:fourier:h_16}]{standalone/plots.pdf}}
+  \hfill
+  \subfloat[][$n_\mathrm{upper}=8$]{\includegraphics[width=0.2\textwidth,page=\getpagerefnumber{page:phy:fourier:h_8}]{standalone/plots.pdf}}
+  \\
+\subfloat[][$n_\mathrm{upper}=4$]{\includegraphics[width=0.2\textwidth,page=\getpagerefnumber{page:phy:fourier:h_4}]{standalone/plots.pdf}}
+  \hfill
+\subfloat[][$n_\mathrm{upper}=2$]{\includegraphics[width=0.2\textwidth,page=\getpagerefnumber{page:phy:fourier:h_2}]{standalone/plots.pdf}}
+  \hfill
+\subfloat[][$n_\mathrm{upper}=1$]{\includegraphics[width=0.2\textwidth,page=\getpagerefnumber{page:phy:fourier:h_1}]{standalone/plots.pdf}}
+  \hfill
+\subfloat[][$n_\mathrm{upper}=0$]{\includegraphics[width=0.2\textwidth,page=\getpagerefnumber{page:phy:fourier:h_0}]{standalone/plots.pdf}}
+\caption{Representing ASCII \texttt{b} with shorter and shorter Fourier series}
+\label{fig:phy:fewer_and_fewer}
+\end{figure}
+
+
+
+**** Relevance: Channel effects! 
+
+- Physical media affects different harmonics differently!
+- Abstraction: *\Gls{channel}* turns a transmitted signal $g(t)$ into a
+  received signal $\tilde{g}(t)$ 
+
+#+caption: Channel turns transmitted signal $g$ into received signal $\tilde{g}$
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:fig:channel}
+#+NAME: fig:fig:channel
+[[./standalone/phy.pdf]]
+
+
+\pause 
+- Relationship between $g$ and $\tilde{g}$ much easier to describe in
+  frequency domain 
+\pause 
+- We will look at:
+  - Attenuation
+  - Distortion (very briefly)
+  - Noise 
+
+
+*** Attenuation 
+
+
+**** Attenuation 
+- Typical behavior: *Attenuation*
+- Intuition: Every signal looses *power* when traveling over a
+  physical medium 
+
+***** \Gls{attenuation} $\alpha$                               :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+\[\alpha  = \frac{P_\mathrm{transmitted}}{P_\mathrm{received}} \]
+
+      \Glsdesc{attenuation}
+
+
+\pause 
+\vfill
+Note: 
+- High attenuation = low arriving power
+- Attenuation depends on medium, distance, \dots 
+
+**** Signal attenuation: Example
+
+What is attenuation in Figure \ref{fig:phy:attenuated_simple_fourier}? 
+
+#+caption: Example for attenuation of a signal (blue: transmitted, red: received signal)
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:phy:attenuated_simple_fourier}
+#+NAME: fig:phy:attenuated_simple_fourier
+[[./standalone/plot2.pdf]]
+
+
+**** Attenuation depends on frequency! 
+
+- Real channels: different frequencies see different attenuation! 
+  - So-called *frequency-selective attenuation*, $\alpha(f)$ 
+- Formally: 
+
+\[
+\tilde{g}(t) = 1/2 \alert{\frac{1}{\alpha(0)}} c + \sum_{n=1}^\infty 
+\alert{\frac{1}{\sqrt{\alpha(n f)}}} a_n \sin(2\pi n f t) + \sum _{n=1}^\infty
+\alert{\frac{1}{\sqrt{\alpha(n f)}}} b_n \cos(2\pi n f t )
+\label{eq:fourier:freq_sel}
+\]
+
+\pause 
+- Example in Figure \ref{fig:phy:attenuated_simple_fourier} assumed
+  so-called *flat attenuation* 
+
+**** Frequency-selective attenuation: Simple cases
+
+Some simplified cases: 
+- (Simplified) *lowpass channel*: Channel has a cutoff frequency $f_\mathrm{cutoff}$
+  - All harmonics *below* $f_\mathrm{cutoff}$ experience small
+    attenuation 
+  - All harmonics *above* $f_\mathrm{cutoff}$ experience infinite 
+    attenuation 
+\pause 
+- (Simplified) *highpass channel*: Channel has a cutoff frequency $f_\mathrm{cutoff}$
+  - All harmonics *above* $f_\mathrm{cutoff}$ experience small
+    attenuation 
+  - All harmonics *below* $f_\mathrm{cutoff}$ experience infinite 
+    attenuation 
+\pause 
+- (Simplified) *bandpass channel*: Channel has a low cutoff
+  frequency $f_\mathrm{low cutoff}$ and a high cutoff $f_\mathrm{high cutoff}$
+  - All harmonics *between* $f_\mathrm{low cutoff}$ and
+    $f_\mathrm{high cutoff}$ experience small
+    attenuation 
+  - All harmonics *outside* that  experience infinite 
+    attenuation 
+
+
+**** Example: Simplified lowpass channel transmit letter b 
+
+
+#+caption: Sending ASCII b over a simplistic lowpass channel (attenuates to zero all over 0.5 Hz)
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:fig:channel:simplistic_lowpass}
+#+NAME: fig:fig:channel:simplistic_lowpass
+[[./standalone/plots.pdf]]
+
+
+
+
+**** Frequency-selective attenuation: Realistic 
+
+\vskip-2.5em
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+
+
+- Real physical media are more complicated
+- But often still result in lowpass-like or bandpass-like channels 
+- E.g., bathtub-like attenuation 
+
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+#+caption: Frequency-selective attenuation
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:phy:channel_bandwidth}
+#+NAME: fig:phy:channel_bandwidth
+[[./standalone/phy.pdf]]
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+**** Channel bandwidth 
+
+- Similar argument to signal bandwidth
+- Case 1: channel has a finite range of frequencies with attenuation
+  below infinity
+- Case 2: all frequencies pass through ``somehow''
+  - Pragmatic: consider threshold for acceptable attenuation level
+  - E.g., $\alpha \leq 2$
+- Results in upper and lower frequencies
+- Difference is *channel bandwidth* 
+
+**** Channel bandwidth - definition 
+
+***** \Gls{channelbw}                                          :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+      \Glsdesc{channelbw}
+
+**** Channels with limited bandwidth - more examples 
+
+
+
+***** Semi-realistic lowpass channel 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+#+caption: Receiving ASCII b over a semi-realistic lowpass channel (harmonics 0 and 1 not attenuated, larger harmonics $h$ attenuated as $1/h^4$)
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:phy:fourier:lowpass}
+#+NAME: fig:phy:fourier:lowpass
+[[./standalone/plots.pdf]]
+
+
+
+***** Semi-realistic bandpass channel 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+
+#+caption: Receiving ASCII b over a semi-realistic lowpass channel (harmonic 0  not attenuated, weakly attenuates around $h=10$ with linear falloff)
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:phy:fourier:bandpass}
+#+NAME: fig:phy:fourier:bandpass
+[[./standalone/plots.pdf]]
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+
+
 **** Relationship of signal bandwidth and channel bandwidth? 
-- Case 1: Signal bandwidth fits completely into channel bandwidth
-- All good 
-- Case 2: Signal wider than channel 
-- You loose signal quality 
-- Case 3: It would fit, but at the wrong place  
-- No problem: Move signal left or right (``modulation''); compare later  
-- 
-- WS 19/20, v 1.11
-- Computer Networks - Physical layer
-- 21
+
+- Signal bandwidth: Harmonics important to represent a signal
+  - We have control over this!
+- Channel bandwidth: usable frequency range of a channel
+  - Usually, no control! 
+- Cases? 
+
+**** Relationship of signal bandwidth and channel bandwidth - Cases? 
+
+
+
+
+***** Signal BW fits in Channel BW: ok 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.3
+      :END:
+
+#+caption: Signal bandwidth fits into channel bandwidth - desirable situation
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:phy:channel_bandwidth:small_signalbw}
+#+NAME: fig:phy:channel_bandwidth:small_signalbw
+[[./standalone/phy.pdf]]
+
+\pause 
+
+
+***** Signal BW larger channel BW: quality degrades 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.3
+      :END:   
+
+
+#+caption: Signal BW larger than channel BW - will lead to quality loss
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:phy:channel_bandwidth:large_signalbw}
+#+NAME: fig:phy:channel_bandwidth:large_signalbw
+[[./standalone/phy.pdf]]
+
+
+\pause 
+
+***** Signal BW small enough but at wrong location 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.3
+      :END:   
+
+#+caption: Signal BW would fit into channel BW, but is at the wrong part of the spectrum; can be cured by proper modulation techniques 
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:phy:channel_bandwidth:outside_signalbw}
+#+NAME: fig:phy:channel_bandwidth:outside_signalbw
+[[./standalone/phy.pdf]]
+
+
+
+\pause 
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+We will revisit the third case in Section \ref{sec:phy:broadband}
+
 **** Relationship of signal bandwidth and channel bandwidth? 
-- Consequence:
-- LOCATION of signal/channel bandwidth in spectrum does not really matter
-- Only RELATIVE SIZE is relevant 
+- Insight:
+  - *LOCATION* of signal/channel bandwidth in spectrum does not really matter
+  - Only *RELATIVE SIZE* is relevant 
 - Hence: we can simply talk about channel bandwidth being smaller/larger than signal bandwidth 
 - And: Channel bandwidth usually given; signal bandwidth can be influenced by sender/receiver 
-- Don’t be stupid: Use a signal bandwidth that fits into the channel bandwidth 
-- WS 19/20, v 1.11
-- Computer Networks - Physical layer
-- 22
-**** Fact 4: Media not only attenuates, but also distorts
+  - Consequence: don’t be stupid, use a signal bandwidth that fits into the channel bandwidth 
+
+
+
+
+*** Distortion 
+**** Media not only attenuates, but also distorts
+
 - Different frequencies have different propagation speed
-- Some wave lengths travel faster than others
-- Speed of electromagnetic waves only constant in vacuum! 
-- Apparent result: Waves arrive at receiver out of phase
-- Recall: a sine wave is determined by amplitude a, frequency f, and phase \phi 
-- Amount of phase shift in the medium depends on frequency 
-- This effect may lead to distortion of a signal’s amplitude
-**** Example with frequency-dependent attenuation and distortion
+  - Some wave lengths travel faster than others
+  - Speed of electromagnetic waves only constant in vacuum! 
+\pause 
+- Consequence: Harmonics arrive at receiver out of phase
+  - Amount of phase shift in the medium depends on frequency
+  - I.e., at receivers sees something like 
+\[
+\tilde{g}(t) = 1/2 \frac{1}{\alpha(0)} c + \sum_{n=1}^\infty 
+\frac{1}{\sqrt{\alpha(n f)}} a_n \sin(2\pi n f t + \alert{\phi_f}) + \sum _{n=1}^\infty
+\frac{1}{\sqrt{\alpha(n f)}} b_n \cos(2\pi n f t + \alert{\phi_f} )
+\label{eq:fourier:distorted}
+\]
+
+
+
+- This effect is called *distortion*  of a signal
+\pause 
+- Mostly an issue in optical fibre
+  - \pause Because of long distances and large signal bandwidths 
+
+**** Example with frequency-dependent attenuation and distortion   :noexport:
 - Behavior of ``real'' medium already well matched!
 - What about the ``wriggling''?
+
+
+*** Noise 
+
 **** Fact 5: Real systems are noisy
 - A receiver exhibits random (thermal) noise
 - Random fluctuations of electrons in the receiver circuitry
@@ -305,7 +742,7 @@ We find:
 - 
 
 
-** Limitations 
+** Limitations                                                     :noexport:
 
 **** Converting signals to data: Sampling
 - Suppose we have a channel with ``sufficient'' bandwidth available, free of noise, no distortion
@@ -395,7 +832,7 @@ We find:
 - 44
 
 
-** Clock extraction 
+** Clock extraction                                                :noexport:
 
 **** When to sample the received signal?
 - How does the receiver know WHEN to check the received signal for its value?
@@ -441,7 +878,9 @@ We find:
 - 
 
 
-** Broadband vs. baseband 
+** Broadband vs. baseband                                          :noexport:
+\label{sec:phy:broadband}
+
 
 **** Baseband versus broadband transmission
 - The transmission schemes described so far: Baseband transmission
@@ -540,7 +979,7 @@ We find:
 **** Examples for SNR $\leadsto$ BER mappings
 
 
-** Structure 
+** Structure                                                       :noexport:
 
 **** Digital vs. analog signals
 - A sender has two principal options what types of signals to generate
@@ -611,6 +1050,58 @@ We find:
 
 ** Stuff                                                           :noexport:
 
+*** Old attenuation material                                       :noexport:
+**** Fact 1: Signals are attenuated in a physical medium           :noexport:
+- Attenuation \alpha: Ratio of transmitted to received power
+-  
+- High attenuation $\leadsto$ low power arrives at receiver
+- Attenuation depends on 
+- Actual medium
+- Distance between sender and receiver
+-  … other factors
+- Normalized, typically given in dB 
+- dB: logarithmic expressionof ratio
+- 
+**** Fact 2: Not all frequencies pass through a medium             :noexport:
+- Previous picture assumed that all frequencies travel unhindered through a physical medium
+- This is not the case for real media!
+- Simplified behavior: frequencies up to given upper bound fc  can pass; higher frequencies are suppressed
+- Mathematically: the Fourier series is cut off at a certain harmonic
+- High frequencies are attenuated to zero
+- Intuition: Range of frequencies that can pass through a medium is relevant 
+
+**** Channel with limited frequency range – example 
+- Result when fewer and fewer harmonics are transported
+**** Fact 3: Frequency-selective attenuation, bandwidth
+- Strictly speaking: channel bandwidth is caused by frequency-selective attenuation 
+- Often: both small and large frequencies are attenuated 
+- Assuming a cut-off frequency fc is too simple-minded
+**** Example with frequency-dependent attenuation
+- Suppose attenuation is 2, 2.5, 3.333… , 5, 10, 1 for the 1st, 2nd, … harmonic
+**** Relationship of signal bandwidth and channel bandwidth? 
+- Case 1: Signal bandwidth fits completely into channel bandwidth
+- All good 
+- Case 2: Signal wider than channel 
+- You loose signal quality 
+- Case 3: It would fit, but at the wrong place  
+- No problem: Move signal left or right (``modulation''); compare later  
+- 
+- WS 19/20, v 1.11
+- Computer Networks - Physical layer
+- 21
+**** Relationship of signal bandwidth and channel bandwidth? 
+- Consequence:
+- LOCATION of signal/channel bandwidth in spectrum does not really matter
+- Only RELATIVE SIZE is relevant 
+- Hence: we can simply talk about channel bandwidth being smaller/larger than signal bandwidth 
+- And: Channel bandwidth usually given; signal bandwidth can be influenced by sender/receiver 
+- Don’t be stupid: Use a signal bandwidth that fits into the channel bandwidth 
+- WS 19/20, v 1.11
+- Computer Networks - Physical layer
+- 22
+
+
+**** figure
 Optical_fiber_cable.jpg
 
 https://commons.wikimedia.org/wiki/File:Optical_fiber_cable.jpg

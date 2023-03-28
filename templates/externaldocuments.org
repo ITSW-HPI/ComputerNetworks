@@ -48,4 +48,4 @@
 #+LATEX_HEADER: \externaldocument{../ch_phy/standalone/modulation}
 #+LATEX_HEADER: \externaldocument{../ch_phy/standalone/phy}
 #+LATEX_HEADER: \externaldocument{../ch_phy/standalone/plots}
-#+LATEX_HEADER: \externaldocument{../ch_phy/standalone/plots2}
+#+LATEX_HEADER: \externaldocument{../ch_phy/standalone/plot2}

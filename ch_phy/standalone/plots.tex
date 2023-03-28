@@ -10,7 +10,7 @@
 \begin{tikzpicture}
   \label{page:phy:ascii_b}
   \begin{axis}[no markers,
-    xlabel=Time,
+    xlabel={Time/s},
     ylabel=Voltage,
     ]
     \addplot coordinates { (0,0) (1,0) (1,1) (3,1) (3,0) (6,0) (6,1) (7,1) (7,0) (8,0)};
@@ -19,8 +19,82 @@
 
 
 \begin{tikzpicture}
+  \label{page:phy:spectrum:ascii_b}
+  % compare fourier2.py 
+  \begin{axis}[xlabel={Harmonic, or: Frequency/(0.125 Hz)}, ylabel=Power, ycomb]
+    \addplot table {
+0	0.140625
+1	0.05935257522198646
+2	0.2533029591058445
+3	0.03843690659415164
+4	0.025330295910584447
+5	0.013837286373894609
+6	0.028144773233982703
+7	0.0012112770453466552
+8	8.547605795164205e-34
+9	0.0007327478422467396
+10	0.010132118364233795
+11	0.002858943465680698
+12	0.002814477323398272
+13	0.0020469358541264247
+14	0.005169448145017245
+15	0.0002637892232088291
+16	8.547605795164205e-34
+17	0.00020537223260202791
+18	0.003127197025998091
+19	0.0009582608292170749
+20	0.0010132118364233778
+21	0.0007844266651867665
+22	0.0020934128851722708
+23	0.00011219768472965265
+24	4.225307908614651e-33
+25	9.496412035517814e-05
+26	0.0014988340775493796
+27	0.00047452971103891103
+28	0.0005169448145017233
+29	0.0004113343155141102
+30	0.001125790929359308
+31	6.17612645390098e-05
+32	8.547605795164205e-34
+% 33	5.450190562165972e-05
+% 34	0.0008764808273558644
+% 35	0.0002823935994672348
+% 36	0.000312719702599808
+% 37	0.0002526896708161943
+% 38	0.0007016702468305893
+% 39	3.9022074439176394e-05
+% 40	8.547605795164205e-34
+% 41	3.5307897217124204e-05
+% 42	0.0005743831272241365
+% 43	0.00018709148693745814
+% 44	0.0002093412885172269
+% 45	0.0001708306959740063
+% 46	0.0004788335710885535
+% 47	2.6868526583064717e-05
+% 48	4.225307908614651e-33
+% 49	2.4719939700952473e-05
+% 50	0.000405284734569351
+% 51	0.00013299967679636935
+% 52	0.0001498834077549375
+% 53	0.00012315135612223785
+% 54	0.00034746633622200526
+% 55	1.962068602379961e-05
+% 56	3.640016494805606e-32
+% 57	1.8267951745763766e-05
+% 58	0.0003011925791983916
+% 59	9.937723623882883e-05
+% 60	0.00011257909293593089
+% 61	9.29675246835149e-05
+% 62	0.00026358268377298826
+% 63	1.4954037596871867e-05
+% 64	8.547605795164205e-34
+};
+  \end{axis}
+\end{tikzpicture}
+
+\begin{tikzpicture}
   \begin{axis}[no markers,
-    xlabel=Time,
+    xlabel={Time/s},
     ylabel=Voltage,
     domain=0:8,
     ]
@@ -32,7 +106,7 @@
 
 \begin{tikzpicture}
   \begin{axis}[no markers,
-    xlabel=Time,
+    xlabel={Time/s},
     ylabel=Voltage,
     domain=0:8,
     trig format plots=rad,
@@ -50,7 +124,7 @@
 
 % \begin{tikzpicture}
 %   \begin{axis}[no markers,
-%     xlabel=Time,
+%     xlabel={Time/s},
 %     ylabel=Voltage,
 %     domain=0:8,
 %     trig format plots=rad,
@@ -73,7 +147,7 @@
 
 % \begin{tikzpicture}
 %   \begin{axis}[no markers,
-%     xlabel=Time,
+%     xlabel={Time/s},
 %     ylabel=Voltage,
 %     domain=0:8,
 %     trig format plots=rad,
@@ -100,7 +174,7 @@
 
 % \begin{tikzpicture}
 %   \begin{axis}[no markers,
-%     xlabel=Time,
+%     xlabel={Time/s},
 %     ylabel=Voltage,
 %     domain=0:8,
 %     trig format plots=rad,
@@ -137,7 +211,7 @@
 \begin{tikzpicture}
   \label{page:phy:fourier:all_harmonics}
   \begin{axis}[no markers,
-    xlabel=Time,
+    xlabel={Time/s},
     ylabel=Voltage,
     domain=0:8,
     trig format plots=rad,
@@ -154,7 +228,7 @@
   \begin{tikzpicture}
     \label{page:phy:fourier:h_\harmonics}
   \begin{axis}[no markers,
-    xlabel=Time,
+    xlabel={Time/s},
     ylabel=Voltage,
     domain=0:8,
     trig format plots=rad,
@@ -169,7 +243,7 @@
 \begin{tikzpicture}
   \label{page:phy:fourier:lowpass}
   \begin{axis}[no markers,
-    xlabel=Time,
+    xlabel={Time/s},
     ylabel=Voltage,
     domain=0:8,
     trig format plots=rad,
@@ -183,7 +257,7 @@
 \begin{tikzpicture}
   \label{page:phy:fourier:lowpass:noisy}
   \begin{axis}[no markers,
-    xlabel=Time,
+    xlabel={Time/s},
     ylabel=Voltage,
     domain=0:8,
     trig format plots=rad,
@@ -198,7 +272,7 @@
 \begin{tikzpicture}
   \label{page:phy:fourier:bandpass}
   \begin{axis}[no markers,
-    xlabel=Time,
+    xlabel={Time/s},
     ylabel=Voltage,
     domain=0:8,
     trig format plots=rad,
@@ -212,7 +286,7 @@
 \begin{tikzpicture}
   \label{page:phy:fourier:bandpass:noisy}
   \begin{axis}[no markers,
-    xlabel=Time,
+    xlabel={Time/s},
     ylabel=Voltage,
     domain=0:8,
     trig format plots=rad,
@@ -235,7 +309,7 @@
 \begin{tikzpicture}
   \label{page:phy:fourier:correct_bits}
   \begin{axis}[no markers,
-    xlabel=Time,
+    xlabel={Time/s},
     ylabel=Voltage,
     domain=0:8,
     trig format plots=rad,
@@ -265,7 +339,7 @@
 \begin{tikzpicture}
   \label{page:phy:fourier:wrong_bits:nonoise}
   \begin{axis}[no markers,
-    xlabel=Time,
+    xlabel={Time/s},
     ylabel=Voltage,
     domain=0:8,
     trig format plots=rad,
@@ -300,7 +374,7 @@
 \begin{tikzpicture}
   \label{page:phy:fourier:wrong_bits:noisy}
   \begin{axis}[no markers,
-    xlabel=Time,
+    xlabel={Time/s},
     ylabel=Voltage,
     domain=0:8,
     trig format plots=rad,
@@ -334,7 +408,7 @@
 \begin{tikzpicture}
   \label{page:phy:ascii_b:2bits_per_symbol}
   \begin{axis}[no markers,
-    xlabel=Time,
+    xlabel={Time/s},
     ylabel=Voltage,
     ymin=0, ymax=3,
     ]
@@ -343,13 +417,141 @@
   \end{axis}
 \end{tikzpicture}
 
+\begin{tikzpicture}[node distance=5cm]
+  \label{page:fig:channel:simplistic_lowpass}
+  \node [draw] (sender) {Sender};
+  \node [draw, rounded corners, right=of sender] (channel) {Channel};
+  \node [draw, right=of channel] (rec) {Receiver};
 
-\begin{tikzpicture}
-  \label{page:phy:simple_fourier}
+  \draw [->] (sender) to node[above] (g) {$g(t)$} (channel) to node[above] (gtilde) {$\tilde{g}(t)$} (rec); 
+
   \begin{axis}
-    [grid=major]
-    \addplot coordinates { (-2, 1) (-1,-1) (-1,1) (1,1) (1, -1) (2,-1) (2,1) (3,1) (3,-1) }
+    [xlabel=Frequency/Hz, ylabel=Attenuation, at={($(channel.north)+(0,2cm)$)}, anchor=south, scale=0.25]
+    \addplot coordinates {(0, 1) (0.125, 1)
+      (2*0.125, 1)
+      (3*0.125, 1)
+      (4*0.125, 1)
+      (5*0.125, 0)
+      (6*0.125, 0)
+      (7*0.125, 0)
+      (8*0.125, 0)
+      (9*0.125, 0)
+      (10*0.125, 0)
+    };
   \end{axis}
+
+
+  \begin{axis}[
+    at={($(sender) + (-2cm,-1cm)$)}, anchor=north, scale=0.5,
+    no markers,
+    xlabel={Time/s},
+    ylabel=Voltage,
+    ]
+    \addplot coordinates { (0,0) (1,0) (1,1) (3,1) (3,0) (6,0) (6,1) (7,1) (7,0) (8,0)};
+  \end{axis}
+
+
+
+  \begin{axis}[
+    at={($(rec) + (2cm,-1cm)$)}, anchor=north, scale=0.5,
+    no markers,
+    xlabel={Time/s},
+    ylabel=Voltage,
+    domain=0:8,
+    trig format plots=rad,
+    samples=100,
+    ]
+    \addplot coordinates { (0,0) (1,0) (1,1) (3,1) (3,0) (6,0) (6,1) (7,1) (7,0) (8,0)};
+    \addplot table [x=t, y=4] {\ftable}; 
+  \end{axis}
+
+  \begin{axis}[
+    at={($(g) + (0,-1cm)$)}, anchor=north, scale=0.5,
+    xlabel={Harmonic, or: Frequency/(0.125 Hz)}, ylabel=Power, ycomb]
+    \addplot table {
+0	0.140625
+1	0.05935257522198646
+2	0.2533029591058445
+3	0.03843690659415164
+4	0.025330295910584447
+5	0.013837286373894609
+6	0.028144773233982703
+7	0.0012112770453466552
+8	8.547605795164205e-34
+9	0.0007327478422467396
+10	0.010132118364233795
+11	0.002858943465680698
+12	0.002814477323398272
+13	0.0020469358541264247
+14	0.005169448145017245
+15	0.0002637892232088291
+16	8.547605795164205e-34
+17	0.00020537223260202791
+18	0.003127197025998091
+19	0.0009582608292170749
+20	0.0010132118364233778
+21	0.0007844266651867665
+22	0.0020934128851722708
+23	0.00011219768472965265
+24	4.225307908614651e-33
+25	9.496412035517814e-05
+26	0.0014988340775493796
+27	0.00047452971103891103
+28	0.0005169448145017233
+29	0.0004113343155141102
+30	0.001125790929359308
+31	6.17612645390098e-05
+32	8.547605795164205e-34
+% 33	5.450190562165972e-05
+% 34	0.0008764808273558644
+% 35	0.0002823935994672348
+% 36	0.000312719702599808
+% 37	0.0002526896708161943
+% 38	0.0007016702468305893
+% 39	3.9022074439176394e-05
+% 40	8.547605795164205e-34
+% 41	3.5307897217124204e-05
+% 42	0.0005743831272241365
+% 43	0.00018709148693745814
+% 44	0.0002093412885172269
+% 45	0.0001708306959740063
+% 46	0.0004788335710885535
+% 47	2.6868526583064717e-05
+% 48	4.225307908614651e-33
+% 49	2.4719939700952473e-05
+% 50	0.000405284734569351
+% 51	0.00013299967679636935
+% 52	0.0001498834077549375
+% 53	0.00012315135612223785
+% 54	0.00034746633622200526
+% 55	1.962068602379961e-05
+% 56	3.640016494805606e-32
+% 57	1.8267951745763766e-05
+% 58	0.0003011925791983916
+% 59	9.937723623882883e-05
+% 60	0.00011257909293593089
+% 61	9.29675246835149e-05
+% 62	0.00026358268377298826
+% 63	1.4954037596871867e-05
+% 64	8.547605795164205e-34
+};
+  \end{axis}
+
+  \begin{axis}[
+    at={($(gtilde) + (0,-1cm)$)}, anchor=north, scale=0.5,
+    xlabel={Harmonic, or: Frequency/(0.125 Hz)}, ylabel=Power, ycomb]
+    \addplot table {
+0	0.140625
+1	0.05935257522198646
+2	0.2533029591058445
+3	0.03843690659415164
+4	0.025330295910584447
+};
+  \end{axis}
+
+  
+  
 \end{tikzpicture}
+
 
 \end{document}

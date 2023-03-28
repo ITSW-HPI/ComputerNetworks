@@ -3,19 +3,67 @@
 
 \input{../../templates/standalone_header}
 
+\usetikzlibrary{calc}
+
 \usepackage{pgfplots}
 
 \begin{document}
 
+\pgfplotsset{every axis/.append style={
+    font=\large,
+    line width=1pt,
+    tick style={line width=0.8pt}}}
 
 \begin{tikzpicture}
   \label{page:phy:simple_fourier}
   \begin{axis}
     [grid=major,
+    xlabel=Time,
+    ylabel=Voltage,
     xtick= {-1, 0, 1, 2, 3, 4,5},
     xticklabels={$-\frac{1}{4}T$,0,$\frac{1}{4}T$, $\frac{2}{4}T$, $\frac{3}{4}T$, $\frac{4}{4}T$, $\frac{5}{4}T$}]
-    \addplot [very thick] coordinates { (-2, -1) (-1,-1) (-1,1) (0,1) (1,1) (1, -1) (2,-1) (3, -1) (3,1) (4,1) (5, 1) };
+    \addplot coordinates { (-2, -1) (-1,-1) (-1,1) (0,1) (1,1) (1, -1) (2,-1) (3, -1) (3,1) (4,1) (5, 1) };
   \end{axis}
 \end{tikzpicture}
+
+
+\begin{tikzpicture}
+  \label{page:phy:attenuated_simple_fourier}
+  \begin{axis}
+    [grid=major,
+    xlabel=Time,
+    ylabel=Voltage,
+    xtick= {-1, 0, 1, 2, 3, 4,5},
+    xticklabels={$-\frac{1}{4}T$,0,$\frac{1}{4}T$, $\frac{2}{4}T$, $\frac{3}{4}T$, $\frac{4}{4}T$, $\frac{5}{4}T$}]
+    \addplot  coordinates { (-2, -1) (-1,-1) (-1,1) (0,1) (1,1) (1, -1) (2,-1) (3, -1) (3,1) (4,1) (5, 1) };
+    \addplot coordinates { (-2, -0.5) (-1,-0.5) (-1,0.5) (0,0.5) (1,0.5) (1, -0.5) (2,-0.5) (3, -0.5) (3,0.5) (4,0.5) (5, 0.5) };
+  \end{axis}
+\end{tikzpicture}
+
+
+\begin{tikzpicture}
+  \label{page:phy:repeated_fourier}
+  \begin{axis}
+    [grid=major,
+    xlabel=Time,
+    ylabel=Voltage,
+    no markers,
+    % xtick= {-1, 0, 1, 2, 3, 4,5},
+    % xticklabels={$-\frac{1}{4}T$,0,$\frac{1}{4}T$, $\frac{2}{4}T$, $\frac{3}{4}T$, $\frac{4}{4}T$, $\frac{5}{4}T$}
+    xmin=0
+    ]
+    \foreach \i in {0,1,2,3} {
+      \addplot [blue] coordinates {
+        (0+8*\i,0) (1+8*\i,0) (1+8*\i,1) (3+8*\i,1) (3+8*\i,0) (6+8*\i,0) (6+8*\i,1) (7+8*\i,1) (7+8*\i,0) (8+8*\i,0)
+        % (0+8*\i,1) (1+8*\i,1) (1+8*\i, -1) (2+8*\i,-1) (3+8*\i, -1) (3+8*\i,1) (4+8*\i,1)
+      };
+      }
+  \end{axis}
+\end{tikzpicture}
+
+
+
+
+
 
 \end{document}
