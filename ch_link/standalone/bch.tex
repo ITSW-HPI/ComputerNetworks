@@ -1,0 +1,82 @@
+% Created 2016-08-17 Wed 14:38
+\documentclass[tikz]{standalone}
+
+\input{../../templates/standalone_header}
+
+\usepackage{pgfplots}
+\usetikzlibrary{decorations.pathreplacing,backgrounds}
+
+\pgfplotstableread{bch_stats}\bchtable
+
+
+\begin{document}
+
+\begin{tikzpicture}
+  \begin{loglogaxis}[
+    cycle list name=exotic,
+    xmin=0.1,
+    ymin=0.00000001,
+    xlabel=SNR,
+    ylabel=PER,
+    legend entries={c=0,c=1,c=2,c=3,c=4,c=5,c=6,c=7},
+    legend style={
+      legend pos=outer north east,
+    },    
+    ]
+    \foreach \c in {0, 1,...,7} {
+      \addplot table [x=snr, y=e\c] {\bchtable};
+    }
+    \draw [very thick, red] (axis cs: 4.641588833612779, 2.3508026136820348e-07) node[below] (gainright) {} --  (axis cs:2.9286445646252357,0.021245375092738494);
+    \draw [very thick, blue] (axis cs: 1,2.8025440301782112e-08) node[below] (gainleft) {} --  (axis cs:0.7356422544596414,8.296999323775811e-05);
+
+    \draw [very thick, <->] (gainleft) -- (gainright); 
+
+    \draw [thick, decorate, decoration={brace,raise=10pt} ] (gainleft) to node[above=2.5, align=center, fill=white] {Coding\\ gain} (gainright); 
+
+  \end{loglogaxis}
+\end{tikzpicture}
+
+
+
+\begin{tikzpicture}
+  \begin{loglogaxis}[
+    cycle list name=exotic,
+    xmin=0.1,
+    ymin=0.00000001,
+    xlabel=SNR,
+    ylabel=PER,
+    legend entries={c=0,c=1,c=2,c=3,c=4,c=5,c=6,c=7},
+    legend style={
+      legend pos=outer north east,
+    },    
+    ]
+    \foreach \c in {0,1,...,7} {
+      \addplot table [x=snr, y=e\c] {\bchtable};
+    }
+  \end{loglogaxis}
+\end{tikzpicture}
+
+
+\begin{tikzpicture}
+  \begin{semilogxaxis}[
+    cycle list name=exotic,
+    xmin=0.1,
+    ymin=0.00000001,
+    xlabel=SNR,
+    ylabel=Throughput (in bits/packet),
+    legend entries={c=0,c=1,c=2,c=3,c=4,c=5,c=6,c=7},
+    legend style={
+      legend pos=outer north east,
+    },    
+    ]
+    \foreach \c in {0,1,...,7} {
+      \addplot table [x=snr, y=t\c] {\bchtable};
+      % \addlegendentry{$c=\c$}
+    }
+  \end{semilogxaxis}
+\end{tikzpicture}
+
+
+
+
+\end{document}
