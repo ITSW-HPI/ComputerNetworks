@@ -1,0 +1,59 @@
+% Created 2016-08-17 Wed 14:38
+\documentclass[tikz]{standalone}
+
+\input{../../templates/standalone_header}
+
+\usetikzlibrary{ext.positioning-plus}
+
+\begin{document}
+
+
+\begin{tikzpicture}
+  \label{page:ll:layers}
+
+  \begin{scope}[every node/.style={draw}]
+    \node (networkl) {Network layer};
+    \node [below=of -(networkl)] (lll) {Link layer};
+
+    \node [right=3cm of networkl] (networkr) {Network layer};
+    \node [below=of -(networkr)] (llr) {Link layer};
+
+    \node [below=of -(llr)(lll)] (phy) {Physical layer}; 
+  \end{scope}
+
+  \draw [<->] (networkl) to node [left] {Packets} (lll); 
+  \draw [<->] (lll) to node [left] {Bits} (lll |- phy.north); 
+
+  \draw [<->] (networkr) -- (llr);
+  \draw [<->] (llr) -- (llr |- phy.north); 
+  
+\end{tikzpicture}
+
+
+\begin{tikzpicture}
+  \label{page:ll:errorcontrol}
+
+  \node (ec) {Error control};
+  \node [below left=of ec] (ed) {Error detection};
+  \node [below right=of ec] (ecor) {Error correction};
+  
+  \node [below left=of ecor, align=center] (fwd) {Forward\\ error\\correction};
+  \node [below right=of ecor, align=center] (back) {Backward\\error\\correction};
+
+  \draw (ec) edge (ed) -- (ecor) edge (fwd) -- (back);
+  
+\end{tikzpicture}
+
+
+\begin{tikzpicture}
+  \label{page:ll:basic_interleaving}
+
+  \begin{scope}[node distance=0, every node/.style={draw}]
+    \node[label=above:H] (B1)                   {0100 1000};
+    \node[label=above:P, right=of B1] (B2)      {0101 0000};
+    \node[label=above:I, right=of B2] (B3)      {0100 1001};
+    \node[label=above:Parity, right=of B2] (B3) {0101 0001};
+  \end{scope}
+\end{tikzpicture}
+
+\end{document}

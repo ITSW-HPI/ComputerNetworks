@@ -1,0 +1,306 @@
+% Created 2016-08-17 Wed 14:38
+\documentclass[tikz]{standalone}
+
+\input{../../templates/standalone_header}
+
+\usepackage{ifthen}
+\usetikzlibrary{decorations.pathreplacing,decorations.pathmorphing}
+
+       
+\begin{document}
+
+\newcommand{\pplusa}[6]{%
+  % #1: offset, #2: fill color #3: packet length #4: ACK length, #5 label
+  % #6: X to loose the ACK 
+  
+  \coordinate (pStartSend_#5) at ($(a) + (0,-0.5)-(0,#1)$); 
+  \coordinate (pEndSend_#5) at  ($  (pStartSend_#5) + (0,-#3) $ ); 
+  \coordinate (pStartReceive_#5) at ($ (pStartSend_#5) + (3.5,-2) $); 
+  \coordinate (pEndReceive_#5) at ($  (pStartReceive_#5) + (0,-#3) $ ); 
+  \coordinate (aStartSend_#5) at ($(b) +  (0,-0.5)-(0,#1)-(0,2)-(0,#3)  $); 
+  \coordinate (aEndSend_#5) at ($ (aStartSend_#5)  + (0,-#4) $); 
+  \coordinate (aStartReceive_#5) at ($ (aStartSend_#5) + (-3.5,-2)  $); 
+  \coordinate (aEndReceive_#5) at ($ (aStartReceive_#5) + (0,-#4)  $);   
+
+  % Packets: 
+  \ifthenelse{\equal{#6}{X}}
+  {
+    % packet gets lost
+    \coordinate (pStartLoss_#5) at ($ (pStartSend_#5) + (1.75,-1)  $); 
+    \coordinate (pEndLoss_#5) at ($ (pStartLoss_#5) + (0,-#3)  $);
+
+    \draw [fill=#2, semitransparent] (pStartSend_#5) --
+    (pStartLoss_#5) decorate [decoration=zigzag] {-- (pEndLoss_#5)}
+    -- (pEndSend_#5);
+  \node at ($(1.75,-0.5) - (0,#1) - (0,0.5*#3) -(0, 1)$) {P\,#5 lost!}; 
+    
+  }
+  {
+    % packet normally delivered
+  \draw [fill=#2, semitransparent] (pStartSend_#5) -- (pStartReceive_#5) -- (pEndReceive_#5) -- (pEndSend_#5);
+  \node at ($(1.75,-0.5) - (0,#1) - (0,0.5*#3) -(0, 1)$) {P\,#5}; 
+  \draw [->] (a) ++ (pStartSend_#5) -- (pStartReceive_#5); 
+  \draw [->] (a) ++ (pEndSend_#5) -- (pEndReceive_#5); 
+
+  % ACK:
+    %ACK normally sent: 
+  \draw [fill=#2, semitransparent] (aStartSend_#5) -- (aStartReceive_#5) -- (aEndReceive_#5) -- (aEndSend_#5); 
+
+
+  \draw [->] (aStartSend_#5) -- (aStartReceive_#5); 
+  \draw [->] (aEndSend_#5) -- (aEndReceive_#5); 
+}
+
+}
+
+\begin{tikzpicture}
+  \label{page:ll:alternating_bit_efficiency}
+
+  \node [fill=hpiorange!10](a) {A};
+  \node [fill=hpiblue!10, right=3cm of a] (b) {B};
+
+  \draw (a) -- ++(0,-8); 
+  \draw (b) -- ++(0,-8);
+
+  \coordinate (pStartSend) at (0, -0.5); 
+  \coordinate (pEndSend) at (0, -3.5); 
+  \coordinate (pStartReceive) at (3.5, -2.5); 
+  \coordinate (pEndReceive) at (3.5, -5.5); 
+  \coordinate (aStartSend) at (3.5, -5.5); 
+  \coordinate (aEndSend) at (3.5, -6); 
+  \coordinate (aStartReceive) at (0, -7.5); 
+  \coordinate (aEndReceive) at (0, -8); 
+
+  % \foreach \n in {pStartSend, pEndSend, pStartReceive, pEndReceive, aStartSend, aEndSend, aStartReceive, aEndReceive} { \node [red] at(\n) {X}; }
+  
+
+  \pplusa{0}{hpiyellow!30}{3}{0.5}{}{}
+  
+  \draw [decorate, decoration={brace,mirror,raise=3pt}] (pStartSend) to node [left] {$T_\mathrm{Packet}$ } (pEndSend); 
+
+  \draw [decorate, decoration={brace,mirror,raise=3pt}] (pEndSend) to node [left] {$d$ } (pEndReceive -| a); 
+  \draw [decorate, decoration={brace,mirror,raise=3pt}] (pEndReceive -| a) to node [left] {$d$ } (aStartReceive); 
+  \draw [decorate, decoration={brace,mirror,raise=3pt}] (aStartReceive) to node [left] {$T_\mathrm{ACK}$ } (aEndReceive); 
+
+%   \draw [decorate, decoration={brace,raise=3pt}] (aStartSend) to node [right] {$T_\mathrm{ACK}$ } (aEndSend); 
+
+
+  \draw [decorate, decoration={brace,mirror,raise=40pt}] (pStartSend) to node [left=2cm, anchor=east] {total time} (aEndReceive); 
+
+  
+  \draw [dotted] (pEndReceive) -- (pEndReceive -| a); 
+  
+\end{tikzpicture}
+
+
+\begin{tikzpicture}
+  \label{page:ll:arq:no_seq}
+  \node [fill=hpiorange!10](a) {A};
+  \node [fill=hpiblue!10, right=3cm of a] (b) {B};
+
+  \draw (a) -- ++(0,-10); 
+  \draw (b) -- ++(0,-10);
+
+  \pplusa{1}{hpiyellow!10}{2}{0.5}{}{}
+
+  \draw [<-] (pStartSend_) to node[above] {P from above}  ++(-3,0); 
+\end{tikzpicture}
+
+\begin{tikzpicture}
+  \label{page:ll:arq:no_seq:packet_lost}
+  \node [fill=hpiorange!10](a) {A};
+  \node [fill=hpiblue!10, right=3cm of a] (b) {B};
+
+  \draw (a) -- ++(0,-17); 
+  \draw (b) -- ++(0,-17);
+
+  \pplusa{1}{hpiyellow!10}{2}{0.5}{1}{X}
+  \draw [<-] (pStartSend_1) to node[above] {P from above}  ++(-3,0); 
+
+  \pplusa{10}{hpiyellow!30}{2}{0.5}{1b}{}
+  \draw [<-] (pStartSend_1b) to node[above] {Timeout}  ++(-3,0); 
+
+  \draw [->] (pEndReceive_1b)  to node[above] {Deliver} ++ (3,0); 
+  
+\end{tikzpicture}
+
+\begin{tikzpicture}
+  \label{page:ll:arq:no_seq:packet_lost}
+  \node [fill=hpiorange!10](a) {A};
+  \node [fill=hpiblue!10, right=3cm of a] (b) {B};
+
+  \draw (a) -- ++(0,-17); 
+  \draw (b) -- ++(0,-17);
+
+  \pplusa{1}{hpiyellow!10}{2}{0.5}{1}{}
+  \draw [<-] (pStartSend_1) to node[above] {P from above}  ++(-3,0); 
+  \draw [->] (pEndReceive_1)  to node[above] {Deliver} ++ (3,0); 
+
+  \draw [fill=white,draw=none] ($(aStartSend_1) + (-0.1,-0.75)$) node [anchor=north east] {ACK lost} rectangle (aEndReceive_1); 
+  
+  \pplusa{10}{hpiyellow!30}{2}{0.5}{1b}{}
+  \draw [<-] (pStartSend_1b) to node[above] {Timeout}  ++(-3,0); 
+
+  \draw [->] (pEndReceive_1b)  to node[above] {Deliver} ++ (3,0); 
+
+
+  
+\end{tikzpicture}
+
+
+
+\begin{tikzpicture}
+  \label{page:ll:justtest}
+  \node [fill=hpiorange!10](a) {A};
+  \node [fill=hpiblue!10, right=3cm of a] (b) {B};
+
+  \draw (a) -- ++(0,-20); 
+  \draw (b) -- ++(0,-20);
+
+  \pplusa{0}{hpiorange!30}{3}{0.5}{1}{}
+  \pplusa{3.1}{hpiblue!30}{3}{0.5}{2}{}
+  \pplusa{6.2}{hpiyellow!30}{3}{0.5}{3}{}
+  \pplusa{9.3}{hpired!30}{3}{0.5}{4}{}
+
+  
+\end{tikzpicture}
+
+
+\begin{tikzpicture}
+  \node [fill=hpiorange!10](a) {A};
+  \node [fill=hpiblue!10, right=3cm of a] (b) {B};
+
+  \draw (a) -- ++(0,-20); 
+  \draw (b) -- ++(0,-20);
+
+  \pplusa{0}{hpiorange!30}{1}{0.25}{1}{}
+  \pplusa{1.5}{hpiblue!30}{1}{0.25}{2}{}
+  \pplusa{3}{hpiyellow!30}{1}{0.25}{3}{X}
+  \pplusa{4.5}{hpired!30}{1}{0.25}{4}{X}
+  \pplusa{6}{hpiorange!80}{1}{0.25}{5}{}
+  \pplusa{7.5}{hpiblue!80}{1}{0.25}{6}{}
+  \pplusa{9}{hpiyellow!80}{1}{0.25}{7}{}
+  \pplusa{10.5}{hpired!80}{1}{0.25}{8}{}
+
+  
+\end{tikzpicture}
+
+
+\begin{tikzpicture}
+  \label{page:ll:gobackn}
+  \node [fill=hpiorange!10](a) {A};
+  \node [fill=hpiblue!10, right=3cm of a] (b) {B};
+
+  \draw (a) -- ++(0,-25); 
+  \draw (b) -- ++(0,-25);
+
+  \pplusa{0}{hpiorange!30}{2}{0.25}{1}{}
+  \pplusa{2.5}{hpiblue!30}{2}{0.25}{2}{}
+  \pplusa{5}{hpiyellow!30}{2}{0.25}{3}{X}
+  \pplusa{7.5}{hpired!30}{2}{0.25}{4}{}
+  \pplusa{10}{hpiorange!80}{2}{0.25}{5}{}
+  \pplusa{12.5}{hpiblue!80}{2}{0.25}{3b}{}
+  \pplusa{15}{hpiyellow!80}{2}{0.25}{4b}{}
+  \pplusa{17.5}{hpired!80}{2}{0.25}{5b}{}
+  \pplusa{20}{green!20}{2}{0.25}{6}{}
+
+  % Sender comments:
+  
+  \node [left=0.1 of pStartSend_1, align=right] {Send window=3, reduce to 2};
+  \node [left=0.1 of pStartSend_2, align=right] {Send window=2, reduce to 1};
+  \node [left=0.1 of pStartSend_3, align=right] {Send window=1, reduce to 0};
+  \node [left=0.1 of aEndReceive_1, align=right] {Increase send window to 1};
+  \node [left=0.1 of pStartSend_4, align=right] {Send window=1, reduce to 0};
+  \node [left=0.1 of aEndReceive_2, align=right] {Increase send window to 1};
+  \node [left=0.1 of pStartSend_5, align=right] {Send window=1, reduce to 0};
+  \node [left=0.1 of pEndSend_5, align=right] {Timeout for ACK 3!};
+  \node [left=0.1 of pEndSend_3b, align=right] {Timeout for ACK 4!};
+  \node [left=0.1 of pEndSend_4b, align=right] {Timeout for ACK 5!};
+  
+  \node [left=0.1 of pStartSend_3b, align=right] {Retransmit 3, send window stays at 0};
+  \node [left=0.1 of pStartSend_4b, align=right] {Retransmit 4, send window stays at 0};
+  \node [left=0.1 of pStartSend_5b, align=right] {Retransmit 5, send window stays at 0};
+
+  \node [left=0.1 of aEndReceive_3b, align=right] {Increase send window to 1};
+  
+  \node [left=0.1 of pStartSend_6, align=right] {Send window=1, reduce to 0};
+
+  % Receiver comments: 
+  \node [right=0.1 of pEndReceive_1, align=left] {Expected P1, got P1, deliver}; 
+  \node [right=0.1 of pEndReceive_2, align=left] {Expected P2, got P2, deliver}; 
+
+  
+  \node [right=0.1 of pEndReceive_4, align=left] {Expected P3, got P4, discard, CumAck=2}; 
+  \node [right=0.1 of pEndReceive_5, align=left] {Expected P3, got P5, discard, CumAck=2}; 
+
+
+  \node [right=0.1 of pEndReceive_3b, align=left] {Expected P3, got P3b, deliver, send CumAck=3}; 
+
+  \node [right=0.1 of pEndReceive_4b, align=left] {Expected P4, got P4b, deliver, send CumAck=4}; 
+
+  \node [right=0.1 of pEndReceive_5b, align=left] {Expected P5, got P5b, deliver, send CumAck=5}; 
+  
+\end{tikzpicture}
+
+\begin{tikzpicture}
+  \label{page:ll:selective_repeat}
+  \node [fill=hpiorange!10](a) {A};
+  \node [fill=hpiblue!10, right=3cm of a] (b) {B};
+
+  \draw (a) -- ++(0,-25); 
+  \draw (b) -- ++(0,-25);
+
+  \pplusa{0}{hpiorange!30}{2}{0.25}{1}{}
+  \pplusa{2.5}{hpiblue!30}{2}{0.25}{2}{}
+  \pplusa{5}{hpiyellow!30}{2}{0.25}{3}{X}
+  \pplusa{7.5}{hpired!30}{2}{0.25}{4}{}
+  \pplusa{10}{hpiorange!80}{2}{0.25}{5}{}
+  \pplusa{12.5}{hpiblue!80}{2}{0.25}{3b}{}
+  \pplusa{15}{hpiyellow!80}{2}{0.25}{6}{}
+  \pplusa{17.5}{hpired!80}{2}{0.25}{7}{}
+%   \pplusa{20}{green!20}{2}{0.25}{8}{}
+
+  % Sender comments:
+  
+  \node [left=0.1 of pStartSend_1, align=right] {Send window=3, reduce to 2};
+  \node [left=0.1 of pStartSend_2, align=right] {Send window=2, reduce to 1};
+  \node [left=0.1 of pStartSend_3, align=right] {Send window=1, reduce to 0};
+  \node [left=0.1 of aEndReceive_1, align=right] {Increase send window to 1};
+  \node [left=0.1 of pStartSend_4, align=right] {Send window=1, reduce to 0};
+  \node [left=0.1 of aEndReceive_2, align=right] {Increase send window to 1};
+  \node [left=0.1 of pStartSend_5, align=right] {Send window=1, reduce to 0};
+  \node [left=0.1 of pStartSend_6, align=right] {Send window=1, reduce to 0};
+  \node [left=0.1 of pEndSend_5, align=right] {Timeout for ACK 3!};
+  
+  \node [left=0.1 of pStartSend_3b, align=right] {Retransmit 3, send window stays at 0};
+  \node [left=0.1 of aEndReceive_4, align=right] {NACK 3 provides no new information, already retransmitted, SelAck 4 increases SendWindow to 1};
+  \node [left=0.1 of aEndReceive_5, align=right] {NACK 3 provides no new information, already retransmitted, SelAck 5 increases SendWindow to 1};
+  % \node [left=0.1 of pStartSend_4b, align=right] {Retransmit 4, send window stays at 0};
+  % \node [left=0.1 of pStartSend_5b, align=right] {Retransmit 5, send window stays at 0};
+
+  % \node [left=0.1 of aEndReceive_3b, align=right] {Increase send window to 1};
+  
+  % \node [left=0.1 of pStartSend_6, align=right] {Send window=1, reduce to 0};
+
+  % Receiver comments: 
+  \node [right=0.1 of pEndReceive_1, align=left] {Expected P1, got P1, deliver, CumAck=1}; 
+  \node [right=0.1 of pEndReceive_2, align=left] {Expected P2, got P2, deliver, CumAck=2}; 
+
+  
+  \node [right=0.1 of pEndReceive_4, align=left] {Expected P3, got P4, buffer P4, CumAck=2 + NACK=3, SelAck=4}; 
+  \node [right=0.1 of pEndReceive_5, align=left] {Expected P3, got P5, buffer P5, CumAck=2 + NACK=3, SelAck=4,5}; 
+
+
+  \node [right=0.1 of pEndReceive_3b, align=left] {Expected P3, got P3b, deliver 3, 4, 5, send CumAck=5}; 
+
+  \node [right=0.1 of pEndReceive_6, align=left] {Expected P6, got P6, deliver 6, send CumAck=6}; 
+
+  
+  % \node [right=0.1 of pEndReceive_4b, align=left] {Expected P4, got P4b, deliver, send CumAck=4}; 
+
+  % \node [right=0.1 of pEndReceive_5b, align=left] {Expected P5, got P5b, deliver, send CumAck=5}; 
+  
+\end{tikzpicture}
+
+
+\end{document}
