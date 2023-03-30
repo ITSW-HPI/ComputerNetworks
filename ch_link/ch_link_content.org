@@ -12,6 +12,14 @@
 
 **** Plans for this chapter 
 
+- Understand the main service provided by the link layer
+- Communication between two directly connected nodes
+- Framing of a physical bit stream into a structure of frames/packets
+- Error control: Detection and correction
+- Connection setup and release
+- Acknowledgement-based protocols
+- Flow control
+- Some ideas about how to use extended finite state machines to specify communication protocols
 
 \vskip-2.5em
 
@@ -39,11 +47,659 @@
 
 
 
+** Services 
+
+**** The link layer’s service
+- Link layer sits on top of the physical layer
+- Can thus use a bit stream transmission service
+- But: this service might have incorrect bits; only between neighbors
+- Expectations of the higher layer (networking layer)
+- Wants to use either a packet service or, sometimes, a bit stream service (rather unusual)
+- Does not really want to be bothered by errors
+- Does not really want to care about issues at the other end
+- 
+**** Options for link layer service
+- Reliable (dependable) service – yes/no
+- Reliability has many facets
+- A delivered packet should have the same content as the transmitted packet
+- All packets have to be delivered eventually
+- Packets have to be delivered in order
+- Error control may be required 
+- Forward error control, acknowledgements
+- Connection-oriented – yes/no 
+- Should a context be setup to/with the peer entity?
+- Packet or bitstream abstraction
+- Usually in computer networks: packets 
+- What about a maximal packet length? 
+**** Distinguish: Service versus implementation
+- Note the difference between service and implementation
+- One example: 
+- Connection-less & reliable service required by the network layer
+- Link layer decides to use connections internally as a means to help with error control
+- What about other combinations? 
+**** Basic link layer functions – Framing 
+- How to turn a physical layer’s bit stream abstraction into individual, well demarcated frames
+- Usually necessary to provide error control – not obvious how to do that over a bit stream abstraction
+- Frames and packets are really the same thing, only a convention to talk about “frames'' in the link layer context
+- In addition: Fragmentation & reassembly if network layer packets are longer than link layer packets
+**** Basic link layer functions – Error control
+- If desired by the network layer – usually is
+- Usually built on top of frames 
+- Error detection – are there incorrect bits?  
+- Error correction – repair any mistakes that have happened? 
+- Forward error correction – invest effort before error happened; try to hide it from higher layers
+- Backward error correction – invest effort after error happened; try to repair it 
+**** Basic link layer functions – Connection setup
+- Connection: Shared state at sender and receiver 
+- Connections useful for many purposes
+- Application context
+- Error control – several error control schemes rely on a common context between sender and receiver
+- Question: how to set up and terminate a connection? What state information is required? 
+- Especially: if used on top of frames / packets? 
+- In practice: Only ``virtual'' connection; there is no end-to-end line switched
+- Problem reappears later in the transport layer again, with some additional complications – treated there!
+**** Basic link layer functions – Flow control
+- What happens with a fast sender and a slow receiver? 
+- Sender will overrun buffers faster than the receiver can process the packets in that buffer
+- Lots of transmission effort is wasted in this case
+- Necessary to control the amount of frames a link layer sends per unit time, adapt to receiver’s capabilities
+
+** Framing 
+
+**** Framing
+- How to turn a bit stream into a sequence of frames?
+- More precisely: how does a receiver know when a frame starts and when it finishes? 
+**** Framing by character counting
+- Idea: Announce the number of bits (bytes, characters) in a frame to the receiver
+- Put this information into the frame
+- Has to be at the beginning of a frame – a frame header
+- 
+**** Basic technique: Put control data into a header
+- Albeit ``character count'' is not a good framing technique, it illustrates an important technique: headers
+- If sender has to communicate administrative or control data to receiver, it can be added to the payload, the actual packet content
+- Usually at the start of the packet; sometimes at the end (a trailer)
+- Receiver uses headers to learn about sender’s intention
+- Same thing works for packet headers as well
+**** Framing by flag bytes/byte stuffing
+- Use dedicated flag bytes to demarcate start/stop of a frame
+- What happens when the flag byte appears in the payload? 
+- Escape it with a special control character – byte stuffing
+- If that appears, escape it as well
+**** Framing by flag bit patterns/bit stuffing
+- Byte stuffing is closely tied to characters/bytes as fundamental unit – often not appropriate
+- Use same idea, but stick with the bit stream abstraction of the physical layer
+- Use a bit pattern instead of a flag byte – often, 01111110
+- Actually, it IS a flag byte
+- Use bit stuffing
+- Whenever sender sends five 1’s in a row, it automatically adds a zero into the bit stream – except in the flag pattern
+- Receiver throws away (``destuffs'') any 0 after five 1’s
+**** Framing by coding violations
+- Suppose the physical layer’s encoding rules ``bits $\leadsto$ signals'' still provide some options to play with
+- Not all possible combinations that the physical layer can express are used to express bit patterns
+- Example: Manchester encoding – only low/high and high/low is used
+- When ``violating'' these encoding rules, data can be transmitted – e.g., the start and end of a frame
+- Example: Manchester – use high/high or low/low 
+- This drops the self-clocking feature of Manchester, but clock synchronization is sufficiently good to hold for a short while
+- Powerful and simple scheme – used e.g. by Ethernet networks 
+- But raises questions regarding bandwidth efficiency
+
+
+** Error control 
+
+**** Error control
+- Two basic aspects:
+- Detect the presence of errors (incorrectly received bits) in a frame 
+- Correct errors in frames 
+- Separate functions for error control
+- Detect, but do not correct: Simply drop a frame; pretend that it never has arrived at the receiver
+- Higher layers can take corrective measures, if they so desire
+- Correct, but do not detect: Try to correct as many errors as possible, do not care if there are some remaining errors present
+- Only feasible if application is not (too much) bothered by errors
+- Example: voice applications can tolerate some degree of bits errors without loosing too much voice quality 
+- Functions for detection (very) inefficient if you only want to detect 
+- Or combine both functions
+**** Error control – redundancy 
+- Any form of error control requires redundancy in the frames
+- Without redundancy
+- A frame of length m can represent 2m different frames
+- All of them are legal!
+- How could a receiver possibly decide that one legal frame is not the one that had originally been transmitted? 
+- Not possible!
+**** Error control – redundancy 
+- Core idea: Declare some of the possible messages illegal!
+- Still need to be able to express 2m legal frames
+-  $\leadsto$ More than 2m possible frames are required
+-  $\leadsto$ More than m bits are required in a frame  
+- Use frames with n > m total length  
+- r=n-m are the redundant bits (often, as header or trailer)
+- Having more possible than legal frames allows receiver to detect illegal frames
+**** Simple redundancy example: Parity
+- A simple rule to construct 1 redundant bit (i.e., n=m+1): Parity
+- Odd parity: Add one bit, choose its value such that the number of 1’s in the entire message is odd
+- Even parity: Add one bit, choose its value such that the number of 1’s in the entire message is even
+- Example:
+- Original message without redundancy: 01101011001
+- Odd parity: 011010110011 
+- Even parity: 011010110010
+**** How do illegal messages help with detecting bit errors?
+- Transmitter only sends legal frame
+- Physical medium/receiver might corrupt some bits
+- Hope: A legal frame is only corrupted into an illegal frame
+- But one legal frame is never turned into another legal frame
+- Necessary to realize this hope: 
+- Physical medium only alters up to a certain number of bits (by assumption) – say, k bits per frame
+- This is only an assumption! 
+- Alternative formulation: More than k bit alternations have negligible probability 
+- How does it relate to the BER or the SNR? 
+- Legal messages are sufficiently different so that it is not possible to change one legal frame into another by altering at most k bits
+**** Altering frames by changing bits
+- Suppose the following frames are the only legal bit patterns: 0000, 0011, 1100, 1111
+- 
+
+** Forward error correction 
+**** Distance between frames
+- In previous example: Two bit changes necessary to go from one legal frame to another
+- Formally: Hamming distance of two frames
+- Let x=x1,…, xn and y=y1,…, yn be frames
+- d(x,y) = number of ``1'' bits in x XOR y
+- Or: the number of bit positions where x and y are different
+**** Hamming distance of a set of frames
+- The Hamming distance of a set of frames S: 
+- The smallest distance between any two frames in the set
+- 
+**** Hamming distance and error detection/correction
+- What happens if d(S) = 0?
+- This is nonsense, by definition
+- What happens if d(S) = 1?
+- There exist x,y 2 S such that d(x,y) = 1; no other pair is closer
+- A single bit error converts from one legal frame x to another legal frame y
+- Cannot detect or correct anything
+**** Hamming distance and detection/correction
+- What happens if d(S) = 2?
+- There exist x,y 2 S such that d(x,y) = 2; no other pair is closer
+- In particular: any u with d(x,u) = 1 is illegal, 
+- As is any u with d(y,u)=1
+- I.e., errors which modify a single bit always lead to an illegal frame
+-  $\leadsto$ Can be detected!
+- Generalizes to all legal frames, because Hamming distance describes the ``critical cases''
+- But not corrected – upon receiving u, no way to decide whether x or y had been sent (symmetry!)
+**** Hamming distance and detection/correction
+- What happens if d(S) = 3?
+- There exist x,y 2 S such that d(x,y) = 3; no other pair is closer
+- Every s with d(x,s)=1 is illegal AND d(y,s) > 1! 
+- Hence: the receipt of s could have the following causes:
+- Originally, x had been sent, but 1 bit error occurred
+- Originally, y had been sent, but 2 bit errors occurred
+- (Originally, some other frame had been sent, but at least 2 bit errors occurred)
+- Assuming that fewer errors have happened, a received frame s can be mapped to a frame x!
+- Hence, the error has been ``corrected'' – hopefully, correctly!
+**** Generalization – Required Hamming distances
+- The examples above can be generalized
+- To detect d bit errors, a Hamming distance of d+1 in the set of legal frames is required
+- So that it is not possible to re-write a legal frame into another one using at most d bits
+- To correct d bit errors, a Hamming distance of 2d+1 in the set of legal frames is required
+- So that all illegal frames at most d bits away from legal frame are more than d bits away from any other legal frame 
+**** Frame sets – code books, codes
+- Some terminology: 
+- The set of legal frames S ½ {0,1}n is also called a code book or simply a code
+- The rate R of a code S is defined as:
+- Rate characterizes the efficiency
+- The distance \delta  of a code S is defined as: 
+- Distance characterizes error correction/detection capabilities
+- A good code should have large distance and large rate – but arbitrary combinations are not possible
+**** How to construct error correcting codes
+- Constructing good codes (e.g., highest rate at given error correction needs) is difficult
+- Simple example: use several parity bits
+- Distribute the parity bits over the entire codeword to protect against burst errors 
+- Two main classes of actual codes
+- Block codes 
+- Convolutional codes
+- Turbo codes: generalization/successors to convolutional codes, almost capacity achieving 
+- Low-Density Parity Check (LDPC): almost capacity achieving 
+- Dirty paper coding: Transmitter knows errors beforehand (but receiver does not), capacity-achieving 
+- 
+**** Block codes: Bounds 
+- Block codes operate on blocks of k payload bits, building blocks of length n by adding redundancy 
+- Output of n bits only depends on the very k input bits
+- Property: Binary block codes can correct up to t errors in a codeword of length n with k user bits only if (Varshamov-Gilbert bound):
+-  But code for given (n, k, t) does not necessarily exist
+- Common examples
+- Bose Chaudhuri Hocquenghem (BCH) codes – based on polynomials over finite fields 
+- Reed Solomon codes (special case of non-binary BCH codes)
+
+*** Detour: Polynomials 
+
+**** A detour: Bit strings as polynomials 
+- (
+- WS 19/20, v 1.7
+- Computer Networks - Link layer
+- 35
+**** How to deal with error control mathematically 
+- We need rules how to compute redundancy bits and how to interpret received sequence of (possibly erroneous) bits 
+- For both error correction and error detection 
+- Should be: 
+- Efficiently implementable in hardware
+- Provable properties! 
+- Basic operation based on polynomial arithmetic
+- Bit string is interpreted as representing a polynomial
+- Coefficients 0 and 1 are possible, interpreted modulo 2
+- As are groups of bits
+- Interpreted than as modulo 2^k 
+  - 
+**** Modulo 2 arithmetic 
+- With 0 and 1 as the only possible numbers (bits!), normal arithmetic is not applicable
+- Instead: look at modulo 2 arithmetic
+- Rules: 
+- Addition modulo 2 Subtraction modulo 2Multiplication modulo 2
+- Example: 0110111011 
+-                 ©  1101010110 = 1011101101
+**** Matrix multiplication 
+- With addition and multiplication in place, we can define matrix multiplication quite easily 
+- 
+- WS 19/20, v 1.7
+- Computer Networks - Link layer
+- 38
+**** Modulo 2 division
+- Division of two numbers is done just like normal division
+- 1101010110 / 1001 = 1100110  1001
+-       1000
+-       1001
+-         001101
+-             1001
+-               1001
+-               1001
+-                   
+**** Modulo 2 division with remainder
+- After division, a remainder may result 
+- 1101010101 / 1001 = 1100110  remainder 11  1001
+-       1000
+-       1001
+-         001101
+-             1001
+-               1000
+-               1001
+-                 0011
+**** Polynomials over modulo 2 arithmetic
+- Define polynomials over modulo 2 arithmetic
+- p(x) =  an ¢ xn © … © a1 x1 © a0
+- Coefficients and x 2 {0,1}
+- Addition, subtraction, multiplication and division of polynomials is defined in the usual way!
+- Using modulo 2 arithmetic, of course 
+**** Bit strings and polynomials modulo 2
+- Idea: Conceive of a string of bits as a representation of the coefficients of a polynomial
+- Bit string: bnbn-1…b1b0
+- Polynomial: bn¢xn © … © b1¢x1 © b0
+- A bit string of (n+1) bits corresponds to a degree n polynomial!
+- Operations on bit strings correspond to operations on polynomials and vice versa
+- Example: ``Add k zeros'' $ ``multiply by xk''
+- This isomorphism allows us to divide bit strings!
+- 
+**** Generalization: Groups of bits 
+- Instead of looking at polynomials over just 0/1 (the GF(2) Galois Field), we can also group bits together 
+- Popular choice: group 8 bits together 
+- Galois Field GF(2^8)
+- Also called Rijndael‘s finite field 
+- Addition, subtraction work similarly, multiplication of polynomials becomes a bit more complicated 
+- Practically, often more suitable than working on bit sequences 
+- WS 19/20, v 1.7
+- Computer Networks - Link layer
+- 43
+**** End of detour: Bit strings as polynomials 
+- )
+- WS 19/20, v 1.7
+- Computer Networks - Link layer
+- 44
+
+
+
+*** Matrixes 
+
+**** Codes as matrix operations: nonsystematic code 
+- Forward error correction: We need to compute redundancy bits from payload bits 
+- Idea: Use a suitable matrix? 
+- In general: a nonsystematic code to compute codeword
+- Using a generator matrix 
+- Given payload p, codeword c:
+- Structure in codeword? Not obvious… 
+- 
+- WS 19/20, v 1.7
+- Computer Networks - Link layer
+- 45
+**** Codes as matrix operations: Systematic codes 
+- Let’s look at generator matrix with a particular structure 
+- Identity matrix, append matrix for parity bits 
+- For k payloads, and (n-k) redundancy bits, A is a (k, n-k) matrix 
+- Example 
+- 
+- WS 19/20, v 1.7
+- Computer Networks - Link layer
+- 46
+**** Decoding? 
+- Encoding is easy – how about decoding? 
+- Getting back the original payload from the (possibly erroneous) received bits 
+- First step: Use a parity-check matrix H 
+- For k payloads and n-k redundancy bits, H is an (n-k, n) matrix 
+- For a valid codeword, it must hold:
+- Hence:  if result <> 0, codeword is not valid
+- One way to check for errors (but not a particularly efficient one, if error checking is all you want to do) 
+- 
+- WS 19/20, v 1.7
+- Computer Networks - Link layer
+- 47
+**** Relationship of generator and parity check matrix? 
+- Generator matrix and parity check matrix are related:
+- Recall: A is a (k, n-k) matrix 
+- Property: 
+- Check: homework! 
+- 
+- WS 19/20, v 1.7
+- Computer Networks - Link layer
+- 48
+**** Example: Hamming (7,4) code 
+- WS 19/20, v 1.7
+- Computer Networks - Link layer
+- 49
+**** Decoding: Maximum likelihood decoding 
+- Suppose we received an invalid codeword c 
+- We want to map it to original payload 
+- Under stochastic assumptions: errors happened randomly 
+- What is then the ``right'' answer, the ``right'' payload to identify? 
+- Simple approach:
+- For each payload, there is a likelihood that we received the invalid c 
+- Under stochastic assumptions how errors happen
+- We decide for that payload that maximizes this likelihood (maximum likelihood decoding) 
+- Under independent bit errors: the one with the smallest Hamming distance! 
+- WS 19/20, v 1.7
+- Computer Networks - Link layer
+- 50
+**** Maximum likelihood decoding: How? 
+- Trivial approach: Search through all codewords around the received (invalid) codeword c 
+- Akin to an expanding ring search: Hamming distance 1, 2, … 
+- Simple, but sloooow 
+- Efficient? 
+- Syndrome decoding 
+- Iterative algorithms, often amenable to hardware implementations
+- For details, check lecture Blömer Codes & Crypto 
+- WS 19/20, v 1.7
+- Computer Networks - Link layer
+- 51
+**** Example: BCH codes 
+- Family of binary block codes 
+- Binary: polynomials with coefficients 0 and 1 (over GF(2))
+- BCH: Bose & Chaudhuri (1960), Hocquenghem (1959)
+- Properties: For any integer m > 2 and t < 2m-1, there exist a BCH code with 
+- Block length: n = 2m -1 
+- Number of parity-check digits: n–k <= mt 
+- With tight bound for small t 
+- Minimum Hamming distance: d >= 2t + 1
+- (k: number of payload bits)
+- Interpretation: Bound on how many payload bits, given desired error correction capability 
+- WS 19/20, v 1.7
+- Computer Networks - Link layer
+- 52
+**** BCH parameters 
+- Issue: no simple formulas to compute n-k
+- Example values for n, k, t  
+- WS 19/20, v 1.7
+- Computer Networks - Link layer
+- 53
+**** Example: 127 bit blocks 
+**** Example: Reed-Solomon codes 
+- Generalization of BCH codes to non-binary symbols 
+- Depending on definition of BCH code: RS is a special case 
+- Applications: 
+- Data storage – RAID, CDs, DVDs
+- Some simple data transmission techniques 
+- WS 19/20, v 1.7
+- Computer Networks - Link layer
+- 55
+**** Block error rate for BCH codes
+- Block is considered in error if any bit errors remain after correction 
+- Example: codewords 127 bit, varying number of correctable bit errors (``c'' in legend)
+- Simulated 1500 blocks, varying SNR, AWGN channel, BPSK modulation 
+- 
+**** Convolutional codes
+- Convolutional codes differ from block codes
+- There are no ``independent blocks of data''
+- Instead: a stream of symbols (usually, bits) is encoded into another stream
+- k bits mapped to n bits, outcome depends on the last K input symbols (K: constraint length)
+- 
+**** Decoding convolutional codes – Viterbi algorithm
+- Encoding convolutional codes is trivial – simple shift register
+- Decoding? 
+- Simple table lookup not possible – depends on too much state for non-trivial constraint length (n2K-1 entries)
+- Popular: Viterbi algorithm
+- Dynamic programming technique
+- Idea: hidden (for the receiver) sequence of states (= sent bits), receiver observes sequence of events (= received bits)
+- Viterbi algorithm determines the most likely sequence of states that has caused the observed sets of events 
+- Maximum likelihood property makes this algorithm powerful
+- Can be implemented in hardware
+- State of the art decoding technique, but outperformed by turbo codes
+**** Convolutional codes: Properties 
+- State-of-the-art codes in wireless transmission 
+- Close to Shannon bound/channel capacity! 
+- Typical examples: 
+- Turbo codes: Two convolutional codes nested within each other, informing each other over error patterns
+- Used in UMTS, LTE, … 
+- Low-density parity check codes
+- Tend to outperform Turbo codes at higher code rates
+- Used e.g. in DVB-S2, 10GBast-T Ethernet, … optional in 802.11n, 11ac
+- WS 19/20, v 1.7
+- Computer Networks - Link layer
+- 59
+**** An additional trick: Interleaving 
+- How to deal with burst errors? Spanning multiple code blocks?  
+- WS 19/20, v 1.7
+- Computer Networks - Link layer
+- 60
+
+** Error detection 
+
+*** CRC 
+**** How to construct error detecting codes – CRC 
+- Efficient error detection: Cyclic Redundancy Check  (CRC)
+- Gives rules how to compute redundancy bits and how to decide whether a received bit pattern is correct
+- Very high detection probability with few redundancy bits
+- Efficiently implementable in hardware
+- Basic operation based on polynomial arithmetic
+- Bit string is interpreted as representing a polynomial
+- Coefficients 0 and 1 are possible, interpreted modulo 2
+- 
+**** Use polynomials to compute redundancy bits – CRC 
+- Define a generator polynomial G(x) of degree g
+- Known to both sender and receiver
+- We will use g redundancy bits in the end
+- Given: message/frame M, represented by polynomial M(x)
+- Transmitter
+- Compute remainder r(x) of division xgM(x) / G(x)
+- Note: Remainder after division is of degree < g, fitting into g bits!
+- Transmit T(x) = xgM(x) – r(x) 
+- Note: xgM(x) – r(x) is divisible without remainder by G(x)
+- Receiver
+- Receive m(x)
+- Compute remainder of division of m(x) by G(x)
+**** CRC transmission and reception
+- What happens in the channel after transmitting T(x)?
+- No errors: T(x) arrives correctly at the receiver
+- Bit errors occur: T(x) is modified by flipping some bits 
+- Equivalent to modifying some coefficients of the polynomial
+- Equivalent to adding an error polynomial E(x)
+- At the receiver, T(x) © E(x) arrives
+- At the receiver
+- Receive m(x)
+- Compute remainder of division of m(x) by G(x)
+- No errors: m(x) = T(x). Remainder is zero!
+- Bit errors: m(x)/G(x) = (T(x) © E(x))/ G(x) = T(x)/G(x) © E(x)/G(x)
+**** CRC – Overview 
+**** Choice of G(x) determines CRC properties
+- When is remainder of E(x) / G(x) <> 0?
+- If G(x) divides E(x) without remainder, an error slips through!
+- Single bit error: E(x) = xi for error at position i
+- G(x) needs two or more terms to ensure that E(x) is not a multiple of it
+- Two bit errors: E(x) = xi © xj = xj (xi-j +1) for some i>j
+- x must not divide G(x)
+- G(x) must not divide (xk + 1) for all k up to, e.g., maximum frame length
+- Odd number of errors: E(x) has an odd number of terms
+- E(x) will NOT have (x+1) as a factor
+- Make (x+1) a factor of G(x) so that it cannot divide E(x)
+- Using r check bits, all burst errors of length <= r can be detected 
+**** Practical CRC 
+- Practically used generator polynomial (IEEE 802):
+- x32 © x23 © x16 © x12 © x11 © x10 © x8 © x7 © x5 © x4 © x2 © x © 1
+- In practice, residual errors after CRC check are ignored
+- But they may still happen!
+- In particular, when bit errors are not independent, but bursty
+- Implementation in hardware: shift register circuit
+- Negligible overhead in hardware, time, energy 
+- 
+
+
+** Backward error correction 
+
+
+
+
+
+**** How to handle detected errors? 
+- Suppose the CRC function detects an error 
+- Clearly, the received frame cannot be delivered to higher layers/application
+-  $\leadsto$ Have to repair the error somehow 
+- Backward error recovery
+- Here: frame has to be retransmitted
+- How to tell the sender? 
+**** A simple, simplex, acknowledgement-based protocol
+- Acknowledge to sender the receipt of a packet
+- Sender waits for acknowledgement for a certain time
+- If not received in time, packet is retransmitted
+- First solution attempt: 
+- SenderReceiver
+**** Protocol analysis
+- This protocol is nice and simple, but flawed in multiple ways
+- What happens when the higher layer sends packets faster than the acknowledgements come in (and when one is missing?)
+- What happens if acknowledgements are lost?
+-  $\leadsto$ Need some fixes for the protocol here…
+**** Acknowledgement-based protocol, second trial
+- Cure one problem: Concentrate on one packet, only accept the next packet from higher layer when previous one has been fully processed
+- First solution attempt: 
+- SenderReceiver
+- 
+**** Does second version work correctly?
+- It holds back the transmitter until packets are processed
+- It implements flow control!
+- Does it ensure that all packets arrive, in correct order? 
+**** Does second version work correctly? 
+- Simple cases seem ok
+- What if an acknowledgement is lost? 
+**** Problem of second version
+- Sender cannot distinguish between a lost packet and a lost acknowledgement $\leadsto$ has to re-send the packet
+- Receiver cannot distinguish between a new packet and a redundant copy of an old packet
+-  $\leadsto$ Additional information is needed 
+- Put a sequence number in each packet, telling the receiver which packet it is
+- Sequence numbers as header information in each packet 
+- Simplest sequence number: a 0 or 1 !
+- Needed in packet & acknowledgement 
+- In Ack, convention: send the sequence number of the last correctly received packet back
+- Also possible: send sequence number of next expected packet 
+**** Acknowledgements & sequence numbers – 3rd version
+**** Assessment of 3rd version – Alternating bit protocol
+- This 3rd version is a correct implementation of a reliable protocol over an error-prone channel
+- Name: Alternating bit protocol
+- Class of protocols where sender waits for a positive confirmation: Automatic Repeat reQuest (ARQ) protocols
+- It also implements a simple form of flow control
+- Note the dual task of the acknowledgement packet
+- It confirms to the sender that the receiver has obtained a certain packet
+- It is also the permit to send the next packet, stating that the receiver has the capacity to handle it
+- These two functions can be and are separate in other protocols!
+**** Alternating bit protocol – Efficiency  
+- Efficiency \rho depends on circumstances
+- Defined as the ratio of time during which the sender sends new information (assuming an error-free channel in the simplest case; error-considerations make efficiency discussions difficult)
+-  \rho = Tpacket  / (Tpacket + d + Tack + d) 
+- Efficiency of simple alternating bit protocol is low when delay is large compared to data rate
+- Recall bandwidth-delay product!
+**** Improving efficiency – have more ``outstanding'' packets
+- Inefficiency of alternating bit in large bandwidth-delay situations is owing to not exploiting ``space'' between packet and acknowledgement 
+- Always sending packets results in high efficiency
+- More packets are ``outstanding'' = sent, but not yet acknowledged
+- ``pipelining'' of packets
+- But not feasible with a single bit as sequence number
+-  $\leadsto$ Need larger sequence number space! 
+- It also needs – ideally – some full-duplex support
+- How to live without full-duplex?
+**** Sliding windows to handle multiple outstanding packets
+- Introduce a larger sequence number space
+- Say, n bits or 2n sequence numbers 
+- Not all of them may be allowed to be used simultaneously
+- Recall alternating bit case: 2 sequence numbers, but only 1 may be ``in transit''
+- Use sliding windows at both sender and receiver to handle these numbers
+- Sender: sending window – set of sequence numbers it is allowed to send at given time or that are currently ``in flight'' (depends on protocol) 
+- Receiver: receiving window – set of sequence numbers it is allowed to accept at given time
+- May be fixed in size or adapt dynamically over time
+- Window size corresponds to flow control 
+**** Sliding window – simple example
+- A simple sliding window example for n=3, window size fixed to 1
+- Sender here represents the currently unacknowledged sequence numbers (``in flight'') 
+**** Transmission errors and receiver window size
+- Assumption: 
+- Link layer should deliver all frames correctly and in sequence
+- Sender is pipelining packets to increase efficiency
+- What happens if packets are lost (discarded by CRC)? 
+- With receiver window size 1, all following packets are discarded as well!
+**** Go-back-N
+- With receiver window size 1, all frames following a lost frame cannot be handled by receiver
+- They are out of sequence
+- They cannot be acknowledged, only ACKs for the last correctly received packet can be sent
+- Sender will timeout eventually
+- Since all frames sent in the meantime have been discarded, they have to be repeated
+-  $\leadsto$ Go-back N (frames)! 
+- Assessment
+- Quite wasteful of transmission resources
+- But saves overhead at the receiver 
+**** Selective repeat
+- Suppose we invest a bit into a receiver that can buffer packets intermittently if some packets are missing
+- Corresponds to receiver window larger than 1
+- Resulting behavior:
+- Receiver explicitly informs sender about missing packets using Negative Acknowledgements
+- Sender selectively repeats the missing frames 
+- Once missing frames arrive, they are all passed to the network layer
+**** Duplex operation and piggybacking 
+- So far, simplex operation at the (upper) service interface was assumed
+- The receiver only sent back acknowledgements, possibly using duplex operation of the lower layer service
+- What happens when the upper service interface should support full-duplex operation?
+- One option: Use two separate channels for each direction – wasteful
+- Better: Interleave acknowledgement and data frames in a given direction
+- Best (and usual): Put the acknowledgement information for direction A! B into the data frames for B $\leadsto$ A 
+- As part of B’s header – piggyback it 
+**** Combine FEC and ARQ?
+- If ARQ used, does FEC still make sense? 
+- Yes, depending on the error situation
+- Trade-off:
+- With stronger FEC, packet error rate reduces, fewer retransmissions
+- But also fewer payload bits per fixed-size codeword 
+- Recall setup from earlier slide: 
+- Block is considered in error if any bit errors remain after correction 
+- Example: codewords 127 bit, varying number of correctable bit errors (``c'' in legend)
+- Simulated 1500 blocks, at varying SNR, AWGN channel, BPSK modulation 
+**** Combine FEC and ARQ? – Performance 
+- Now add unlimited number of retransmissions, compute expected number of correctly delivered bits per packet time
+
+
 ** Conclusion 
 
 **** Conclusion  
 
 Lorem ipsum 
+
+
+**** Conclusion
+- Most problems in the link layer are due to errors
+- Errors in synchronization require non-trivial framing functions
+- Errors in transmission require mechanisms to correct them so as to hide from higher layers
+- Or to detect them and repair them afterwards
+- Flow control is often tightly integrated with error control in practical protocols
+- But it IS a separate function and can be realized separately as well
+- Connection setup/teardown still has to be treated
+- Necessary to initialize a joint context for sender and receiver
+
 
 ** ARQ tests 
 
