@@ -12,13 +12,14 @@
 \begin{document}
 
 \begin{tikzpicture}
+  \label{page:ll:per_over_snr:with_coding_gain}
   \begin{loglogaxis}[
     cycle list name=exotic,
     xmin=0.1,
     ymin=0.00000001,
     xlabel=SNR,
     ylabel=PER,
-    legend entries={c=0,c=1,c=2,c=3,c=4,c=5,c=6,c=7},
+    legend entries={t=0,t=1,t=2,t=3,t=4,t=5,t=6,t=7},
     legend style={
       legend pos=outer north east,
     },    
@@ -31,21 +32,26 @@
 
     \draw [very thick, <->] (gainleft) -- (gainright); 
 
-    \draw [thick, decorate, decoration={brace,raise=10pt} ] (gainleft) to node[above=2.5, align=center, fill=white] {Coding\\ gain} (gainright); 
+%     \draw [thick, decorate, decoration={brace,raise=10pt} ] (gainleft) to node[above=2.5, align=center, fill=white] {Coding\\ gain} (gainright); 
 
   \end{loglogaxis}
+
+
+    \draw [thick, decorate, decoration={brace,raise=10pt, mirror} ] (gainleft) to node[below right=0.5, align=center, fill=white] {Coding\\ gain} (gainright); 
+
 \end{tikzpicture}
 
 
 
 \begin{tikzpicture}
+  \label{page:ll:per_over_snr}
   \begin{loglogaxis}[
     cycle list name=exotic,
     xmin=0.1,
     ymin=0.00000001,
     xlabel=SNR,
     ylabel=PER,
-    legend entries={c=0,c=1,c=2,c=3,c=4,c=5,c=6,c=7},
+    legend entries={t=0,t=1,t=2,t=3,t=4,t=5,t=6,t=7},
     legend style={
       legend pos=outer north east,
     },    
@@ -58,20 +64,21 @@
 
 
 \begin{tikzpicture}
+  \label{page:ll:thoughput_over_snr}
   \begin{semilogxaxis}[
     cycle list name=exotic,
     xmin=0.1,
     ymin=0.00000001,
     xlabel=SNR,
     ylabel=Throughput (in bits/packet),
-    legend entries={c=0,c=1,c=2,c=3,c=4,c=5,c=6,c=7},
+    legend entries={t=0,t=1,t=2,t=3,t=4,t=5,t=6,t=7},
     legend style={
       legend pos=outer north east,
     },    
     ]
     \foreach \c in {0,1,...,7} {
       \addplot table [x=snr, y=t\c] {\bchtable};
-      % \addlegendentry{$c=\c$}
+      % \addlegendentry{$t=\c$}
     }
   \end{semilogxaxis}
 \end{tikzpicture}

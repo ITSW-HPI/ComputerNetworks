@@ -50,3 +50,8 @@
 #+LATEX_HEADER: \externaldocument{../ch_phy/standalone/plots}
 #+LATEX_HEADER: \externaldocument{../ch_phy/standalone/plot2}
 #+LATEX_HEADER: \externaldocument{../ch_link/ch_link}
+#+LATEX_HEADER: \externaldocument{../ch_link/standalone/arq_fsm}
+#+LATEX_HEADER: \externaldocument{../ch_link/standalone/arq_msc}
+#+LATEX_HEADER: \externaldocument{../ch_link/standalone/bch}
+#+LATEX_HEADER: \externaldocument{../ch_link/standalone/econtrol}
+#+LATEX_HEADER: \externaldocument{../ch_link/standalone/ll}

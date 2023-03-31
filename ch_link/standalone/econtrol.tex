@@ -146,11 +146,12 @@
 
 
 \begin{tikzpicture}
+  \label{page:ll:block_code}
     \begin{scope}[every node/.style={draw, minimum width=4ex, minimum height=4ex}, node distance=0]
       \node [label=above:1] (n1) {}; 
       \node [label=above:2, right=of n1] (n2) {}; 
       \node [label=above:\dots, right=of n2, minimum width=2cm] (ndots) {}; 
-      \node [label=above:$k\cdot K$, right=of ndots] (nend) {}; 
+      \node [label=above:$k$, right=of ndots] (nend) {}; 
     \end{scope}
 
    \draw [<-] (n1.west) to node[above,align=center]  {Bit stream,\\in batches of size $k$} ++(-4,0);
@@ -170,8 +171,37 @@
 \end{tikzpicture}
 
 
-\begin{tikzpicture}[every node/.style={draw}]
+\begin{tikzpicture}
+  \label{page:ll:convolutional_code}
+    \begin{scope}[every node/.style={draw, minimum width=4ex, minimum height=4ex}, node distance=0]
+      \node [label=above:1] (n1) {}; 
+      \node [label=above:2, right=of n1] (n2) {}; 
+      \node [label=above:\dots, right=of n2, minimum width=2cm] (ndots) {}; 
+      \node [label={[above,fill=hpiorange!10,draw=hpiorange,name=kKlabel]:$k\cdot K$}, right=of ndots] (nend) {}; 
+    \end{scope}
 
+    \draw [<-] (kKlabel) -- ++(1,0.5) node[fill=white] {!!}; 
+    
+    
+   \draw [<-] (n1.west) to node[above,align=center]  {Bit stream,\\in batches of size $k$} ++(-4,0);
+
+    \node [circle, draw, below= of n2] (p1) {+}; 
+    \node [circle, draw, right=0.1 of p1] (p2) {+};
+    \node [right=of p2] (pdots) {$\cdots$};
+    \node [circle, draw, right=0.1 of pdots] (pend) {+};
+    
+    \draw [<-] (p1) edge (n1.south) edge (nend.south);
+    \draw [<-] (p2) edge (ndots.south) edge (nend.south);
+    \draw [<-] (pend) edge (n1.south) edge (ndots.south);
+
+    \draw [->] (p1) to node[left] {Bit 1} ++(0, -2); 
+    \draw [->] (p2) to node[right] {Bit 2} ++(0, -2); 
+    \draw [->] (pend) to node[right] {Bit n} ++(0, -2); 
+\end{tikzpicture}
+
+
+\begin{tikzpicture}[every node/.style={draw}]
+  
   \node (frame) {Original frame $M(x)$ };
   \node [right=of frame] (generator) {Generator $G(x)$};
   \node [below=of frame] (remainder) {Remainder $r(x) = x^g M(x) \, \mathrm{mod}\, G(x)$};

@@ -13,12 +13,12 @@
 **** Plans for this chapter 
 
 - Understand the main service provided by the link layer
-- Communication between two directly connected nodes
-- Framing of a physical bit stream into a structure of frames/packets
-- Error control: Detection and correction
-- Connection setup and release
-- Acknowledgement-based protocols
-- Flow control
+  - Communication between two directly connected nodes
+  - Framing of a physical bit stream into a structure of frames/packets
+  - Error control: Detection and correction
+  - Connection setup and release
+  - Acknowledgement-based protocols
+  - Flow control
 - Some ideas about how to use extended finite state machines to specify communication protocols
 
 \vskip-2.5em
@@ -47,74 +47,175 @@
 
 
 
-** Services 
+** Services                                                        :noexport:
 
 **** The link layer’s service
+
+\vskip-2.5em
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
 - Link layer sits on top of the physical layer
-- Can thus use a bit stream transmission service
-- But: this service might have incorrect bits; only between neighbors
+  - Can thus use a bit stream transmission service
+  - But: this service might have incorrect bits; only between neighbors
+
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+#+caption: The link layer between network and physical layer, bridging the gap between packets and bits
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:ll:layers}
+#+NAME: fig:ll:layers
+[[./standalone/ll.pdf]]
+
+
+
+\pause 
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
 - Expectations of the higher layer (networking layer)
-- Wants to use either a packet service or, sometimes, a bit stream service (rather unusual)
-- Does not really want to be bothered by errors
-- Does not really want to care about issues at the other end
-- 
-**** Options for link layer service
-- Reliable (dependable) service – yes/no
-- Reliability has many facets
-- A delivered packet should have the same content as the transmitted packet
-- All packets have to be delivered eventually
-- Packets have to be delivered in order
-- Error control may be required 
-- Forward error control, acknowledgements
+  - Wants to use either a packet service or, sometimes, a bit stream service (rather unusual)
+  - Does not really want to be bothered by errors
+  - Does not really want to care about issues at the other end
+
+
+
+**** Requirement options for link layer service
+
+- Dependable service – yes/no
+  - Has many facets
+    - A delivered packet should have the same content as the transmitted packet
+    - All packets have to be delivered eventually
+    - Packets have to be delivered in order
+  - Error control may be required 
+    - Forward error control, acknowledgements
 - Connection-oriented – yes/no 
-- Should a context be setup to/with the peer entity?
+  - Is a *shared context* to/with the peer entity required?
 - Packet or bitstream abstraction
-- Usually in computer networks: packets 
-- What about a maximal packet length? 
+  - Usually in computer networks: packets 
+  - What about a maximal packet length? 
+
+
 **** Distinguish: Service versus implementation
 - Note the difference between service and implementation
 - One example: 
-- Connection-less & reliable service required by the network layer
-- Link layer decides to use connections internally as a means to help with error control
+  - Connection-less & reliable service required by the network layer
+  - Link layer decides to use connections internally as a means to help with error control
 - What about other combinations? 
+
+
 **** Basic link layer functions – Framing 
 - How to turn a physical layer’s bit stream abstraction into individual, well demarcated frames
-- Usually necessary to provide error control – not obvious how to do that over a bit stream abstraction
-- Frames and packets are really the same thing, only a convention to talk about “frames'' in the link layer context
+  - Usually necessary to provide error control – not obvious how to do that over a bit stream abstraction
+  - Frames and packets are really the same thing, only a convention to
+    talk about “frames'' in the link-layer context; we stick to ``packets''
+\pause 
 - In addition: Fragmentation & reassembly if network layer packets are longer than link layer packets
+
 **** Basic link layer functions – Error control
 - If desired by the network layer – usually is
 - Usually built on top of frames 
 - Error detection – are there incorrect bits?  
 - Error correction – repair any mistakes that have happened? 
-- Forward error correction – invest effort before error happened; try to hide it from higher layers
-- Backward error correction – invest effort after error happened; try to repair it 
+  - Forward error correction – invest effort before error happened; try to hide it from higher layers
+  - Backward error correction – invest effort after error happened;
+    try to repair it 
+
+#+caption: Options for error control
+#+attr_latex: :width 0.95\textwidth :height 0.3\textheight :options keepaspectratio,page=\getpagerefnumber{page:ll:errorcontrol}
+#+NAME: fig:ll:errorcontrol
+[[./standalone/ll.pdf]]
+
+
+
 **** Basic link layer functions – Connection setup
 - Connection: Shared state at sender and receiver 
 - Connections useful for many purposes
-- Application context
-- Error control – several error control schemes rely on a common context between sender and receiver
-- Question: how to set up and terminate a connection? What state information is required? 
-- Especially: if used on top of frames / packets? 
-- In practice: Only ``virtual'' connection; there is no end-to-end line switched
-- Problem reappears later in the transport layer again, with some additional complications – treated there!
+  - Application context
+  - Error control – several error control schemes rely on a *common context* between sender and receiver
+- Question: how to *set up and terminate* a connection? What state information is required? 
+  - Especially: if used on top of frames / packets? 
+- Problem reappears later in the transport layer again, with some
+  additional complications – treated there!
+
+\pause 
+
+***** Connection and circuit are very different!               :B_alertblock:
+      :PROPERTIES:
+      :BEAMER_env: alertblock
+      :END:
+
+Common confusion! 
+
 **** Basic link layer functions – Flow control
 - What happens with a fast sender and a slow receiver? 
 - Sender will overrun buffers faster than the receiver can process the packets in that buffer
 - Lots of transmission effort is wasted in this case
 - Necessary to control the amount of frames a link layer sends per unit time, adapt to receiver’s capabilities
+\pause 
+- Problem reappears later in the transport layer again, with some
+  additional complications – treated there!
 
-** Framing 
+
+** Framing                                                         :noexport:
 
 **** Framing
 - How to turn a bit stream into a sequence of frames?
-- More precisely: how does a receiver know when a frame starts and when it finishes? 
+  - More precisely: how does a receiver know when a frame starts and when it finishes? 
+
+\begin{figure}[h]
+  \centering
+  \begin{tikzpicture}
+  \node [label=left:{From PHY to link layer: }]  (bits) {0010100111011010011010111011101010010111};
+  \draw [<-] ($(bits.south)+(-3,0)$) -- ++(0,-1) node [below, align=center] {Start of\\ frame?};
+  \draw [<-] ($(bits.south)+(+3,0)$) -- ++(0,-1) node [below, align=center] {Ende of\\ frame?};
+\end{tikzpicture}
+\caption{Finding start and end of frames/pacekts in a sequence of bits}
+\label{fig:ll:framing}
+\end{figure}
+
+
+
+\pause 
+
+Note: Physical layer might try to detect and deliver bits when the sender is not actually transmitting anything
+- Receiver still tries to get any information from the physical medium
+
+
+**** Framing: Basic options 
+
+- Put a length field into the packet header
+  - What happens if bit errors inside this field?
+- Use special bytes/bit sequences to indicate start or end
+  - What happens if *these* sequences should be transmitted?
+  - Common technique: *stuffing*
+    - At bit or byte level
+    - Sender deliberately modifies transmitted data to ensure that
+      sequences do not appear in payload 
+- Violate agreed-upon values (*coding violations*)
+  - E.g., incorrect modulation patterns
+  - Very robust, but very inefficient 
+
+
+*** Old framing slides                                             :noexport:
 **** Framing by character counting
 - Idea: Announce the number of bits (bytes, characters) in a frame to the receiver
 - Put this information into the frame
 - Has to be at the beginning of a frame – a frame header
 - 
-**** Basic technique: Put control data into a header
+
+**** Basic technique: Put control data into a header               :noexport:
 - Albeit ``character count'' is not a good framing technique, it illustrates an important technique: headers
 - If sender has to communicate administrative or control data to receiver, it can be added to the payload, the actual packet content
 - Usually at the start of the packet; sometimes at the end (a trailer)
@@ -144,136 +245,303 @@
 - But raises questions regarding bandwidth efficiency
 
 
-** Error control 
+** Error control                                                   :noexport:
 
 **** Error control
 - Two basic aspects:
-- Detect the presence of errors (incorrectly received bits) in a frame 
-- Correct errors in frames 
+  1. *Detect* the presence of errors (incorrectly received bits) in a frame 
+  2. *Correct* errors in frames 
 - Separate functions for error control
-- Detect, but do not correct: Simply drop a frame; pretend that it never has arrived at the receiver
-- Higher layers can take corrective measures, if they so desire
-- Correct, but do not detect: Try to correct as many errors as possible, do not care if there are some remaining errors present
-- Only feasible if application is not (too much) bothered by errors
-- Example: voice applications can tolerate some degree of bits errors without loosing too much voice quality 
-- Functions for detection (very) inefficient if you only want to detect 
+  - Detect, but do not correct
+    - Typically, simply drop a frame; pretend that it never has arrived at the receiver
+    - Higher layers can take corrective measures, if they so desire
+  - Correct, but do not detect: Try to correct as many errors as possible, do not care if there are some remaining errors present
+    - Only feasible if application is not (too much) bothered by errors
+    - Example: voice applications can tolerate some degree of bits errors without loosing too much voice quality 
+    - Functions for correction (very) inefficient if you only want to detect 
 - Or combine both functions
+
 **** Error control – redundancy 
+
+\vskip-2.5em
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
 - Any form of error control requires redundancy in the frames
 - Without redundancy
-- A frame of length m can represent 2m different frames
-- All of them are legal!
+  - A frame of length $m$ can represent $2^m$ different frames
+  - All of them are legal!
+
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+
+#+caption: All possible frames are also legal frames, no redundancy
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:ll:allframes}
+#+NAME: fig:ll:allframes
+[[./standalone/econtrol.pdf]]
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
 - How could a receiver possibly decide that one legal frame is not the one that had originally been transmitted? 
 - Not possible!
 **** Error control – redundancy 
+
 - Core idea: Declare some of the possible messages illegal!
-- Still need to be able to express 2m legal frames
--  $\leadsto$ More than 2m possible frames are required
--  $\leadsto$ More than m bits are required in a frame  
-- Use frames with n > m total length  
-- r=n-m are the redundant bits (often, as header or trailer)
-- Having more possible than legal frames allows receiver to detect illegal frames
+  - Still need to be able to express $2^m$ legal frames
+  - $\leadsto$ More than $2^m$ possible frames are required
+  - $\leadsto$ More than $m$ bits are required in a frame  
+  - Use frames with $n > m$ total length  
+    - $r=n-m$ are the $redundant bits$ (often, as header or trailer)
+- Having /more possible than legal frames/ allows receiver to detect
+  illegal frames
+
+
+#+caption: Distinguish between possible and legal frames
+#+attr_latex: :width 0.95\textwidth :height 0.3\textheight :options keepaspectratio,page=\getpagerefnumber{page:ll:legalframes}
+#+NAME: fig:ll:legalframes 
+[[./standalone/econtrol.pdf]]
+
+
+
 **** Simple redundancy example: Parity
-- A simple rule to construct 1 redundant bit (i.e., n=m+1): Parity
-- Odd parity: Add one bit, choose its value such that the number of 1’s in the entire message is odd
-- Even parity: Add one bit, choose its value such that the number of 1’s in the entire message is even
+- A simple rule to construct 1 redundant bit (i.e., $n=m+1$): Parity
+  - Odd parity: Add one bit, choose its value such that the number of 1’s in the entire message is odd
+  - Even parity: Add one bit, choose its value such that the number of 1’s in the entire message is even
 - Example:
-- Original message without redundancy: 01101011001
-- Odd parity: 011010110011 
-- Even parity: 011010110010
+  - Original message without redundancy: ~01101011001~
+  - Odd parity: ~01101011001~ *1* 
+  - Even parity: ~01101011001~ *0*
 **** How do illegal messages help with detecting bit errors?
 - Transmitter only sends legal frame
 - Physical medium/receiver might corrupt some bits
-- Hope: A legal frame is only corrupted into an illegal frame
-- But one legal frame is never turned into another legal frame
+- *Hope*: A legal frame is only corrupted into an illegal frame
+  - But one legal frame is never turned into another legal frame
 - Necessary to realize this hope: 
-- Physical medium only alters up to a certain number of bits (by assumption) – say, k bits per frame
-- This is only an assumption! 
-- Alternative formulation: More than k bit alternations have negligible probability 
-- How does it relate to the BER or the SNR? 
-- Legal messages are sufficiently different so that it is not possible to change one legal frame into another by altering at most k bits
+  - Physical medium only alters up to a certain number of bits (by assumption) – say, $k$ bits per frame
+    - *This is only an assumption!*
+    - Alternative formulation: More than $k$ bit alternations have negligible probability 
+    - How does it relate to the BER or the SNR? 
+  - Legal messages are sufficiently different so that it is not possible to change one legal frame into another by altering at most k bits
 **** Altering frames by changing bits
 - Suppose the following frames are the only legal bit patterns: 0000, 0011, 1100, 1111
-- 
+- Four-bit sequences form a hypercube when connecting sequences that
+  only differ in a single position 
 
-** Forward error correction 
+
+#+caption: Four-bit sequences arranged in a hypercube; neighbors are sequences that differ in at most a single bit position; blue circles show legal frame, orange circles differ from legal frames by one bit position, red circles differ in two bit positions (inspired by [[https://texample.net/tikz/examples/gray-code-in-4-cube/][Gray codes in TikZ]])
+#+attr_latex: :width 0.95\textwidth :height 0.4\textheight :options keepaspectratio,page=\getpagerefnumber{page:ll:altering_frames}
+#+NAME: fig:ll:altering_frames
+[[./standalone/econtrol.pdf]]
+
+
+
+*** Hamming distance 
 **** Distance between frames
 - In previous example: Two bit changes necessary to go from one legal frame to another
-- Formally: Hamming distance of two frames
-- Let x=x1,…, xn and y=y1,…, yn be frames
-- d(x,y) = number of ``1'' bits in x XOR y
-- Or: the number of bit positions where x and y are different
+- Formally: *Hamming distance of two frames*
+- Let $x=x_11,\dots, x_n$ and $y=y_1,…, y_n$ be two frames
+- $d(x,y)$ = number of ``1'' bits in $x\, \mathrm{XOR}\, y$ 
+  - Or: the number of bit positions where x and y are different
+
+
+#+caption: Example for definition of Hamming distance 
+#+name: tag:ll:hamming_definition 
+#+ATTR_LATEX: :align rcl
+| $x$                | = | 0011010111 |
+| $y$                | = | 0110100101 |
+|--------------------+---+------------|
+| $x \,\mathrm{XOR}\, y$ | = | 0101110010 |
+| $d(x,y)$           | = |          5 |
+
+
+
+
 **** Hamming distance of a set of frames
 - The Hamming distance of a set of frames S: 
+
+\[ d(S) =  \min _{x, y \in S, x \not = y} d(x,y)
+\label{eq:hamming_distance}
+\]
+
 - The smallest distance between any two frames in the set
-- 
+
+\vskip-2.5em
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+
+#+caption: Example for Hamming distance = 2
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:ll:simple_hamming:1}
+#+NAME: fig:ll:simple_hamming:1
+[[./standalone/econtrol.pdf]]
+
+
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+#+caption: Example for Hamming distance = 1
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:ll:simple_hamming:2}
+#+NAME: fig:ll:simple_hamming:2
+[[./standalone/econtrol.pdf]]
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+ 
+
+** Forward error correction
+
+*** Basic correction 
 **** Hamming distance and error detection/correction
-- What happens if d(S) = 0?
-- This is nonsense, by definition
-- What happens if d(S) = 1?
-- There exist x,y 2 S such that d(x,y) = 1; no other pair is closer
-- A single bit error converts from one legal frame x to another legal frame y
+- What happens if $d(S) = 0$?
+  - This is nonsense, by definition
+- What happens if $d(S) = 1$?
+
+#+begin_export latex
+\begin{center}
+\tikz{\draw (0,0) node[fill=white] {$x$} to node [above, align=center] {1 bit \\difference} ++(3,0) node[fill=white] {$y$}; }
+\end{center}
+#+end_export 
+
+- There exist $x,y \in S$ such that $d(x,y) = 1$; no other pair is closer
+- A single bit error converts from one legal frame $x$ to another legal frame $y$
 - Cannot detect or correct anything
 **** Hamming distance and detection/correction
-- What happens if d(S) = 2?
-- There exist x,y 2 S such that d(x,y) = 2; no other pair is closer
-- In particular: any u with d(x,u) = 1 is illegal, 
-- As is any u with d(y,u)=1
-- I.e., errors which modify a single bit always lead to an illegal frame
--  $\leadsto$ Can be detected!
+- What happens if $d(S) = 2$?
+  - There exist $x,y \in S$ such that $d(x,y) = 2$; no other pair is closer
+
+#+begin_export latex
+\begin{center}
+\tikz{\draw (0,0) node[fill=white] {$x$} 
+to node [above, align=center] {1 bit \\difference} ++(3,0) node[fill=white] {$u$}
+to node [above, align=center] {1 bit \\difference} ++(3,0) node[fill=white] {$y$}
+; }
+\end{center}
+#+end_export 
+
+- In particular: any $u$ with $d(x,u) = 1$ is illegal, 
+- I.e., errors that modify a single bit always lead to an illegal frame
+- $\leadsto$ Error can be detected!
 - Generalizes to all legal frames, because Hamming distance describes the ``critical cases''
-- But not corrected – upon receiving u, no way to decide whether x or y had been sent (symmetry!)
+- But not corrected – upon receiving u, no way to decide whether x or
+  y had been sent (symmetry!)
+
+
 **** Hamming distance and detection/correction
-- What happens if d(S) = 3?
-- There exist x,y 2 S such that d(x,y) = 3; no other pair is closer
-- Every s with d(x,s)=1 is illegal AND d(y,s) > 1! 
-- Hence: the receipt of s could have the following causes:
-- Originally, x had been sent, but 1 bit error occurred
-- Originally, y had been sent, but 2 bit errors occurred
-- (Originally, some other frame had been sent, but at least 2 bit errors occurred)
-- Assuming that fewer errors have happened, a received frame s can be mapped to a frame x!
-- Hence, the error has been ``corrected'' – hopefully, correctly!
+- What happens if $d(S) = 3$?
+  - There exist $x,y \in S$ such that $d(x,y) = 3$; no other pair is closer
+  - Every $u$ with $d(x,u)=1$ is illegal AND $d(u,s) > 1$! 
+
+#+begin_export latex
+\begin{center}
+\tikz{\draw (0,0) node[fill=white] {$x$} 
+to node [above, align=center] {1 bit \\difference} ++(3,0) node[fill=white] {$u$}
+to node [above, align=center] {1 bit \\difference} ++(3,0) node[fill=white] {$v$}
+to node [above, align=center] {1 bit \\difference} ++(3,0) node[fill=white] {$y$}
+; }
+\end{center}
+#+end_export 
+
+
+- Hence: the receipt of u could have the following causes:
+  - Originally, $x$ had been sent, but 1 bit error occurred
+  - Originally, $y$ had been sent, but 2 bit errors occurred
+  - (Originally, some other frame had been sent, but at least 2 bit errors occurred)
+- Assuming that fewer errors have happened, a received frame $u$ *is presumed* to have been caused by sending $x$!
+  - Hence, the error has been ``corrected'' – hopefully, correctly!
+
 **** Generalization – Required Hamming distances
 - The examples above can be generalized
-- To detect d bit errors, a Hamming distance of d+1 in the set of legal frames is required
-- So that it is not possible to re-write a legal frame into another one using at most d bits
-- To correct d bit errors, a Hamming distance of 2d+1 in the set of legal frames is required
-- So that all illegal frames at most d bits away from legal frame are more than d bits away from any other legal frame 
+- To *detect* $d$ bit errors, a Hamming distance of $d+1$ in the set of legal frames is required
+  - So that it is not possible to re-write a legal frame into another one using at most d bits
+- To *correct* $d$ bit errors, a Hamming distance of $2d+1$ in the set of legal frames is required
+  - So that all illegal frames at most $d$ bits away from legal frame are more than $d$ bits away from any other legal frame 
 **** Frame sets – code books, codes
-- Some terminology: 
-- The set of legal frames S ½ {0,1}n is also called a code book or simply a code
-- The rate R of a code S is defined as:
-- Rate characterizes the efficiency
-- The distance \delta  of a code S is defined as: 
-- Distance characterizes error correction/detection capabilities
-- A good code should have large distance and large rate – but arbitrary combinations are not possible
+
+Some terminology: 
+- The set of legal frames $S \in {0,1}^n$ is also called a *code book* or simply a *code*
+- The *rate* $R_S$ of a code $S$ is defined as:
+  \[  R_S = \frac{\log |S|}{n} \] 
+  - Rate characterizes the efficiency
+- The *distance* $\delta_S$  of a code $S$ is defined as: 
+  \[ \delta_S  = \frac{d(S)}{n}\]
+  - Distance characterizes error correction/detection capabilities
+
+\pause 
+A good code should have large distance and large rate – but arbitrary combinations are not possible
 **** How to construct error correcting codes
 - Constructing good codes (e.g., highest rate at given error correction needs) is difficult
 - Simple example: use several parity bits
-- Distribute the parity bits over the entire codeword to protect against burst errors 
+  - Distribute the parity bits over the entire codeword to protect against burst errors 
 - Two main classes of actual codes
-- Block codes 
-- Convolutional codes
-- Turbo codes: generalization/successors to convolutional codes, almost capacity achieving 
-- Low-Density Parity Check (LDPC): almost capacity achieving 
-- Dirty paper coding: Transmitter knows errors beforehand (but receiver does not), capacity-achieving 
-- 
+  - Block codes 
+  - Convolutional codes
+
+- Fancy techniques 
+  - Turbo codes: generalization/successors to convolutional codes, almost capacity-achieving 
+  - Low-Density Parity Check (LDPC): almost capacity-achieving 
+
 **** Block codes: Bounds 
-- Block codes operate on blocks of k payload bits, building blocks of length n by adding redundancy 
-- Output of n bits only depends on the very k input bits
-- Property: Binary block codes can correct up to t errors in a codeword of length n with k user bits only if (Varshamov-Gilbert bound):
--  But code for given (n, k, t) does not necessarily exist
-- Common examples
-- Bose Chaudhuri Hocquenghem (BCH) codes – based on polynomials over finite fields 
-- Reed Solomon codes (special case of non-binary BCH codes)
+- Block codes operate on blocks of $k$ payload bits, outputting blocks of length $n$ by adding redundancy $r=n-k$
+- Defining property: Output of $n bits *only* depends on these very $k$ input bits
+- Each coded bit: XOR of several payload bits
+  - Which payload bits get XOR'ed into which output bit defines the
+    specific code as such 
 
-*** Detour: Polynomials 
+#+caption: Block code turning blocks of $k$ payload bits into blocks of $n$ coded bits using XOR operations
+#+attr_latex: :width 0.95\textwidth :height 0.3\textheight :options keepaspectratio,page=\getpagerefnumber{page:ll:block_code}
+#+NAME: fig:ll:block_code
+[[./standalone/econtrol.pdf]]
 
-**** A detour: Bit strings as polynomials 
-- (
-- WS 19/20, v 1.7
-- Computer Networks - Link layer
-- 35
+
+
+
+**** Bounds for block codes 
+- Property: Binary block codes can correct up to t errors in a
+  codeword of length n with k user bits only if (Varshamov-Gilbert
+  bound):
+
+\[ 
+2^{n-k} \geq \sum _{i=0} ^t {n \choose i} 
+\label{eq:varshamov:gilbert}
+\]
+
+
+-  But code for arbitrary  $(n, k, t)$ combination  does not necessarily exist
+
+
+
+*** Detour: Polynomials                                            :noexport:
+
+
 **** How to deal with error control mathematically 
 - We need rules how to compute redundancy bits and how to interpret received sequence of (possibly erroneous) bits 
 - For both error correction and error detection 
@@ -344,75 +612,140 @@
 - WS 19/20, v 1.7
 - Computer Networks - Link layer
 - 43
-**** End of detour: Bit strings as polynomials 
-- )
-- WS 19/20, v 1.7
-- Computer Networks - Link layer
-- 44
-
 
 
 *** Matrixes 
 
+
+**** Notation for block codes: one output bit  
+
+- Output bit of a block code: XOR of several payload bits
+  - E.g.: $o = x_1 \,\mathrm{XOR}\, x_5  \,\mathrm{XOR}\, x_7 \,\mathrm{XOR}\, x8$ 
+\pause 
+- Equivalent: Sum of these payload bits, modulo 2 
+  - E.g., $o = (x_1 + _x5 + x_7 + x_8) \, \mathrm{MOD}\, 2$
+\pause 
+- Which payload bits: multiply by zero or one 
+  - E.g., $o = (0\cdot x_0 + 1\cdot  x_1 + 0 \cdot x_2 + 0 \cdot x_3 +  0 \cdot x4 + 1 \cdot _x5 + 0 \cdot x_6 + 1 \cdot  x_7 + 1\cdot  x_8) \, \mathrm{MOD}\, 2$
+
+**** Notation for block codes: several  output bits 
+
+E.g.: 
+
+- $o_0 = (0\cdot x_0 + 1\cdot  x_1 + 0 \cdot x_2 + 0 \cdot x_3 +  0  \cdot x4 + 1 \cdot _x5 + 0 \cdot x_6 + 1 \cdot  x_7 + 1 \cdot x_8) \, \mathrm{MOD}\, 2$
+- $o_1 = (1\cdot x_0 + 1\cdot  x_1 + 0 \cdot x_2 + 0 \cdot x_3 +  1  \cdot x4 +0 \cdot _x5 + 1 \cdot x_6 + 1 \cdot  x_7 + 0 \cdot x_8) \, \mathrm{MOD}\, 2$
+- $o_2 = (0\cdot x_0 + 0\cdot  x_1 + 1 \cdot x_2 + 0 \cdot x_3 +  1  \cdot x4 + 1 \cdot _x5 + 0 \cdot x_6 + 0 \cdot  x_7 + 0 \cdot x_8) \, \mathrm{MOD}\, 2$
+- \dots 
+\pause 
+
+That can be written more compactly as a matrix mutliplication 
+
+**** Notation for block codes: matrix representation 
+
+
+\[
+(x_0 x_1 x_2 x_3 x_4 x_5 x_6 x_7 x_8 x_9)  \cdot 
+\begin{pmatrix}
+  0 & 1 & 0 & \dots \\
+  1 & 1 & 0 & \dots \\
+  0 & 0 & 1 & \dots \\
+  0 & 0 & 0 & \dots \\
+  0 & 1 & 1 & \dots \\
+  1 & 0 & 1 & \dots \\
+  0 & 1 & 0 & \dots \\
+  1 & 1 & 0 & \dots \\
+  1 & 0 & 0 & \dots \\
+\end{pmatrix} = ( o_0 o_1 o_2 \dots o_n)
+\label{eq:block_matrix}
+\]
+
+
 **** Codes as matrix operations: nonsystematic code 
-- Forward error correction: We need to compute redundancy bits from payload bits 
-- Idea: Use a suitable matrix? 
-- In general: a nonsystematic code to compute codeword
-- Using a generator matrix 
-- Given payload p, codeword c:
-- Structure in codeword? Not obvious… 
-- 
-- WS 19/20, v 1.7
-- Computer Networks - Link layer
-- 45
+
+- What is a *suitable* matrix to compute coded bits? 
+- In general: a *nonsystematic code* 
+  - Using a *generator matrix*
+- Given payload $p$, find codeword c using generator $G$ as $c = pG$ 
+- Examples: 
+
+\[
+\underbrace{( 1 0 0 1)}_{\mathrm{Payload}} \cdot
+\underbrace{\begin{pmatrix}
+0 & 1&1 &0 &1 &1 &0 \\
+1 & 1&0 &1 &1 &0 &0 \\ 
+1 & 0& 1& 1& 0& 1& 1  \\
+0 &0 &0 &1 &0 &0 &0  \\
+\end{pmatrix}}_{\mathrm{Generator }\,G} = 
+\underbrace{(0 0 1 1 0 0 1)}_{\mathrm{Codeword}}
+\]
+
+
+
 **** Codes as matrix operations: Systematic codes 
 - Let’s look at generator matrix with a particular structure 
-- Identity matrix, append matrix for parity bits 
-- For k payloads, and (n-k) redundancy bits, A is a (k, n-k) matrix 
+  - Identity matrix $I_k$, append matrix for $A$ parity bits 
+  - For $k$ payloads, and $(n-k)$ redundancy bits, $A$ is a $(k, n-k)$
+    matrix 
+  - $ G = (I_k | A)$
+
 - Example 
-- 
-- WS 19/20, v 1.7
-- Computer Networks - Link layer
-- 46
-**** Decoding? 
+
+\[
+\underbrace{( 1 0 0 1)}_{\mathrm{Payload}} \cdot
+\underbrace{\begin{pmatrix}
+1 & 0& 0 &0 & | & 1 &1 &0 \\
+0 & 1&0 &0 & | & 1 &0 &0 \\ 
+0 & 0& 1& 0 & | & 0& 1& 1  \\
+0 &0 &0 &1  & | & 0 &0 &0  \\
+\end{pmatrix}}_{\mathrm{Generator }\,G} = 
+\underbrace{(1 0 0 1 |  0 0 1)}_{\mathrm{Codeword}}
+\]
+
+
+
+**** Decoding of systematic codes? 
 - Encoding is easy – how about decoding? 
-- Getting back the original payload from the (possibly erroneous) received bits 
-- First step: Use a parity-check matrix H 
-- For k payloads and n-k redundancy bits, H is an (n-k, n) matrix 
-- For a valid codeword, it must hold:
-- Hence:  if result <> 0, codeword is not valid
+  - Getting back the original payload from the (possibly erroneous) received bits 
+- First step: Use a *parity-check matrix* $H$ 
+  - For $k$ payloads and $n-k$ redundancy bits, $H$ is an $(n-k, n)$ matrix 
+- For a *valid* codeword $c$, it must hold:
+  \[ H c^T = 0]
+  - Hence:  if result <> 0, codeword is not valid
 - One way to check for errors (but not a particularly efficient one, if error checking is all you want to do) 
-- 
-- WS 19/20, v 1.7
-- Computer Networks - Link layer
-- 47
+
+
+
 **** Relationship of generator and parity check matrix? 
 - Generator matrix and parity check matrix are related:
-- Recall: A is a (k, n-k) matrix 
-- Property: 
-- Check: homework! 
-- 
-- WS 19/20, v 1.7
-- Computer Networks - Link layer
-- 48
-**** Example: Hamming (7,4) code 
-- WS 19/20, v 1.7
-- Computer Networks - Link layer
-- 49
+  - Recall: A is a (k, n-k) matrix 
+  - \[  G = (I_k | A)\] 
+  - Then define: \[ H = (-A^T | I_{n-k})  \] 
+\pause 
+- Why use this to show: 
+  \[  G H^T = 0   \]
+  - And continue to show that this is indeed parity-check matrix! 
+- One way to check for errors (but not a particularly efficient one, if error checking is all you want to do) 
+  
+
+
+**** Example: Hamming (7,4) code                                   :noexport:
+
+
+
 **** Decoding: Maximum likelihood decoding 
-- Suppose we received an invalid codeword c 
-- We want to map it to original payload 
-- Under stochastic assumptions: errors happened randomly 
+- Suppose we received an invalid codeword $c$ 
+  - We want to map it to original payload 
+  - Under stochastic assumptions: errors happened randomly 
 - What is then the ``right'' answer, the ``right'' payload to identify? 
 - Simple approach:
-- For each payload, there is a likelihood that we received the invalid c 
-- Under stochastic assumptions how errors happen
-- We decide for that payload that maximizes this likelihood (maximum likelihood decoding) 
-- Under independent bit errors: the one with the smallest Hamming distance! 
-- WS 19/20, v 1.7
-- Computer Networks - Link layer
-- 50
-**** Maximum likelihood decoding: How? 
+  - For each payload, there is a likelihood that we received that invalid $c$ 
+    - Under stochastic assumptions how errors happen
+  - We decide for that payload that maximizes this likelihood (maximum likelihood decoding) 
+  - Under independent bit errors: the one with the smallest Hamming distance! 
+\pause 
+- Details: highly depends on specific code family 
+
+**** Maximum likelihood decoding: How?                             :noexport:
 - Trivial approach: Search through all codewords around the received (invalid) codeword c 
 - Akin to an expanding ring search: Hamming distance 1, 2, … 
 - Simple, but sloooow 
@@ -423,77 +756,244 @@
 - WS 19/20, v 1.7
 - Computer Networks - Link layer
 - 51
+
+
+*** BCH 
+**** Block code examples 
+
+- Bose Chaudhuri Hocquenghem (BCH) codes – based on polynomials over finite fields 
+- Reed Solomon codes (special case of non-binary BCH codes)
+
+
+
 **** Example: BCH codes 
 - Family of binary block codes 
-- Binary: polynomials with coefficients 0 and 1 (over GF(2))
-- BCH: Bose & Chaudhuri (1960), Hocquenghem (1959)
-- Properties: For any integer m > 2 and t < 2m-1, there exist a BCH code with 
-- Block length: n = 2m -1 
-- Number of parity-check digits: n–k <= mt 
-- With tight bound for small t 
-- Minimum Hamming distance: d >= 2t + 1
-- (k: number of payload bits)
+  - Binary: polynomials with coefficients 0 and 1 (over GF(2))
+- BCH: Bose & Chaudhuri [[cite:&Bose1960-br]], Hocquenghem \cite{hocquenghem59:_codes}
+- Properties: For any integer $m > 2$ and $t < 2m-1$, there exist a BCH code with 
+  - Block length: $n = 2m -1 $
+  - Number of parity-check digits: $n–k \leq mt$ 
+    - With tight bound for small $t$ 
+  - Minimum Hamming distance: $d >= 2t + 1$
+    - I.e., can correct up to $t$ errors 
+  - (k: number of payload bits)
 - Interpretation: Bound on how many payload bits, given desired error correction capability 
-- WS 19/20, v 1.7
-- Computer Networks - Link layer
-- 52
-**** BCH parameters 
-- Issue: no simple formulas to compute n-k
+
+
+**** BCH parameters
+
+\vskip-2.5em
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+
+
+- Issue: no simple formulas to compute $n-k$
 - Example values for n, k, t  
-- WS 19/20, v 1.7
-- Computer Networks - Link layer
-- 53
-**** Example: 127 bit blocks 
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+
+
+
+#+caption: Example combinations for BCH codes with codeword length 127
+#+Name: tab:ll:bch 
+| Codeword length $n$ | Payload $k$ | Correctable errors $t$ |
+|---------------------+-------------+------------------------|
+|                 127 |         120 |                      1 |
+|                 127 |         113 |                      2 |
+|                 127 |         106 |                      3 |
+|                 127 |          99 |                      4 |
+|                 127 |          92 |                      5 |
+|                 127 |          85 |                      6 |
+|                 127 |          78 |                      7 |
+|                 127 |          71 |                      9 |
+|                 127 |          64 |                     10 |
+|                 127 |          57 |                     11 |
+|                 127 |          50 |                     13 |
+|                 127 |          43 |                     14 |
+|                 127 |          36 |                     15 |
+|                 127 |          29 |                     21 |
+|                 127 |          22 |                     23 |
+|                 127 |          15 |                     27 |
+|                 127 |           8 |                     31 |
+|                     |             |                        |
+
+
+
+
 **** Example: Reed-Solomon codes 
 - Generalization of BCH codes to non-binary symbols 
-- Depending on definition of BCH code: RS is a special case 
+
 - Applications: 
-- Data storage – RAID, CDs, DVDs
-- Some simple data transmission techniques 
-- WS 19/20, v 1.7
-- Computer Networks - Link layer
-- 55
+  - Data storage – RAID, CDs, DVDs
+  - Some simple data transmission techniques 
+
 **** Block error rate for BCH codes
+
+\vskip-2.5em
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
 - Block is considered in error if any bit errors remain after correction 
 - Example: codewords 127 bit, varying number of correctable bit errors (``c'' in legend)
-- Simulated 1500 blocks, varying SNR, AWGN channel, BPSK modulation 
-- 
+
+
+
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+
+#+caption: Packet error rate achieved by BCH codes for varying number of correctable errors $t$ as function of signal-to-noise ratio
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:ll:per_over_snr}
+#+NAME: fig:ll:per_over_snr
+[[./standalone/bch.pdf]]
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+
+**** Coding gain 
+
+\vskip-2.5em
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+
+Note: 
+- the roughly parallel curves, once SNR gets ``good enough''
+- double logarithmic axes 
+
+\pause 
+Gives rise to notion of *coding gain*
+- The factor of SNR needed to get the same PER from two different
+  codes 
+
+
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+#+caption: Coding gain: Factor between two SNR needed by two dfiferent FEC schemes to obtain comparable PER
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:ll:per_over_snr:with_coding_gain}
+#+NAME: fig:ll:per_over_snr:with_coding_gain
+[[./standalone/bch.pdf]]
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+*** Convolutional codes 
 **** Convolutional codes
-- Convolutional codes differ from block codes
-- There are no ``independent blocks of data''
-- Instead: a stream of symbols (usually, bits) is encoded into another stream
-- k bits mapped to n bits, outcome depends on the last K input symbols (K: constraint length)
-- 
+
+\vskip-2.5em
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+
+
+- Block codes: *one* block of payload bits determines *one* block of
+  coded bits 
+  - There is no history; previous bits do not matter
+- Convolutional codes: Take into account a couple of previous payload
+  blocks as well
+  - Otherwise, quite similar
+  - Payloads in blocks of $k$ bits, $n$ output bits determined from
+    the last $K\cdot k$ bits
+    - $K$: constraint length 
+  
+
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+
+
+#+caption: Structure of convolutional code for payload block length $k$, output block length $n$ , and constraint length $K$
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:ll:convolutional_code}
+#+NAME: fig:ll:convolutional_code
+[[./standalone/econtrol.pdf]]
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+
 **** Decoding convolutional codes – Viterbi algorithm
-- Encoding convolutional codes is trivial – simple shift register
+- Encoding convolutional codes is trivial
+  - simple shift register (just like block codes)
 - Decoding? 
-- Simple table lookup not possible – depends on too much state for non-trivial constraint length (n2K-1 entries)
-- Popular: Viterbi algorithm
-- Dynamic programming technique
-- Idea: hidden (for the receiver) sequence of states (= sent bits), receiver observes sequence of events (= received bits)
-- Viterbi algorithm determines the most likely sequence of states that has caused the observed sets of events 
-- Maximum likelihood property makes this algorithm powerful
-- Can be implemented in hardware
-- State of the art decoding technique, but outperformed by turbo codes
+- Popular: *Viterbi algorithm*
+  - *Dynamic programming* technique
+  - Idea: hidden (for the receiver) sequence of states (= sent bits), receiver observes sequence of events (= received bits)
+  - Viterbi algorithm determines the most likely sequence of states that has caused the observed sets of events 
+  - *Maximum likelihood property* makes this algorithm powerful
+  - Can be nicely implemented in hardware, but costly (*large* chip area!)
+
+
 **** Convolutional codes: Properties 
-- State-of-the-art codes in wireless transmission 
-- Close to Shannon bound/channel capacity! 
+- Still popular codes in wireless transmission 
+  - Relatively close to Shannon bound/channel capacity!
+  - Allow plenty of additional tricks, e.g., puncturing 
 - Typical examples: 
-- Turbo codes: Two convolutional codes nested within each other, informing each other over error patterns
-- Used in UMTS, LTE, … 
+  - Turbo codes: Two convolutional codes nested within each other, informing each other over error patterns
+    - Used in UMTS, LTE, \dots 
 - Low-density parity check codes
-- Tend to outperform Turbo codes at higher code rates
-- Used e.g. in DVB-S2, 10GBast-T Ethernet, … optional in 802.11n, 11ac
-- WS 19/20, v 1.7
-- Computer Networks - Link layer
-- 59
-**** An additional trick: Interleaving 
+  - Tend to outperform Turbo codes at higher code rates
+  - Used e.g. in DVB-S2, 10GBast-T Ethernet, \dots optional in 802.11n, 11ac
+
+
+
+**** An additional trick: Interleaving                             :noexport:
 - How to deal with burst errors? Spanning multiple code blocks?  
 - WS 19/20, v 1.7
 - Computer Networks - Link layer
 - 60
 
-** Error detection 
+** Error detection                                                 :noexport:
 
 *** CRC 
 **** How to construct error detecting codes – CRC 
@@ -554,7 +1054,7 @@
 - 
 
 
-** Backward error correction 
+** Backward error correction                                       :noexport:
 
 
 
@@ -701,7 +1201,7 @@ Lorem ipsum
 - Necessary to initialize a joint context for sender and receiver
 
 
-** ARQ tests 
+** ARQ tests                                                       :noexport:
 
 
 
