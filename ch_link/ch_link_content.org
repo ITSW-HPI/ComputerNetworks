@@ -966,7 +966,7 @@ Gives rise to notion of *coding gain*
 - Encoding convolutional codes is trivial
   - simple shift register (just like block codes)
 - Decoding? 
-- Popular: *Viterbi algorithm*
+- Popular: *Viterbi algorithm* [[cite:&Viterbi1967-gv]]
   - *Dynamic programming* technique
   - Idea: hidden (for the receiver) sequence of states (= sent bits), receiver observes sequence of events (= received bits)
   - Viterbi algorithm determines the most likely sequence of states that has caused the observed sets of events 
