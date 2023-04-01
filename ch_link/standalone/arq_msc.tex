@@ -150,17 +150,19 @@
 
 
 \begin{tikzpicture}
-  \label{page:ll:justtest}
+  \label{page:ll:packets_in_flight}
   \node [fill=hpiorange!10](a) {A};
   \node [fill=hpiblue!10, right=3cm of a] (b) {B};
 
-  \draw (a) -- ++(0,-20); 
-  \draw (b) -- ++(0,-20);
+  \draw (a) -- ++(0,-10); 
+  \draw (b) -- ++(0,-10);
 
-  \pplusa{0}{hpiorange!30}{3}{0.5}{1}{}
-  \pplusa{3.1}{hpiblue!30}{3}{0.5}{2}{}
-  \pplusa{6.2}{hpiyellow!30}{3}{0.5}{3}{}
-  \pplusa{9.3}{hpired!30}{3}{0.5}{4}{}
+  \pplusa{0}{hpiorange!30}{0.75}{0.125}{1}{}
+  \pplusa{0.8}{hpiblue!30}{0.75}{0.125}{2}{}
+  \pplusa{1.6}{hpiyellow!30}{0.75}{0.125}{3}{}
+  \pplusa{2.4}{hpired!30}{0.75}{0.125}{4}{}
+  \pplusa{3.2}{hpiorange!60}{0.75}{0.125}{5}{}
+  \pplusa{4.0}{hpiblue!60}{0.75}{0.125}{6}{}
 
   
 \end{tikzpicture}

@@ -7,6 +7,54 @@
 #+latex_header: \usepackage{ifthen}
 #+latex_header: \usetikzlibrary{decorations.pathreplacing,decorations.pathmorphing,calc}
 
+#+BEGIN_EXPORT latex
+
+\newcommand{\pplusa}[6]{%
+  % #1: offset, #2: fill color #3: packet length #4: ACK length, #5 label
+  % #6: X to loose the ACK 
+  
+  \coordinate (pStartSend_#5) at ($(a) + (0,-0.5)-(0,#1)$); 
+  \coordinate (pEndSend_#5) at  ($  (pStartSend_#5) + (0,-#3) $ ); 
+  \coordinate (pStartReceive_#5) at ($ (pStartSend_#5) + (3.5,-2) $); 
+  \coordinate (pEndReceive_#5) at ($  (pStartReceive_#5) + (0,-#3) $ ); 
+  \coordinate (aStartSend_#5) at ($(b) +  (0,-0.5)-(0,#1)-(0,2)-(0,#3)  $); 
+  \coordinate (aEndSend_#5) at ($ (aStartSend_#5)  + (0,-#4) $); 
+  \coordinate (aStartReceive_#5) at ($ (aStartSend_#5) + (-3.5,-2)  $); 
+  \coordinate (aEndReceive_#5) at ($ (aStartReceive_#5) + (0,-#4)  $);   
+
+  % Packets: 
+  \ifthenelse{\equal{#6}{X}}
+  {
+    % packet gets lost
+    \coordinate (pStartLoss_#5) at ($ (pStartSend_#5) + (1.75,-1)  $); 
+    \coordinate (pEndLoss_#5) at ($ (pStartLoss_#5) + (0,-#3)  $);
+
+    \draw [fill=#2, semitransparent] (pStartSend_#5) --
+    (pStartLoss_#5) decorate [decoration=zigzag] {-- (pEndLoss_#5)}
+    -- (pEndSend_#5);
+  \node at ($(1.75,-0.5) - (0,#1) - (0,0.5*#3) -(0, 1)$) {P\,#5 lost!}; 
+    
+  }
+  {
+    % packet normally delivered
+  \draw [fill=#2, semitransparent] (pStartSend_#5) -- (pStartReceive_#5) -- (pEndReceive_#5) -- (pEndSend_#5);
+  \node at ($(1.75,-0.5) - (0,#1) - (0,0.5*#3) -(0, 1)$) {P\,#5}; 
+  \draw [->] (a) ++ (pStartSend_#5) -- (pStartReceive_#5); 
+  \draw [->] (a) ++ (pEndSend_#5) -- (pEndReceive_#5); 
+
+  % ACK:
+    %ACK normally sent: 
+  \draw [fill=#2, semitransparent] (aStartSend_#5) -- (aStartReceive_#5) -- (aEndReceive_#5) -- (aEndSend_#5); 
+
+
+  \draw [->] (aStartSend_#5) -- (aStartReceive_#5); 
+  \draw [->] (aEndSend_#5) -- (aEndReceive_#5); 
+}
+}
+
+#+END_EXPORT 
+
+
 
 **** The story so far  
 
@@ -47,7 +95,7 @@
 
 
 
-** Services                                                        :noexport:
+** Services                                                        
 
 **** The link layer’s service
 
@@ -168,7 +216,7 @@ Common confusion!
   additional complications – treated there!
 
 
-** Framing                                                         :noexport:
+** Framing                                                         
 
 **** Framing
 - How to turn a bit stream into a sequence of frames?
@@ -245,7 +293,7 @@ Note: Physical layer might try to detect and deliver bits when the sender is not
 - But raises questions regarding bandwidth efficiency
 
 
-** Error control                                                   :noexport:
+** Error control                                                   
 
 **** Error control
 - Two basic aspects:
@@ -417,7 +465,7 @@ Note: Physical layer might try to detect and deliver bits when the sender is not
 
  
 
-** Forward error correction
+** Forward error correction                                        
 
 *** Basic correction 
 **** Hamming distance and error detection/correction
@@ -771,8 +819,8 @@ That can be written more compactly as a matrix mutliplication
   - Binary: polynomials with coefficients 0 and 1 (over GF(2))
 - BCH: Bose & Chaudhuri [[cite:&Bose1960-br]], Hocquenghem \cite{hocquenghem59:_codes}
 - Properties: For any integer $m > 2$ and $t < 2m-1$, there exist a BCH code with 
-  - Block length: $n = 2m -1 $
-  - Number of parity-check digits: $n–k \leq mt$ 
+  - Block length: $n = 2m -1$
+  - Number of parity-check digits: $n-k \leq mt$ 
     - With tight bound for small $t$ 
   - Minimum Hamming distance: $d >= 2t + 1$
     - I.e., can correct up to $t$ errors 
@@ -801,32 +849,34 @@ That can be written more compactly as a matrix mutliplication
       :BEAMER_col: 0.48
       :END:   
 
+ 
 
-
-
-#+caption: Example combinations for BCH codes with codeword length 127
-#+Name: tab:ll:bch 
-| Codeword length $n$ | Payload $k$ | Correctable errors $t$ |
-|---------------------+-------------+------------------------|
-|                 127 |         120 |                      1 |
-|                 127 |         113 |                      2 |
-|                 127 |         106 |                      3 |
-|                 127 |          99 |                      4 |
-|                 127 |          92 |                      5 |
-|                 127 |          85 |                      6 |
-|                 127 |          78 |                      7 |
-|                 127 |          71 |                      9 |
-|                 127 |          64 |                     10 |
-|                 127 |          57 |                     11 |
-|                 127 |          50 |                     13 |
-|                 127 |          43 |                     14 |
-|                 127 |          36 |                     15 |
-|                 127 |          29 |                     21 |
-|                 127 |          22 |                     23 |
-|                 127 |          15 |                     27 |
-|                 127 |           8 |                     31 |
-|                     |             |                        |
-
+\begin{table}[htbp]
+\caption{\label{tab:ll:bch}Example combinations for BCH codes with codeword length 127}
+\centering
+  \maxsizebox{!}{0.3\textheight}{
+\begin{tabular}{rrr}
+Codeword length \(n\) & Payload \(k\) & Correctable errors \(t\)\\
+\hline
+127 & 120 & 1\\
+127 & 113 & 2\\
+127 & 106 & 3\\
+127 & 99 & 4\\
+127 & 92 & 5\\
+127 & 85 & 6\\
+127 & 78 & 7\\
+127 & 71 & 9\\
+127 & 64 & 10\\
+127 & 57 & 11\\
+127 & 50 & 13\\
+127 & 43 & 14\\
+127 & 36 & 15\\
+127 & 29 & 21\\
+127 & 22 & 23\\
+127 & 15 & 27\\
+127 & 8 & 31\\
+\end{tabular}}
+\end{table}
 
 
 
@@ -993,215 +1043,785 @@ Gives rise to notion of *coding gain*
 - Computer Networks - Link layer
 - 60
 
-** Error detection                                                 :noexport:
+** Error detection                                                 
 
-*** CRC 
+
 **** How to construct error detecting codes – CRC 
-- Efficient error detection: Cyclic Redundancy Check  (CRC)
+- Efficient error detection: *Cyclic Redundancy Check*  (CRC)
 - Gives rules how to compute redundancy bits and how to decide whether a received bit pattern is correct
-- Very high detection probability with few redundancy bits
-- Efficiently implementable in hardware
+  - Very high detection probability with few redundancy bits
+  - Efficiently implementable in hardware
 - Basic operation based on polynomial arithmetic
-- Bit string is interpreted as representing a polynomial
-- Coefficients 0 and 1 are possible, interpreted modulo 2
-- 
+  - Bit string is interpreted as representing a polynomial
+  - Coefficients 0 and 1 are possible, interpreted modulo 2
+
 **** Use polynomials to compute redundancy bits – CRC 
-- Define a generator polynomial G(x) of degree g
-- Known to both sender and receiver
-- We will use g redundancy bits in the end
-- Given: message/frame M, represented by polynomial M(x)
+- Define a generator polynomial $G(x)$ of degree $g$
+  - I.e., it needs $g+1$ bits for all coefficients 
+  - We will use $g$ redundancy bits in the end
+  - Known to both sender and receiver
+- Given: message/frame $M$, represented by polynomial $M(x)$
 - Transmitter
-- Compute remainder r(x) of division xgM(x) / G(x)
-- Note: Remainder after division is of degree < g, fitting into g bits!
-- Transmit T(x) = xgM(x) – r(x) 
-- Note: xgM(x) – r(x) is divisible without remainder by G(x)
+  - Compute remainder $r(x)$ of division $xgM(x) / G(x)$
+  - Note: Remainder after division is of degree $< g$, fitting into $g$ bits!
+  - Transmit $T(x) = xgM(x) - r(x)$ 
+  - Note: $xgM(x)- r(x)$ is divisible *without remainder* by $G(x)$
 - Receiver
-- Receive m(x)
-- Compute remainder of division of m(x) by G(x)
+  - Receive $m(x)$
+  - Compute remainder of division of $m(x)$ by $G(x)$
+
 **** CRC transmission and reception
-- What happens in the channel after transmitting T(x)?
-- No errors: T(x) arrives correctly at the receiver
-- Bit errors occur: T(x) is modified by flipping some bits 
-- Equivalent to modifying some coefficients of the polynomial
-- Equivalent to adding an error polynomial E(x)
-- At the receiver, T(x) © E(x) arrives
-- At the receiver
-- Receive m(x)
-- Compute remainder of division of m(x) by G(x)
-- No errors: m(x) = T(x). Remainder is zero!
-- Bit errors: m(x)/G(x) = (T(x) © E(x))/ G(x) = T(x)/G(x) © E(x)/G(x)
+- What happens in the channel after transmitting $T(x)$?
+  - No errors: $T(x)$ arrives correctly at the receiver
+  - Bit errors occur: $T(x)$ is modified by flipping some bits 
+  - Equivalent to modifying some coefficients of the polynomial
+  - Equivalent to *adding an error polynomial* $E(x)$
+- At the receiver, $m(x) = T(x) + E(x)$ arrives
+  - Compute remainder of division of $m(x)$ by $G(x)$
+    - No errors: $m(x) = T(x)$; remainder is zero!
+  - Bit errors: 
+
+\[m(x)/G(x) = (T(x) + E(x))/ G(x) = 
+\underbrace{T(x)/G(x)}_{\text{no remainder}} + 
+\underbrace{E(x)/G(x)}_{\text{SHOULD have non-zero remainder!}}
+\]
 **** CRC – Overview 
+
+#+caption: OVerview of CRC at transmitter, channel, and receiver
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:ll:crc}
+#+NAME: fig:ll:crc
+[[./standalone/econtrol.pdf]]
+
+
+
 **** Choice of G(x) determines CRC properties
-- When is remainder of E(x) / G(x) <> 0?
-- If G(x) divides E(x) without remainder, an error slips through!
-- Single bit error: E(x) = xi for error at position i
-- G(x) needs two or more terms to ensure that E(x) is not a multiple of it
-- Two bit errors: E(x) = xi © xj = xj (xi-j +1) for some i>j
-- x must not divide G(x)
-- G(x) must not divide (xk + 1) for all k up to, e.g., maximum frame length
-- Odd number of errors: E(x) has an odd number of terms
-- E(x) will NOT have (x+1) as a factor
-- Make (x+1) a factor of G(x) so that it cannot divide E(x)
-- Using r check bits, all burst errors of length <= r can be detected 
+
+- When is remainder of $E(x) / G(x) \not= 0$?
+  - If $G(x)$ divides $E(x)\not=0$ without remainder, an error slips
+    through!
+\pause
+- Single bit error: $E(x) = x_i$ for error at position $i$
+  - $G(x)$ needs two or more terms to ensure that $E(x)$ is not a multiple of it
+\pause
+- Two bit errors: $E(x) = x_i + x_j = x_j \cdot (x_{i-j} +1)$ for some $i>j$
+  - $x$ must not divide $G(x)$
+  - $G(x)$ must not divide $(x_k + 1)$ for all $k$ up to, e.g., maximum frame length
+\pause
+- Odd number of errors: $E(x)$ has an odd number of terms
+  - $E(x)$ will NOT have $(x+1)$ as a factor (simple proof by contradiction)
+  - Make $(x+1)$ a factor of $G(x)$ so that it cannot divide $E(x)$
+\pause
+- Using $r$ check bits, all burst errors of length $\leq r$ can be
+  detected 
+
 **** Practical CRC 
 - Practically used generator polynomial (IEEE 802):
-- x32 © x23 © x16 © x12 © x11 © x10 © x8 © x7 © x5 © x4 © x2 © x © 1
+  - $x_{32} + x_{23} +  x_{16} + x_{12} + x_{11} + x_{10} + x_8 + x_7 + x_5 + x_4 + x_2 + x_1 + 1$
 - In practice, residual errors after CRC check are ignored
-- But they may still happen!
-- In particular, when bit errors are not independent, but bursty
+  - But they may still happen!
+  - In particular, when bit errors are not independent, but bursty
 - Implementation in hardware: shift register circuit
-- Negligible overhead in hardware, time, energy 
-- 
+  - Negligible overhead in hardware, time, energy 
 
 
-** Backward error correction                                       :noexport:
+** Backward error correction
 
-
-
-
+*** ARQ                                                            
 
 **** How to handle detected errors? 
 - Suppose the CRC function detects an error 
-- Clearly, the received frame cannot be delivered to higher layers/application
--  $\leadsto$ Have to repair the error somehow 
-- Backward error recovery
+  - Sometimes, delivering incorrect frame is acceptable
+  - Typically, have to repair the error somehow 
+- *Backward* error recovery
+  - Take action *after* the error has occured 
 - Here: frame has to be retransmitted
 - How to tell the sender? 
+
+  
 **** A simple, simplex, acknowledgement-based protocol
 - Acknowledge to sender the receipt of a packet
-- Sender waits for acknowledgement for a certain time
-- If not received in time, packet is retransmitted
-- First solution attempt: 
-- SenderReceiver
+  - Sender waits for acknowledgement for a certain time
+  - If not received in time, packet is retransmitted
+\pause 
+First solution attempt: 
+
+
+
+***** Sender (ARQ, v1)
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+#+caption: Sender in a simple backward error recovery protocol
+#+attr_latex: :width 0.95\textwidth :height 0.3\textheight :options keepaspectratio,page=\getpagerefnumber{page:arq:simple_sender}
+#+NAME: fig:arq:simple_sender
+[[./standalone/arq_fsm.pdf]]
+
+
+
+***** Receiver (ARQ, v1)
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+#+caption: Receiver in a simple backward error recovery protocol
+#+attr_latex: :width 0.95\textwidth :height 0.5\textheight :options keepaspectratio,page=\getpagerefnumber{page:arq:simple_receiver}
+#+NAME: fig:arq:simple_receiver
+[[./standalone/arq_fsm.pdf]]
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+
 **** Protocol analysis
 - This protocol is nice and simple, but flawed in multiple ways
-- What happens when the higher layer sends packets faster than the acknowledgements come in (and when one is missing?)
-- What happens if acknowledgements are lost?
--  $\leadsto$ Need some fixes for the protocol here…
+  - What happens when the higher layer sends packets faster than the acknowledgements come in (and when one is missing?)
+  - What happens if acknowledgements are lost?
+- $\leadsto$ Need some fixes for the protocol here…
+
+
 **** Acknowledgement-based protocol, second trial
 - Cure one problem: Concentrate on one packet, only accept the next packet from higher layer when previous one has been fully processed
-- First solution attempt: 
-- SenderReceiver
-- 
+
+\pause 
+
+Second solution attempt: 
+
+***** Sender (ARQ v2)
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.68
+      :END:
+
+#+caption: Sender that drops packets from higher layer while busy processing a previous packet
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:arq:sender_process}
+#+NAME: fig:arq:sender_process
+[[./standalone/arq_fsm.pdf]]
+
+
+
+***** Receiver (ARQ v2)
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.28
+      :END:   
+
+
+Receiver: Identical to previous version! 
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
 **** Does second version work correctly?
 - It holds back the transmitter until packets are processed
-- It implements flow control!
+  - It implements *flow control*!
 - Does it ensure that all packets arrive, in correct order? 
+
+\vskip-2em
+
+***** No packets lost, using ARQ v2
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+
+#+caption: No packet loss, correct operation with v2 of our protocol
+#+attr_latex: :width 0.95\textwidth :height 0.3\textheight :options keepaspectratio,page=\getpagerefnumber{page:ll:arq:no_seq}
+#+NAME: fig:ll:arq:no_seq
+[[./standalone/arq_msc.pdf]]
+
+
+
+***** One packet loss 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+#+caption: Loosing one packet can be recovered by timeout in the v2 protocol
+#+attr_latex: :width 0.95\textwidth :height 0.3\textheight :options keepaspectratio,page=\getpagerefnumber{page:ll:arq:no_seq:packet_lost}
+#+NAME: fig:ll:arq:no_seq:packet_lost
+[[./standalone/arq_msc.pdf]]
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+
+
 **** Does second version work correctly? 
+
+\vskip-2.5em
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+
+
 - Simple cases seem ok
 - What if an acknowledgement is lost? 
+
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+#+caption: Loosing an acknowledgement leads to timeout as well and then to duplicate delivery of the same packet to the upper layer; v2 fails
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:ll:arq:no_seq:packet_lost}
+#+NAME: fig:ll:arq:no_seq:packet_lost
+[[./standalone/arq_msc.pdf]]
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+
+
 **** Problem of second version
 - Sender cannot distinguish between a lost packet and a lost acknowledgement $\leadsto$ has to re-send the packet
 - Receiver cannot distinguish between a new packet and a redundant copy of an old packet
 -  $\leadsto$ Additional information is needed 
-- Put a sequence number in each packet, telling the receiver which packet it is
-- Sequence numbers as header information in each packet 
-- Simplest sequence number: a 0 or 1 !
+  
+
+**** Sequence numbers
+
+- Put a *sequence number* in each packet, telling the receiver which packet it is
+  - Sequence numbers as header information in each packet 
+  - Simplest sequence number: a single bit, 0 or 1!
 - Needed in packet & acknowledgement 
-- In Ack, convention: send the sequence number of the last correctly received packet back
-- Also possible: send sequence number of next expected packet 
+  - In Ack, convention: send the sequence number of the last correctly received packet back
+  - Also possible: send sequence number of next expected packet 
+- Retransmissions are usually *not* distinguished from the original
+  packet     
+
 **** Acknowledgements & sequence numbers – 3rd version
+
+\vskip-2.5em
+
+***** Sender (v3)
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.68
+      :END:
+
+
+#+caption: Sender of an alternating bit protocol with simple flow control
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:arq:sender_alternating_bit}
+#+NAME: fig:arq:sender_alternating_bit
+[[./standalone/arq_fsm.pdf]]
+
+
+
+***** Receiver (v3)
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.28
+      :END:   
+
+#+caption: Receiver of an alternating-bit protocol
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:ll:receiver_alternating_bit}
+#+NAME: fig:ll:receiver_alternating_bit
+[[./standalone/arq_fsm.pdf]]
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+
 **** Assessment of 3rd version – Alternating bit protocol
-- This 3rd version is a correct implementation of a reliable protocol over an error-prone channel
-- Name: Alternating bit protocol
-- Class of protocols where sender waits for a positive confirmation: Automatic Repeat reQuest (ARQ) protocols
-- It also implements a simple form of flow control
+- This 3rd version is a correct implementation of a dependable protocol over an error-prone channel
+  - Protocol name: *Alternating bit protocol*
+    - As it uses only a single bit as sequence number 
+  - \pause Class of protocols where sender waits for a positive confirmation: *Automatic Repeat reQuest* (ARQ) protocols
+  - It also implements a simple form of flow control
+\pause 
 - Note the dual task of the acknowledgement packet
-- It confirms to the sender that the receiver has obtained a certain packet
-- It is also the permit to send the next packet, stating that the receiver has the capacity to handle it
-- These two functions can be and are separate in other protocols!
+  - It *confirms* to the sender that the receiver has obtained a certain packet
+  - It  *permits*  sending the *next* packet, stating that the receiver has the capacity to handle it
+  - \pause These two functions can be and are separate in other protocols!
+
+*** Efficiency 
+
 **** Alternating bit protocol – Efficiency  
-- Efficiency \rho depends on circumstances
-- Defined as the ratio of time during which the sender sends new information (assuming an error-free channel in the simplest case; error-considerations make efficiency discussions difficult)
--  \rho = Tpacket  / (Tpacket + d + Tack + d) 
-- Efficiency of simple alternating bit protocol is low when delay is large compared to data rate
-- Recall bandwidth-delay product!
+\vskip-3.5em
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+- *Efficiency* \rho depends on setting 
+- $\rho$:  ratio of time during which the sender sends *new* information
+  - Assuming an error-free channel in the simplest case; error-considerations make efficiency discussions difficult)
+  - Then: $\rho = T_\mathrm{packet}  / (T_\mathrm{packet} + d + T_\mathrm{ACK} + d)$ 
+- Efficiency of simple alternating bit protocol is low when *delay is large compared to data rate*
+  - Equivalently: at large ``bandwidth''-delay product!
+
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+#+caption: Efficiency of an alternating bit protocol in an error-free case
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:ll:alternating_bit_efficiency}
+#+NAME: fig:ll:alternating_bit_efficiency
+[[./standalone/arq_msc.pdf]]
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+
+
 **** Improving efficiency – have more ``outstanding'' packets
+
+
+\vskip-2.5em
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.58
+      :END:
+
 - Inefficiency of alternating bit in large bandwidth-delay situations is owing to not exploiting ``space'' between packet and acknowledgement 
-- Always sending packets results in high efficiency
-- More packets are ``outstanding'' = sent, but not yet acknowledged
-- ``pipelining'' of packets
+- Always sending packets should improve  efficiency
+  - More packets are ``outstanding'', ``in flight'' = sent, but not yet acknowledged
+  - ``Pipelining'' of packets
+\pause 
 - But not feasible with a single bit as sequence number
--  $\leadsto$ Need larger sequence number space! 
-- It also needs – ideally – some full-duplex support
-- How to live without full-duplex?
-**** Sliding windows to handle multiple outstanding packets
-- Introduce a larger sequence number space
-- Say, n bits or 2n sequence numbers 
+  - $\leadsto$ Needs larger sequence number space! 
+  - It is simplified by full-duplex support
+
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.38
+      :END:   
+
+#+caption: Efficent ARQ protocol in large bandwidth-delay product settings as long as many packets can be in flight (which requires large sequence number space)
+#+attr_latex: :width 0.95\textwidth :height 0.5\textheight :options keepaspectratio,page=\getpagerefnumber{page:ll:packets_in_flight}
+#+NAME: fig:page:ll:packets_in_flight
+[[./standalone/arq_msc.pdf]]
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+**** Sender-side sliding window to handle multiple outstanding packets
+- Introduce a larger sequence number space to distinguish any possible
+  in-flight packets 
+  - Say, $n$ bits or $2n$ sequence numbers 
+\pause 
 - Not all of them may be allowed to be used simultaneously
-- Recall alternating bit case: 2 sequence numbers, but only 1 may be ``in transit''
-- Use sliding windows at both sender and receiver to handle these numbers
-- Sender: sending window – set of sequence numbers it is allowed to send at given time or that are currently ``in flight'' (depends on protocol) 
-- Receiver: receiving window – set of sequence numbers it is allowed to accept at given time
+  - Recall alternating bit case: 2 sequence numbers, but only 1 may be
+    ``in transit''
+\pause 
+- Recall: Channel have an implicit ``storage capacity''
+  - Sender should not exceed that; that would surely lead to packet
+    loss 
+\pause 
+- Use *sender-slide sliding window* of sequence numbers describe which
+  packets a sender may have in flight
+  - Often cast as: The set of sequence number still allowed to send 
+
+
+**** Manipulating sender-side windows 
+
+- Acknowledgement arrives at sender 
+  - Indicates to sender the  some packet has left the network
+    - (implicit channel storage is less used)
+  - Typically shifts the sliding window, allowing new packet(s) to be sent
+\pause 
+- Timeout
+  - Triggers retransmission
+  - Usually ok, since timeout also means: packet has left the network
+    (by being lost)
+
+
+
+**** Receiver-side sliding window to manage buffers 
+
+- Sliding window at receiver
+  - Set of sequence numbers receiver is willing to accept at given time
+  - Usually governed by available buffer space at receiver
 - May be fixed in size or adapt dynamically over time
-- Window size corresponds to flow control 
-**** Sliding window – simple example
+
+**** Sliding window – simple example                               :noexport:
 - A simple sliding window example for n=3, window size fixed to 1
 - Sender here represents the currently unacknowledged sequence numbers (``in flight'') 
+
+
+
 **** Transmission errors and receiver window size
-- Assumption: 
+
+Assumptions: 
 - Link layer should deliver all frames correctly and in sequence
 - Sender is pipelining packets to increase efficiency
 - What happens if packets are lost (discarded by CRC)? 
 - With receiver window size 1, all following packets are discarded as well!
-**** Go-back-N
-- With receiver window size 1, all frames following a lost frame cannot be handled by receiver
-- They are out of sequence
-- They cannot be acknowledged, only ACKs for the last correctly received packet can be sent
+
+
+
+
+**** Example: Receiver window size 1 - Go-back-N
+
+- With receiver window size 1, all *frames following a lost* frame cannot be handled by receiver
+  - They are *out of sequence*
+- Since we have no buffer (window size=1!), we have to discard them 
+  - They cannot be acknowledged,
+  - If desired: can send  ACKs for the last correctly received packet can be sent
+    - A so-called *cumulative ACK* for *all* correctly received
+      sequence numbers 
 - Sender will timeout eventually
-- Since all frames sent in the meantime have been discarded, they have to be repeated
--  $\leadsto$ Go-back N (frames)! 
+  - Since *all* frames sent after the timed-out one have been
+    discarded by receiver , they have to be repeated
+  - Hence: $\leadsto$ Go-back N (frames)! 
 - Assessment
-- Quite wasteful of transmission resources
-- But saves overhead at the receiver 
+  - Quite wasteful of transmission resources
+  - But saves overhead at the receiver 
+
+**** Example: Sender window size 3, receiver window size 1 
+
+\vskip-2.5em
+
+***** Go-Back-N 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+
+- Sender allowed to have up to three packets in flight
+- Receiver will only accept the *next packet in sequence* 
+  - Discards any out of order packet
+  - But does send CumAcks back 
+
+
+
+
+*****  Example trace
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+\begin{figure}[h]
+  \centering
+  \maxsizebox{!}{0.6\textheight}{
+  \begin{tikzpicture}
+  \label{page:ll:gobackn}
+  \node [fill=hpiorange!10](a) {A};
+  \node [fill=hpiblue!10, right=3cm of a] (b) {B};
+
+  \draw (a) -- ++(0,-25); 
+  \draw (b) -- ++(0,-25);
+
+  \pplusa{0}{hpiorange!30}{2}{0.25}{1}{}
+  \node [left=0.1 of pStartSend_1, align=right] {Send window=3, reduce to 2};
+  \node [right=0.1 of pEndReceive_1, align=left] {Expected P1, got P1, deliver}; 
+
+\onslide<2->
+  \pplusa{2.5}{hpiblue!30}{2}{0.25}{2}{}
+  \node [left=0.1 of pStartSend_2, align=right] {Send window=2, reduce to 1};
+  \node [right=0.1 of pEndReceive_2, align=left] {Expected P2, got P2, deliver}; 
+
+\onslide<3->
+  \pplusa{5}{hpiyellow!30}{2}{0.25}{3}{X}
+  \node [left=0.1 of pStartSend_3, align=right] {Send window=1, reduce to 0};
+
+\onslide<4->
+  \node [left=0.1 of aEndReceive_1, align=right] {Increase send window to 1};
+
+
+\onslide<5->
+  \pplusa{7.5}{hpired!30}{2}{0.25}{4}{}
+  \node [left=0.1 of pStartSend_4, align=right] {Send window=1, reduce to 0};
+
+\onslide<6->
+  \node [left=0.1 of aEndReceive_2, align=right] {Increase send window to 1};
+
+
+\onslide<7->
+  \pplusa{10}{hpiorange!80}{2}{0.25}{5}{}
+  \node [left=0.1 of pStartSend_5, align=right] {Send window=1, reduce to 0};
+
+\onslide<8->
+  \node [right=0.1 of pEndReceive_4, align=left] {Expected P3, got P4, discard, CumAck=2}; 
+
+
+\onslide<9->
+  \node [left=0.1 of pEndSend_5, align=right] {Timeout for ACK 3!};
+
+\onslide<10->
+  \pplusa{12.5}{hpiblue!80}{2}{0.25}{3b}{}
+  \node [left=0.1 of pStartSend_3b, align=right] {Retransmit 3, send window stays at 0};
+
+\onslide<11->
+  \node [right=0.1 of pEndReceive_5, align=left] {Expected P3, got P5, discard, CumAck=2}; 
+
+\onslide<12->
+  \node [left=0.1 of pEndSend_3b, align=right] {Timeout for ACK 4!};
+  \pplusa{15}{hpiyellow!80}{2}{0.25}{4b}{}
+  \node [left=0.1 of pStartSend_4b, align=right] {Retransmit 4, send window stays at 0};
+
+\onslide<13->
+  \node [right=0.1 of pEndReceive_3b, align=left] {Expected P3, got P3b, deliver, send CumAck=3}; 
+
+\onslide<14->
+  \node [left=0.1 of pEndSend_4b, align=right] {Timeout for ACK 5!};
+  \pplusa{17.5}{hpired!80}{2}{0.25}{5b}{}
+  \node [left=0.1 of pStartSend_5b, align=right] {Retransmit 5, send window stays at 0};
+
+
+\onslide<15->
+  \node [left=0.1 of aEndReceive_3b, align=right] {Increase send window to 1};
+
+\onslide<16->
+  \node [right=0.1 of pEndReceive_4b, align=left] {Expected P4, got P4b, deliver, send CumAck=4}; 
+
+\onslide<17->
+  \pplusa{20}{green!20}{2}{0.25}{6}{}
+  \node [left=0.1 of pStartSend_6, align=right] {Send window=1, reduce to 0};
+
+
+\onslide<18->
+
+  \node [right=0.1 of pEndReceive_5b, align=left] {Expected P5, got P5b, deliver, send CumAck=5}; 
+
+
+\end{tikzpicture}}
+\caption{Go-Back-N example. Note: sequence numbers 3b, 4b, 5b only shown for better illustrations; real packet sequence numbers do \textbf{not} distinguish between original and retransmission.}
+\label{fig:ll:gobbackn}
+\end{figure}
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+
+
+
 **** Selective repeat
-- Suppose we invest a bit into a receiver that can buffer packets intermittently if some packets are missing
-- Corresponds to receiver window larger than 1
+- Suppose we invest a bit into a receiver to  intermittently buffer packets if some packets are missing
+  - Corresponds to receiver window larger than 1
+\pause 
 - Resulting behavior:
-- Receiver explicitly informs sender about missing packets using Negative Acknowledgements
-- Sender selectively repeats the missing frames 
-- Once missing frames arrive, they are all passed to the network layer
+  - Receiver should  inform sender about all packets it has received
+    already (to avoid needless retransmissions)
+  - Often realized by mix of:
+    - *CumAcks* for all packets in sequence 
+    - plus *Selective Ack* for additionally received frames 
+  - Sender selectively repeats the missing frames 
+- Once missing frames arrive and close gaps in packet sequence, they
+  are all passed to up the network layer
+
+**** Example selective repeat: Sender window=3, receiver window=\infty 
+
+
+\begin{figure}[h]
+  \centering
+  \maxsizebox{!}{0.6\textheight}{
+  \begin{tikzpicture}
+  \label{page:ll:selective_repeat}
+  \node [fill=hpiorange!10](a) {A};
+  \node [fill=hpiblue!10, right=3cm of a] (b) {B};
+
+  \draw (a) -- ++(0,-25); 
+  \draw (b) -- ++(0,-25);
+
+
+  \pplusa{0}{hpiorange!30}{2}{0.25}{1}{}
+  \node [left=0.1 of pStartSend_1, align=right] {Send window=3, reduce to 2};
+  \node [right=0.1 of pEndReceive_1, align=left] {Expected P1, got P1, deliver, CumAck=1}; 
+\pause
+  \pplusa{2.5}{hpiblue!30}{2}{0.25}{2}{}
+  \node [left=0.1 of pStartSend_2, align=right] {Send window=2, reduce to 1};
+  \node [right=0.1 of pEndReceive_2, align=left] {Expected P2, got P2, deliver, CumAck=2}; 
+\pause
+  \pplusa{5}{hpiyellow!30}{2}{0.25}{3}{X}
+  \node [left=0.1 of pStartSend_3, align=right] {Send window=1, reduce to 0};
+\pause
+  \node [left=0.1 of aEndReceive_1, align=right] {Increase send window to 1};
+\pause
+  \pplusa{7.5}{hpired!30}{2}{0.25}{4}{}
+  \node [left=0.1 of pStartSend_4, align=right] {Send window=1, reduce to 0};
+\pause
+  \node [left=0.1 of aEndReceive_2, align=right] {Increase send window to 1};  
+\pause
+  \pplusa{10}{hpiorange!80}{2}{0.25}{5}{}
+  \node [left=0.1 of pStartSend_5, align=right] {Send window=1, reduce to 0};
+\pause
+  \node [right=0.1 of pEndReceive_4, align=left] {Expected P3, got P4, buffer P4, CumAck=2 + NACK=3, SelAck=4}; 
+\pause
+  \node [left=0.1 of pEndSend_5, align=right] {Timeout for ACK 3!};
+  \pplusa{12.5}{hpiblue!80}{2}{0.25}{3b}{}
+  \node [left=0.1 of pStartSend_3b, align=right] {Retransmit 3, send window stays at 0};
+\pause
+  \node [right=0.1 of pEndReceive_5, align=left] {Expected P3, got P5, buffer P5, CumAck=2 + NACK=3, SelAck=4,5}; 
+\pause
+  \node [left=0.1 of aEndReceive_4, align=right] {NACK 3 provides no new information, already retransmitted, SelAck 4 increases SendWindow to 1};
+\pause
+  \pplusa{15}{hpiyellow!80}{2}{0.25}{6}{}
+  \node [left=0.1 of pStartSend_6, align=right] {Send window=1, reduce to 0};
+\pause
+  \node [left=0.1 of aEndReceive_5, align=right] {NACK 3 provides no new information, already retransmitted, SelAck 5 increases SendWindow to 1};
+\pause
+  \node [right=0.1 of pEndReceive_3b, align=left] {Expected P3, got P3b, deliver 3, 4, 5, send CumAck=5}; 
+\pause
+  \pplusa{17.5}{hpired!80}{2}{0.25}{7}{}
+\pause
+  \node [right=0.1 of pEndReceive_6, align=left] {Expected P6, got P6, deliver 6, send CumAck=6}; 
+
+%----------------------------------
+%   \pplusa{20}{green!20}{2}{0.25}{8}{}
+
+%   Sender comments:
+  
+  
+  % \node [left=0.1 of pStartSend_4b, align=right] {Retransmit 4, send window stays at 0};
+  % \node [left=0.1 of pStartSend_5b, align=right] {Retransmit 5, send window stays at 0};
+
+  % \node [left=0.1 of aEndReceive_3b, align=right] {Increase send window to 1};
+  
+  % \node [left=0.1 of pStartSend_6, align=right] {Send window=1, reduce to 0};
+
+  % Receiver comments: 
+
+  
+
+
+
+  
+  % \node [right=0.1 of pEndReceive_4b, align=left] {Expected P4, got P4b, deliver, send CumAck=4}; 
+
+  % \node [right=0.1 of pEndReceive_5b, align=left] {Expected P5, got P5b, deliver, send CumAck=5}; 
+  
+\end{tikzpicture}
+}
+\caption{Selective repeat example. Note: sequence numbers 3b, 4b, 5b only shown for better illustrations; real packet sequence numbers do \textbf{not} distinguish between original and retransmission.}
+\label{fig:ll:selective_repeat}
+\end{figure}
+
+
+
 **** Duplex operation and piggybacking 
 - So far, simplex operation at the (upper) service interface was assumed
-- The receiver only sent back acknowledgements, possibly using duplex operation of the lower layer service
+  - The receiver only sent back acknowledgements, possibly using duplex operation of the lower layer service
 - What happens when the upper service interface should support full-duplex operation?
-- One option: Use two separate channels for each direction – wasteful
-- Better: Interleave acknowledgement and data frames in a given direction
-- Best (and usual): Put the acknowledgement information for direction A! B into the data frames for B $\leadsto$ A 
-- As part of B’s header – piggyback it 
+  - One option: Use two separate channels for each direction – wasteful
+  - Better: Interleave acknowledgement and data frames in a given direction
+  - Best (and usual): Put the acknowledgement information for direction A! B into the data frames for B $\leadsto$ A 
+  - As part of B’s header – piggyback it 
+
+
+
+*** FEC and ARQ
 **** Combine FEC and ARQ?
 - If ARQ used, does FEC still make sense? 
-- Yes, depending on the error situation
+  - Yes, depending on the error situation
 - Trade-off:
-- With stronger FEC, packet error rate reduces, fewer retransmissions
-- But also fewer payload bits per fixed-size codeword 
-- Recall setup from earlier slide: 
-- Block is considered in error if any bit errors remain after correction 
-- Example: codewords 127 bit, varying number of correctable bit errors (``c'' in legend)
-- Simulated 1500 blocks, at varying SNR, AWGN channel, BPSK modulation 
+  - With stronger FEC, packet error rate reduces, fewer retransmissions
+  - But also fewer /payload/ bits per fixed-size codeword, fixed-size
+    header overhead 
+
+
 **** Combine FEC and ARQ? – Performance 
-- Now add unlimited number of retransmissions, compute expected number of correctly delivered bits per packet time
+
+- Codewords 127 bit, varying number of correctable bit errors (``t'' in legend)
+- For at varying SNR, AWGN channel, BPSK modulation, infinitely many
+  retransmissions 
+
+\vskip-2.5em
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.28
+      :END:
+
+#+caption: PER over SNR (repetation of Figure \ref{fig:ll:per_over_snr:with_coding_gain})
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:ll:per_over_snr}
+#+NAME: fig:ll:per_over_snr_2
+[[./standalone/bch.pdf]]
+
+
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.68
+      :END:   
+
+#+caption: Throughput over SNR, for varying number of correctable bit errors
+#+attr_latex: :width 0.95\textwidth :height 0.5\textheight :options keepaspectratio,page=\getpagerefnumber{page:ll:thoughput_over_snr}
+#+NAME: fig:ll:thoughput_over_snr
+[[./standalone/bch.pdf]]
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
 
 
 ** Conclusion 
 
-**** Conclusion  
-
-Lorem ipsum 
 
 
 **** Conclusion
 - Most problems in the link layer are due to errors
-- Errors in synchronization require non-trivial framing functions
-- Errors in transmission require mechanisms to correct them so as to hide from higher layers
-- Or to detect them and repair them afterwards
+  - Errors in synchronization require non-trivial framing functions
+  - Errors in transmission require mechanisms to correct them so as to hide from higher layers
+  - Or to detect them and repair them afterwards
 - Flow control is often tightly integrated with error control in practical protocols
-- But it IS a separate function and can be realized separately as well
+  - But it IS a separate function and can be realized separately as well
 - Connection setup/teardown still has to be treated
-- Necessary to initialize a joint context for sender and receiver
+  - Necessary to initialize a joint context for sender and receiver
 
 
-** ARQ tests                                                       :noexport:
+*** ARQ tests                                                      :noexport:
 
 
 
@@ -1295,178 +1915,4 @@ Lorem ipsum
 \end{tikzpicture}
 
 
-**** Go-Back N: Example trace 
 
-\begin{figure}[h]
-  \centering
-  \maxsizebox{!}{0.6\textheight}{
-  \begin{tikzpicture}
-  \label{page:ll:gobackn}
-  \node [fill=hpiorange!10](a) {A};
-  \node [fill=hpiblue!10, right=3cm of a] (b) {B};
-
-  \draw (a) -- ++(0,-25); 
-  \draw (b) -- ++(0,-25);
-
-  \pplusa{0}{hpiorange!30}{2}{0.25}{1}{}
-  \node [left=0.1 of pStartSend_1, align=right] {Send window=3, reduce to 2};
-  \node [right=0.1 of pEndReceive_1, align=left] {Expected P1, got P1, deliver}; 
-
-\onslide<2->
-  \pplusa{2.5}{hpiblue!30}{2}{0.25}{2}{}
-  \node [left=0.1 of pStartSend_2, align=right] {Send window=2, reduce to 1};
-  \node [right=0.1 of pEndReceive_2, align=left] {Expected P2, got P2, deliver}; 
-
-\onslide<3->
-  \pplusa{5}{hpiyellow!30}{2}{0.25}{3}{X}
-  \node [left=0.1 of pStartSend_3, align=right] {Send window=1, reduce to 0};
-
-\onslide<4->
-  \node [left=0.1 of aEndReceive_1, align=right] {Increase send window to 1};
-
-
-\onslide<5->
-  \pplusa{7.5}{hpired!30}{2}{0.25}{4}{}
-  \node [left=0.1 of pStartSend_4, align=right] {Send window=1, reduce to 0};
-
-\onslide<6->
-  \node [left=0.1 of aEndReceive_2, align=right] {Increase send window to 1};
-
-
-\onslide<7->
-  \pplusa{10}{hpiorange!80}{2}{0.25}{5}{}
-  \node [left=0.1 of pStartSend_5, align=right] {Send window=1, reduce to 0};
-
-\onslide<8->
-  \node [right=0.1 of pEndReceive_4, align=left] {Expected P3, got P4, discard, CumAck=2}; 
-
-
-\onslide<9->
-  \node [left=0.1 of pEndSend_5, align=right] {Timeout for ACK 3!};
-
-\onslide<10->
-  \pplusa{12.5}{hpiblue!80}{2}{0.25}{3b}{}
-  \node [left=0.1 of pStartSend_3b, align=right] {Retransmit 3, send window stays at 0};
-
-\onslide<11->
-  \node [right=0.1 of pEndReceive_5, align=left] {Expected P3, got P5, discard, CumAck=2}; 
-
-\onslide<12->
-  \node [left=0.1 of pEndSend_3b, align=right] {Timeout for ACK 4!};
-  \pplusa{15}{hpiyellow!80}{2}{0.25}{4b}{}
-  \node [left=0.1 of pStartSend_4b, align=right] {Retransmit 4, send window stays at 0};
-
-\onslide<13->
-  \node [right=0.1 of pEndReceive_3b, align=left] {Expected P3, got P3b, deliver, send CumAck=3}; 
-
-\onslide<14->
-  \node [left=0.1 of pEndSend_4b, align=right] {Timeout for ACK 5!};
-  \pplusa{17.5}{hpired!80}{2}{0.25}{5b}{}
-  \node [left=0.1 of pStartSend_5b, align=right] {Retransmit 5, send window stays at 0};
-
-
-\onslide<15->
-  \node [left=0.1 of aEndReceive_3b, align=right] {Increase send window to 1};
-
-\onslide<16->
-  \node [right=0.1 of pEndReceive_4b, align=left] {Expected P4, got P4b, deliver, send CumAck=4}; 
-
-\onslide<17->
-  \pplusa{20}{green!20}{2}{0.25}{6}{}
-  \node [left=0.1 of pStartSend_6, align=right] {Send window=1, reduce to 0};
-
-
-\onslide<18->
-
-  \node [right=0.1 of pEndReceive_5b, align=left] {Expected P5, got P5b, deliver, send CumAck=5}; 
-
-
-\end{tikzpicture}}
-\caption{Go-Back-N example. Note: sequence numbers 3b, 4b, 5b only shown for better illustrations; real packet sequence numbers do \textbf{not} distinguish between original and retransmission.}
-\label{fig:ll:gobbackn}
-\end{figure}
-**** Selective repeat: Example trace 
-
-\begin{figure}[h]
-  \centering
-  \maxsizebox{!}{0.6\textheight}{
-  \begin{tikzpicture}
-  \label{page:ll:selective_repeat}
-  \node [fill=hpiorange!10](a) {A};
-  \node [fill=hpiblue!10, right=3cm of a] (b) {B};
-
-  \draw (a) -- ++(0,-25); 
-  \draw (b) -- ++(0,-25);
-
-
-  \pplusa{0}{hpiorange!30}{2}{0.25}{1}{}
-  \node [left=0.1 of pStartSend_1, align=right] {Send window=3, reduce to 2};
-  \node [right=0.1 of pEndReceive_1, align=left] {Expected P1, got P1, deliver, CumAck=1}; 
-\pause
-  \pplusa{2.5}{hpiblue!30}{2}{0.25}{2}{}
-  \node [left=0.1 of pStartSend_2, align=right] {Send window=2, reduce to 1};
-  \node [right=0.1 of pEndReceive_2, align=left] {Expected P2, got P2, deliver, CumAck=2}; 
-\pause
-  \pplusa{5}{hpiyellow!30}{2}{0.25}{3}{X}
-  \node [left=0.1 of pStartSend_3, align=right] {Send window=1, reduce to 0};
-\pause
-  \node [left=0.1 of aEndReceive_1, align=right] {Increase send window to 1};
-\pause
-  \pplusa{7.5}{hpired!30}{2}{0.25}{4}{}
-  \node [left=0.1 of pStartSend_4, align=right] {Send window=1, reduce to 0};
-\pause
-  \node [left=0.1 of aEndReceive_2, align=right] {Increase send window to 1};  
-\pause
-  \pplusa{10}{hpiorange!80}{2}{0.25}{5}{}
-  \node [left=0.1 of pStartSend_5, align=right] {Send window=1, reduce to 0};
-\pause
-  \node [right=0.1 of pEndReceive_4, align=left] {Expected P3, got P4, buffer P4, CumAck=2 + NACK=3, SelAck=4}; 
-\pause
-  \node [left=0.1 of pEndSend_5, align=right] {Timeout for ACK 3!};
-  \pplusa{12.5}{hpiblue!80}{2}{0.25}{3b}{}
-  \node [left=0.1 of pStartSend_3b, align=right] {Retransmit 3, send window stays at 0};
-\pause
-  \node [right=0.1 of pEndReceive_5, align=left] {Expected P3, got P5, buffer P5, CumAck=2 + NACK=3, SelAck=4,5}; 
-\pause
-  \node [left=0.1 of aEndReceive_4, align=right] {NACK 3 provides no new information, already retransmitted, SelAck 4 increases SendWindow to 1};
-\pause
-  \pplusa{15}{hpiyellow!80}{2}{0.25}{6}{}
-  \node [left=0.1 of pStartSend_6, align=right] {Send window=1, reduce to 0};
-\pause
-  \node [left=0.1 of aEndReceive_5, align=right] {NACK 3 provides no new information, already retransmitted, SelAck 5 increases SendWindow to 1};
-\pause
-  \node [right=0.1 of pEndReceive_3b, align=left] {Expected P3, got P3b, deliver 3, 4, 5, send CumAck=5}; 
-\pause
-  \pplusa{17.5}{hpired!80}{2}{0.25}{7}{}
-\pause
-  \node [right=0.1 of pEndReceive_6, align=left] {Expected P6, got P6, deliver 6, send CumAck=6}; 
-
-%----------------------------------
-%   \pplusa{20}{green!20}{2}{0.25}{8}{}
-
-%   Sender comments:
-  
-  
-  % \node [left=0.1 of pStartSend_4b, align=right] {Retransmit 4, send window stays at 0};
-  % \node [left=0.1 of pStartSend_5b, align=right] {Retransmit 5, send window stays at 0};
-
-  % \node [left=0.1 of aEndReceive_3b, align=right] {Increase send window to 1};
-  
-  % \node [left=0.1 of pStartSend_6, align=right] {Send window=1, reduce to 0};
-
-  % Receiver comments: 
-
-  
-
-
-
-  
-  % \node [right=0.1 of pEndReceive_4b, align=left] {Expected P4, got P4b, deliver, send CumAck=4}; 
-
-  % \node [right=0.1 of pEndReceive_5b, align=left] {Expected P5, got P5b, deliver, send CumAck=5}; 
-  
-\end{tikzpicture}
-}
-\caption{Selective repeat example. Note: sequence numbers 3b, 4b, 5b only shown for better illustrations; real packet sequence numbers do \textbf{not} distinguish between original and retransmission.}
-\label{fig:ll:selective_repeat}
-\end{figure}
