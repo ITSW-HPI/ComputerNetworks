@@ -55,3 +55,4 @@
 #+LATEX_HEADER: \externaldocument{../ch_link/standalone/bch}
 #+LATEX_HEADER: \externaldocument{../ch_link/standalone/econtrol}
 #+LATEX_HEADER: \externaldocument{../ch_link/standalone/ll}
+#+LATEX_HEADER: \externaldocument{../ch_congestion/ch_congestion}
