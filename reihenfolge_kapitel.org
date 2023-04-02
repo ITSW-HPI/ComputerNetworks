@@ -1,6 +1,9 @@
 00. ch_org
 01. ch_basics 
 02. ch_arch
+03. ch_phy
+04. ch_link
+05. ch_mac
 06. ch_inter
 07. ch_network
 08. ch_congestion 
