@@ -10,6 +10,9 @@
 
 **** Plans for this chapter 
 
+- Understand sources of the congestion control/resource allocation problem
+- Difference between congestion control and flow control
+- Possible solutions and their classification
 
 \vskip-2.5em
 
@@ -35,11 +38,369 @@
       :BEAMER_env: ignoreheading
       :END:
 
+** Problems and options
+
+
+
+
+**** Why congestion control?
+- Any network can only transport a bounded amount of traffic per unit time
+- Link capacities are limited, processing speed in routers, buffer space, … 
+- When sources inject more traffic into the network than its nominal capacity, congestive collapse (usually) results
+- Consequence: packets are lost!
+**** Snowball effects
+- Congestion control is essential to avoid snowball effects
+- Once a network is overloaded, it will loose packets (buffer overflows, etc.)
+- Once a reliable transport protocol detects packet loss, it will retransmit the lost packets
+- These retransmissions further increase the load in the network
+- More packets will be lost
+- More retransmissions will happen
+- Etc. 
+- Mechanisms to dampen/avoid such oscillations are necessary
+**** Congestion control: Adapt sending rate to network capacity
+- Sending rate of each source has to be adapted to the network’s actual, current capacity
+- Global issue: depends on all links & routers, forwarding disciplines, load injected by other terminals, etc.
+- Made complicated by interaction of mechanisms of many different layers
+**** Desirable properties of congestion control
+- Congestion control should result in many packets delivered at short delays
+- Protect network from congestive collapse but still transport as much data as possible
+- Fairness 
+- Give all participating flows a ``fair'' share of available capacity
+- Does fair mean ``equal''? Video conference = ssh session?
+- Should path lengths be considered?
+**** Design options for congestion control mechanisms
+- Open loop: Design system up front so that it will work correctly, no corrections at runtime necessary
+- Closed loop: Use some sort of feedback to allow sender to adapt to current situation
+- Explicit feedback: Some entity (e.g., point where congestion occurs) informs sender
+- Implicit feedback: No explicit action taken; congestion is deduced by sender from the network’s behavior (e.g., missing acknowledgements)
+- 
+
+
+** Actions 
+
+
+
+**** Possible actions – Taxonomy: Timescale
+- Increase capacity – activate additional links, routers, …
+- Usually not practical, at least on short timescales 
+- Reservations and admission control – do not admit additional traffic when network is nearing capacity limit
+- Usually applied to circuit-switched (or similar) networks; difficult (but not impossible) in packet-switched networks 
+- Feedback about network state only relatively rarely – akin to open-loop control
+- Reduce/control load at smaller granularity
+- Have some/all sources reduce their offered load without terminating on-going sessions
+- Usually requires feedback from the network (closed loop)
+**** Possible actions – Time scales 
+**** Possible actions – Taxonomy 
+- Where: Router-centric vs. host-centric
+- Where is/are information gathered, decisions made, actions taken?
+- Usually not either/or, but more a question of emphasis 
+- How: Window-based vs. rate-based
+- How is the allowed amount of traffic injected into the network described? 
+- By a rate – so and so many bytes per second?
+- By a congestion window – as a set of sequence numbers/amount of bytes that may be injected into the network before further permits are received?
+- 
+**** Router actions: Dropping packets 
+- Suppose a router’s buffer is full and a packet arrives
+- Obviously, there is one packet too many and one of them has to be dropped
+- One candidate: the newly arriving packet
+- Intuition: ``old'' packets are more valuable than new ones, e.g., for a go-back-n transport protocol (``wine'' strategy)
+- A so-called drop-tail queue
+- Other option: a packet that is already in the queue for quite some time
+- Intuition: For multi-media traffic, new packets are more important than old ones (``milk'' strategy)
+**** Dropping packets = implicit feedback
+- Dropping a packet constitutes an implicit feedback action
+- The sending transport protocol can detect this packet loss (if it so desires, e.g., by missing acknowledgements)
+- Assumption: Packet loss is only (or predominantly) caused by congestion
+- Then: Correct action by a transport protocol is to reduce its offered load (= send fewer packets per time interval)
+- Assumption is by and large true in wired networks but not in wireless networks
+- In open-loop congestion control, packets arriving to a full queue should never happen
+- Else, resource reservations were not done correctly
+**** Avoiding full queues – proactive actions?
+- When packets arrive to a full queue, things are pretty bad already
+- Is there any chance we can try to avoid such a situation, without having to recur to open-loop control? 
+- Provide proactive feedback! (Congestion avoidance)
+- Do not only react when the queue is full, but already when the ``congestion indicator'' has crossed some threshold
+- E.g., when the average queue lengthhas exceeded a lower threshold
+- E.g., when the outgoing linkutilization is persistently higherthan a threshold
+- E.g., … 
+- Router is then called to be in a warning state
+**** Proactive action: Choke packets
+- Once a router decides it is congested (or that it likely will be in the near future):Send out choke packets
+- A choke packet tells the source of a packet arriving during warning state to slow down its sending rate
+- Obvious problem: In an already congested network, more packets are injected to remedy congestion
+- Questionable
+- Second problem: How long does it take before source learns about congestion?
+- How much data has already been injected? 
+- Think in terms of the data rate-delay product
+**** Proactive action: Warning bits
+- Once a router decides it is congested (or that it likely will be in the near future):Set a warning bit in all packets that it sends out
+- Destination will copy this warning bit into its acknowledgement packet
+- Source receives the warning bit and reduces its sending rate
+- 
+**** Proactive actions: Random early detection (RED)
+- Exploit lost packets as implicit feedback, but not only when the queue is already full
+- Instead: early on deliberately drop some packets to provide feedback
+- Sounds cruel, but it might save later packets from being dropped
+- Dropping probability can be increased as a router becomes more and more congested
+- E.g., as the queue becomes longer and longer
+**** What happens after feedback has been received?
+- Once feedback of some sort has been received by a sending transport protocol instance, it has to react on it
+- Rate-based protocols: Reduce rate, e.g., by a constant factor
+- Relatively easy
+- Question: How to increase rate again?
+- Window-based protocols: Shrink the congestion window
+- By how much? 
+- How to grow the window in the first place? 
+
+** Case study: TCP 
+
+
+
+
+**** Popular example: Congestion control in TCP
+- TCP’s mechanism for congestion control
+- Implicit feedback by dropped packets
+- Whether the packets were dropped because queues were full or by a mechanism like RED is indistinguishable (and immaterial) to TCP
+- There are some proposals for explicit router feedback as well, but not part of original TCP
+- Assumption: Congestion is the only important source of packet drops!
+- Window-based congestion control
+- I.e., TCP keeps track of how many bytes it is allowed to inject into the network by a window that grows and shrinks
+- Sender limits transmission:
+- LastByteSent - LastByteCumAcked \leq CongestionWindow
+- We will use TCP as a case study
+- Assumption: Flow control not an issue, ignored for this chapter!
+- A general treatment of congestion control is too broad a topic
+**** TCP ACK/self-clocking
+- Suppose TCP has somehow determined a ``correct'' size of its congestion window
+- Suppose also that the TCP source has injected this entire amount of data into the network but still has more data to send
+- Correct size? Recall bandwidth-delay product! 
+- When to send more data?
+- Only acceptable when there is space in the network again
+- Space is available when packets leave the network
+- Sender can learn about packets leaving the network by receiving an acknowledgement!
+- Thus: ACK not only serves as a confirmation, but also as a permit to inject a corresponding amount of data into the network
+-  $\leadsto$ ACK-clocking (self-clocking) behavior of TCP
+**** Good and bad news
+- Good news: ACK arrival
+- Network could cope with the currently offered load; it did not drop the packet
+- Let’s be greedy and try to offer a bit more load – and see if it works!
+-  $\leadsto$ Increase congestion window
+- Bad news: No ACK, timeout occurs
+- Packet has been dropped, network is overloaded
+- Put less load onto the network
+-  $\leadsto$ Reduce congestion window
+**** Reduce congestion window by how much?
+- Overloaded network is bad situation – quick and drastic response necessary
+-  $\leadsto$ Upon packet drop, cut congestion window in half
+- Reduce load by 50%
+- A minimum congestion window of one packet is always allowed
+- A multiplicative decrease
+- If a packet happens to be dropped because of a transmission error (not due to overload), TCP misinterprets and overreacts
+- But this is a rare occurrence in wired networks
+- Leads to various problems in wireless networks
+**** Increase congestion window by how much? 
+- When increasing congestion window, sender cannot be sure that additional capacity is actually available
+- Asymmetric situation to decreasing of congestion window!
+- Hence: Be careful, only increase a little!
+- Think in terms of round trip times (RTT)
+- If all packets sent out within the last RTT arrived,try to send one more packet per RTT
+- There’s a little bit of rounding up involved to account for packet generation times 
+- This adds constant amounts of load: additive increase
+**** Additive increase – details 
+- In practice, additive increase does not wait for a full RTT before it adds additional load
+- Instead, each arriving ACK is used to increase window a little (but not by a full packet); packet is sent once window is big enough 
+- Specifically:
+- Increment = MSS ¢ (MSS / Congestion Window)
+- All measured in bytes
+- Congestion Window += Increment
+- Where MSS is the Maximum Segment Size, the size of the largest allowed packet
+- 
+**** AIMD – Sawtooth pattern of TCP’s offered load
+- In summary: TCP uses an additive increase multiplicative decrease (AIMD) scheme
+- Consequence
+- A TCP connection perpetually probes the network to check for additional bandwidth
+- Will repeatedly exceed it and fall back, owing to multiplicative decrease
+- Sawtooth pattern of TCP’s congestion window/offered load
+- This is still simplified; we have to introduce one more mechanism!
+**** Quickly initialize a connection: Slow start
+- Additive increase nice and well when operating close to network capacity
+- But takes a long time to converge to it for a new connection
+- Starting at a congestion window of, say, 1 or 2
+- Idea: Quickly ramp up the congestion window in such an initialization phase
+- Goal: double congestion window each RTT
+- Implemented by: increase congestion window by one packet per arriving ACK
+- Instead of just adding a single packet per RTT
+- 
+**** Leaving slow start
+- When doubling congestion window, network capacity will eventually be exceeded
+- Packet loss and timeout will result
+- Congestion window is halved and TCP switches to ``normal'', linear increase of congestion window
+- The ``congestion avoidance'' phase
+- 
+**** Remaining problem: Packet bursts
+- Congestion control scheme so far: Nice and well, but one problematic case remains
+- Suppose 
+- A sender transmits its full congestion window
+- Packets arrive, acknowledgements are lost
+- Timeout occurs, CW is halved
+- One packet is retransmitted
+- Cumulative acknowledgement for all outstanding packets arrives
+-  $\leadsto$ Sender will then transmit an entire (halved) congestion window worth of data in a single burst! ACK clocking is missing!
+-  $\leadsto$ Not good! Many packet losses!
+**** Solution: Use slow start here as well
+- Avoiding such packet bursts by linearly increasing CW too slow
+- We can use the slow start mechanism to get the ACK flow going again 
+- $\leadsto$ Reset the congestion window to 1, restart slow start
+- In addition: We have some rough idea of what the network’s capacity is!
+- When initializing a connection, no idea – have to wait for the first packet loss (or use heuristic assumption) 
+- Here: the previous, halved congestion window is a relatively good guess! 
+- We can avoid the next packet loss by using the previous congestion window as a congestion threshold 
+-  $\leadsto$ Use slow start’s exponential growth until congestion threshold is reached, then switch to additive increase
+**** TCP Tahoe congestion window dynamics
+**** TCP Tahoe congestion window dynamics (w/o anim)
+**** Detecting losses without having to wait for timeout
+- Scenario: Several packets are sent, only one of them is lost
+- Receiver sees sequence numbers n, n+1, n+3, n+4, …
+- What ACKs does it send out (assuming Go-back-N behavior)?
+- ACK n+1, ACK n+2, ACK n+2, ACK n+2, ... (ack for next expected packet)
+- These additional ``ACK n+2'' are duplicate ACKs
+- What can sender deduce? 
+- Packets n, n+1 have arrived, and some packets beyond n+2
+- AND: ACK clocking still works, the network is apparently not congested, there are still packets coming through! 
+- Hence: Packet n+2 has to be resent, but no severe measures against congestion are (yet) necessary!
+- In practice: react on the third duplicate ACK
+- Retransmitting on third dupACK: FastRetransmit
+- No panic (= slow start from initial CWND) upon dupACK, only cut CWND and SSThreshold in half: FastRecovery  (TCP Reno)
+**** TCP Reno congestion control dynamics 
+**** TCP congestion control
+- This description still glosses over some (minor) details, but captures the essence
+- Different TCP versions: TCP Tahoe, TCP Reno, TCP Vegas, TCP NewReno, \dots 
+- Main difference is the congestion control
+- Correct interoperation is a tricky question (e.g., fairness)
+- Complicated dynamics
+- Main source of complications: Stupidity of the network
+**** TCP traces from simulation
+- A single TCP connection
+- Black squares: packets
+- Hollow squares: ACKs
+- Topology:
+- S-R1, R1-D: 10 Mb/s, 3 ms delay
+- R1-R2: 1,5 Mb/s, 20 ms delay
+- Connection start! Slow start!
+**** TCP traces from simulation 
+- Same topology, a bit later after connection start
+-  $\leadsto$ Congestion avoidance state
+**** Summary: TCP sender congestion control
+- When CongWin is below Threshold, sender in slow-start phase, window grows exponentially.
+- When CongWin is above Threshold, sender is in congestion-avoidance phase, window grows linearly.
+- When a triple duplicate ACK occurs, Threshold set to CongWin/2 and CongWin set to Threshold.
+- When timeout occurs, Threshold set to CongWin/2 and CongWin is set to 1 MSS. 
+- 
+**** Summary: TCP Reno sender congestion control
+*** TCP performance 
+
+**** TCP throughput
+- TCP throughput in congestion avoidance state, no packet losses: determined by congestion window size, RTT
+- Due to ACK clocking
+- One full window will be transmitted for one RTT 
+- Throughput is approx. W/RTT 
+-  $\leadsto$ Larger congestion window gives more throughput
+- But: What if errors happen? 
+- If any single TCP connection where to perpetually increase its congestion window, router queues would overflow, resulting in error
+-  $\leadsto$ Errors are bound to happen
+**** TCP throughput in presence of errors – Assumptions 
+- Single TCP flow
+- Sender always has data to send, always uses the maximum segment size MSS for each packet 
+- Errors happen with probability p
+- Simplified: Send 1/p packets, the last one is lost
+- ACK clock still works, loss is detected via duplicate ACKs
+- Round trip time RTT is constant 
+- Actually: this means that queues in routers do not change
+- TCP is in congestion avoidance mode 
+- Suppose that at packet loss, CWND has size W 
+**** TCP throughput in presence of errors – CWND process
+**** TCP throughput in presence of errors – Throughput
+- Transmitted data per ``round'' / Area of trapezoid: (W/2)2 + ½ (W/2)2 = 3/8 W2 
+- On the other hand: Each ``round'' delivers 1/p packets!
+- Hence: 1/p = 3/8 W2 \leftrightarrow W = (8/3p) 1/2 
+- Hence the obtained throughput TP: TP = Data / Time = (MSS * (3/8 W)2) / (RTT * W/2) 
+- or:
+- TP = (MSS / RTT) * C/ p1/2 
+- for C = (3/2)1/2 
+- 
+**** TCP fairness
+- Is TCP fair? 
+- Suppose: two TCP connections share a bottleneck link of limited capacity 
+- One is long-running, has already acquired a large share of the link capacity 
+- The second one has recently started and only has a small congestion window
+- Will this converge to a state where both connections have same throughput = congestion window size? 
+- 
+**** Fairness: TCP traces from simulation
+- Two TCP connections (S1 $\leadsto$ D1, S2 $\leadsto$ D2)
+- Topology
+- Performance as before
+**** Why is TCP fair?
+- Two competing sessions:
+- Additive increase gives slope of 1, as throughout increases
+- Multiplicative decrease decreases throughput proportionally
+-  $\leadsto$ AIMD scheme ensures fairness 
+**** Proof: AIMD ensures fairness
+- Let ai, bi denote the throughput of connection A, B, respectively, after the ith multiplicative decrease has taken place
+- Start with some arbitrary pair (a0, b0) such that a0 + b0 < c, where c is the total capacity of the link
+- Goal: Compute (ai+1, bi+1) as function of (ai, bi), s
+- First: Additive increase 
+- (ai, bi ) $\leadsto$ (ai + 1, bi + 1) $\leadsto$ (ai + 2, bi + 2) $\leadsto$ ?  $\leadsto$ (ai + k, bi + k) until ai + k + bi + k = c
+- Or: k = ½ ( c – ai – bI) 
+- Then: Multiplicative decrease
+- (ai + ½ ( c – ai – bI), bi + ½ ( c – ai – bI)) $\leadsto$ (1/2 (ai + ½ ( c – ai – bI)), ½ (bi + ½ ( c – ai – bI)) = (¼ (ai – bi + c), ¼ (bi – ai + c))
+- Look at difference: di+1 = ai+1 – bi+1 = ¼ (ai – bi + c) - ¼ (bi – ai + c)   = ½ (ai – bi) = ½ di !
+- Hence: limi! 1 di = 0
+- Hence: AIMD ensures fairness! 
+
+*** Trends 
+
+**** Current developments for TCP 
+**** TCP Vegas: Observe RTT variation 
+- What happens when CWND grows and queue fills up? 
+- Illustrative scenario: Single sender, no competition
+- CWND/RTT smaller than bottleneck rate: nothing, queue stays empty 
+- RTT depends only on propagation delay 
+- CWND/RTT larger than bottleneck rate: RTT starts growing! 
+- Because queueing delay shows up! 
+- Hence idea: Carefully observe RTT variations 
+- Once RTT starts growing, stop increasing CWND 
+- Example for delay-based congestion control 
+- Challenge: ``noisy'' RTT in real networks 
+- 
+- WS 19/20, v 1.5.3
+- Computer Networks - Congestion Control
+- 51
+**** TCP Cubic
+- Goal: work over large data rate-delay products
+- Idea: 
+- Have to grow CWND quickly; but also have to back off quickly 
+- Use knowledge of previous data rate bottleneck smarter 
+- When approaching last bottleneck, get careful: only increase CWND carefully 
+- But when we can exceed last bottleneck without errors, aggressively increase CWND (indicator that more capacity has become available)
+- Use a convex/concave function for CWND!
+- E.g., a cubic function  
+- WS 19/20, v 1.5.3
+- Computer Networks - Congestion Control
+- 52
+**** TCP Cubic vs. Reno 
+- WS 19/20, v 1.5.3
+- Computer Networks - Congestion Control
+- 53
+
 
 
 ** Conclusion 
 
-**** Conclusion  
-
-Lorem ipsum 
-
+**** Conclusion
+- Congestion control is necessary to protect network from overload
+- Can be implemented in-network, in end systems, reactive or proactive, \dots 
+- Dynamics of congestion control can be rather tricky
+- TCP’s congestion control is probably one of the most complicated and subtle, yet also most crucial protocols in the Internet
+- Be aware of interactions of UDP/non-congestion-controlled protocols with TCP/congestion-controlled protocols
+- Big related topic (entirely missing here): Quality of Service and resource reservation schemes
+- 
