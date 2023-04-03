@@ -1,0 +1,77 @@
+% Created 2016-08-17 Wed 14:38
+\documentclass[tikz]{standalone}
+
+\input{../../templates/standalone_header}
+
+\usetikzlibrary{shapes.callouts}
+\usetikzlibrary{decorations.pathreplacing,decorations.pathmorphing,calc}
+
+
+\begin{document}
+
+\begin{tikzpicture}
+  \draw [->] (0,0) -- (0, 10) node [left] {CWND};
+  \draw (0.1,8) -- (-0.1,8) node [left] {$W$};
+  \draw (0.1,4) -- (-0.1,4) node [left] {$W/2$};
+
+  \draw [->] (0,0) -- (15, 0) node [below] {Time / RTT}; 
+
+  \foreach \i in {1,...,15} {
+    \draw (\i, 0.1) -- (\i, -0.1); 
+  }
+
+  % basic process
+  \draw (0,7) -- (1,8) -- (1,4) -- (5,8) -- (5,4) -- (9,8) -- (9,4) -- (13, 8) -- (13, 4) -- (15, 6);
+
+  \foreach \i in {5,6,7,8} {
+    \draw [fill=hpiyellow!10] (\i,0) rectangle (\i+1,\i-1); 
+  }
+  \draw [fill=hpiyellow!40] (9,0) rectangle (9.1,8); 
+
+  % show packet losses: 
+  \node [circle, draw, hpired, scale=3, line width=0.5mm] at (5,8) (pl) {};
+  \node [circle, draw, hpired, scale=3, line width=0.5mm] at (9,8) (pl2) {};
+  \node [draw, hpired, rectangle callout, callout absolute pointer={(pl)}, above right=0.5 of pl] {Packet loss, drop CWND to $W/2$}; 
+  \node [draw, hpired, rectangle callout, callout absolute pointer={(pl2)}, above right=0.5 of pl] {Packet loss, drop CWND to $W/2$}; 
+
+  \node [draw, hpiyellow, rectangle callout, align=center, 
+  callout absolute pointer={(5.5, 3)}, anchor=east] at (4,2) {Transmit one CWND worth\\ of packets in one RTT};
+
+  
+  
+\end{tikzpicture}
+
+\begin{tikzpicture}
+  \draw [->] (0,0) -- (0, 10) node [left] {CWND A};
+  \draw [->] (0,0) -- (10, 0) node [below right] {CWND B}; 
+  \draw [dotted] (0,0) -- (10,10);
+  \draw [dashed] (9,0) -- (0,9);
+
+  \draw (0.1,9) -- (-0.1,9) node [left] {$\mathrm{CWND}_\max$};
+  \draw (9, 0.1) -- (9, -0.1) node [below] {$\mathrm{CWND}_\max$};
+
+  \foreach \a/\b [remember=\a as \lasta (initially 4.5),
+  remember=\b as \lastb (initially 1.5),
+  ] in {6/3,3/1.5, 5.25/3.75, 2.625/1.875, 4.875/4.125, 2.4375/2.0625, 4.6875/4.3125, 2.34275/2.15625} {
+    \draw [->] (\lasta, \lastb)  -- (\a, \b); 
+  }
+
+  \foreach \a/\b [count=\i, remember=\a as \lasta (initially 3.75),
+  remember=\b as \lastb (initially 0.75),
+  ] in {3/1.5,  2.625/1.875, 2.4375/2.0625, 2.34275/2.15625} {
+    \draw [decorate, decoration={brace, raise=5pt}] (\lasta, \lastb) to node[below left=1pt] (rtt\i) {}  (\a, \b); 
+  }
+
+  \node (rttlabel) at (1,0.5)  {One RTT}; 
+  \foreach \i in {1,...,4} {
+    %\node [draw, rectangle callout,
+    %callout absolute pointer={(rtt\i)}] at (1,0.5) {One RTT};
+    \draw [->] (rttlabel) -- (rtt\i); 
+  }
+
+\end{tikzpicture}
+
+
+
+
+\end{document}

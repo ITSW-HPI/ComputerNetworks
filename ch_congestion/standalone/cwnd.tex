@@ -1,0 +1,109 @@
+% Created 2016-08-17 Wed 14:38
+\documentclass[tikz]{standalone}
+
+\input{../../templates/standalone_header}
+
+\usetikzlibrary{shapes.callouts}
+\usetikzlibrary{decorations.pathreplacing,decorations.pathmorphing,calc}
+
+
+\begin{document}
+
+\begin{tikzpicture}[yscale=0.25]
+  \label{page:cc:tahoe}
+  \draw [->] (0,0)  -- (0, 50) node [left=0.5, rotate=90, anchor=south east] {Congestion window};
+  \foreach \i in {0,2,...,48} {
+    \draw (0.1,\i) -- (-0.1,\i) node [left] {\i}; 
+  }
+
+  \draw [->] (0,0) -- (24,0) node [below=0.5,anchor=north east] {Transmission round/RTT};
+  \foreach \i in {0,2,...,24} {
+    \draw (\i, 0.1) -- (\i, -0.1) node [below] {\i}; 
+  }
+ 
+  % packet loss detected
+  \node [draw=hpired, scale=3, line width=1mm, circle]  (pl) at (13, 40) {}; 
+  \node [rectangle callout, fill=hpired!10, draw,
+  callout absolute pointer={(pl.north east)},
+  above right=of pl]  {Packet loss detected!}; 
+  
+  % sstart threshold 
+  \draw [dashed, hpiblue] (0,32) -- (13,32); 
+  \draw [dashed, hpiblue] (13,20) -- (24,20); 
+  \draw [hpired, dotted, thick, ->] (13, 40) to [bend left=10, ] node (halfss) {} (13, 20);
+  \node [rectangle callout, fill=hpiblue!10, draw,
+  callout absolute pointer={(halfss)},
+  right=of halfss] {New threshold is half current CWND}; 
+  
+  % sequence of nodes: 
+  \node [circle, fill] at (1, 2) (n1) {};
+  \foreach \t/\c [remember=\c as \lastc (initially 2), remember=\t as \lastt (initially 1), ] in {2/4, 3/8, 4/16,5/32, 6/33, 7/34, 8/35, 9/36, 10/37, 11/38, 12/39, 13/40, 14/1,15/2,16/4, 17/8, 18/16, 19/20,  20/21, 21/22, 22/23, 23/24, 24/25} {
+    \draw (\lastt, \lastc) -- (\t, \c) node [circle, fill] (n\t) {}; 
+  }
+
+  \node [rectangle callout, fill=hpiyellow!10, draw,
+  callout absolute pointer={(5, 32)}] at (7,10) {}; 
+  
+  \node [rectangle callout, fill=hpiyellow!10, draw,
+  callout absolute pointer={(19, 20)}] at (7,10) {Switch to congestion avoidance};
+
+  % mark the various phases
+  \draw [decorate, decoration={brace, raise=5pt, mirror}] (1,-4) to node[below=0.5] {Slow start} (5, -4) ; 
+  \draw [decorate, decoration={brace, raise=5pt, mirror}] (5,-4) to node[below=0.5] {Congestion avoidance} (14, -4) ; 
+  \draw [decorate, decoration={brace, raise=5pt, mirror}] (14,-4) to node[below=0.5] {Slow start} (19, -4) ; 
+  \draw [decorate, decoration={brace, raise=5pt, mirror}] (19,-4) to node[below=0.5] {Congestion avoidance} (24, -4) ; 
+  
+
+\end{tikzpicture}
+
+
+\begin{tikzpicture}[yscale=0.25]
+  \label{page:cc:reno}
+
+  \draw [->] (0,0)  -- (0, 50) node [left=0.5, rotate=90, anchor=south east] {Congestion window};
+  \foreach \i in {0,2,...,48} {
+    \draw (0.1,\i) -- (-0.1,\i) node [left] {\i}; 
+  }
+
+  \draw [->] (0,0) -- (24,0) node [below=0.5,anchor=north east] {Transmission round/RTT};
+  \foreach \i in {0,2,...,24} {
+    \draw (\i, 0.1) -- (\i, -0.1) node [below] {\i}; 
+  }
+ 
+  % packet loss detected
+  \node [draw=hpired, scale=3, line width=1mm, circle]  (pl) at (13, 40) {}; 
+  \node [rectangle callout, fill=hpired!10, draw,
+  callout absolute pointer={(pl.north east)},
+  above right=of pl]  {Packet loss by DupAck detected}; 
+  
+  % sstart threshold 
+  \draw [dashed, hpiblue] (0,32) -- (13,32); 
+  \draw [dashed, hpiblue] (13,20) -- (24,20); 
+  \draw [hpired, dotted, thick, ->] (13, 40) to [bend left=10, ] node (halfss) {} (13, 20);
+  \node [rectangle callout, fill=hpiblue!10, draw,
+  callout absolute pointer={(halfss)},
+  right=of halfss] {New threshold is half current CWND}; 
+  
+  % sequence of nodes: 
+  \node [circle, fill] at (1, 2) (n1) {};
+  \foreach \t/\c [remember=\c as \lastc (initially 2), remember=\t as \lastt (initially 1), ] in {2/4, 3/8, 4/16,5/32, 6/33, 7/34, 8/35, 9/36, 10/37, 11/38, 12/39, 13/40, 14/20,15/21,16/22, 17/23, 18/24, 19/25,  20/26, 21/27, 22/28, 23/29, 24/30} {
+    \draw (\lastt, \lastc) -- (\t, \c) node [circle, fill] (n\t) {}; 
+  }
+
+  \node [rectangle callout, fill=hpiyellow!10, draw,
+  callout absolute pointer={(5, 32)}] at (7,10) {Switch to congestion avoidance}; 
+
+  \node [hpiorange, circle, scale=3, draw, line width=1mm] at (14,20) (fr) {};
+  \node [rectangle callout, fill=hpiorange!10, draw,
+  callout absolute pointer={(fr)}, below=of fr]  {Fast Recovery}; 
+  
+
+  % mark the various phases
+  \draw [decorate, decoration={brace, raise=5pt, mirror}] (1,-4) to node[below=0.5] {Slow start} (5, -4) ; 
+  \draw [decorate, decoration={brace, raise=5pt, mirror}] (5,-4) to node[below=0.5] {Congestion avoidance} (24, -4) ; 
+  
+
+\end{tikzpicture}
+
+
+\end{document}

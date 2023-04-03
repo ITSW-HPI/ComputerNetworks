@@ -1,0 +1,514 @@
+% Created 2016-08-17 Wed 14:38
+\documentclass[tikz]{standalone}
+
+\input{../../templates/standalone_header}
+
+\usetikzlibrary{decorations.pathreplacing,decorations.pathmorphing}
+
+
+\begin{document}
+
+
+\newcommand{\pplus}[8]{% 
+  % #1: start point
+  % #2: end point 
+  % #3: label intern
+  % #4: label to print 
+  % #5: vertical offset from startpoint
+  % #6: length of packet
+  % #7: delay
+  % #8: fill color 
+
+  \coordinate (pStartSend-#3) at ($ (#1) - (0, #5)$);
+  \coordinate (pEndSend-#3) at ($ (pStartSend-#3) - (0, #6)$);
+
+  \coordinate (tmp) at (pStartSend-#3 -| #2); 
+  \coordinate (pStartReceive-#3) at ($ (tmp) - (0, #7)$);
+  \coordinate (pEndReceive-#3) at ($ (pStartReceive-#3) - (0, #6)$);
+
+  % draw packet
+  \draw [fill=#8] (pStartSend-#3) to node [below, sloped] {#4} (pStartReceive-#3) -- (pEndReceive-#3) -- (pEndSend-#3); 
+}
+
+
+\newcommand{\pplusa}[8]{% 
+  % #1: start point
+  % #2: end point 
+  % #3: label 
+  % #4: vertical offset from startpoint
+  % #5: length of packet
+  % #6: length of ack
+  % #7: delay
+  % #8: fill color 
+
+  \coordinate (pStartSend-#3) at ($ (#1) - (0, #4)$);
+  \coordinate (pEndSend-#3) at ($ (pStartSend-#3) - (0, #5)$);
+
+  \coordinate (tmp) at (pStartSend-#3 -| #2); 
+  \coordinate (pStartReceive-#3) at ($ (tmp) - (0, #7)$);
+  \coordinate (pEndReceive-#3) at ($ (pStartReceive-#3) - (0, #5)$);
+
+  \coordinate (aStartSend-#3) at (pEndReceive-#3);
+  \coordinate (aEndSend-#3) at ($(aStartSend-#3) - (0, #6)$);
+  
+  \coordinate (tmp) at (aStartSend-#3 -| #1);
+  \coordinate (aStartReceive-#3) at ($ (tmp) - (0,#7)$);
+  \coordinate (aEndReceive-#3) at ($ (aStartReceive-#3) - (0,#6)$);
+  
+  % draw packet
+  \draw [fill=#8] (pStartSend-#3) to node [below, sloped] {P #3} (pStartReceive-#3) -- (pEndReceive-#3) -- (pEndSend-#3);
+  % draw ACK
+  \draw [fill=#8] (aStartSend-#3) -- (aStartReceive-#3) -- (aEndReceive-#3) -- (aEndSend-#3);
+
+  
+}
+
+
+% \begin{tikzpicture}
+%   % example: delay always 1, all ack times 0,
+%   % packet times from A-B and C-D 0.5, from C-D 1 
+  
+%   \node (a) {A}; 
+%   \node [right=of a] (b) {B}; 
+%   \node [right=of b] (c) {C};
+%   \node [right=of c] (d) {D};
+
+%   \foreach \n in {a,b,c, d} { \draw [thin] (\n) -- ++ (0,-20); }
+
+%   % \pplusa{a}{b}{1}{0.5}{1}{0.1}{2}{hpiblue}
+%   % Args: start, end, label, offset, packeet, delay, color
+
+%   % Packet 1: 
+%   \pplus{a}{b}{P1ab}{P1}{0.5}{0.5}{1}{hpiyellow!10}
+%   \pplus{pEndReceive-P1ab}{c}{P1bc}{P1}{0.05}{1}{1}{hpiyellow!10}
+%   \pplus{pEndReceive-P1bc}{d}{P1cd}{P1}{0.05}{0.5}{1}{hpiyellow!10}
+
+%   % Ack 1: 
+%   \pplus{pEndReceive-P1cd}{c}{A1dc}{A1}{0.05}{0.0}{1}{hpiyellow!20}
+%   \pplus{pEndReceive-A1dc}{b}{A1cb}{A1}{0.05}{0.0}{1}{hpiyellow!20}
+%   \pplus{pEndReceive-A1cb}{a}{A1ba}{A1}{0.05}{0.0}{1}{hpiyellow!20}
+
+
+%   % Packet 2: 
+%   \pplus{pEndSend-P1ab}{b}{P2ab}{P2}{0.05}{0.5}{1}{hpired!10}
+%   \pplus{pEndSend-P1bc}{c}{P2bc}{P2}{0.05}{1}{1}{hpired!10}
+%   \pplus{pEndReceive-P2bc}{d}{P2cd}{P2}{0.05}{0.5}{1}{hpired!10}
+
+%   % Ack 2: 
+%   \pplus{pEndReceive-P2cd}{c}{A2dc}{A2}{0.05}{0.0}{1}{hpired!20}
+%   \pplus{pEndReceive-A2dc}{b}{A2cb}{A2}{0.05}{0.0}{1}{hpired!20}
+%   \pplus{pEndReceive-A2cb}{a}{A2ba}{A2}{0.05}{0.0}{1}{hpired!20}
+
+%   % Packet 3: 
+%   \pplus{pEndSend-P2ab}{b}{P3ab}{P3}{0.05}{0.5}{1}{hpiblue!10}
+%   \pplus{pEndSend-P2bc}{c}{P3bc}{P3}{0.05}{1}{1}{hpiblue!10}
+%   \pplus{pEndReceive-P3bc}{d}{P3cd}{P3}{0.05}{0.5}{1}{hpiblue!10}
+
+%   % Ack 3: 
+%   \pplus{pEndReceive-P3cd}{c}{A3dc}{A3}{0.05}{0.0}{1}{hpiblue!20}
+%   \pplus{pEndReceive-A3dc}{b}{A3cb}{A3}{0.05}{0.0}{1}{hpiblue!20}
+%   \pplus{pEndReceive-A3cb}{a}{A3ba}{A3}{0.05}{0.0}{1}{hpiblue!20}
+
+%   % Packet 3: 
+%   \pplus{pEndSend-P3ab}{b}{P4ab}{P4}{0.05}{0.5}{1}{hpiorange!10}
+%   \pplus{pEndSend-P3bc}{c}{P4bc}{P4}{0.05}{1}{1}{hpiorange!10}
+%   \pplus{pEndReceive-P4bc}{d}{P4cd}{P4}{0.05}{0.5}{1}{hpiorange!10}
+
+%   % Ack 3: 
+%   \pplus{pEndReceive-P4cd}{c}{A4dc}{A4}{0.05}{0.0}{1}{hpiorange!20}
+%   \pplus{pEndReceive-A4dc}{b}{A4cb}{A4}{0.05}{0.0}{1}{hpiorange!20}
+%   \pplus{pEndReceive-A4cb}{a}{A4ba}{A4}{0.05}{0.0}{1}{hpiorange!20}
+
+%   % CWND exhausted 
+%   % ------------------
+%   % Packet 5: 
+%   \pplus{pEndReceive-A1ba}{b}{P5ab}{P5}{0.05}{0.5}{1}{hpiyellow!40}
+%   \pplus{pEndReceive-P5ab}{c}{P5bc}{P5}{0.05}{1}{1}{hpiyellow!40}
+%   \pplus{pEndReceive-P5bc}{d}{P5cd}{P5}{0.05}{0.5}{1}{hpiyellow!40}
+
+%   % Ack 5: 
+%   \pplus{pEndReceive-P5cd}{c}{A5dc}{A5}{0.05}{0.0}{1}{hpiyellow!50}
+%   \pplus{pEndReceive-A5dc}{b}{A5cb}{A5}{0.05}{0.0}{1}{hpiyellow!50}
+%   \pplus{pEndReceive-A5cb}{a}{A5ba}{A5}{0.05}{0.0}{1}{hpiyellow!50}
+
+%   % -------------
+%   % Packet 6: 
+%   \pplus{pEndReceive-A2ba}{b}{P6ab}{P6}{0.05}{0.5}{1}{hpired!40}
+%   \pplus{pEndReceive-P6ab}{c}{P6bc}{P6}{0.05}{1}{1}{hpired!40}
+%   \pplus{pEndReceive-P6bc}{d}{P6cd}{P6}{0.05}{0.5}{1}{hpired!40}
+
+%   % Ack 6: 
+%   \pplus{pEndReceive-P6cd}{c}{A6dc}{A6}{0.05}{0.0}{1}{hpired!50}
+%   \pplus{pEndReceive-A6dc}{b}{A6cb}{A6}{0.05}{0.0}{1}{hpired!50}
+%   \pplus{pEndReceive-A6cb}{a}{A6ba}{A6}{0.05}{0.0}{1}{hpired!50}
+
+%   % -------------
+%   % Packet 6: 
+%   \pplus{pEndReceive-A3ba}{b}{P7ab}{P7}{0.05}{0.5}{1}{hpiblue!40}
+%   \pplus{pEndReceive-P7ab}{c}{P7bc}{P7}{0.05}{1}{1}{hpiblue!40}
+%   \pplus{pEndReceive-P7bc}{d}{P7cd}{P7}{0.05}{0.5}{1}{hpiblue!40}
+
+%   % Ack 6: 
+%   \pplus{pEndReceive-P7cd}{c}{A7dc}{A7}{0.05}{0.0}{1}{hpiblue!50}
+%   \pplus{pEndReceive-A7dc}{b}{A7cb}{A7}{0.05}{0.0}{1}{hpiblue!50}
+%   \pplus{pEndReceive-A7cb}{a}{A7ba}{A7}{0.05}{0.0}{1}{hpiblue!50}
+  
+  
+% \end{tikzpicture}
+
+
+\begin{tikzpicture}
+
+  \label{page:cc:ackclocking}
+  % example: delay always 0.2, all ack times 0,
+  % packet times from A-B and C-D 0.5, from C-D 1 
+  
+  \node (a) {A}; 
+  \node [right=of a] (b) {B}; 
+  \node [right=of b] (c) {C};
+  \node [right=of c] (d) {D};
+
+  \foreach \n in {a,b,c, d} { \draw [thin] (\n) -- ++ (0,-13); }
+
+  % \pplusa{a}{b}{1}{0.5}{1}{0.1}{2}{hpiblue}
+  % Args: start, end, label, offset, packeet, delay, color
+
+  % Packet 1: 
+  \pplus{a}{b}{P1ab}{P1}{0.5}{0.5}{0.5}{hpiyellow!10}
+  \pplus{pEndReceive-P1ab}{c}{P1bc}{P1}{0.05}{1}{0.5}{hpiyellow!10}
+  \pplus{pEndReceive-P1bc}{d}{P1cd}{P1}{0.05}{0.5}{0.5}{hpiyellow!10}
+
+  % Ack 1: 
+  \pplus{pEndReceive-P1cd}{c}{A1dc}{A1}{0.05}{0.0}{0.5}{hpiyellow!20}
+  \pplus{pEndReceive-A1dc}{b}{A1cb}{A1}{0.05}{0.0}{0.5}{hpiyellow!20}
+  \pplus{pEndReceive-A1cb}{a}{A1ba}{A1}{0.05}{0.0}{0.5}{hpiyellow!20}
+
+
+  % Packet 2: 
+  \pplus{pEndSend-P1ab}{b}{P2ab}{P2}{0.05}{0.5}{0.5}{hpired!10}
+  \pplus{pEndSend-P1bc}{c}{P2bc}{P2}{0.05}{1}{0.5}{hpired!10}
+  \pplus{pEndReceive-P2bc}{d}{P2cd}{P2}{0.05}{0.5}{0.5}{hpired!10}
+
+  % Ack 2: 
+  \pplus{pEndReceive-P2cd}{c}{A2dc}{A2}{0.05}{0.0}{0.5}{hpired!20}
+  \pplus{pEndReceive-A2dc}{b}{A2cb}{A2}{0.05}{0.0}{0.5}{hpired!20}
+  \pplus{pEndReceive-A2cb}{a}{A2ba}{A2}{0.05}{0.0}{0.5}{hpired!20}
+
+  % Packet 3: 
+  \pplus{pEndSend-P2ab}{b}{P3ab}{P3}{0.05}{0.5}{0.5}{hpiblue!10}
+  \pplus{pEndSend-P2bc}{c}{P3bc}{P3}{0.05}{1}{0.5}{hpiblue!10}
+  \pplus{pEndReceive-P3bc}{d}{P3cd}{P3}{0.05}{0.5}{0.5}{hpiblue!10}
+
+  % Ack 3: 
+  \pplus{pEndReceive-P3cd}{c}{A3dc}{A3}{0.05}{0.0}{0.5}{hpiblue!20}
+  \pplus{pEndReceive-A3dc}{b}{A3cb}{A3}{0.05}{0.0}{0.5}{hpiblue!20}
+  \pplus{pEndReceive-A3cb}{a}{A3ba}{A3}{0.05}{0.0}{0.5}{hpiblue!20}
+
+  % Packet 3: 
+  \pplus{pEndSend-P3ab}{b}{P4ab}{P4}{0.05}{0.5}{0.5}{hpiorange!10}
+  \pplus{pEndSend-P3bc}{c}{P4bc}{P4}{0.05}{1}{0.5}{hpiorange!10}
+  \pplus{pEndReceive-P4bc}{d}{P4cd}{P4}{0.05}{0.5}{0.5}{hpiorange!10}
+
+  % Ack 3: 
+  \pplus{pEndReceive-P4cd}{c}{A4dc}{A4}{0.05}{0.0}{0.5}{hpiorange!20}
+  \pplus{pEndReceive-A4dc}{b}{A4cb}{A4}{0.05}{0.0}{0.5}{hpiorange!20}
+  \pplus{pEndReceive-A4cb}{a}{A4ba}{A4}{0.05}{0.0}{0.5}{hpiorange!20}
+
+  % CWND exhausted 
+  % ------------------
+  % Packet 5: 
+  \pplus{pEndReceive-A1ba}{b}{P5ab}{P5}{0.05}{0.5}{0.5}{hpiyellow!40}
+  \pplus{pEndReceive-P5ab}{c}{P5bc}{P5}{0.05}{1}{0.5}{hpiyellow!40}
+  \pplus{pEndReceive-P5bc}{d}{P5cd}{P5}{0.05}{0.5}{0.5}{hpiyellow!40}
+
+  % Ack 5: 
+  \pplus{pEndReceive-P5cd}{c}{A5dc}{A5}{0.05}{0.0}{0.5}{hpiyellow!50}
+  \pplus{pEndReceive-A5dc}{b}{A5cb}{A5}{0.05}{0.0}{0.5}{hpiyellow!50}
+  \pplus{pEndReceive-A5cb}{a}{A5ba}{A5}{0.05}{0.0}{0.5}{hpiyellow!50}
+
+  % -------------
+  % Packet 6: 
+  \pplus{pEndReceive-A2ba}{b}{P6ab}{P6}{0.05}{0.5}{0.5}{hpired!40}
+  \pplus{pEndReceive-P6ab}{c}{P6bc}{P6}{0.05}{1}{0.5}{hpired!40}
+  \pplus{pEndReceive-P6bc}{d}{P6cd}{P6}{0.05}{0.5}{0.5}{hpired!40}
+
+  % Ack 6: 
+  \pplus{pEndReceive-P6cd}{c}{A6dc}{A6}{0.05}{0.0}{0.5}{hpired!50}
+  \pplus{pEndReceive-A6dc}{b}{A6cb}{A6}{0.05}{0.0}{0.5}{hpired!50}
+  \pplus{pEndReceive-A6cb}{a}{A6ba}{A6}{0.05}{0.0}{0.5}{hpired!50}
+
+  % -------------
+  % Packet 6: 
+  \pplus{pEndReceive-A3ba}{b}{P7ab}{P7}{0.05}{0.5}{0.5}{hpiblue!40}
+  \pplus{pEndReceive-P7ab}{c}{P7bc}{P7}{0.05}{1}{0.5}{hpiblue!40}
+  \pplus{pEndReceive-P7bc}{d}{P7cd}{P7}{0.05}{0.5}{0.5}{hpiblue!40}
+
+  % Ack 6: 
+  \pplus{pEndReceive-P7cd}{c}{A7dc}{A7}{0.05}{0.0}{0.5}{hpiblue!50}
+  \pplus{pEndReceive-A7dc}{b}{A7cb}{A7}{0.05}{0.0}{0.5}{hpiblue!50}
+  \pplus{pEndReceive-A7cb}{a}{A7ba}{A7}{0.05}{0.0}{0.5}{hpiblue!50}
+  
+  
+\end{tikzpicture}
+
+
+
+\begin{tikzpicture}
+
+  \label{page:cc:ackclocking:with_comments}
+  % example: delay always 0.2, all ack times 0,
+  % packet times from A-B and C-D 0.5, from C-D 1 
+  
+  \node (a) {A}; 
+  \node [right=of a] (b) {B}; 
+  \node [right=of b] (c) {C};
+  \node [right=of c] (d) {D};
+
+  \foreach \n in {a,b,c, d} { \draw [thin] (\n) -- ++ (0,-13); }
+
+  % \pplusa{a}{b}{1}{0.5}{1}{0.1}{2}{hpiblue}
+  % Args: start, end, label, offset, packeet, delay, color
+
+  % Packet 1: 
+  \pplus{a}{b}{P1ab}{P1}{0.5}{0.5}{0.5}{hpiyellow!10}
+  \pplus{pEndReceive-P1ab}{c}{P1bc}{P1}{0.05}{1}{0.5}{hpiyellow!10}
+  \pplus{pEndReceive-P1bc}{d}{P1cd}{P1}{0.05}{0.5}{0.5}{hpiyellow!10}
+
+  % Ack 1: 
+  \pplus{pEndReceive-P1cd}{c}{A1dc}{A1}{0.05}{0.0}{0.5}{hpiyellow!20}
+  \pplus{pEndReceive-A1dc}{b}{A1cb}{A1}{0.05}{0.0}{0.5}{hpiyellow!20}
+  \pplus{pEndReceive-A1cb}{a}{A1ba}{A1}{0.05}{0.0}{0.5}{hpiyellow!20}
+
+
+  % Packet 2: 
+  \pplus{pEndSend-P1ab}{b}{P2ab}{P2}{0.05}{0.5}{0.5}{hpired!10}
+  \pplus{pEndSend-P1bc}{c}{P2bc}{P2}{0.05}{1}{0.5}{hpired!10}
+  \pplus{pEndReceive-P2bc}{d}{P2cd}{P2}{0.05}{0.5}{0.5}{hpired!10}
+
+  % Ack 2: 
+  \pplus{pEndReceive-P2cd}{c}{A2dc}{A2}{0.05}{0.0}{0.5}{hpired!20}
+  \pplus{pEndReceive-A2dc}{b}{A2cb}{A2}{0.05}{0.0}{0.5}{hpired!20}
+  \pplus{pEndReceive-A2cb}{a}{A2ba}{A2}{0.05}{0.0}{0.5}{hpired!20}
+
+  % Packet 3: 
+  \pplus{pEndSend-P2ab}{b}{P3ab}{P3}{0.05}{0.5}{0.5}{hpiblue!10}
+  \pplus{pEndSend-P2bc}{c}{P3bc}{P3}{0.05}{1}{0.5}{hpiblue!10}
+  \pplus{pEndReceive-P3bc}{d}{P3cd}{P3}{0.05}{0.5}{0.5}{hpiblue!10}
+
+  % Ack 3: 
+  \pplus{pEndReceive-P3cd}{c}{A3dc}{A3}{0.05}{0.0}{0.5}{hpiblue!20}
+  \pplus{pEndReceive-A3dc}{b}{A3cb}{A3}{0.05}{0.0}{0.5}{hpiblue!20}
+  \pplus{pEndReceive-A3cb}{a}{A3ba}{A3}{0.05}{0.0}{0.5}{hpiblue!20}
+
+  % Packet 3: 
+  \pplus{pEndSend-P3ab}{b}{P4ab}{P4}{0.05}{0.5}{0.5}{hpiorange!10}
+  \pplus{pEndSend-P3bc}{c}{P4bc}{P4}{0.05}{1}{0.5}{hpiorange!10}
+  \pplus{pEndReceive-P4bc}{d}{P4cd}{P4}{0.05}{0.5}{0.5}{hpiorange!10}
+
+  % Ack 3: 
+  \pplus{pEndReceive-P4cd}{c}{A4dc}{A4}{0.05}{0.0}{0.5}{hpiorange!20}
+  \pplus{pEndReceive-A4dc}{b}{A4cb}{A4}{0.05}{0.0}{0.5}{hpiorange!20}
+  \pplus{pEndReceive-A4cb}{a}{A4ba}{A4}{0.05}{0.0}{0.5}{hpiorange!20}
+
+  % CWND exhausted 
+  % ------------------
+  % Packet 5: 
+  \pplus{pEndReceive-A1ba}{b}{P5ab}{P5}{0.05}{0.5}{0.5}{hpiyellow!40}
+  \pplus{pEndReceive-P5ab}{c}{P5bc}{P5}{0.05}{1}{0.5}{hpiyellow!40}
+  \pplus{pEndReceive-P5bc}{d}{P5cd}{P5}{0.05}{0.5}{0.5}{hpiyellow!40}
+
+  % Ack 5: 
+  \pplus{pEndReceive-P5cd}{c}{A5dc}{A5}{0.05}{0.0}{0.5}{hpiyellow!50}
+  \pplus{pEndReceive-A5dc}{b}{A5cb}{A5}{0.05}{0.0}{0.5}{hpiyellow!50}
+  \pplus{pEndReceive-A5cb}{a}{A5ba}{A5}{0.05}{0.0}{0.5}{hpiyellow!50}
+
+  % -------------
+  % Packet 6: 
+  \pplus{pEndReceive-A2ba}{b}{P6ab}{P6}{0.05}{0.5}{0.5}{hpired!40}
+  \pplus{pEndReceive-P6ab}{c}{P6bc}{P6}{0.05}{1}{0.5}{hpired!40}
+  \pplus{pEndReceive-P6bc}{d}{P6cd}{P6}{0.05}{0.5}{0.5}{hpired!40}
+
+  % Ack 6: 
+  \pplus{pEndReceive-P6cd}{c}{A6dc}{A6}{0.05}{0.0}{0.5}{hpired!50}
+  \pplus{pEndReceive-A6dc}{b}{A6cb}{A6}{0.05}{0.0}{0.5}{hpired!50}
+  \pplus{pEndReceive-A6cb}{a}{A6ba}{A6}{0.05}{0.0}{0.5}{hpired!50}
+
+  % -------------
+  % Packet 6: 
+  \pplus{pEndReceive-A3ba}{b}{P7ab}{P7}{0.05}{0.5}{0.5}{hpiblue!40}
+  \pplus{pEndReceive-P7ab}{c}{P7bc}{P7}{0.05}{1}{0.5}{hpiblue!40}
+  \pplus{pEndReceive-P7bc}{d}{P7cd}{P7}{0.05}{0.5}{0.5}{hpiblue!40}
+
+  % Ack 6: 
+  \pplus{pEndReceive-P7cd}{c}{A7dc}{A7}{0.05}{0.0}{0.5}{hpiblue!50}
+  \pplus{pEndReceive-A7dc}{b}{A7cb}{A7}{0.05}{0.0}{0.5}{hpiblue!50}
+  \pplus{pEndReceive-A7cb}{a}{A7ba}{A7}{0.05}{0.0}{0.5}{hpiblue!50}
+
+  % remarks
+
+  \draw [decorate, decoration={brace, mirror, raise=10pt}] (pEndSend-P1bc) to node [left=10pt] (ipt-12) {} (pEndSend-P2bc);
+  \draw [decorate, decoration={brace, mirror, raise=10pt}] (pEndSend-P2bc) to node [left=10pt] (ipt-23) {} (pEndSend-P3bc);
+
+  \draw [decorate, decoration={brace, raise=10pt}] (pEndReceive-P1cd) to node [right=15pt] (ipt-12d) {} (pEndReceive-P2cd);
+  \draw [decorate, decoration={brace, raise=10pt}] (pEndReceive-P2cd) to node [right=15pt] (ipt-23d) {} (pEndReceive-P3cd);
+  
+  \draw [decorate, decoration={brace, mirror, raise=10pt}] (pEndReceive-A1ba) to node [left=10pt] (ipt-12a) {} (pEndReceive-A2ba);
+  \draw [decorate, decoration={brace, mirror, raise=10pt}] (pEndReceive-A2ba) to node [left=10pt] (ipt-23a) {} (pEndReceive-A3ba);
+
+  
+  
+  \node [below left=of ipt-12, align=center, draw=hpired] (ipt-label) {Time between packets\\at bottleneck link};
+  \draw [hpired, ->, very thick] (ipt-label) edge (ipt-12) edge (ipt-23) edge (ipt-12d) edge (ipt-23d) edge (ipt-12a) edge (ipt-23a); 
+  
+  
+\end{tikzpicture}
+
+
+\begin{tikzpicture}
+
+  \label{page:cc:ackclocking:with_slowstart}
+  % example: delay always 0.2, all ack times 0,
+  % packet times from A-B and C-D 0.5, from C-D 1 
+  
+  \node (a) {A}; 
+  \node [right=of a] (b) {B}; 
+  \node [right=of b] (c) {C};
+  \node [right=of c] (d) {D};
+
+  \foreach \n in {a,b,c, d} { \draw [thin] (\n) -- ++ (0,-16); }
+
+  % \pplusa{a}{b}{1}{0.5}{1}{0.1}{2}{hpiblue}
+  % Args: start, end, label, offset, packeet, delay, color
+
+  % Packet 1: 
+  \pplus{a}{b}{P1ab}{P1}{0.5}{0.5}{0.5}{hpiyellow!10}
+  \pplus{pEndReceive-P1ab}{c}{P1bc}{P1}{0.05}{1}{0.5}{hpiyellow!10}
+  \pplus{pEndReceive-P1bc}{d}{P1cd}{P1}{0.05}{0.5}{0.5}{hpiyellow!10}
+
+  % Ack 1: 
+  \pplus{pEndReceive-P1cd}{c}{A1dc}{A1}{0.05}{0.0}{0.5}{hpiyellow!20}
+  \pplus{pEndReceive-A1dc}{b}{A1cb}{A1}{0.05}{0.0}{0.5}{hpiyellow!20}
+  \pplus{pEndReceive-A1cb}{a}{A1ba}{A1}{0.05}{0.0}{0.5}{hpiyellow!20}
+
+
+  % Packet 2: 
+  \pplus{pEndSend-P1ab}{b}{P2ab}{P2}{0.05}{0.5}{0.5}{hpired!10}
+  \pplus{pEndSend-P1bc}{c}{P2bc}{P2}{0.05}{1}{0.5}{hpired!10}
+  \pplus{pEndReceive-P2bc}{d}{P2cd}{P2}{0.05}{0.5}{0.5}{hpired!10}
+
+  % Ack 2: 
+  \pplus{pEndReceive-P2cd}{c}{A2dc}{A2}{0.05}{0.0}{0.5}{hpired!20}
+  \pplus{pEndReceive-A2dc}{b}{A2cb}{A2}{0.05}{0.0}{0.5}{hpired!20}
+  \pplus{pEndReceive-A2cb}{a}{A2ba}{A2}{0.05}{0.0}{0.5}{hpired!20}
+
+  % Packet 3: 
+  \pplus{pEndSend-P2ab}{b}{P3ab}{P3}{0.05}{0.5}{0.5}{hpiblue!10}
+  \pplus{pEndSend-P2bc}{c}{P3bc}{P3}{0.05}{1}{0.5}{hpiblue!10}
+  \pplus{pEndReceive-P3bc}{d}{P3cd}{P3}{0.05}{0.5}{0.5}{hpiblue!10}
+
+  % Ack 3: 
+  \pplus{pEndReceive-P3cd}{c}{A3dc}{A3}{0.05}{0.0}{0.5}{hpiblue!20}
+  \pplus{pEndReceive-A3dc}{b}{A3cb}{A3}{0.05}{0.0}{0.5}{hpiblue!20}
+  \pplus{pEndReceive-A3cb}{a}{A3ba}{A3}{0.05}{0.0}{0.5}{hpiblue!20}
+
+  % Packet 3: 
+  \pplus{pEndSend-P3ab}{b}{P4ab}{P4}{0.05}{0.5}{0.5}{hpiorange!10}
+  \pplus{pEndSend-P3bc}{c}{P4bc}{P4}{0.05}{1}{0.5}{hpiorange!10}
+  \pplus{pEndReceive-P4bc}{d}{P4cd}{P4}{0.05}{0.5}{0.5}{hpiorange!10}
+
+  % Ack 3: 
+  \pplus{pEndReceive-P4cd}{c}{A4dc}{A4}{0.05}{0.0}{0.5}{hpiorange!20}
+  \pplus{pEndReceive-A4dc}{b}{A4cb}{A4}{0.05}{0.0}{0.5}{hpiorange!20}
+  \pplus{pEndReceive-A4cb}{a}{A4ba}{A4}{0.05}{0.0}{0.5}{hpiorange!20}
+
+  % CWND exhausted , but now, we are in slow start! 
+  % ------------------
+  % Packet 5: 
+  \pplus{pEndReceive-A1ba}{b}{P5ab}{P5}{0.05}{0.5}{0.5}{hpiyellow!40}
+  \pplus{pEndReceive-P5ab}{c}{P5bc}{P5}{0.05}{1}{0.5}{hpiyellow!40}
+  \pplus{pEndReceive-P5bc}{d}{P5cd}{P5}{0.05}{0.5}{0.5}{hpiyellow!40}
+
+  % Ack 5: 
+  \pplus{pEndReceive-P5cd}{c}{A5dc}{A5}{0.05}{0.0}{0.5}{hpiyellow!50}
+  \pplus{pEndReceive-A5dc}{b}{A5cb}{A5}{0.05}{0.0}{0.5}{hpiyellow!50}
+  \pplus{pEndReceive-A5cb}{a}{A5ba}{A5}{0.05}{0.0}{0.5}{hpiyellow!50}
+
+  % -------------
+  % Packet 6: 
+  \pplus{pEndSend-P5ab}{b}{P6ab}{P6}{0.05}{0.5}{0.5}{hpired!40}
+  \pplus{pEndSend-P5bc}{c}{P6bc}{P6}{0.05}{1}{0.5}{hpired!40}
+  \pplus{pEndReceive-P6bc}{d}{P6cd}{P6}{0.05}{0.5}{0.5}{hpired!40}
+
+  % Ack 6: 
+  \pplus{pEndReceive-P6cd}{c}{A6dc}{A6}{0.05}{0.0}{0.5}{hpired!50}
+  \pplus{pEndReceive-A6dc}{b}{A6cb}{A6}{0.05}{0.0}{0.5}{hpired!50}
+  \pplus{pEndReceive-A6cb}{a}{A6ba}{A6}{0.05}{0.0}{0.5}{hpired!50}
+
+  % -------------
+  % Packet 7: 
+  \pplus{pEndSend-P6ab}{b}{P7ab}{P7}{0.05}{0.5}{0.5}{hpiblue!40}
+  \pplus{pEndSend-P6bc}{c}{P7bc}{P7}{0.05}{1}{0.5}{hpiblue!40}
+  \pplus{pEndReceive-P7bc}{d}{P7cd}{P7}{0.05}{0.5}{0.5}{hpiblue!40}
+
+  % Ack 7: 
+  \pplus{pEndReceive-P7cd}{c}{A7dc}{A7}{0.05}{0.0}{0.5}{hpiblue!50}
+  \pplus{pEndReceive-A7dc}{b}{A7cb}{A7}{0.05}{0.0}{0.5}{hpiblue!50}
+  \pplus{pEndReceive-A7cb}{a}{A7ba}{A7}{0.05}{0.0}{0.5}{hpiblue!50}
+  
+  % -------------
+  % Packet 8: 
+  \pplus{pEndSend-P7ab}{b}{P8ab}{P8}{0.05}{0.5}{0.5}{hpiorange!40}
+  \pplus{pEndSend-P7bc}{c}{P8bc}{P8}{0.05}{1}{0.5}{hpiorange!40}
+  \pplus{pEndReceive-P8bc}{d}{P8cd}{P8}{0.05}{0.5}{0.5}{hpiorange!40}
+
+  % Ack 8: 
+  \pplus{pEndReceive-P8cd}{c}{A8dc}{A8}{0.05}{0.0}{0.5}{hpiorange!50}
+  \pplus{pEndReceive-A8dc}{b}{A8cb}{A8}{0.05}{0.0}{0.5}{hpiorange!50}
+  \pplus{pEndReceive-A8cb}{a}{A8ba}{A8}{0.05}{0.0}{0.5}{hpiorange!50}
+
+  % -------------
+  % Packet 9: 
+  \pplus{pEndSend-P8ab}{b}{P9ab}{P9}{0.05}{0.5}{0.5}{hpiyellow!70}
+  % \pplus{pEndSend-P8bc}{c}{P9bc}{P9}{0.05}{1}{0.5}{hpiyellow!70}
+  % \pplus{pEndReceive-P9bc}{d}{P9cd}{P9}{0.05}{0.5}{0.5}{hpiyellow!70}
+
+  % Ack 9: 
+  % \pplus{pEndReceive-P9cd}{c}{A9dc}{A9}{0.05}{0.0}{0.5}{hpiyellow!80}
+  % \pplus{pEndReceive-A9dc}{b}{A9cb}{A9}{0.05}{0.0}{0.5}{hpiyellow!80}
+  % \pplus{pEndReceive-A9cb}{a}{A9ba}{A9}{0.05}{0.0}{0.5}{hpiyellow!80}
+  
+  % -------------
+  % Packet 10: 
+  \pplus{pEndSend-P9ab}{b}{P10ab}{P10}{0.05}{0.5}{0.5}{hpired!70}
+  \pplus{pEndSend-P8bc}{c}{P10bc}{P10}{0.05}{1}{0.5}{hpired!70}
+  \pplus{pEndReceive-P10bc}{d}{P10cd}{P10}{0.05}{0.5}{0.5}{hpired!70}
+
+  % Ack 10: 
+  \pplus{pEndReceive-P10cd}{c}{A10dc}{A10}{0.05}{0.0}{0.5}{hpired!80}
+  \pplus{pEndReceive-A10dc}{b}{A10cb}{A10}{0.05}{0.0}{0.5}{hpired!80}
+  \pplus{pEndReceive-A10cb}{a}{A10ba}{A10}{0.05}{0.0}{0.5}{hpired!80}
+  
+  % -------------
+  % Packet 11: 
+  \pplus{pEndSend-P10ab}{b}{P11ab}{P11}{0.05}{0.5}{0.5}{green!70}
+  % \pplus{pEndSend-P10bc}{c}{P11bc}{P11}{0.05}{1}{0.5}{green!70}
+  % \pplus{pEndReceive-P11bc}{d}{P11cd}{P11}{0.05}{0.5}{0.5}{green!70}
+
+  % Ack 11: 
+  % \pplus{pEndReceive-P11cd}{c}{A11dc}{A11}{0.05}{0.0}{0.5}{green!80}
+  % \pplus{pEndReceive-A11dc}{b}{A11cb}{A11}{0.05}{0.0}{0.5}{green!80}
+  % \pplus{pEndReceive-A11cb}{a}{A11ba}{A11}{0.05}{0.0}{0.5}{green!80}
+
+
+  % markup for packet loss 
+  \node [align=center, draw=hpired, left=of pEndSend-P9ab] (pl) {Packet loss!};
+
+  \draw [hpired, very thick, ->] (pl) edge (pEndReceive-P9ab)  edge (pEndReceive-P11ab); 
+
+  \draw [decorate, decoration={brace,mirror,raise=10pt}] (pEndReceive-A8ba) to node[left=20pt, align=center] {ACK clock \\still working!} (pEndReceive-A10ba); 
+  
+  
+\end{tikzpicture}
+
+
+\end{document}

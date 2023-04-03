@@ -1,0 +1,20 @@
+% Created 2016-08-17 Wed 14:38
+\documentclass[tikz]{standalone}
+
+\input{../../templates/standalone_header}
+
+\usepackage{pgfplots}
+
+\begin{document}
+
+
+\begin{tikzpicture}
+  \begin{axis}[xmin=0, xmax=10, domain=0:10, ymin=0, ymax=200]
+    \addplot {1*(x-5)^3 + 100}; 
+    \draw [dotted] (axis cs:0,100) to node[above, very near start] {$b$} (axis cs:10, 100); 
+    \draw [dotted] (axis cs:5,0) to node[right, very near start] {$a$} (axis cs:5, 200); 
+  \end{axis}
+
+\end{tikzpicture}
+
+\end{document}
