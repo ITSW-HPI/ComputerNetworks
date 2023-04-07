@@ -6,6 +6,80 @@
 
 
 
+#+latex_header: \usetikzlibrary{calc,decorations.pathreplacing,decorations.shapes,decorations.pathmorphing,shapes.callouts,decorations.markings,spy,overlay-beamer-styles}
+
+#+begin_export latex
+\newcommand{\pplus}[8]{% 
+  % #1: start point
+  % #2: end point 
+  % #3: label intern
+  % #4: label to print 
+  % #5: vertical offset from startpoint
+  % #6: length of packet
+  % #7: delay
+  % #8: fill color 
+
+  \coordinate (pStartSend-#3) at ($ (#1) - (0, #5)$);
+  \coordinate (pEndSend-#3) at ($ (pStartSend-#3) - (0, #6)$);
+
+  \coordinate (tmp) at (pStartSend-#3 -| #2); 
+  \coordinate (pStartReceive-#3) at ($ (tmp) - (0, #7)$);
+  \coordinate (pEndReceive-#3) at ($ (pStartReceive-#3) - (0, #6)$);
+
+  % draw packet
+  \draw [fill=#8] (pStartSend-#3) to node [below, sloped] {#4} (pStartReceive-#3) -- (pEndReceive-#3) -- (pEndSend-#3); 
+}
+
+
+\newcommand{\pplusa}[6]{%
+  % #1: offset, #2: fill color #3: packet length #4: ACK length, #5 label
+  % #6: X to loose the ACK 
+  
+  \coordinate (pStartSend_#5) at ($(a) + (0,-0.5)-(0,#1)$); 
+  \coordinate (pEndSend_#5) at  ($  (pStartSend_#5) + (0,-#3) $ ); 
+  \coordinate (pStartReceive_#5) at ($ (pStartSend_#5) + (3.5,-1) $); 
+  \coordinate (pEndReceive_#5) at ($  (pStartReceive_#5) + (0,-#3) $ ); 
+  \coordinate (aStartSend_#5) at ($(b) +  (0,-0.5)-(0,#1)-(0,1)-(0,#3)  $); 
+  \coordinate (aEndSend_#5) at ($ (aStartSend_#5)  + (0,-#4) $); 
+  \coordinate (aStartReceive_#5) at ($ (aStartSend_#5) + (-3.5,-1)  $); 
+  \coordinate (aEndReceive_#5) at ($ (aStartReceive_#5) + (0,-#4)  $);   
+
+  
+  % Packets: 
+  \ifthenelse{\equal{#6}{X}}
+  {
+    % packet gets lost
+    \coordinate (pStartLoss_#5) at ($ (pStartSend_#5) + (1.75,-1)  $); 
+    \coordinate (pEndLoss_#5) at ($ (pStartLoss_#5) + (0,-#3)  $);
+
+    \draw [fill=#2, semitransparent] (pStartSend_#5) --
+    (pStartLoss_#5) decorate [decoration=zigzag] {-- (pEndLoss_#5)}
+    -- (pEndSend_#5);
+  \node at ($(1.75,-0.5) - (0,#1) - (0,0.5*#3) -(0, 0.5)$) {P\,#5 lost!}; 
+    
+  }
+  {
+    % packet normally delivered
+  \draw [fill=#2, semitransparent] (pStartSend_#5) -- (pStartReceive_#5) -- (pEndReceive_#5) -- (pEndSend_#5);
+  \node at ($(1.75,-0.5) - (0,#1) - (0,0.5*#3) -(0, 0.5)$) {P\,#5}; 
+  \draw [->] (a) ++ (pStartSend_#5) -- (pStartReceive_#5); 
+  \draw [->] (a) ++ (pEndSend_#5) -- (pEndReceive_#5); 
+
+  % ACK:
+    %ACK normally sent: 
+  \draw [fill=#2, semitransparent] (aStartSend_#5) -- (aStartReceive_#5) -- (aEndReceive_#5) -- (aEndSend_#5); 
+
+
+  \draw [->] (aStartSend_#5) -- (aStartReceive_#5); 
+  \draw [->] (aEndSend_#5) -- (aEndReceive_#5); 
+}
+
+}
+
+
+#+end_export 
+
+
 **** The story so far  
 
 **** Plans for this chapter 
@@ -13,6 +87,7 @@
 - Understand sources of the congestion control/resource allocation problem
 - Difference between congestion control and flow control
 - Possible solutions and their classification
+- Case study: TCP 
 
 \vskip-2.5em
 
@@ -38,119 +113,280 @@
       :BEAMER_env: ignoreheading
       :END:
 
-** Problems and options
+** Problems and options                                            
 
 
 
 
 **** Why congestion control?
+\vskip-2.5em
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+
 - Any network can only transport a bounded amount of traffic per unit time
-- Link capacities are limited, processing speed in routers, buffer space, … 
-- When sources inject more traffic into the network than its nominal capacity, congestive collapse (usually) results
-- Consequence: packets are lost!
+- Link capacities are limited, processing speed in routers, buffer
+  space, … 
+
+\pause 
+- Challenging case: Flows merge at a *bottleneck* link
+  - Bottleneck: *Available* link rate is smaller than the sum of the
+    incoming flows' rates 
+
+ 
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+
+#+caption: Basic scenario for congestion control: Flows with (potentially) high rates merge at a bottleneck link whose rate is smaller than the sum of the incoming rates
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:cc:basic_scenario}
+#+NAME: fig:cc:basic_scenario
+[[./standalone/cc.pdf]]
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+**** Congestive collapse 
+
+
+\vskip-2.5em
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+- When sources inject more traffic into the network than its nominal
+  rate, queues build up
+  - Main purpose of queues: smooth out variations, buffer
+- In the end: *congestive collapse* (usually) results
+  - Consequence: packets are lost!
+
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+#+caption: Basic scenario with queue build up in both directions at a bottleneck link
+#+attr_latex: :width 0.95\textwidth :height 0.3\textheight :options keepaspectratio,page=\getpagerefnumber{page:cc:basic_scenario:with_queues}
+#+NAME: fig:cc:basic_scenario:with_queues
+[[./standalone/cc.pdf]]
+
+#+caption: Ideal vs. acceptable vs. undesirable behavior of throughput vs. offered load
+#+attr_latex: :width 0.95\textwidth :height 0.3\textheight :options keepaspectratio,page=\getpagerefnumber{page:cc:ideal_throughtput}
+#+NAME: fig:cc:ideal_throughtput
+[[./standalone/cc.pdf]]
+
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
 **** Snowball effects
-- Congestion control is essential to avoid snowball effects
-- Once a network is overloaded, it will loose packets (buffer overflows, etc.)
-- Once a reliable transport protocol detects packet loss, it will retransmit the lost packets
-- These retransmissions further increase the load in the network
-- More packets will be lost
-- More retransmissions will happen
-- Etc. 
+- *Congestion control* is essential to avoid snowball effects
+  - Once a network is overloaded, it will loose packets (buffer overflows, etc.)
+  - Once a reliable transport protocol detects packet loss, it will retransmit the lost packets
+  - These retransmissions further increase the load in the network
+  - More packets will be lost
+  - More retransmissions will happen
+  - Etc. 
 - Mechanisms to dampen/avoid such oscillations are necessary
+
 **** Congestion control: Adapt sending rate to network capacity
 - Sending rate of each source has to be adapted to the network’s actual, current capacity
 - Global issue: depends on all links & routers, forwarding disciplines, load injected by other terminals, etc.
 - Made complicated by interaction of mechanisms of many different layers
+  - At least, link, network, and transport layer interact 
+
+
+**** Comparison: Flow control vs. congestion control 
+
+- *Flow control*:  issue between peers!
+  - Source must not overrun its destination
+  - Only source and destination are involved (possibly separated by multiple hops, but that is irrelevant)
+- *Congestion control*: issue inside a network
+  - Usually caused by interaction of multiple flows 
+
+
+
 **** Desirable properties of congestion control
-- Congestion control should result in many packets delivered at short delays
-- Protect network from congestive collapse but still transport as much data as possible
+
+- Congestion control should result in *many packets delivered* at *short delays*
+  - Protect network from congestive collapse but still transport as much data as possible
 - Fairness 
-- Give all participating flows a ``fair'' share of available capacity
-- Does fair mean ``equal''? Video conference = ssh session?
-- Should path lengths be considered?
+  - Give all participating flows a ``fair'' share of available capacity
+  - Does fair mean ``equal''? Video conference = ssh session?
+  - Should path lengths be considered?
+
+#+caption: Scenario for fairness: how to distribute link date rates between flows with many or few hops? 
+#+attr_latex: :width 0.95\textwidth :height 0.3\textheight :options keepaspectratio,page=\getpagerefnumber{page:cc:fairness_scenario}
+#+NAME: fig:cc:fairness_scenario
+[[./standalone/cc.pdf]]
+
+
+** Option space                                                    
+
+*** Taxonomy 
+
 **** Design options for congestion control mechanisms
 - Open loop: Design system up front so that it will work correctly, no corrections at runtime necessary
 - Closed loop: Use some sort of feedback to allow sender to adapt to current situation
-- Explicit feedback: Some entity (e.g., point where congestion occurs) informs sender
-- Implicit feedback: No explicit action taken; congestion is deduced by sender from the network’s behavior (e.g., missing acknowledgements)
-- 
+  - Explicit feedback: Some entity (e.g., point where congestion occurs) informs sender
+  - Implicit feedback: No explicit action taken; congestion is deduced by sender from the network’s behavior (e.g., missing acknowledgements)
 
-
-** Actions 
-
-
+#+caption: Types of congestion control approaches
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:cc:cc_types}
+#+NAME: fig:cc:cc_types
+[[./standalone/cc.pdf]]
 
 **** Possible actions – Taxonomy: Timescale
-- Increase capacity – activate additional links, routers, …
-- Usually not practical, at least on short timescales 
-- Reservations and admission control – do not admit additional traffic when network is nearing capacity limit
-- Usually applied to circuit-switched (or similar) networks; difficult (but not impossible) in packet-switched networks 
-- Feedback about network state only relatively rarely – akin to open-loop control
-- Reduce/control load at smaller granularity
-- Have some/all sources reduce their offered load without terminating on-going sessions
-- Usually requires feedback from the network (closed loop)
-**** Possible actions – Time scales 
-**** Possible actions – Taxonomy 
-- Where: Router-centric vs. host-centric
+- *Increase capacity* – activate additional links, routers, …
+  - Often not practical on short timescales 
+\pause 
+- *Reservations* and admission control – do not admit additional traffic when network is nearing capacity limit
+  - Usually applied to circuit-switched (or similar) networks; difficult (but not impossible) in packet-switched networks 
+  - Feedback about network state only relatively rarely – akin to
+    open-loop control
+\pause 
+- Reduce/*control load* at smaller granularity
+  - Have some/all sources reduce their offered load without terminating on-going sessions
+  - Usually requires feedback from the network (closed loop)
+**** Possible actions – Timescales 
+
+#+caption: Possible timescales and action scopes of various approaches for congestion control
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:cc:timescales}
+#+NAME: fig:cc:timescales
+[[./standalone/cc.pdf]]
+
+
+**** Where to take actions?  
+
+Where: Router-centric vs. host-centric
 - Where is/are information gathered, decisions made, actions taken?
 - Usually not either/or, but more a question of emphasis 
 - How: Window-based vs. rate-based
-- How is the allowed amount of traffic injected into the network described? 
-- By a rate – so and so many bytes per second?
-- By a congestion window – as a set of sequence numbers/amount of bytes that may be injected into the network before further permits are received?
-- 
-**** Router actions: Dropping packets 
+
+**** How to describe offered load? 
+
+How is the allowed amount of traffic injected into the network described? 
+- By a *rate* – so and so many bytes per second?
+- By a *congestion window* (*CWND*) – as a set of sequence numbers/amount of bytes that may be injected into the network before further permits are received?
+  - Versions for both packets or bytes exist (identical if all packets
+    are the same size)
+  - Briefly: Packets / bytes in flight \leq CWND 
+  - Compare sender-side windows for ARQ protocols!
+
+**** Relationship of CWND and rate 
+
+Interesting scenario: high datarate/delay product 
+- Typically, entire CWND can be sent before acks/permits arrive
+- Once acks/permits arrive, new data can be sent 
+- Hence, we send CWND data (or packets) in one RTT
+- Hence, rate: 
+
+\[  \mathrm{rate} = \frac{\mathrm{CWND}}{\mathrm{RTT}}
+\label{eq:rate_cwnd}
+\]
+
+- Note: This is only true in an averaged sense (at least over one RTT)
+  - Over shorter periods, rate can vary substantially 
+
+*** Actions 
+
+**** Dropping packets? 
 - Suppose a router’s buffer is full and a packet arrives
-- Obviously, there is one packet too many and one of them has to be dropped
+  - Obviously, there is one packet too many and one of them has to be dropped
+
+\pause
 - One candidate: the newly arriving packet
-- Intuition: ``old'' packets are more valuable than new ones, e.g., for a go-back-n transport protocol (``wine'' strategy)
-- A so-called drop-tail queue
+- Intuition: ``old'' packets are more valuable than new ones, e.g., for a go-back-n transport protocol (*wine* strategy)
+- A so-called *drop-tail queue*
+
 - Other option: a packet that is already in the queue for quite some time
-- Intuition: For multi-media traffic, new packets are more important than old ones (``milk'' strategy)
+- Intuition: For multi-media traffic, new packets are more important
+  than old ones (*milk* strategy)
+
+
 **** Dropping packets = implicit feedback
-- Dropping a packet constitutes an implicit feedback action
-- The sending transport protocol can detect this packet loss (if it so desires, e.g., by missing acknowledgements)
-- Assumption: Packet loss is only (or predominantly) caused by congestion
-- Then: Correct action by a transport protocol is to reduce its offered load (= send fewer packets per time interval)
-- Assumption is by and large true in wired networks but not in wireless networks
+- Dropping a packet is implicit feedback
+  - The sending transport protocol can detect this packet loss (if it so desires, e.g., by missing acknowledgements)
+  - Assumption: Packet loss is only (or predominantly) caused by congestion
+  - Then: Correct action by a transport protocol is to reduce its offered load (= send fewer packets per time interval)
+  - Assumption is by and large true in wired networks but not in wireless networks
+\pause
 - In open-loop congestion control, packets arriving to a full queue should never happen
 - Else, resource reservations were not done correctly
+
+
+
 **** Avoiding full queues – proactive actions?
 - When packets arrive to a full queue, things are pretty bad already
-- Is there any chance we can try to avoid such a situation, without having to recur to open-loop control? 
-- Provide proactive feedback! (Congestion avoidance)
-- Do not only react when the queue is full, but already when the ``congestion indicator'' has crossed some threshold
-- E.g., when the average queue lengthhas exceeded a lower threshold
-- E.g., when the outgoing linkutilization is persistently higherthan a threshold
-- E.g., … 
-- Router is then called to be in a warning state
+  - Is there any chance we can try to avoid such a situation, without
+    having to recur to open-loop control?  Avoiding congestion? 
+\pause
+- Provide *proactive feedback*! 
+  - Do not only react when the queue is full, but already when the ``congestion indicator'' has crossed some threshold
+  - E.g., when 
+    - the average queue length has exceeded a lower threshold
+    - the outgoing link utilization is persistently higher than a threshold
+    - \dots 
+  - Queue is then called to be in a *warning state*
+
 **** Proactive action: Choke packets
-- Once a router decides it is congested (or that it likely will be in the near future):Send out choke packets
-- A choke packet tells the source of a packet arriving during warning state to slow down its sending rate
+- Once a router decides it is congested (or that it likely will be in
+  the near future): Send out choke packets
+- A choke packet tells the source of a packet arriving during warning
+  state to slow down its sending rate
+\pause 
 - Obvious problem: In an already congested network, more packets are injected to remedy congestion
-- Questionable
+  - Questionable
 - Second problem: How long does it take before source learns about congestion?
-- How much data has already been injected? 
-- Think in terms of the data rate-delay product
+  - How much data has already been injected? 
+  - Think in terms of the data rate-delay product
+
 **** Proactive action: Warning bits
-- Once a router decides it is congested (or that it likely will be in the near future):Set a warning bit in all packets that it sends out
-- Destination will copy this warning bit into its acknowledgement packet
-- Source receives the warning bit and reduces its sending rate
-- 
+- Once a router decides it is congested (or that it likely will be in
+  the near future): Set a *warning bit* in all packets that it sends out
+  - Called, e.g., *early congestion notification*
+  - Destination will copy this warning bit into its acknowledgement packet
+  - Source receives the warning bit and reduces its sending rate
+
 **** Proactive actions: Random early detection (RED)
 - Exploit lost packets as implicit feedback, but not only when the queue is already full
 - Instead: early on deliberately drop some packets to provide feedback
-- Sounds cruel, but it might save later packets from being dropped
+  - Sounds cruel, but it might save later packets from being dropped
+  - Also called: Random Early Drop (RED) 
 - Dropping probability can be increased as a router becomes more and more congested
-- E.g., as the queue becomes longer and longer
+  - E.g., as the queue becomes longer and longer
+
+
 **** What happens after feedback has been received?
 - Once feedback of some sort has been received by a sending transport protocol instance, it has to react on it
 - Rate-based protocols: Reduce rate, e.g., by a constant factor
-- Relatively easy
-- Question: How to increase rate again?
+  - Relatively easy
+  - Question: How to increase rate again?
 - Window-based protocols: Shrink the congestion window
-- By how much? 
-- How to grow the window in the first place? 
+  - By how much? 
+  - How to grow the window in the first place? 
 
 ** Case study: TCP 
 
@@ -158,20 +394,402 @@
 
 
 **** Popular example: Congestion control in TCP
-- TCP’s mechanism for congestion control
-- Implicit feedback by dropped packets
-- Whether the packets were dropped because queues were full or by a mechanism like RED is indistinguishable (and immaterial) to TCP
-- There are some proposals for explicit router feedback as well, but not part of original TCP
+- We will use TCP as a case study
+  - Assumption: Flow control not an issue, ignored for this chapter!
+  - A general treatment of congestion control is too broad a topic
+\pause 
+- Strictly speaking, there is no such thing as ``TCP congestion
+  control'' but plenty of variants (see
+  below)
+  - We will mostly look at Tahoe, Reno, Cubic 
+
+
+**** TCP congestion control basics 
+
+TCP’s mechanism for congestion control
+- *Implicit feedback* by dropped packets: use missing/late ACKs 
+  - Whether the packets were dropped because queues were full or by a mechanism like RED is indistinguishable (and immaterial) to TCP
+  - There are some proposals for explicit router feedback as well, but not part of original TCP
 - Assumption: Congestion is the only important source of packet drops!
 - Window-based congestion control
-- I.e., TCP keeps track of how many bytes it is allowed to inject into the network by a window that grows and shrinks
-- Sender limits transmission:
-- LastByteSent - LastByteCumAcked \leq CongestionWindow
-- We will use TCP as a case study
-- Assumption: Flow control not an issue, ignored for this chapter!
-- A general treatment of congestion control is too broad a topic
-**** TCP ACK/self-clocking
-- Suppose TCP has somehow determined a ``correct'' size of its congestion window
+  - CWND in bytes 
+    - I.e., TCP keeps track of how many bytes it is allowed to inject into the network by a window that grows and shrinks
+
+
+*** ACK clocking                                                   
+
+**** Interaction TCP and bottleneck link  (ACK/self-clocking)
+- Suppose TCP has
+  - somehow determined a CWND size
+  - no packets in flight
+  - has infinite data to send (*backlogged sender*)
+- What will happen?
+  - \pause TCP will send its full CWND worth of data
+  - Then, wait for a permit to send more data
+    - ACK interpreted as permit: Packet has left the network; hence
+      network has space for another packet
+    - Each ACK triggers transmission of another packet
+  - Packet transmissions driven by ACK arrivals  - so-called *ACK
+    clock* 
+
+**** ACK clock: Example
+
+\vskip-2.5em
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+\begin{figure}
+  \begin{tikzpicture}
+    \node [client, label=above:A] (a) {};
+    \node [switch, label=above:B, right=of a] (b) {}; 
+    \node [switch, label=above:C, right=of b] (c) {}; 
+    \node [server, label=above:D, right=of c] (d) {};
+
+    \draw [very thick] (a) to node[above] {Rate 1} (b); 
+    \draw (b) to node[above] {Rate 0.5} (c); 
+    \draw [very thick] (c) to node[above] {Rate 1} (d); 
+  \end{tikzpicture}
+  \caption{Example scenario for ACK clocking}
+  \label{fig:cc:ack_clock_scenario}
+\end{figure}
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+
+\begin{figure}
+  \maxsizebox{!}{0.6\textheight}{
+\begin{tikzpicture}
+
+  \label{page:cc:ackclocking:with_comments}
+  % example: delay always 0.2, all ack times 0,
+  % packet times from A-B and C-D 0.5, from C-D 1 
+  
+  \node (a) {A}; 
+  \node [right=of a] (b) {B}; 
+  \node [right=of b] (c) {C};
+  \node [right=of c] (d) {D};
+
+  \foreach \n in {a,b,c, d} { \draw [thin] (\n) -- ++ (0,-13); }
+
+  % \pplusa{a}{b}{1}{0.5}{1}{0.1}{2}{hpiblue}
+  % Args: start, end, label, offset, packeet, delay, color
+
+  % Packet 1: 
+
+\pause 
+
+  \pplus{a}{b}{P1ab}{P1}{0.5}{0.5}{0.5}{hpiyellow!10}
+  \pplus{pEndReceive-P1ab}{c}{P1bc}{P1}{0.05}{1}{0.5}{hpiyellow!10}
+  \pplus{pEndReceive-P1bc}{d}{P1cd}{P1}{0.05}{0.5}{0.5}{hpiyellow!10}
+
+  % Ack 1: 
+  \pplus{pEndReceive-P1cd}{c}{A1dc}{A1}{0.05}{0.0}{0.5}{hpiyellow!20}
+  \pplus{pEndReceive-A1dc}{b}{A1cb}{A1}{0.05}{0.0}{0.5}{hpiyellow!20}
+  \pplus{pEndReceive-A1cb}{a}{A1ba}{A1}{0.05}{0.0}{0.5}{hpiyellow!20}
+
+
+\pause 
+
+  % Packet 2: 
+  \pplus{pEndSend-P1ab}{b}{P2ab}{P2}{0.05}{0.5}{0.5}{hpired!10}
+  \pplus{pEndSend-P1bc}{c}{P2bc}{P2}{0.05}{1}{0.5}{hpired!10}
+  \pplus{pEndReceive-P2bc}{d}{P2cd}{P2}{0.05}{0.5}{0.5}{hpired!10}
+
+  % Ack 2: 
+  \pplus{pEndReceive-P2cd}{c}{A2dc}{A2}{0.05}{0.0}{0.5}{hpired!20}
+  \pplus{pEndReceive-A2dc}{b}{A2cb}{A2}{0.05}{0.0}{0.5}{hpired!20}
+  \pplus{pEndReceive-A2cb}{a}{A2ba}{A2}{0.05}{0.0}{0.5}{hpired!20}
+
+\pause 
+
+  % Packet 3: 
+  \pplus{pEndSend-P2ab}{b}{P3ab}{P3}{0.05}{0.5}{0.5}{hpiblue!10}
+  \pplus{pEndSend-P2bc}{c}{P3bc}{P3}{0.05}{1}{0.5}{hpiblue!10}
+  \pplus{pEndReceive-P3bc}{d}{P3cd}{P3}{0.05}{0.5}{0.5}{hpiblue!10}
+
+  % Ack 3: 
+  \pplus{pEndReceive-P3cd}{c}{A3dc}{A3}{0.05}{0.0}{0.5}{hpiblue!20}
+  \pplus{pEndReceive-A3dc}{b}{A3cb}{A3}{0.05}{0.0}{0.5}{hpiblue!20}
+  \pplus{pEndReceive-A3cb}{a}{A3ba}{A3}{0.05}{0.0}{0.5}{hpiblue!20}
+
+\pause 
+
+  % Packet 4: 
+  \pplus{pEndSend-P3ab}{b}{P4ab}{P4}{0.05}{0.5}{0.5}{hpiorange!10}
+  \pplus{pEndSend-P3bc}{c}{P4bc}{P4}{0.05}{1}{0.5}{hpiorange!10}
+  \pplus{pEndReceive-P4bc}{d}{P4cd}{P4}{0.05}{0.5}{0.5}{hpiorange!10}
+
+  % Ack 4: 
+  \pplus{pEndReceive-P4cd}{c}{A4dc}{A4}{0.05}{0.0}{0.5}{hpiorange!20}
+  \pplus{pEndReceive-A4dc}{b}{A4cb}{A4}{0.05}{0.0}{0.5}{hpiorange!20}
+  \pplus{pEndReceive-A4cb}{a}{A4ba}{A4}{0.05}{0.0}{0.5}{hpiorange!20}
+
+\pause 
+\node [left=0.1 of pEndSend-P4ab, align=left] {CWND exhausted, wait
+};
+
+  % CWND exhausted 
+  % ------------------
+
+\pause 
+  % Packet 5: 
+  \pplus{pEndReceive-A1ba}{b}{P5ab}{P5}{0.05}{0.5}{0.5}{hpiyellow!40}
+  \pplus{pEndReceive-P5ab}{c}{P5bc}{P5}{0.05}{1}{0.5}{hpiyellow!40}
+  \pplus{pEndReceive-P5bc}{d}{P5cd}{P5}{0.05}{0.5}{0.5}{hpiyellow!40}
+
+  % Ack 5: 
+  \pplus{pEndReceive-P5cd}{c}{A5dc}{A5}{0.05}{0.0}{0.5}{hpiyellow!50}
+  \pplus{pEndReceive-A5dc}{b}{A5cb}{A5}{0.05}{0.0}{0.5}{hpiyellow!50}
+  \pplus{pEndReceive-A5cb}{a}{A5ba}{A5}{0.05}{0.0}{0.5}{hpiyellow!50}
+
+\pause 
+
+  % -------------
+  % Packet 6: 
+  \pplus{pEndReceive-A2ba}{b}{P6ab}{P6}{0.05}{0.5}{0.5}{hpired!40}
+  \pplus{pEndReceive-P6ab}{c}{P6bc}{P6}{0.05}{1}{0.5}{hpired!40}
+  \pplus{pEndReceive-P6bc}{d}{P6cd}{P6}{0.05}{0.5}{0.5}{hpired!40}
+
+  % Ack 6: 
+  \pplus{pEndReceive-P6cd}{c}{A6dc}{A6}{0.05}{0.0}{0.5}{hpired!50}
+  \pplus{pEndReceive-A6dc}{b}{A6cb}{A6}{0.05}{0.0}{0.5}{hpired!50}
+  \pplus{pEndReceive-A6cb}{a}{A6ba}{A6}{0.05}{0.0}{0.5}{hpired!50}
+
+\pause 
+
+  % -------------
+  % Packet 6: 
+  \pplus{pEndReceive-A3ba}{b}{P7ab}{P7}{0.05}{0.5}{0.5}{hpiblue!40}
+  \pplus{pEndReceive-P7ab}{c}{P7bc}{P7}{0.05}{1}{0.5}{hpiblue!40}
+  \pplus{pEndReceive-P7bc}{d}{P7cd}{P7}{0.05}{0.5}{0.5}{hpiblue!40}
+
+  % Ack 6: 
+  \pplus{pEndReceive-P7cd}{c}{A7dc}{A7}{0.05}{0.0}{0.5}{hpiblue!50}
+  \pplus{pEndReceive-A7dc}{b}{A7cb}{A7}{0.05}{0.0}{0.5}{hpiblue!50}
+  \pplus{pEndReceive-A7cb}{a}{A7ba}{A7}{0.05}{0.0}{0.5}{hpiblue!50}
+
+  
+\end{tikzpicture}
+    
+  }
+  \caption{Example MSC for ACK clocking; CWND fixed at 4; initially, no packets in flight; bottleneck has half data rate of other links.}
+\end{figure}
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+      
+
+**** ACK clock: Time between packets?
+\vskip-2.5em
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+Once ACK clock operates: What is the resulting time between packets? 
+\onslide<2->
+- Bottleneck link sends packets as fast as possible
+\onslide<3->
+
+- Packets arrive at destination with distance imposed by bottleneck
+\onslide<4->
+
+- ACKs are returned immediately
+\onslide<5->
+
+- Bottleneck does not slow down ACKs
+\onslide<6->
+
+- ACKs trigger transmission of new packets 
+\onslide<7->
+
+- Hence: Distance between packets = distance possible at bottleneck!
+
+\onslide<1->
+
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+
+\begin{figure}
+  \maxsizebox{!}{0.6\textheight}{
+\begin{tikzpicture}
+
+  \label{page:cc:ackclocking:with_comments}
+  % example: delay always 0.2, all ack times 0,
+  % packet times from A-B and C-D 0.5, from C-D 1 
+  
+  \node (a) {A}; 
+  \node [right=of a] (b) {B}; 
+  \node [right=of b] (c) {C};
+  \node [right=of c] (d) {D};
+
+  \foreach \n in {a,b,c, d} { \draw [thin] (\n) -- ++ (0,-13); }
+
+  % \pplusa{a}{b}{1}{0.5}{1}{0.1}{2}{hpiblue}
+  % Args: start, end, label, offset, packeet, delay, color
+
+  % Packet 1: 
+  \pplus{a}{b}{P1ab}{P1}{0.5}{0.5}{0.5}{hpiyellow!10}
+  \pplus{pEndReceive-P1ab}{c}{P1bc}{P1}{0.05}{1}{0.5}{hpiyellow!10}
+  \pplus{pEndReceive-P1bc}{d}{P1cd}{P1}{0.05}{0.5}{0.5}{hpiyellow!10}
+
+  % Ack 1: 
+  \pplus{pEndReceive-P1cd}{c}{A1dc}{A1}{0.05}{0.0}{0.5}{hpiyellow!20}
+  \pplus{pEndReceive-A1dc}{b}{A1cb}{A1}{0.05}{0.0}{0.5}{hpiyellow!20}
+  \pplus{pEndReceive-A1cb}{a}{A1ba}{A1}{0.05}{0.0}{0.5}{hpiyellow!20}
+
+
+
+  % Packet 2: 
+  \pplus{pEndSend-P1ab}{b}{P2ab}{P2}{0.05}{0.5}{0.5}{hpired!10}
+  \pplus{pEndSend-P1bc}{c}{P2bc}{P2}{0.05}{1}{0.5}{hpired!10}
+  \pplus{pEndReceive-P2bc}{d}{P2cd}{P2}{0.05}{0.5}{0.5}{hpired!10}
+
+  % Ack 2: 
+  \pplus{pEndReceive-P2cd}{c}{A2dc}{A2}{0.05}{0.0}{0.5}{hpired!20}
+  \pplus{pEndReceive-A2dc}{b}{A2cb}{A2}{0.05}{0.0}{0.5}{hpired!20}
+  \pplus{pEndReceive-A2cb}{a}{A2ba}{A2}{0.05}{0.0}{0.5}{hpired!20}
+
+
+
+  % Packet 3: 
+  \pplus{pEndSend-P2ab}{b}{P3ab}{P3}{0.05}{0.5}{0.5}{hpiblue!10}
+  \pplus{pEndSend-P2bc}{c}{P3bc}{P3}{0.05}{1}{0.5}{hpiblue!10}
+  \pplus{pEndReceive-P3bc}{d}{P3cd}{P3}{0.05}{0.5}{0.5}{hpiblue!10}
+
+  % Ack 3: 
+  \pplus{pEndReceive-P3cd}{c}{A3dc}{A3}{0.05}{0.0}{0.5}{hpiblue!20}
+  \pplus{pEndReceive-A3dc}{b}{A3cb}{A3}{0.05}{0.0}{0.5}{hpiblue!20}
+  \pplus{pEndReceive-A3cb}{a}{A3ba}{A3}{0.05}{0.0}{0.5}{hpiblue!20}
+
+
+
+  % Packet 4: 
+  \pplus{pEndSend-P3ab}{b}{P4ab}{P4}{0.05}{0.5}{0.5}{hpiorange!10}
+  \pplus{pEndSend-P3bc}{c}{P4bc}{P4}{0.05}{1}{0.5}{hpiorange!10}
+  \pplus{pEndReceive-P4bc}{d}{P4cd}{P4}{0.05}{0.5}{0.5}{hpiorange!10}
+
+  % Ack 4: 
+  \pplus{pEndReceive-P4cd}{c}{A4dc}{A4}{0.05}{0.0}{0.5}{hpiorange!20}
+  \pplus{pEndReceive-A4dc}{b}{A4cb}{A4}{0.05}{0.0}{0.5}{hpiorange!20}
+  \pplus{pEndReceive-A4cb}{a}{A4ba}{A4}{0.05}{0.0}{0.5}{hpiorange!20}
+
+  % CWND exhausted 
+  % ------------------
+
+
+  % Packet 5: 
+  \pplus{pEndReceive-A1ba}{b}{P5ab}{P5}{0.05}{0.5}{0.5}{hpiyellow!40}
+  \pplus{pEndReceive-P5ab}{c}{P5bc}{P5}{0.05}{1}{0.5}{hpiyellow!40}
+  \pplus{pEndReceive-P5bc}{d}{P5cd}{P5}{0.05}{0.5}{0.5}{hpiyellow!40}
+
+  % Ack 5: 
+  \pplus{pEndReceive-P5cd}{c}{A5dc}{A5}{0.05}{0.0}{0.5}{hpiyellow!50}
+  \pplus{pEndReceive-A5dc}{b}{A5cb}{A5}{0.05}{0.0}{0.5}{hpiyellow!50}
+  \pplus{pEndReceive-A5cb}{a}{A5ba}{A5}{0.05}{0.0}{0.5}{hpiyellow!50}
+
+
+  % -------------
+  % Packet 6: 
+  \pplus{pEndReceive-A2ba}{b}{P6ab}{P6}{0.05}{0.5}{0.5}{hpired!40}
+  \pplus{pEndReceive-P6ab}{c}{P6bc}{P6}{0.05}{1}{0.5}{hpired!40}
+  \pplus{pEndReceive-P6bc}{d}{P6cd}{P6}{0.05}{0.5}{0.5}{hpired!40}
+
+  % Ack 6: 
+  \pplus{pEndReceive-P6cd}{c}{A6dc}{A6}{0.05}{0.0}{0.5}{hpired!50}
+  \pplus{pEndReceive-A6dc}{b}{A6cb}{A6}{0.05}{0.0}{0.5}{hpired!50}
+  \pplus{pEndReceive-A6cb}{a}{A6ba}{A6}{0.05}{0.0}{0.5}{hpired!50}
+
+
+  % -------------
+  % Packet 7: 
+  \pplus{pEndReceive-A3ba}{b}{P7ab}{P7}{0.05}{0.5}{0.5}{hpiblue!40}
+  \pplus{pEndReceive-P7ab}{c}{P7bc}{P7}{0.05}{1}{0.5}{hpiblue!40}
+  \pplus{pEndReceive-P7bc}{d}{P7cd}{P7}{0.05}{0.5}{0.5}{hpiblue!40}
+
+  % Ack 7: 
+  \pplus{pEndReceive-P7cd}{c}{A7dc}{A7}{0.05}{0.0}{0.5}{hpiblue!50}
+  \pplus{pEndReceive-A7dc}{b}{A7cb}{A7}{0.05}{0.0}{0.5}{hpiblue!50}
+  \pplus{pEndReceive-A7cb}{a}{A7ba}{A7}{0.05}{0.0}{0.5}{hpiblue!50}
+
+
+  % remarks
+
+\onslide<2->
+  \draw [decorate, decoration={brace, mirror, raise=10pt}] (pEndSend-P1bc) to node [left=10pt] (ipt-12) {} (pEndSend-P2bc);
+  \draw [decorate, decoration={brace, mirror, raise=10pt}] (pEndSend-P2bc) to node [left=10pt] (ipt-23) {} (pEndSend-P3bc);
+
+
+\onslide<3->
+  \draw [decorate, decoration={brace, raise=10pt}] (pEndReceive-P1cd) to node [right=15pt] (ipt-12d) {} (pEndReceive-P2cd);
+  \draw [decorate, decoration={brace, raise=10pt}] (pEndReceive-P2cd) to node [right=15pt] (ipt-23d) {} (pEndReceive-P3cd);
+  
+
+\onslide<6->
+
+  \draw [decorate, decoration={brace, mirror, raise=10pt}] (pEndReceive-A1ba) to node [left=10pt] (ipt-12a) {} (pEndReceive-A2ba);
+  \draw [decorate, decoration={brace, mirror, raise=10pt}] (pEndReceive-A2ba) to node [left=10pt] (ipt-23a) {} (pEndReceive-A3ba);
+
+\onslide<7->
+  
+  
+  \node [below left=of ipt-12, align=center, draw=hpired] (ipt-label) {Time between packets\\at bottleneck link};
+  \draw [hpired, ->, very thick] (ipt-label) edge (ipt-12) edge (ipt-23) edge (ipt-12d) edge (ipt-23d) edge (ipt-12a) edge (ipt-23a); 
+  
+  
+\end{tikzpicture}
+    
+  }
+  \caption{Time between packet transmissions in  ACK clocking; CWND fixed at 4; initially, no packets in flight; bottleneck has half data rate of other links.}
+\end{figure}
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+
+
+
+
+
+**** Packets sent at bottleneck speed 
+
+- ACK clocking ensures that packets are sent at the speed the
+  bottleneck link can deal with
+\pause 
+- It works *without any explicit knowledge* of available rates 
+\pause 
+- It works with bottleneck link shared between different flows 
+\pause 
+- That does *NOT* mean that link rates are reduced
+  - Rather, gaps are left between packets
+
+
+**** Ack clock old                                                 :noexport:
+    - somehow determined a ``correct'' size of its congestion window
 - Suppose also that the TCP source has injected this entire amount of data into the network but still has more data to send
 - Correct size? Recall bandwidth-delay product! 
 - When to send more data?
@@ -179,218 +797,1404 @@
 - Space is available when packets leave the network
 - Sender can learn about packets leaving the network by receiving an acknowledgement!
 - Thus: ACK not only serves as a confirmation, but also as a permit to inject a corresponding amount of data into the network
--  $\leadsto$ ACK-clocking (self-clocking) behavior of TCP
+- $\leadsto$ ACK-clocking (self-clocking) behavior of TCP
+
+*** Adapting CWND                                                  
+**** Ideal CWND? 
+
+- So far, CWND was fixed
+- In previous example, it was too small
+  - Bottleneck link was idle! 
+- What is the *right* CWND?
+  - Recall Eq. \ref{eq:rate_cwnd}: $\mathrm{rate} =
+    \frac{\mathrm{CWND}}{\mathrm{RTT}}$
+  - It should hold: $\mathrm{rate} \approx \mathrm{rate}_\mathrm{bottleneck}$
+ - Hence (recall datarate-delay product): 
+\[ \mathrm{CWND}= \mathrm{rate}_\mathrm{bottleneck} \cdot \mathrm{RTT}
+\label{eq:cwnd_bottleneck}
+\]
+\pause 
+- How to set CWND?
+  - Realistically, we know neither RTT nor bottleneck rate
+  - Both of which can change
+
 **** Good and bad news
 - Good news: ACK arrival
-- Network could cope with the currently offered load; it did not drop the packet
-- Let’s be greedy and try to offer a bit more load – and see if it works!
--  $\leadsto$ Increase congestion window
-- Bad news: No ACK, timeout occurs
-- Packet has been dropped, network is overloaded
-- Put less load onto the network
--  $\leadsto$ Reduce congestion window
+  - Network could cope with the currently offered load; it did not drop the packet
+  - Let’s be greedy and try to offer a bit more load – and see if it works!
+  - $\leadsto$ Increase congestion window
+- Bad news: No ACK arrives; packet loss suspected 
+  - Suspicion: Packet has been dropped, network is overloaded
+  - Put less load onto the network
+  - $\leadsto$ Reduce congestion window
+
 **** Reduce congestion window by how much?
 - Overloaded network is bad situation – quick and drastic response necessary
--  $\leadsto$ Upon packet drop, cut congestion window in half
-- Reduce load by 50%
-- A minimum congestion window of one packet is always allowed
-- A multiplicative decrease
+  - $\leadsto$ Upon packet drop, cut congestion window in half
+    - A minimum congestion window of one or two  packets is always allowed
+  - Reduces load by 50%
+  - A *multiplicative* decrease
+\pause
 - If a packet happens to be dropped because of a transmission error (not due to overload), TCP misinterprets and overreacts
-- But this is a rare occurrence in wired networks
-- Leads to various problems in wireless networks
+  - But this is a rare occurrence in wired networks
+  - Leads to various problems in wireless networks
+
 **** Increase congestion window by how much? 
 - When increasing congestion window, sender cannot be sure that additional capacity is actually available
-- Asymmetric situation to decreasing of congestion window!
+  - Asymmetric situation to decreasing of congestion window!
+\pause
 - Hence: Be careful, only increase a little!
-- Think in terms of round trip times (RTT)
-- If all packets sent out within the last RTT arrived,try to send one more packet per RTT
-- There’s a little bit of rounding up involved to account for packet generation times 
-- This adds constant amounts of load: additive increase
+  - Smallest increment: one more packet  *per RTT*
+\pause
+- This adds constant amounts of load: *additive increase*
+
+
+**** Additive increase: practicality aspect 1 
+
+- Incrementing CWND by one each RTT: *When* is RTT over? At which ACK? 
+- Simpler idea: Increment CWND by 1/CWND for each ACK 
+
+**** Additive increase - example 
+
+\begin{figure}
+  \maxsizebox{!}{0.6\textheight}{
+\begin{tikzpicture}
+  \node [fill=hpiorange!10](a) {A};
+  \node [fill=hpiblue!10, right=3cm of a] (b) {B};
+
+  \node [left=of a] (inflight) {in flight}; 
+  \node [left=of inflight] (cwnd) {CWND}; 
+  \draw (a) -- ++(0,-11); 
+  \draw (b) -- ++(0,-11);
+  
+  \pplusa{0}{hpiyellow!10}{0.3}{0}{1}{}
+  \node at (cwnd |- pStartSend_1)  {1};
+  \draw [dotted] (pEndSend_1) -- (inflight |- pEndSend_1) node  {1};
+\pause 
+  
+  % ----- after one RTT: 
+
+  \node at (cwnd |- aEndReceive_1)  {1 + 1/1 = 2};
+  \draw [dotted] (aEndReceive_1) -- (inflight |- aEndReceive_1) node  {0};
+\pause 
+  
+  \pplusa{2 + 0.3 + 0.05}{hpired!10}{0.3}{0}{2}{}
+  
+  \pplusa{2 + 2*0.3 + 2*0.05}{hpiblue!10}{0.3}{0}{3}{}
+  \draw [dotted] (pEndSend_3) -- (inflight |- pEndSend_3) node  {2};
+
+\pause 
+  
+  % ----- after two RTTs: 
+  \node at (cwnd |- aEndReceive_2)  {$2 + 1/2 = 2.5$};
+  \draw [dotted] (aEndReceive_2) --  (inflight |- aEndReceive_2) node {1};
+
+\pause 
+  
+  \pplusa{2*2 + 2*0.3 + 1*0.05}{hpiorange!10}{0.3}{0}{4}{}
+
+\pause 
+
+  \node at (cwnd |- aEndReceive_3)  {$2.5 + 1/2 = 3 $};
+  \draw [dotted] (aEndReceive_3) --  (inflight |- aEndReceive_3) node {1};
+
+\pause 
+
+
+  \pplusa{2*2 + 3*0.3 + 2*0.05}{hpiyellow!30}{0.3}{0}{5}{}
+  \pplusa{2*2 + 4*0.3 + 3*0.05}{hpired!30}{0.3}{0}{6}{}
+
+  \draw [dotted] (pEndSend_6) -- (inflight |- pEndSend_6) node  {3};
+
+\pause 
+  
+  % % ----- nach 3 RTTs
+  \node at (cwnd |- aEndReceive_4)  {$3 + 1/3 = 3.33\dots  $};
+  \draw [dotted] (aEndReceive_4) --  (inflight |- aEndReceive_4) node {2};
+  
+\pause 
+  
+  \pplusa{3*2 + 3*0.3 + 2*0.05}{hpiblue!30}{0.3}{0}{7}{}
+
+\pause 
+
+  \node at (cwnd |- aEndReceive_5)  {$3.33\dots  + 1/3 = 3.66\ldots $};
+  \draw [dotted] (aEndReceive_5) --  (inflight |- aEndReceive_5) node {2};
+\pause 
+  
+  \pplusa{3*2 + 4*0.3 + 3*0.05}{hpiorange!30}{0.3}{0}{8}{}
+\pause 
+
+  \node at (cwnd |- aEndReceive_6)  {$3.66\dots  + 1/3  = 4\ldots $};
+  \draw [dotted] (aEndReceive_6) --  (inflight |- aEndReceive_6) node {2};
+\pause 
+
+  \pplusa{3*2 + 5*0.3 + 4*0.05}{hpiyellow!60}{0.3}{0}{9}{}
+
+  \pplusa{3*2 + 6*0.3 + 5*0.05}{hpired!60}{0.3}{0}{10}{}
+  \draw [dotted] (pEndSend_10) -- (inflight |- pEndSend_10) node  {0};
+
+
+\end{tikzpicture}}
+\caption{Example for simplified linear increase of CWND; initial CWND 1; backlogged sender }
+  \label{fig:cc:one_cwnd_increase:exact:comments}
+
+\end{figure}
+
+
+
+**** Additive increase: practicality aspect 2
+
+
+- Actually: previous example still complex to implement
+  - We increment CWND by 1/CWND, but not the *current CWND*, but the
+    one at the start of a CWND-sending period
+\pause 
+- Maybe feasible to do, but requires bookkeeping
+  - When is the start? 
+\pause
+- Even simpler: Increment CWND by 1/*current* CWND!
+  - Consequence: Sub-linear increase 
+
+
+
+**** Additive increase - example 2
+
+\begin{figure}
+  \maxsizebox{!}{0.6\textheight}{
+\begin{tikzpicture}
+
+  \node [fill=hpiorange!10](a) {A};
+  \node [fill=hpiblue!10, right=3cm of a] (b) {B};
+
+  \node [left=of a] (inflight) {in flight}; 
+  \node [left=of inflight] (cwnd) {CWND}; 
+  \draw (a) -- ++(0,-11); 
+  \draw (b) -- ++(0,-11);
+  
+  \pplusa{0}{hpiyellow!10}{0.3}{0}{1}{}
+  \node at (cwnd |- pStartSend_1)  {1};
+  \draw [dotted] (pEndSend_1) -- (inflight |- pEndSend_1) node  {1};
+  
+  % ----- after one RTT: 
+
+  \node at (cwnd |- aEndReceive_1)  {2};
+  \draw [dotted] (aEndReceive_1) -- (inflight |- aEndReceive_1) node  {0};
+  
+  \pplusa{2 + 0.3 + 0.05}{hpired!10}{0.3}{0}{2}{}
+  
+  \pplusa{2 + 2*0.3 + 2*0.05}{hpiblue!10}{0.3}{0}{3}{}
+  \draw [dotted] (pEndSend_3) -- (inflight |- pEndSend_3) node  {2};
+
+
+  
+  % ----- after two RTTs: 
+  \node at (cwnd |- aEndReceive_2)  {$2 + \frac{1}{2} = 2.5$};
+  \draw [dotted] (aEndReceive_2) --  (inflight |- aEndReceive_2) node {1};
+
+
+  
+  \pplusa{2*2 + 2*0.3 + 1*0.05}{hpiorange!10}{0.3}{0}{4}{}
+
+  \node at (cwnd |- aEndReceive_3)  {$2.5 + \frac{1}{2.5} = 2.9 $};
+  \draw [dotted] (aEndReceive_3) --  (inflight |- aEndReceive_3) node {1};
+
+
+
+  \pplusa{2*2 + 3*0.3 + 2*0.05}{hpiyellow!30}{0.3}{0}{5}{}
+  % \pplusa{2*2 + 4*0.3 + 3*0.05}{hpired!30}{0.3}{0}{6}{}
+
+  \draw [dotted] (pEndSend_5) -- (inflight |- pEndSend_5) node  {2};
+  
+  % % ----- nach 3 RTTs
+  \node at (cwnd |- aEndReceive_4)  {$2.9 + \frac{1}{2.9} \approx 3.2 $};
+  \draw [dotted] (aEndReceive_4) --  (inflight |- aEndReceive_4) node {1};
+  
+  
+  \pplusa{3*2 + 3*0.3 + 2*0.05}{hpiblue!30}{0.3}{0}{6}{}
+
+  \node at (cwnd |- aEndReceive_5)  {$3.2 + \frac{1}{3.2} \approx 3.5 $};
+  \draw [dotted] (aEndReceive_5) --  (inflight |- aEndReceive_5) node {1};
+  
+  \pplusa{3*2 + 4*0.3 + 3*0.05}{hpiorange!30}{0.3}{0}{7}{}
+  \pplusa{3*2 + 5*0.3 + 4*0.05}{hpiyellow!60}{0.3}{0}{8}{}
+
+  \draw [dotted] (pEndSend_8) -- (inflight |- pEndSend_8) node  {3};
+
+  % \pplusa{3*2 + 6*0.3 + 5*0.05}{hpired!60}{0.3}{0}{10}{}
+
+\end{tikzpicture}}
+\caption{Example for slightly more complex, alomost  linear increase of CWND; initial CWND 1; backlogged sender }
+  \label{fig:cc:one_cwnd_increase:exact:comments}
+
+
+\end{figure}
+
+
 **** Additive increase – details 
-- In practice, additive increase does not wait for a full RTT before it adds additional load
-- Instead, each arriving ACK is used to increase window a little (but not by a full packet); packet is sent once window is big enough 
-- Specifically:
-- Increment = MSS ¢ (MSS / Congestion Window)
-- All measured in bytes
-- Congestion Window += Increment
-- Where MSS is the Maximum Segment Size, the size of the largest allowed packet
-- 
+
+- Various implementation options exist
+- In fact, TCP measures CWND in bytes, not in packets
+  - And increments accordingly 
+  - Geared towards *Maximum segment size* (MSS) packets 
+
+**** Additive increase, multiplicative decrease
+
+CWND manipulation so far: 
+- Additive increase 
+- Multiplicative decrease 
+\pause
+Terminology: *Additive increase, multiplicative decrease (AIMD)*
+\pause
+- What could AIAD, MIAD, MIMD mean? 
+
 **** AIMD – Sawtooth pattern of TCP’s offered load
-- In summary: TCP uses an additive increase multiplicative decrease (AIMD) scheme
-- Consequence
+
+Consequences of AIMD
 - A TCP connection perpetually probes the network to check for additional bandwidth
-- Will repeatedly exceed it and fall back, owing to multiplicative decrease
-- Sawtooth pattern of TCP’s congestion window/offered load
-- This is still simplified; we have to introduce one more mechanism!
+- Will repeatedly exceed it (additive increase) and fall back (multiplicative decrease)
+- *Sawtooth pattern* of TCP’s congestion window/offered load
+  - Note: This is still simplified
+
+#+caption: Sawtooth pattern of CWND over time, resulting from TCP's AIMD mechanism
+#+attr_latex: :width 0.95\textwidth :height 0.3\textheight :options keepaspectratio,page=\getpagerefnumber{page:cc:sawtooth}
+#+NAME: fig:cc:sawtooth
+[[./standalone/cc.pdf]]
+
+
+**** Ramp-up time? 
+
+- How long does this mechanism take to ramp up CWND to desired size? 
+- Example: Transatlantic link 
+  - 200 ms delay, 12 Gbit/s bottleneck link rate, TCP packets of 1500
+    bytes
+\pause 
+- Results
+  - Bottleneck rate in packet/s = 12 Gbit/s / 1500 bytes/packet = 12
+    Git/s / 12000 bits/packet = 1 MPacket / s 
+  - CWND = Bottleneck rate \cdot RTT = 1 MPacket/s * 0,4 s = 400.000
+    Packets  
+  - It takes 400.000 RTTs to go from closed CWND to desired size
+  - Or: 400.000 RTT \cdot 0,4 s / RTT = 160.000 s \approx 44 h 
+
+
+*** Slow start                                                     
+
+
 **** Quickly initialize a connection: Slow start
 - Additive increase nice and well when operating close to network capacity
-- But takes a long time to converge to it for a new connection
-- Starting at a congestion window of, say, 1 or 2
+  - But convergence time for new connection too long 
+\pause 
 - Idea: Quickly ramp up the congestion window in such an initialization phase
-- Goal: double congestion window each RTT
-- Implemented by: increase congestion window by one packet per arriving ACK
-- Instead of just adding a single packet per RTT
-- 
+  - Double congestion window each RTT
+  - Implemented by: increase congestion window by *one packet per arriving ACK*
+    - Instead of just adding a single packet per RTT
+\pause 
+- Note: Name ``slow start'' is historic – it was slow compared to some earlier, even more aggressive scheme
+
+**** Slow start: Example 
+
+
+\begin{figure}
+  \maxsizebox{!}{0.6\textheight}{
+    \begin{tikzpicture}
+      \label{page:cc:slowstart:comments}
+      \node [fill=hpiorange!10](a) {A};
+      \node [fill=hpiblue!10, right=3cm of a] (b) {B};
+
+      \node [left=of a] (inflight) {in flight}; 
+      \node [left=of inflight] (cwnd) {CWND}; 
+      \draw (a) -- ++(0,-15); 
+      \draw (b) -- ++(0,-15);
+      
+      \pplusa{0}{hpiyellow!10}{0.3}{0}{1}{}
+      \node at (cwnd |- pStartSend_1)  {1};
+      \draw [dotted] (pEndSend_1) -- (inflight |- pEndSend_1) node  {1};
+
+      \pause
+      % ----- after one RTT: 
+
+      \node at (cwnd |- aEndReceive_1)  {1 + 1 = 2};
+      \draw [dotted] (aEndReceive_1) -- (inflight |- aEndReceive_1) node  {0};
+      
+      \pplusa{2 + 0.3 + 0.05}{hpired!10}{0.3}{0}{2}{}
+      
+      \pplusa{2 + 2*0.3 + 2*0.05}{hpiblue!10}{0.3}{0}{3}{}
+      \draw [dotted] (pEndSend_3) -- (inflight |- pEndSend_3) node  {2};
+
+      \pause
+
+      
+      % ----- after two RTTs: 
+      \node at (cwnd |- aEndReceive_2)  {2 + 1 = 3};
+      \draw [dotted] (aEndReceive_2) --  (inflight |- aEndReceive_2) node {1};
+
+      \pause
+
+      
+      \pplusa{2*2 + 2*0.3 + 1*0.05}{hpiorange!10}{0.3}{0}{4}{}
+
+      \pause
+
+      \node at (cwnd |- aEndReceive_3)  {3 + 1 =  4};
+      \draw [dotted] (aEndReceive_3) --  (inflight |- aEndReceive_3) node {1};
+
+      \pause
+
+
+      \pplusa{2*2 + 3*0.3 + 2*0.05}{hpiyellow!30}{0.3}{0}{5}{}
+      \pplusa{2*2 + 4*0.3 + 3*0.05}{hpired!30}{0.3}{0}{6}{}
+      \pplusa{2*2 + 5*0.3 + 4*0.05}{hpiblue!30}{0.3}{0}{7}{}
+      
+
+      \draw [dotted] (pEndSend_7) -- (inflight |- pEndSend_7) node  {4};
+      
+      \pause
+      % % ----- nach 3 RTTs
+      \node at (cwnd |- aEndReceive_4)  {4 + 1 = 5};
+      \draw [dotted] (aEndReceive_4) --  (inflight |- aEndReceive_4) node {3};
+      
+      
+
+      \node at (cwnd |- aEndReceive_5)  {5 + 1 = 6};
+      \draw [dotted] (aEndReceive_5) --  (inflight |- aEndReceive_5) node {3};
+      
+      \pplusa{3*2 + 3*0.3 + 1*0.05}{hpiorange!30}{0.3}{0}{8}{}
+
+      \node at (cwnd |- aEndReceive_6)  {6 + 1 = 7};
+      \draw [dotted] (aEndReceive_6) --  (inflight |- aEndReceive_6) node {3};
+
+      \pplusa{3*2 + 4*0.3 + 2*0.05}{hpiyellow!60}{0.3}{0}{9}{}
+
+      \node at (cwnd |- aEndReceive_7)  {7 + 1 = 8};
+      \draw [dotted] (aEndReceive_7) --  (inflight |- aEndReceive_7) node {3};
+
+      
+      \pplusa{3*2 + 5*0.3 + 3*0.05}{hpired!60}{0.3}{0}{10}{}
+      \pplusa{3*2 + 6*0.3 + 4*0.05}{hpiblue!60}{0.3}{0}{11}{}
+      \draw [dotted] (pEndSend_11) -- (inflight |- pEndSend_11) node  {4};
+
+      % and second half of the 8 CWND
+      \pplusa{3*2 + 7*0.3 + 5*0.05}{hpiorange!60}{0.3}{0}{12}{}
+      \pplusa{3*2 + 8*0.3 + 6*0.05}{hpiyellow!90}{0.3}{0}{13}{}
+      \pplusa{3*2 + 9*0.3 + 7*0.05}{hpired!90}{0.3}{0}{14}{}
+
+      \node at (cwnd |- aEndReceive_8)  {8 + 1 = 9};
+      \draw [dotted] (pEndSend_14) -- (inflight |- pEndSend_14) node  {7};
+      
+      \node at (cwnd |- aEndReceive_9)  {9 + 1 = 10};
+      \pplusa{3*2 + 10*0.3 + 8*0.05}{hpiblue!90}{0.3}{0}{15}{}
+      \draw [dotted] (pEndSend_15) -- (inflight |- pEndSend_15) node  {8};
+
+
+      \node [below left=of pEndSend_15, align=right] (label) {Continuous sending possible!};
+      \draw [dotted, ->] (label) -- (pEndSend_15); 
+
+      
+      
+
+    \end{tikzpicture}
+    
+  }
+  \caption{Slow start example }
+\end{figure}
+
+
 **** Leaving slow start
-- When doubling congestion window, network capacity will eventually be exceeded
-- Packet loss and timeout will result
+- When doubling congestion window, bottleneck data rate  will quickly be exceeded
+  - Packet loss and timeout will result
 - Congestion window is halved and TCP switches to ``normal'', linear increase of congestion window
-- The ``congestion avoidance'' phase
-- 
+  - The *congestion avoidance* phase
+
+
+*** Packet bursts                                                  
+
+
 **** Remaining problem: Packet bursts
 - Congestion control scheme so far: Nice and well, but one problematic case remains
 - Suppose 
-- A sender transmits its full congestion window
-- Packets arrive, acknowledgements are lost
-- Timeout occurs, CW is halved
-- One packet is retransmitted
-- Cumulative acknowledgement for all outstanding packets arrives
--  $\leadsto$ Sender will then transmit an entire (halved) congestion window worth of data in a single burst! ACK clocking is missing!
--  $\leadsto$ Not good! Many packet losses!
-**** Solution: Use slow start here as well
-- Avoiding such packet bursts by linearly increasing CW too slow
-- We can use the slow start mechanism to get the ACK flow going again 
-- $\leadsto$ Reset the congestion window to 1, restart slow start
-- In addition: We have some rough idea of what the network’s capacity is!
-- When initializing a connection, no idea – have to wait for the first packet loss (or use heuristic assumption) 
-- Here: the previous, halved congestion window is a relatively good guess! 
-- We can avoid the next packet loss by using the previous congestion window as a congestion threshold 
--  $\leadsto$ Use slow start’s exponential growth until congestion threshold is reached, then switch to additive increase
+  - A sender transmits using ACK clock adapted to bottleneck rate 
+  - Packets arrive, but acknowledgements are lost
+  - Timeout occurs, CWND is halved
+  - One packet is retransmitted
+  - Cumulative acknowledgement for all outstanding packets arrives
+\pause 
+- $\leadsto$ Sender then has *zero* packet in flight; sends all its
+  CWND back to back 
+  - Because  ACK clocking is missing!
+\pause 
+- $\leadsto$ Not good! Many packet losses!
+
+**** Packet bursts - Example 
+
+\begin{figure}
+% \usetikzlibrary{spy}
+  \maxsizebox{!}{0.6\textheight}{
+\begin{tikzpicture} % [spy using overlays={size=10cm}]
+
+  % example: delay always 0.2, all ack times 0,
+  % packet times from A-B and C-D 0.5, from C-D 1 
+  
+  \node (a) {A}; 
+  \node [right= 3 of a] (errorline) {}; 
+  \node [right=of errorline] (b) {B};
+
+  \foreach \n in {a, b} { \draw [thin] (\n) -- ++ (0,-47); }
+
+  % \pplusa{a}{b}{1}{0.5}{1}{0.1}{2}{hpiblue}
+  % Args: start, end, label, offset, packeet, delay, color
+
+  % Packet 1: 
+  \pplus{a}{b}{P1}{P1}{2}{0.5}{8}{hpiyellow!10}
+  \pplus{pEndSend-P1}{b}{P2}{P2}{2}{0.5}{8}{hpired!10}
+  \pplus{pEndSend-P2}{b}{P3}{P3}{2}{0.5}{8}{hpiblue!10}
+  \pplus{pEndSend-P3}{b}{P4}{P4}{2}{0.5}{8}{hpiorange!10}
+  \pplus{pEndSend-P4}{b}{P5}{P5}{2}{0.5}{8}{hpiyellow!20}
+  \pplus{pEndSend-P5}{b}{P6}{P6}{2}{0.5}{8}{hpired!20}
+  \pplus{pEndSend-P6}{b}{P7}{P7}{2}{0.5}{8}{hpiblue!20}
+  % \pplus{pEndSend-P7}{b}{P8}{P8}{2}{0.5}{8}{hpiorange!20}
+
+  % previous ACKs:
+
+  \foreach \i in {1,...,7} {
+    \draw (pStartSend-P\i) -- ++(1, 1.75);
+  }
+
+  
+  \foreach \i in {1,...,7} {
+    \pplus{pEndReceive-P\i}{errorline}{A\i}{}{0.01}{0.01}{2}{red}
+    \node[red] at (pEndReceive-A\i) {X};
+  }
+  % \foreach \i in {1,...,8} {
+  %   \pplus{pEndReceive-P\i}{errorline}{A\i}{}{0.01}{0.01}{0.125}{red}
+  %   \node[red] at (pEndReceive-A\i) {X};
+  % }
+
+\pause 
+  \coordinate (timeout-P1) at ($ (pEndSend-P7) + (0, -2)$);
+  \pplus{timeout-P1}{b}{P1a}{P1'}{0}{0.5}{8}{hpiyellow!10}
+  \node [left=of pStartSend-P1a, align=right] (timeout-label) {Timeout for P1};
+  \draw [dotted] (timeout-label) -- (timeout-P1); 
+  
+  % \spy [magnification=3] on (timeout-P1) in node at ($(timeout-label) + (-5,-5)$);
+  % \spy [magnification=3] on (timeout-P1) in node at (5,5);
+
+  % \pplus{pEndSend-P1a}{b}{P2a}{P2'}{0.05}{0.5}{0.5}{hpired!10}
+
+  % \pplus{pEndSend-P2a}{b}{P3a}{P3'}{0.05}{0.5}{0.5}{hpiblue!10}
+
+\pause 
+
+  % ACKS:
+  \node [align=left, right=0.5 of pEndReceive-P1a] (cumack-label) {All packets until P7 already received\\Send CumAck including P7};
+  \pplus{pEndReceive-P1a}{a}{A7a}{A7}{0.01}{0.01}{8}{red}
+ 
+  % \spy [magnification=3] on (cumack-label.west) in node at ($(cumack-label) + (10,0)$);
+ 
+\pause 
+
+
+  \pplus{pEndReceive-A7a}{b}{P8}{P8}{0.05}{0.5}{8}{hpiyellow!40}
+  \pplus{pEndSend-P8}{b}{P9}{P9}{0.05}{0.5}{8}{hpired!40}
+  \pplus{pEndSend-P9}{b}{P10}{P10}{0.05}{0.5}{8}{hpiblue!40}
+  \pplus{pEndSend-P10}{b}{P11}{P11}{0.05}{0.5}{8}{hpiorange!40}
+
+\pause 
+
+  % annotate packet burst
+  \draw [decorate, decoration={brace, raise=10pt, mirror}] (pStartSend-P8) to node [left=15pt] (burstlabel) {} (pEndSend-P11);
+  \node [align=right, anchor=east, left=0 of burstlabel]  (burstdescr) {CWND=4\\no packets in flight\\send 4 packets back to back};
+  
+  
+\end{tikzpicture}
+  
+  }
+  \caption{Example MSC for packet bursts, iniital CWND=8, all ACKs for packets starting from 1 are lost, triggering a retrnamission of packet 1, resulting in a packet burst once packet arrives}
+  \label{fig:cc:packet_burst_msc:1}
+\end{figure}
+\usetikzlibrary{spy}
+
+
+**** Packet burst - Example rotated 
+
+#+caption: Packet bursts - rotated version of Figure 
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:cc:ackclocking:packet_burst_2},rotate=90
+#+NAME: fig:cc:ackclocking:packet_burst_2
+[[./standalone/ackclocking.pdf]]
+
+
+**** Options for dealing with packet bursts 
+
+- Introduce new mechanism
+  - E.g., so-called *pacing*: Explicitly keep track of recent
+    inter-ACK arrival times, just that if ACK clock is not working 
+\pause 
+- Use slow start again!
+  - Root cause: Wide open CWND 
+
+
+
+**** Use slow start for dealing with packet bursts 
+
+Idea: 
+- Upon timeout, *reset CWND to 1 and switch to  slow start again*
+- Avoids bursts, and quickly ramps up CWND/transmission rate again 
+
+\pause 
+Slow start threshold 
+- In addition: Now, we  have some rough idea about bottleneck rate!
+- Stay in slow start just *below* that suspected rate (say, half of
+  it)
+  - Expressed as *slowstart threshold* (SSTHRESH)
+- Then, switch to congestion avoidance to carefully converge to
+  bottleneck 
+
+
+
+
+**** Slowstart threshold at connection start? 
+
+- When initializing a connection, no idea about bottleneck rate 
+  – Have to wait for the first packet loss
+  - Or use heuristic assumption
+    - Commonly used: Initial CWND=2, 4; SSTHRESH = 32, 64, \dots  
+
+**** Rules for CWND, SSTHRESH: TCP Tahoe 
+
+
+- Initialize CWND, SSTHRESH 
+While TCP connection lasts: 
+- Use slow start until CWND \geq SSTHRESH
+- Then, use congestion avoidance until first timeout
+  - Use the *half the CWND* at packet loss as new SSTHRESH
+  - Reset CWND to 1 
+
+
 **** TCP Tahoe congestion window dynamics
-**** TCP Tahoe congestion window dynamics (w/o anim)
+
+\begin{figure}
+  \maxsizebox{!}{0.6\textheight}{
+\begin{tikzpicture}[yscale=0.25]
+  \draw [->] (0,0)  -- (0, 50) node [left=1, rotate=90, anchor=south east] {Congestion window};
+  \foreach \i in {0,2,...,48} {
+    \draw (0.1,\i) -- (-0.1,\i) node [left] {\i}; 
+  }
+
+
+
+  \draw [->] (0,0) -- (24,0) node [below=0.5,anchor=north east] {Transmission round/RTT};
+
+  \foreach \i in {0,2,...,24} {
+    \draw (\i, 0.1) -- (\i, -0.1) node [below] {\i}; 
+  }
+
+\pause  
+  % sstart threshold 
+  \draw [dashed, hpiblue] (0,32) -- (13,32);
+  \node [rectangle callout, fill=hpiblue!10, draw,
+  callout absolute pointer={(1,32)},
+  ] at (4, 44) {Initial slowstart threshold}; 
+
+
+\pause  
+
+  % first couple of transmissions 
+
+  % first sequence of nodes: 
+  \node [circle, fill] at (1, 2) (n1) {};
+  \foreach \t/\c [remember=\c as \lastc (initially 2), remember=\t as \lastt (initially 1), ] in {2/4, 3/8, 4/16,5/32} {
+    \draw (\lastt, \lastc) -- (\t, \c) node [circle, fill] (n\t) {}; 
+  }
+
+  \draw [decorate, decoration={brace, raise=5pt, mirror}] (1,-4) to node[below=0.5] {Slow start} (5, -4) ; 
+
+
+\pause 
+
+  \node [rectangle callout, fill=hpiyellow!10, draw,
+  callout absolute pointer={(5, 32)}] at (7,10) {Switch to congestion avoidance}; 
+
+
+\pause 
+
+  % first CWND phase 
+  \foreach \t/\c [remember=\c as \lastc (initially 32), remember=\t as \lastt (initially 5), ] in { 6/33, 7/34, 8/35, 9/36, 10/37, 11/38, 12/39, 13/40} {
+    \draw (\lastt, \lastc) -- (\t, \c) node [circle, fill] (n\t) {}; 
+  }
+
+  \draw [decorate, decoration={brace, raise=5pt, mirror}] (5,-4) to node[below=0.5] {Congestion avoidance} (14, -4) ; 
+
+\pause 
+
+  % packet loss detected
+  \node [draw=hpired, scale=3, line width=1mm, circle]  (pl) at (13, 40) {}; 
+  \node [rectangle callout, fill=hpired!10, draw,
+  callout absolute pointer={(pl.north east)},
+  above right=of pl]  {Packet loss detected!}; 
+  
+
+\pause 
+% new ssthresh
+  \draw [dashed, hpiblue] (13,20) -- (24,20); 
+  \draw [hpired, dotted, thick, ->] (13, 40) to [bend left=10, ] node (halfss) {} (13, 20);
+  \node [rectangle callout, fill=hpiblue!10, draw,
+  callout absolute pointer={(halfss)},
+  right=of halfss] {New threshold is half current CWND}; 
+  
+\pause 
+  % sequence of nodes: 
+  \foreach \t/\c [remember=\c as \lastc (initially 40), remember=\t as \lastt (initially 13), ] in {14/1,15/2,16/4, 17/8, 18/16, 19/20} {
+    \draw (\lastt, \lastc) -- (\t, \c) node [circle, fill] (n\t) {}; 
+  }
+
+  \draw [decorate, decoration={brace, raise=5pt, mirror}] (14,-4) to node[below=0.5] {Slow start} (19, -4) ; 
+
+\pause 
+  % sequence of nodes: 
+  \foreach \t/\c [remember=\c as \lastc (initially 20), remember=\t as \lastt (initially 19), ] in {20/21, 21/22, 22/23, 23/24, 24/25} {
+    \draw (\lastt, \lastc) -- (\t, \c) node [circle, fill] (n\t) {}; 
+  }
+  
+  \node [rectangle callout, fill=hpiyellow!10, draw,
+  callout absolute pointer={(19, 20)}] at (7,10) {Switch to congestion avoidance};
+
+  % mark the various phases
+  \draw [decorate, decoration={brace, raise=5pt, mirror}] (19,-4) to node[below=0.5] {Congestion avoidance} (24, -4) ; 
+  
+
+\end{tikzpicture}
+  
+  }
+  \caption{TCP Tahoe: Dynamics of congestion window over time (measured in RTTs)}
+  \label{fig:cc:tahoe:cwnd}
+\end{figure}
+
+
+
+
+*** DupAcks                                                        
+
 **** Detecting losses without having to wait for timeout
-- Scenario: Several packets are sent, only one of them is lost
-- Receiver sees sequence numbers n, n+1, n+3, n+4, …
-- What ACKs does it send out (assuming Go-back-N behavior)?
-- ACK n+1, ACK n+2, ACK n+2, ACK n+2, ... (ack for next expected packet)
-- These additional ``ACK n+2'' are duplicate ACKs
-- What can sender deduce? 
-- Packets n, n+1 have arrived, and some packets beyond n+2
-- AND: ACK clocking still works, the network is apparently not congested, there are still packets coming through! 
-- Hence: Packet n+2 has to be resent, but no severe measures against congestion are (yet) necessary!
-- In practice: react on the third duplicate ACK
-- Retransmitting on third dupACK: FastRetransmit
-- No panic (= slow start from initial CWND) upon dupACK, only cut CWND and SSThreshold in half: FastRecovery  (TCP Reno)
+
+\vskip-2.5em
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+
+- Scenario:
+  - Selective ARQ receiver; CWND wide open
+  - Only *one packet* is lost 
+- Reaction: 
+  - Receiver sees sequence numbers n, n+2, n+3, n+4, \dots 
+  - Sends *duplicate*  CumAcks ACK n, ACK n, ACK n, \dots
+    - Aptly named: *DupAcks* 
+
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+#+caption: Scenario for DupAcks: one packet is lost; duplicate CumAcks are sent by a GoBackN receiver
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:cc:dup_ack:msc:gobackn}
+#+NAME: fig:cc:dup_ack:msc:gobackn
+[[./standalone/dup_ack.pdf]]
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+**** Consequences to draw from duplicates? 
+
+Conclusions to draw
+- Packets n  has arrived  and *some* packets beyond n+1 (unclear which
+  ones)
+- *ACK clocking still works*, the network is apparently not congested,
+  there are still packets coming through!
+\pause 
+Actions:  
+- Hence: Packet n+2 has to be resent, some overload, but no severe
+  measures against congestion are (yet) necessary!
+\pause 
+- *TCP Reno*
+  - Cut CWND in half (no need to reduce to one) and set SSTHRESH to this new CWND 
+    - *Fast Recovery*
+  - Retransmit the apparently missing packet
+    - Justification: DupAcks interpreted as ``packet has left the
+      network''
+    - *Fast Retransmit* 
+  - In practice: react on the *third duplicate ACK* 
+\pause 
+- Timeout mechanism still in place; timeouts longer than 3x DupAck,
+  requires CWND=1 like before 
+
 **** TCP Reno congestion control dynamics 
-**** TCP congestion control
-- This description still glosses over some (minor) details, but captures the essence
+
+#+caption: TCP Reno congestion window dynamics
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:cc:reno}
+#+NAME: fig:cc:reno
+[[./standalone/cwnd.pdf]]
+
+
+
+**** TCP congestion control                                        :noexport:
+- This description still glosses over some details, but captures the essence
+  - E.g., how to determine timeouts? 
 - Different TCP versions: TCP Tahoe, TCP Reno, TCP Vegas, TCP NewReno, \dots 
 - Main difference is the congestion control
 - Correct interoperation is a tricky question (e.g., fairness)
 - Complicated dynamics
 - Main source of complications: Stupidity of the network
 **** TCP traces from simulation
+
+\vskip-2.5em
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
 - A single TCP connection
-- Black squares: packets
-- Hollow squares: ACKs
+  - Black squares: packets
+  - Hollow squares: ACKs
 - Topology:
-- S-R1, R1-D: 10 Mb/s, 3 ms delay
-- R1-R2: 1,5 Mb/s, 20 ms delay
-- Connection start! Slow start!
-**** TCP traces from simulation 
-- Same topology, a bit later after connection start
--  $\leadsto$ Congestion avoidance state
-**** Summary: TCP sender congestion control
+
+\begin{figure}
+  \maxsizebox{0.9\textwidth}{0.5\textheight}{
+    \begin{tikzpicture}
+      \draw (0,0) node[rounded corners, draw, fill=white] {Sender}
+      to node[above, align=center] {10 Mbit/s, \\ 3 ms delay}
+      ++ (6,0) node [rounded corners, draw, fill=white] {$R_1$}
+      to node[above, align=center] {1,5 Mbit/s,\\ 20 ms delay}
+      ++ (5,0) node [rounded corners, draw, fill=white] {$R_2$}
+      to node[above, align=center] {10 Mbit/s, \\ 3 ms delay}
+      ++ (6,0) node [rounded corners, draw, fill=white] {Destination}
+      ;
+    \end{tikzpicture}
+  }
+  \caption{Scenario for TCP traces}
+  \label{fig:cc:tcptrace-scenario}
+\end{figure}
+
+- Connection starts up and is in slow start mode 
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+
+#+caption: TCP trace from simulation, generated from NS/2 simulator 
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio
+#+NAME: fig:tcptrace:1
+[[./figures/nssim-1.png]]
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+
+      
+**** TCP traces from simulation
+
+\vskip-2.5em
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+- Same topology
+
+
+- Connection in congestion avoidance 
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+
+#+caption: TCP trace from simulation, showing congestion avoidance, generated from NS/2 simulator 
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio
+#+NAME: fig:tcptrace:2
+[[./figures/nssim-2.png]]
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+***  Summary Tahoe vs. Reno                                        
+
+
+**** FSM for TCP Tahoe congestion control 
+
+#+caption: Finite State Machine for TCP Tahoe's key congestion control mechanisms (red: timeout transitions)
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:cc:tahoe_fsm}
+#+NAME: fig:cc:tahoe_fsm
+[[./standalone/cc_fsm.pdf]]
+
+
+
+
+
+**** FSM for TCP Reno congestion control 
+
+#+caption: Finite State Machine for TCP Reno's key congestion control mechanisms (blue: Fast Recovery, yellow: count DupAcks)
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:cc:reno_fsm}
+#+NAME: fig:cc:reno_fsm
+[[./standalone/cc_fsm.pdf]]
+
+
+
+
+**** Summary: TCP sender congestion control                        :noexport:
 - When CongWin is below Threshold, sender in slow-start phase, window grows exponentially.
 - When CongWin is above Threshold, sender is in congestion-avoidance phase, window grows linearly.
 - When a triple duplicate ACK occurs, Threshold set to CongWin/2 and CongWin set to Threshold.
 - When timeout occurs, Threshold set to CongWin/2 and CongWin is set to 1 MSS. 
 - 
-**** Summary: TCP Reno sender congestion control
-*** TCP performance 
+**** Summary: TCP Reno sender congestion control                   :noexport:
+
+*** Modern TCP 
+
+**** Current developments for TCP 
+- MANY updates on these classic TCP congestion control schemes exist 
+- Geared towards different environments: long&fat pipe, wireless
+  networks with high error rates, \dots 
+  - Easy: grow congestion window aggressively; hard: stay TCP friendly & fair 
+\pause 
+- Examples: TCP Vegas, New Reno, Hybla, Westwood, Westwood-2, FAST,
+  BIC, DCTCP (and variants), CUBIC (Linux standard kernel), … 
+- Important, current de facto standard on the Internet: CUBIC [[cite:&Ha2008-hj]]
+  - Linux since 2006, MS Windows since 2017
+\pause 
+- Multi-path-capable TCP variants 
+
+
+**** TCP Cubic
+- Goal: work over large data rate-delay products
+- Challenge of Tahoe/Reno: after packet loss, both struggle with
+  opening up CWND again 
+- Idea:
+  - Do cut CWND W* in half
+  - More quickly get in close to previous CWND
+  - Then, treat careful around W*
+  - If we manage to increase CWND beyond W*, then
+    - additional capacity has become available
+    - ramp up CWND agressively 
+
+**** TCP Cubic: CWND as a function of time since packet loss 
+
+- Control CWND as some $W(t)$: 
+  - where $t$ is time since last packet loss at $t_0$, with $\mathrm{CWND}(t_0) = W^*$
+  - set $W(0) = (1-\beta) W^*$; $\beta$ parameter to control backoff
+  - set $W(t_1) = W^*$, $t_1$ time by which we want to be back at old CWND
+    $W^*$ back
+- Desired properties of $W(t)$:
+  - $\frac{\mathrm{d} W}{\mathrm{d} t}|_{t=0} = \mathrm{large}$ 
+  - $\frac{\mathrm{d} W}{\mathrm{d} t}|_{t=t_1} = \mathrm{small}$  
+  - $\frac{\mathrm{d} W}{\mathrm{d} t}|_{t > t_1} = \mathrm{large}$ 
+
+
+
+**** Cubic function 
+
+\vskip-2.5em
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block 
+      :BEAMER_col: 0.48
+      :END:
+
+- We can fit a cubic polynomial to theses properties!
+- Choose  \[ W(t) = C \cdot (t- K)^3 + W^* \label{eq:cubic}\]
+  - With $t_1 = K = \sqrt[3]{\frac{\beta W^*}{C}}$
+  - $C$, $\beta$ parameters controlling behavior 
+\pause 
+- Check that $W(0) = (1-\beta) W^*$, $W(t_1) = W^*$
+
+\onslide<1->
+
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+#+caption: Cubic function to control CWND (example values: $W^* = 100$, $\beta=0.7$, $C= 0.4$, resulting in $K\approx 5.59$)
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:cc:cubic}
+#+NAME: fig:cc:cubic
+[[./standalone/cubic.pdf]]
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+**** Cubic old                                                     :noexport:
+
+- Idea: 
+  - Have to grow CWND quickly; but also have to back off quickly 
+  - Use knowledge of previous data rate bottleneck smarter 
+    - When approaching last bottleneck, get careful: only increase CWND carefully 
+    - But when we can exceed last bottleneck without errors, aggressively increase CWND (indicator that more capacity has become available)
+- Use a convex/concave function for CWND!
+  - E.g., a cubic function, centered around suspected CWND threshold
+    / last working CWND   
+
+
+**** TCP Cubic vs. Reno 
+
+#+caption: CWNDs of several TCP flows, using SACK/Reno or Cubic, sharing a bottleneck link (Fig 5 from [[cite:&Ha2008-hj]])
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio
+#+NAME: fig:label
+[[./figures/cubic_Ha_2008_fig5.pdf]]
+
+
+
+
+**** TCP Vegas: Observe RTT variation 
+
+- What happens when CWND grows and queue fills up? 
+- Illustrative scenario: Single sender, no competition
+  - \pause CWND/RTT smaller than bottleneck rate: nothing, queue stays empty 
+    - RTT depends only on propagation delay 
+  - CWND/RTT larger than bottleneck rate: RTT starts growing! 
+    - Because queueing delay shows up! 
+\pause 
+- Hence idea: Carefully observe RTT variations 
+  - Once RTT starts growing, stop increasing CWND 
+  - Example for delay-based congestion control 
+  - Challenge: ``noisy'' RTT in real networks 
+
+
+
+*** TCP performance                                                
 
 **** TCP throughput
 - TCP throughput in congestion avoidance state, no packet losses: determined by congestion window size, RTT
-- Due to ACK clocking
-- One full window will be transmitted for one RTT 
-- Throughput is approx. W/RTT 
--  $\leadsto$ Larger congestion window gives more throughput
-- But: What if errors happen? 
-- If any single TCP connection where to perpetually increase its congestion window, router queues would overflow, resulting in error
--  $\leadsto$ Errors are bound to happen
+  - Recall: rate \approx CWND/RTT 
+  - $\leadsto$ Larger congestion window gives more throughput
+\pause 
+- TCP probes network by increasing CWND
+  - Transmission rate *will* eventually exceed bottleneck rate
+  - Queue *will* overflow, packets *will* be dropped 
+\pause 
+- So: What is impact of packet losses?   
+
 **** TCP throughput in presence of errors – Assumptions 
-- Single TCP flow
-- Sender always has data to send, always uses the maximum segment size MSS for each packet 
-- Errors happen with probability p
-- Simplified: Send 1/p packets, the last one is lost
-- ACK clock still works, loss is detected via duplicate ACKs
+- Single, backlogged  TCP Reno flow in congestion avoidance 
+- Packets are dropped  with probability p, detected via DupAcks 
+  - *Simplified*: Send 1/p packets, the last one is lost
 - Round trip time RTT is constant 
-- Actually: this means that queues in routers do not change
-- TCP is in congestion avoidance mode 
-- Suppose that at packet loss, CWND has size W 
+  - *Simplified*: this means that queues in routers do not change
+
+\pause 
+- Note: Analysis here based on \cite{Mathis}
+
 **** TCP throughput in presence of errors – CWND process
+
+\begin{figure}
+  \maxsizebox{!}{0.6\textheight}{
+\begin{tikzpicture}
+  \draw [->] (0,0) -- (0, 10) node [left] {CWND};
+  \draw (0.1,8) -- (-0.1,8) node [left] {$W$};
+  \draw (0.1,4) -- (-0.1,4) node [left] {$W/2$};
+
+  \draw [->] (0,0) -- (15, 0) node [below] {Time / RTT}; 
+
+  \foreach \i in {1,...,15} {
+    \draw (\i, 0.1) -- (\i, -0.1); 
+  }
+
+\pause 
+  % basic process
+  \draw (0,7) -- (1,8) -- (1,4) -- (5,8) -- (5,4) -- (9,8) -- (9,4) -- (13, 8) -- (13, 4) -- (15, 6);
+
+\pause 
+  % show packet losses: 
+  \node [circle, draw, hpired, scale=3, line width=0.5mm] at (5,8) (pl) {};
+  \node [draw, hpired, rectangle callout, callout absolute pointer={(pl)}, above right=0.5 of pl] {Packet loss, drop CWND to $W/2$}; 
+
+\pause 
+    \draw [fill=hpiyellow!10] (5,0) rectangle (6,4);
+\node[rotate=90] at (5.5, 2)  {$W/2$}; 
+  \node [draw, hpiyellow, rectangle callout, align=center, 
+  callout absolute pointer={(5.5, 3)}, anchor=east] at (4,2) {Transmit one CWND worth\\ of packets in one RTT};
+
+\pause 
+  \foreach \i in {6,7,8} {
+    \draw [fill=hpiyellow!10] (\i,0) rectangle (\i+1,\i-1); 
+  }
+  \draw [fill=hpiyellow!40] (9,0) rectangle (9.1,8); 
+  \node[rotate=90] at (6.5,3) {$W/2 +1$}; 
+  \node[rotate=90] at (7.5,4) {$W/2 +2$}; 
+  \node[rotate=90] at (8.5,5) {$W/2 +3 = W-1$}; 
+
+
+\pause 
+  % show packet losses: 
+  \node [circle, draw, hpired, scale=3, line width=0.5mm] at (9,8) (pl2) {};
+  \node [draw, hpired, rectangle callout, callout absolute pointer={(pl2)}, above right=0.5 of pl] {Packet loss, drop CWND to $W/2$}; 
+
+
+\pause 
+\draw [very thick, hpiblue] (5,0)   -- (5,4) -- (9,8) -- (9,0) -- (5,0); 
+  
+\end{tikzpicture}
+  
+  }
+  \caption{Simplfied CWND dynamics of a single TCP Reno flow, $W=4$ in example,  packets are dropped once every $1/p$ packets, all else stays constant}
+  \label{fig:cc:reno_throughput}
+\end{figure}
+
+
 **** TCP throughput in presence of errors – Throughput
-- Transmitted data per ``round'' / Area of trapezoid: (W/2)2 + ½ (W/2)2 = 3/8 W2 
-- On the other hand: Each ``round'' delivers 1/p packets!
-- Hence: 1/p = 3/8 W2 \leftrightarrow W = (8/3p) 1/2 
-- Hence the obtained throughput TP: TP = Data / Time = (MSS * (3/8 W)2) / (RTT * W/2) 
-- or:
-- TP = (MSS / RTT) * C/ p1/2 
-- for C = (3/2)1/2 
-- 
+
+- Blue trapezoid:
+  - In one RTT period, transmit current CWND many packets
+  - There are $W - W/2 = W/2$ many periods of length RTT
+  - In total: 
+\[ n = \sum_{i=W/2} ^{W-1} i = \sum_{i=0} ^{W-1} i - \sum_{i=0}
+^{W/2-1} i = \frac{1}{2} W (W-1) - \frac{1}{2} W/2 (W/2 - 1) =
+\frac{1}{2} ( W^2 - W^2/4 - W  -W/2 ) \approx \frac{3}{8} W^2 \]
+
+\pause 
+- On the other hand: Each ``round'' delivers $n = 1/p$ packets!
+  - Because we assumed that packet errors happen like that 
+\pause 
+ - Hence: $1/p = n \approx 3/8 W^2 \leftrightarrow W \approx
+   \sqrt{\frac{8}{3 p} }$ 
+
+- Hence throughput:  
+\[  \mathrm{TP}_\mathrm{Reno} = \frac{n}{\text{Period lenght}}
+\approx \frac{3/8 W^2}{ W/2 \cdot \mathrm{RTT}}  
+= \frac{3}{4} \frac{W}{\mathrm{RTT}} 
+= \frac{3}{4} \frac{\sqrt{\frac{8}{3 p} }}{\mathrm{RTT}} 
+% = \frac{\sqrt{\frac{9\cdot 8}{16 \cdot 3 p} }}{\mathrm{RTT}} 
+% = \frac{\sqrt{\frac{3}{2 p} }}{\mathrm{RTT}} 
+= \frac{c}{\sqrt{p} \, \mathrm{RTT}} 
+\] 
+
+**** Reno throughput - Lessons learned 
+
+Inherently limited 
+- by RTT, inversely proportional!
+- by packet errors, in particular those imposed by limited buffers at
+  the bottleneck link 
+\pause 
+Due to the congestion control mechanism! 
+
+
+
 **** TCP fairness
 - Is TCP fair? 
-- Suppose: two TCP connections share a bottleneck link of limited capacity 
-- One is long-running, has already acquired a large share of the link capacity 
-- The second one has recently started and only has a small congestion window
+- Suppose: 
+  - Two TCP connections share a bottleneck link of limited capacity,
+    same RTT 
+  - One is long-running, has already acquired a large share of the link capacity 
+  - The second one has recently started and only has a small
+    congestion window
+\pause 
 - Will this converge to a state where both connections have same throughput = congestion window size? 
-- 
+
 **** Fairness: TCP traces from simulation
+
+\vskip-2.5em
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+
+
+
 - Two TCP connections (S1 $\leadsto$ D1, S2 $\leadsto$ D2)
 - Topology
-- Performance as before
+
+
+\begin{figure}
+  \maxsizebox{0.9\textwidth}{0.5\textheight}{
+    \begin{tikzpicture}
+      \draw (0,0) node[rounded corners, draw, fill=white] {$S_1$}
+      to node[above, align=center] {10 Mbit/s, \\ 3 ms delay}
+      ++ (6,2) node [rounded corners, draw, fill=white] (r1) {$R_1$}
+      to node[above, align=center] {1,5 Mbit/s,\\ 20 ms delay}
+      ++ (5,0) node [rounded corners, draw, fill=white] (r2) {$R_2$}
+      to node[above, align=center] {10 Mbit/s, \\ 3 ms delay}
+      ++ (6,-2) node [rounded corners, draw, fill=white] {$D_1$}
+      ;
+
+\draw (r1) to ++(-6,2) node[rounded corners, draw, fill=white] {$S_2$}; 
+\draw (r2) to ++(6,2) node[rounded corners, draw, fill=white] {$D_2$}; 
+    \end{tikzpicture}
+  }
+  \caption{Scenario for two competing TCP flows; blue crosses indicate progress per one RTT}
+  \label{fig:cc:tcptrace-fairness-scenario}
+\end{figure}
+
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+#+caption: CWND dynamics for two competing TCP flows, sharing a bottleneck link (generated using NS/2)
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{label}
+#+NAME: fig:label
+[[./figures/nssim-fairness.png]]
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+
+
+
+**** Why is TCP fair?                                              :noexport:
+
+\vskip-2.5em
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+Idea: Look at joint development of both CWNDs 
+- Both grow +1 per RTT
+- Both get reduced by half at packet loss
+  - Both will see packet loss (with high prob.) as they share same
+    bottleneck link 
+
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+\begin{figure}
+  \maxsizebox{!}{0.5\textheight}{
+\begin{tikzpicture}
+  \draw [->] (0,0) -- (0, 10) node [left] {CWND A};
+  \draw [->] (0,0) -- (10, 0) node [below right] {CWND B}; 
+
+\pause 
+  \draw (0.1,9) -- (-0.1,9) node [left] {$\mathrm{CWND}_\mathrm{max}$}; 
+   \draw (9, 0.1) -- (9, -0.1) node [below] {$\mathrm{CWND}_\mathrm{max}$};
+\pause 
+  \draw [dotted] (0,0) -- (10,10);
+
+\pause 
+  \draw [dashed] (9,0) -- (0,9);
+\pause 
+
+% first iteration:
+\draw [->] (4.5, 1.5) to (6, 3); 
+\pause 
+\draw [decorate, decoration={crosses}, hpiblue] (4.5, 1.5) to (6, 3); 
+
+
+  \foreach \a/\b [remember=\a as \lasta (initially 4.5),
+  remember=\b as \lastb (initially 1.5),
+  ] in {6/3,3/1.5, 5.25/3.75, 2.625/1.875, 4.875/4.125, 2.4375/2.0625, 4.6875/4.3125, 2.34275/2.15625} {
+    \draw [->] (\lasta, \lastb)  -- (\a, \b); 
+    \pause 
+  }
+
+  \pause
+  
+  
+  % \pause 
+  % \foreach \a/\b [count=\i, remember=\a as \lasta (initially 3.75),
+  % remember=\b as \lastb (initially 0.75),
+  % ] in {3/1.5,  2.625/1.875, 2.4375/2.0625, 2.34275/2.15625} {
+  %   \draw [decorate, decoration={brace, raise=5pt}] (\lasta, \lastb) to node[below left=1pt] (rtt\i) {}  (\a, \b); 
+  % }
+
+
+  % \node (rttlabel) at (1,0.5)  {One RTT}; 
+  % \foreach \i in {1,...,4} {
+  %   %\node [draw, rectangle callout,
+  %   %callout absolute pointer={(rtt\i)}] at (1,0.5) {One RTT};
+  %   \draw [->] (rttlabel) -- (rtt\i); 
+  % }
+
+\end{tikzpicture}
+  
+  }
+  \caption{TCP fairness between two competing flows induced by the AIMD mechanism}
+  \label{fig:cc:fairness}
+\end{figure}
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
 **** Why is TCP fair?
-- Two competing sessions:
-- Additive increase gives slope of 1, as throughout increases
-- Multiplicative decrease decreases throughput proportionally
--  $\leadsto$ AIMD scheme ensures fairness 
+
+\vskip-2.5em
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+Idea: Look at joint development of both CWNDs 
+- Both grow +1 per RTT
+- Both get reduced by half at packet loss
+  - Both will see packet loss (with high prob.) as they share same
+    bottleneck link 
+
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+\begin{figure}
+  \maxsizebox{!}{0.5\textheight}{
+% animation solution as per: https://tex.stackexchange.com/questions/682111/using-spy-with-beamer-animations 
+\begin{tikzpicture}[spy using outlines={magnification=4, size=5cm, connect spies}]
+  \draw [->] (0,0) -- (0, 10) node [left] {CWND A};
+  \draw [->] (0,0) -- (10, 0) node [below right] {CWND B}; 
+
+
+  \begin{scope}[visible on=<1->]
+    \draw (0.1,9) -- (-0.1,9) node [left] {$\mathrm{CWND}_\mathrm{max}$}; 
+    \draw (9, 0.1) -- (9, -0.1) node [below] {$\mathrm{CWND}_\mathrm{max}$};
+  \end{scope}
+
+  \draw[visible on=<2->] [dotted] (0,0) -- (10,10);
+
+
+  \draw[visible on=<3->] [dashed] (9,0) -- (0,9);
+
+
+  % first iteration:
+  \draw[visible on=<4->] [->] (4.5, 1.5) to (6, 3); 
+
+  \draw[visible on=<5->] [decorate, thick, decoration={crosses, segment length=5mm}, hpiblue] (4.5, 1.5) to (6, 3); 
+
+
+  \begin{scope}[visible on=<6->]
+  \draw[visible on=<6->] [decorate,
+  decoration={markings,
+    mark=at position 5mm with {
+      \draw [thick, hpiblue,->] (0,0) to node [below, rotate=0] {\tiny +1}
+      (0.5*5mm,-0.5*5mm) node (n0) {} node [below right=0.5] (n1) {One RTT}
+      to node [right, rotate=0] {\tiny +1}  
+      (5mm, 0);
+      \draw [thin, dashed, hpiblue, ->] (n1) -- (0.5*5mm,-0.5*5mm); 
+    }
+  }
+  ] (4.5, 1.5) to (6,3); 
+\end{scope}
+  \spy [visible on=<7->, hpiblue] on (n0) in node at (9,6); 
+  
+  \draw[visible on=<8->] (6,3)  to (3, 1.5); 
+  
+  \begin{scope}[visible on=<9->]
+  \foreach \a/\b [remember=\a as \lasta (initially 3),
+  remember=\b as \lastb (initially 1.5),
+  ] in {5.25/3.75, 2.625/1.875, 4.875/4.125, 2.4375/2.0625, 4.6875/4.3125, 2.34275/2.15625} {
+    \draw [->] (\lasta, \lastb)  -- (\a, \b); 
+  }
+\end{scope}
+
+  
+  
+  % \pause 
+  % \foreach \a/\b [count=\i, remember=\a as \lasta (initially 3.75),
+  % remember=\b as \lastb (initially 0.75),
+  % ] in {3/1.5,  2.625/1.875, 2.4375/2.0625, 2.34275/2.15625} {
+  % \draw [decorate, decoration={brace, raise=5pt}] (\lasta, \lastb) to node[below left=1pt] (rtt\i) {}  (\a, \b); 
+  % }
+
+
+  %   \node (rttlabel) at (1,0.5)  {One RTT}; 
+  %   \foreach \i in {1,...,4} {
+  %   %   \node [draw, rectangle callout,
+  %   %   callout absolute pointer={(rtt\i)}] at (1,0.5) {One RTT};
+  %   \draw [->] (rttlabel) -- (rtt\i); 
+  % }
+
+\end{tikzpicture}
+  
+  }
+  \caption{TCP fairness between two competing flows induced by the AIMD mechanism}
+  \label{fig:cc:fairness}
+\end{figure}
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
 **** Proof: AIMD ensures fairness
-- Let ai, bi denote the throughput of connection A, B, respectively, after the ith multiplicative decrease has taken place
-- Start with some arbitrary pair (a0, b0) such that a0 + b0 < c, where c is the total capacity of the link
-- Goal: Compute (ai+1, bi+1) as function of (ai, bi), s
-- First: Additive increase 
-- (ai, bi ) $\leadsto$ (ai + 1, bi + 1) $\leadsto$ (ai + 2, bi + 2) $\leadsto$ ?  $\leadsto$ (ai + k, bi + k) until ai + k + bi + k = c
-- Or: k = ½ ( c – ai – bI) 
-- Then: Multiplicative decrease
-- (ai + ½ ( c – ai – bI), bi + ½ ( c – ai – bI)) $\leadsto$ (1/2 (ai + ½ ( c – ai – bI)), ½ (bi + ½ ( c – ai – bI)) = (¼ (ai – bi + c), ¼ (bi – ai + c))
-- Look at difference: di+1 = ai+1 – bi+1 = ¼ (ai – bi + c) - ¼ (bi – ai + c)   = ½ (ai – bi) = ½ di !
-- Hence: limi! 1 di = 0
+- Assumptions:
+  - one bottleneck
+  - shared by senders $A$, $B$ with same RTT
+  - RTT does not change (*significant* simplification)
+- Notation: 
+  - $a_i$, $b_i$ denote the rate of  $A$, $B$, respectively, after
+    the $i$ th multiplicative decrease has taken place
+  - $c$ is bottleneck link rate 
+
+
+**** Proof: AIMD ensures fairness (2) 
+- Start with some arbitrary pair $(a_0, b_0)$ such that $a_0 + b_0 < c$
+- Goal: Compute $(a_{i+1,} b_{i+1})$ as function of $(a_i, b_i)$
+\pause
+- *First*: Additive increase 
+  - $(a_i, b_i) \leadsto (a_i + 1, b_i + 1) \leadsto (a_i + 2, b_i + 2) \leadsto \dots \leadsto (a_i + k, b_i + k)$ until $a_i + k + b_i + k = c$
+  - Or: $k = 1/2 \cdot (c - a_i - b_i)$ 
+\pause
+- *Then*: Multiplicative decrease
+  - $(a_i + 1/2 ( c - a_i - b_i), b_i + 1/2 (c - a_i - b_i)) \leadsto (1/2 (a_i + 1/2 ( c - a_i - b_i)), 1/2 (b_i + 1/2 (c - a_i - b_i))) = (1/4  (a_i - b_i + c),1/4 (b_i - a_i + c))$
+  - Look at difference between both rates: $d_{i+1} = a_{i+1} - b_{i+1}  = 1/4 (a_i - b_i + c) - 1/4 (b_i - a_i + c)   = 1/2(a_i - b_i) = 1/2  d_i$ !
+    - Hence: $\lim _{i\rightarrow \infty} d_i = 0$!
+\pause
 - Hence: AIMD ensures fairness! 
 
-*** Trends 
-
-**** Current developments for TCP 
-**** TCP Vegas: Observe RTT variation 
-- What happens when CWND grows and queue fills up? 
-- Illustrative scenario: Single sender, no competition
-- CWND/RTT smaller than bottleneck rate: nothing, queue stays empty 
-- RTT depends only on propagation delay 
-- CWND/RTT larger than bottleneck rate: RTT starts growing! 
-- Because queueing delay shows up! 
-- Hence idea: Carefully observe RTT variations 
-- Once RTT starts growing, stop increasing CWND 
-- Example for delay-based congestion control 
-- Challenge: ``noisy'' RTT in real networks 
-- 
-- WS 19/20, v 1.5.3
-- Computer Networks - Congestion Control
-- 51
-**** TCP Cubic
-- Goal: work over large data rate-delay products
-- Idea: 
-- Have to grow CWND quickly; but also have to back off quickly 
-- Use knowledge of previous data rate bottleneck smarter 
-- When approaching last bottleneck, get careful: only increase CWND carefully 
-- But when we can exceed last bottleneck without errors, aggressively increase CWND (indicator that more capacity has become available)
-- Use a convex/concave function for CWND!
-- E.g., a cubic function  
-- WS 19/20, v 1.5.3
-- Computer Networks - Congestion Control
-- 52
-**** TCP Cubic vs. Reno 
-- WS 19/20, v 1.5.3
-- Computer Networks - Congestion Control
-- 53
 
 
 
@@ -402,5 +2206,5 @@
 - Dynamics of congestion control can be rather tricky
 - TCP’s congestion control is probably one of the most complicated and subtle, yet also most crucial protocols in the Internet
 - Be aware of interactions of UDP/non-congestion-controlled protocols with TCP/congestion-controlled protocols
+\pause 
 - Big related topic (entirely missing here): Quality of Service and resource reservation schemes
-- 

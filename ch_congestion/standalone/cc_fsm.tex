@@ -1,0 +1,154 @@
+% Created 2016-08-17 Wed 14:38
+\documentclass[tikz]{standalone}
+
+\input{../../templates/standalone_header}
+
+\usepackage{ifthen}
+
+
+\usetikzlibrary{automata}
+\usetikzlibrary{arrows}       %                 ...customizing arrows
+\usetikzlibrary{decorations.pathreplacing,decorations.pathmorphing}       %                 ...customizing arrows
+
+
+\tikzset{node distance=5cm, % Minimum distance between two nodes. Change if necessary.
+  every node/.style={           align=center,
+},
+         every state/.style={ % Sets the properties for each state
+           semithick,
+           fill=gray!10},
+         initial text={},     % No label on start arrow
+         double distance=2pt, % Adjust appearance of accept states
+         every edge/.style={  % Sets the properties for each transition
+           draw, ->, 
+           % ->,>=stealth’,     % Makes edges directed with bold arrowheads
+           auto,
+           semithick}}
+
+       
+\begin{document}
+
+
+
+\begin{tikzpicture}[bend angle=30]
+  \label{page:cc:tahoe_fsm}
+
+  \node [state, initial, minimum width=3cm] (ss) {Slow\\ start};
+  \node [state, minimum width=3cm, right=10cm of ss] (ca) {Congestion\\ avoidance};
+
+  % ACK of previously unacked data:
+  
+  \draw (ss) edge [loop above] node [above]  {
+    CWND < SSTHRESH-1 \& \\
+    ACK for unacked seqno; \\
+    CWND++
+  } (ss); 
+
+  \draw (ss) edge [bend left] node [above]  {
+    CWND $\geq$ SSTHRESH-1 \& \\
+    ACK for unacked seqno; \\
+    CWND++
+  } (ca); 
+  
+  \draw (ca) edge [loop above] node [above]  {
+    --  \& \\
+    ACK for unacked seqno; \\
+    CWND += 1/CWND
+  } (ca); 
+
+  
+  
+  % timeout 
+  \draw (ca) edge  node [below, fill=hpired!10 ] {
+    --  \& \\
+    Timeout; \\
+    SSTHRESH=CWND/2, CWND=1
+  } (ss);
+
+
+  \draw (ss) edge [out=310, in=330, min distance=2cm] node [below right=0, fill=hpired!10] {
+    --  \& \\
+    Timeout; \\
+    SSTHRESH=CWND/2, CWND=1
+  } (ss);
+
+  
+\end{tikzpicture}
+
+
+\begin{tikzpicture}[bend angle=30]
+  \label{page:cc:reno_fsm}
+
+  \node [state, initial, minimum width=3cm] (ss) {Slow\\ start};
+  \node [state, minimum width=3cm, right=10cm of ss] (ca) {Congestion\\ avoidance};
+
+  % ACK of previously unacked data:
+  
+  \draw (ss) edge [loop above] node [above]  {
+    CWND < SSTHRESH-1 \& \\
+    ACK for unacked seqno; \\
+    CWND++, AckCount[seqno]  = 1
+  } (ss); 
+
+  \draw (ss) edge [bend left] node [above]  {
+    CWND $\geq$ SSTHRESH-1 \& \\
+    ACK for unacked seqno; \\
+    CWND++, AckCount[seqno]  = 1
+  } (ca); 
+  
+  \draw (ca) edge [loop above] node [above]  {
+    --  \& \\
+    ACK for unacked seqno; \\
+    CWND += 1/CWND, AckCount[seqno]  = 1
+  } (ca); 
+
+  % dupack reveived, but not yet number three
+
+  \draw (ss) edge [loop left] node [left, fill=hpiyellow!10] {
+    AckCount[seqno] $\in$ \{1, 2\} \& \\
+    ACK for already acked seqno; \\
+    AckCount[seqno]++; 
+  } (ss);
+
+  \draw (ca) edge [loop right] node [right, fill=hpiyellow!10] {
+    AckCount[seqno] $\in$ \{1, 2\} \& \\
+    ACK for already acked seqno; \\
+    AckCount[seqno]++; 
+  } (ca);
+
+
+  % third dupack received: 
+  \draw (ss) edge [loop below] node [below, fill=hpiblue!10] {
+    AckCount[seqno] = 3 \& \\
+    ACK for already acked seqno; \\
+    SSTHRESH=CWND/2, CWND=CWND/2
+  } (ss);
+
+  \draw (ca) edge [loop below] node [below, fill=hpiblue!10] {
+    AckCount[seqno] = 3 \& \\
+    ACK for already acked seqno; \\
+    SSTHRESH=CWND/2, CWND=CWND/2
+  } (ca);
+  
+  
+  % timeout 
+  \draw (ca) edge  node [below, fill=hpired!10 ] {
+    --  \& \\
+    Timeout; \\
+    SSTHRESH=CWND/2, CWND=1
+  } (ss);
+
+
+  \draw (ss) edge [out=310, in=330, min distance=2cm] node [below right=0, fill=hpired!10] {
+    --  \& \\
+    Timeout; \\
+    SSTHRESH=CWND/2, CWND=1
+  } (ss);
+
+  
+\end{tikzpicture}
+
+\end{document}
+
+
+

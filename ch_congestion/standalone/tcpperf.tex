@@ -4,7 +4,7 @@
 \input{../../templates/standalone_header}
 
 \usetikzlibrary{shapes.callouts}
-\usetikzlibrary{decorations.pathreplacing,decorations.pathmorphing,calc}
+\usetikzlibrary{decorations.pathreplacing,decorations.pathmorphing,decorations.shapes,decorations.markings,calc,spy}
 
 
 \begin{document}
@@ -41,35 +41,72 @@
   
 \end{tikzpicture}
 
-\begin{tikzpicture}
+\begin{tikzpicture}[spy using outlines={magnification=4, size=5cm, connect spies}]
   \draw [->] (0,0) -- (0, 10) node [left] {CWND A};
   \draw [->] (0,0) -- (10, 0) node [below right] {CWND B}; 
+
+  % \pause 
+  \draw (0.1,9) -- (-0.1,9) node [left] {$\mathrm{CWND}_\mathrm{max}$}; 
+  \draw (9, 0.1) -- (9, -0.1) node [below] {$\mathrm{CWND}_\mathrm{max}$};
+  % \pause 
   \draw [dotted] (0,0) -- (10,10);
+
+  % \pause 
   \draw [dashed] (9,0) -- (0,9);
+  % \pause 
 
-  \draw (0.1,9) -- (-0.1,9) node [left] {$\mathrm{CWND}_\max$};
-  \draw (9, 0.1) -- (9, -0.1) node [below] {$\mathrm{CWND}_\max$};
+  % first iteration:
+  \draw [->] (4.5, 1.5) to (6, 3); 
+  % \pause 
+  \draw [decorate, thick, decoration={crosses, segment length=5mm}, hpiblue] (4.5, 1.5) to (6, 3); 
 
+  % \pause 
+  \draw [decorate,
+  decoration={markings,
+    mark=at position 5mm with {
+      \draw [thick, hpiblue,->] (0,0) to node [below, rotate=0] {\tiny +1}
+      (0.5*5mm,-0.5*5mm) node (n0) {} node [below right=0.5] (n1) {One RTT}
+      to node [right, rotate=0] {\tiny +1}  
+      (5mm, 0);
+      \draw [thin, dashed, hpiblue, ->] (n1) -- (0.5*5mm,-0.5*5mm); 
+    }
+  }
+  ] (4.5, 1.5) to (6,3); 
+
+  % \pause
+
+  \spy [hpiblue] on (n0) in node at (9,6); 
+  
+  % \pause 
+  
   \foreach \a/\b [remember=\a as \lasta (initially 4.5),
   remember=\b as \lastb (initially 1.5),
   ] in {6/3,3/1.5, 5.25/3.75, 2.625/1.875, 4.875/4.125, 2.4375/2.0625, 4.6875/4.3125, 2.34275/2.15625} {
     \draw [->] (\lasta, \lastb)  -- (\a, \b); 
+    % \pause 
   }
 
-  \foreach \a/\b [count=\i, remember=\a as \lasta (initially 3.75),
-  remember=\b as \lastb (initially 0.75),
-  ] in {3/1.5,  2.625/1.875, 2.4375/2.0625, 2.34275/2.15625} {
-    \draw [decorate, decoration={brace, raise=5pt}] (\lasta, \lastb) to node[below left=1pt] (rtt\i) {}  (\a, \b); 
-  }
+  % \pause
+  
+  
+  % % \pause 
+  % \foreach \a/\b [count=\i, remember=\a as \lasta (initially 3.75),
+  % remember=\b as \lastb (initially 0.75),
+  % ] in {3/1.5,  2.625/1.875, 2.4375/2.0625, 2.34275/2.15625} {
+  % \draw [decorate, decoration={brace, raise=5pt}] (\lasta, \lastb) to node[below left=1pt] (rtt\i) {}  (\a, \b); 
+  % }
 
-  \node (rttlabel) at (1,0.5)  {One RTT}; 
-  \foreach \i in {1,...,4} {
-    %\node [draw, rectangle callout,
-    %callout absolute pointer={(rtt\i)}] at (1,0.5) {One RTT};
-    \draw [->] (rttlabel) -- (rtt\i); 
-  }
+
+  %   \node (rttlabel) at (1,0.5)  {One RTT}; 
+  %   \foreach \i in {1,...,4} {
+  %   %   \node [draw, rectangle callout,
+  %   %   callout absolute pointer={(rtt\i)}] at (1,0.5) {One RTT};
+  %   \draw [->] (rttlabel) -- (rtt\i); 
+  % }
 
 \end{tikzpicture}
+
+
 
 
 

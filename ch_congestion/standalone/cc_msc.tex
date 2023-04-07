@@ -5,50 +5,7 @@
 \usepackage{ifthen}
 \usetikzlibrary{decorations.pathreplacing,decorations.pathmorphing,calc}
 
-\newcommand{\pplusa}[6]{%
-  % #1: offset, #2: fill color #3: packet length #4: ACK length, #5 label
-  % #6: X to loose the ACK 
-  
-  \coordinate (pStartSend_#5) at ($(a) + (0,-0.5)-(0,#1)$); 
-  \coordinate (pEndSend_#5) at  ($  (pStartSend_#5) + (0,-#3) $ ); 
-  \coordinate (pStartReceive_#5) at ($ (pStartSend_#5) + (3.5,-1) $); 
-  \coordinate (pEndReceive_#5) at ($  (pStartReceive_#5) + (0,-#3) $ ); 
-  \coordinate (aStartSend_#5) at ($(b) +  (0,-0.5)-(0,#1)-(0,1)-(0,#3)  $); 
-  \coordinate (aEndSend_#5) at ($ (aStartSend_#5)  + (0,-#4) $); 
-  \coordinate (aStartReceive_#5) at ($ (aStartSend_#5) + (-3.5,-1)  $); 
-  \coordinate (aEndReceive_#5) at ($ (aStartReceive_#5) + (0,-#4)  $);   
-
-  
-  % Packets: 
-  \ifthenelse{\equal{#6}{X}}
-  {
-    % packet gets lost
-    \coordinate (pStartLoss_#5) at ($ (pStartSend_#5) + (1.75,-1)  $); 
-    \coordinate (pEndLoss_#5) at ($ (pStartLoss_#5) + (0,-#3)  $);
-
-    \draw [fill=#2, semitransparent] (pStartSend_#5) --
-    (pStartLoss_#5) decorate [decoration=zigzag] {-- (pEndLoss_#5)}
-    -- (pEndSend_#5);
-  \node at ($(1.75,-0.5) - (0,#1) - (0,0.5*#3) -(0, 0.5)$) {P\,#5 lost!}; 
-    
-  }
-  {
-    % packet normally delivered
-  \draw [fill=#2, semitransparent] (pStartSend_#5) -- (pStartReceive_#5) -- (pEndReceive_#5) -- (pEndSend_#5);
-  \node at ($(1.75,-0.5) - (0,#1) - (0,0.5*#3) -(0, 0.5)$) {P\,#5}; 
-  \draw [->] (a) ++ (pStartSend_#5) -- (pStartReceive_#5); 
-  \draw [->] (a) ++ (pEndSend_#5) -- (pEndReceive_#5); 
-
-  % ACK:
-    %ACK normally sent: 
-  \draw [fill=#2, semitransparent] (aStartSend_#5) -- (aStartReceive_#5) -- (aEndReceive_#5) -- (aEndSend_#5); 
-
-
-  \draw [->] (aStartSend_#5) -- (aStartReceive_#5); 
-  \draw [->] (aEndSend_#5) -- (aEndReceive_#5); 
-}
-
-}
+\input{packet_drawing.latex}
 
 \begin{document}
 

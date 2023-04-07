@@ -8,11 +8,28 @@
 \begin{document}
 
 
+% W(t) = C (t- K )^3 + Wmax, where K = (Wmax * beta / C), beta = 0.7 (parameter ); C= 0.4 (parameter)
+% Example: Wmax = 100, K = 5,59
+
 \begin{tikzpicture}
-  \begin{axis}[xmin=0, xmax=10, domain=0:10, ymin=0, ymax=200]
-    \addplot {1*(x-5)^3 + 100}; 
-    \draw [dotted] (axis cs:0,100) to node[above, very near start] {$b$} (axis cs:10, 100); 
-    \draw [dotted] (axis cs:5,0) to node[right, very near start] {$a$} (axis cs:5, 200); 
+  \label{page:cc:cubic}
+  \begin{axis}[xmin=-3, xmax=15, 
+    ymin=0, ymax=200, xlabel={Time since last CWND reduction}, ylabel=CWND]
+    \addplot[domain=0:15, blue] {0.4*(x-5.59)^3 + 100};
+    \draw [dotted] (axis cs:0,100) to node[above, very near end] {$W^*$} (axis cs:15, 100);
+    \draw [dotted] (axis cs:0,30) to node[above, near end] {$(1-\beta) W^*$} (axis cs:15, 30);
+    
+
+    \draw [dotted] (axis cs:0,0) -- (axis cs:0,200); 
+    \draw [dotted] (axis cs:5.59,0) to node[left, very near end] (K) {$t_1 = \sqrt[3]{\frac{\beta W^*}{C}}$} (axis cs:5.59, 200);
+    
+
+    \addplot [domain=-3:0, red]  {100+x}; 
+    \draw [red] (axis cs:0,100) circle (4);
+    \node [red] at (axis cs:0,110) {Packet loss}; 
+    \draw [black, dashed, ->] (axis cs:0,100) to[bend right] node[rotate=90, align=center, right, anchor=south] { \tiny Reduce  CWND} (axis cs:0,30); 
+
+    
   \end{axis}
 
 \end{tikzpicture}

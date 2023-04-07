@@ -1,0 +1,125 @@
+% Created 2016-08-17 Wed 14:38
+\documentclass[tikz]{standalone}
+
+\input{../../templates/standalone_header}
+
+\input{packet_drawing}
+
+
+\begin{document}
+
+\begin{tikzpicture}
+  \label{page:cc:dup_ack:msc:gobackn}
+  \node (a) {A}; 
+  \node [right= 3 of a] (errorline) {}; 
+  \node [right=of errorline] (b) {B};
+
+  \foreach \n in {a, b} { \draw [thin] (\n) -- ++ (0,-16); }
+
+  % Args: start, end, label, offset, packeet, delay, color
+
+  \begin{scope}
+   [on background layer]
+  \pplus{a}{b}{P1}{P1}{0.5}{0.5}{2}{hpiyellow!10}
+  \end{scope}
+  \pplus{pEndReceive-P1}{a}{A1}{A $\leq$ 1}{0.25}{0.1}{2}{hpiyellow!10}
+ 
+  %\pause 
+
+  \begin{scope}
+   [on background layer]
+    \pplus{pEndSend-P1}{errorline}{P2}{P2}{1}{0.5}{1.5}{hpired!10}
+  \end{scope}
+  % \pplus{pEndReceive-P2}{errorline}{A2}{A2}{0.25}{0.1}{0.5}{hpired!10}
+  \node [red] at (pStartReceive-P2) {X}; 
+
+  % \pause 
+
+  \begin{scope}  [on background layer]
+    \pplus{pEndSend-P2}{b}{P3}{P3}{1}{0.5}{2}{hpiblue!10}
+  \end{scope}
+
+  \pplus{pEndReceive-P3}{a}{A3}{A $\leq 1$}{0.25}{0.1}{2}{hpiblue!10}
+
+  % \pause 
+
+  \begin{scope}
+  [on background layer]
+    \pplus{pEndSend-P3}{b}{P4}{P4}{1}{0.5}{2}{hpiorange!10}
+  \end{scope}
+  \pplus{pEndReceive-P4}{a}{A4}{A $\leq 1$}{0.25}{0.1}{2}{hpiorange!10}
+  
+  % \pause 
+  \begin{scope}
+  [on background layer]
+    \pplus{pEndSend-P4}{b}{P5}{P5}{1}{0.5}{2}{hpiyellow!30}
+  \end{scope}
+  \pplus{pEndReceive-P5}{a}{A5}{A $\leq 1$ }{0.25}{0.1}{2}{hpiyellow!30}
+
+  % \pause 
+  \begin{scope}
+   [on background layer]
+    \pplus{pEndSend-P5}{b}{P6}{P6}{1}{0.5}{2}{hpired!30}
+  \end{scope}
+  \pplus{pEndReceive-P6}{a}{A6}{A $\leq 1$}{0.25}{0.1}{2}{hpired!30}
+\end{tikzpicture}
+
+
+\begin{tikzpicture}
+  \label{page:cc:dup_ack:msc:selective_repeat}
+  \node (a) {A}; 
+  \node [right= 3 of a] (errorline) {}; 
+  \node [right=of errorline] (b) {B};
+
+  \foreach \n in {a, b} { \draw [thin] (\n) -- ++ (0,-16); }
+
+  % Args: start, end, label, offset, packeet, delay, color
+
+  \begin{scope}
+   [on background layer]
+  \pplus{a}{b}{P1}{P1}{0.5}{0.5}{2}{hpiyellow!10}
+  \end{scope}
+  \pplus{pEndReceive-P1}{a}{A1}{A1}{0.25}{0.1}{2}{hpiyellow!10}
+ 
+  %\pause 
+
+  \begin{scope}
+   [on background layer]
+    \pplus{pEndSend-P1}{errorline}{P2}{P2}{1}{0.5}{1.5}{hpired!10}
+  \end{scope}
+  % \pplus{pEndReceive-P2}{errorline}{A2}{A2}{0.25}{0.1}{0.5}{hpired!10}
+  \node [red] at (pStartReceive-P2) {X}; 
+
+  % \pause 
+
+  \begin{scope}  [on background layer]
+    \pplus{pEndSend-P2}{b}{P3}{P3}{1}{0.5}{2}{hpiblue!10}
+  \end{scope}
+
+  \pplus{pEndReceive-P3}{a}{A3}{A $\leq 1$ + 3}{0.25}{0.1}{2}{hpiblue!10}
+
+  % \pause 
+
+  \begin{scope}
+  [on background layer]
+    \pplus{pEndSend-P3}{b}{P4}{P4}{1}{0.5}{2}{hpiorange!10}
+  \end{scope}
+  \pplus{pEndReceive-P4}{a}{A4}{A $\leq 1$ + 3,4}{0.25}{0.1}{2}{hpiorange!10}
+  
+  % \pause 
+  \begin{scope}
+  [on background layer]
+    \pplus{pEndSend-P4}{b}{P5}{P5}{1}{0.5}{2}{hpiyellow!30}
+  \end{scope}
+  \pplus{pEndReceive-P5}{a}{A5}{A $\leq 1$ + 3,4,5}{0.25}{0.1}{2}{hpiyellow!30}
+
+  % \pause 
+  \begin{scope}
+   [on background layer]
+    \pplus{pEndSend-P5}{b}{P6}{P6}{1}{0.5}{2}{hpired!30}
+  \end{scope}
+  \pplus{pEndReceive-P6}{a}{A6}{A $\leq 1$ + 3,4,5,6}{0.25}{0.1}{2}{hpired!30}
+\end{tikzpicture}
+
+
+\end{document}

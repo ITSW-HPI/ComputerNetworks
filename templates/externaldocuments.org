@@ -56,3 +56,13 @@
 #+LATEX_HEADER: \externaldocument{../ch_link/standalone/econtrol}
 #+LATEX_HEADER: \externaldocument{../ch_link/standalone/ll}
 #+LATEX_HEADER: \externaldocument{../ch_congestion/ch_congestion}
+#+LATEX_HEADER: \externaldocument{../ch_congestion/standalone/ackclocking}
+#+LATEX_HEADER: \externaldocument{../ch_congestion/standalone/cc}
+#+LATEX_HEADER: \externaldocument{../ch_congestion/standalone/cc_msc}
+#+LATEX_HEADER: \externaldocument{../ch_congestion/standalone/cubic}
+#+LATEX_HEADER: \externaldocument{../ch_congestion/standalone/cwnd}
+#+LATEX_HEADER: \externaldocument{../ch_congestion/standalone/tcpperf}
+#+LATEX_HEADER: \externaldocument{../ch_congestion/standalone/test}
+#+LATEX_HEADER: \externaldocument{../ch_congestion/standalone/dup_ack}
+#+LATEX_HEADER: \externaldocument{../ch_congestion/standalone/cc_fsm}
+#+LATEX_HEADER: \externaldocument{../ch_congestion/standalone/cubic}

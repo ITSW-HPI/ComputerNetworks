@@ -9,59 +9,40 @@
 \begin{document}
 
 
-\newcommand{\pplus}[8]{% 
-  % #1: start point
-  % #2: end point 
-  % #3: label intern
-  % #4: label to print 
-  % #5: vertical offset from startpoint
-  % #6: length of packet
-  % #7: delay
-  % #8: fill color 
 
-  \coordinate (pStartSend-#3) at ($ (#1) - (0, #5)$);
-  \coordinate (pEndSend-#3) at ($ (pStartSend-#3) - (0, #6)$);
+\input{packet_drawing.latex}
 
-  \coordinate (tmp) at (pStartSend-#3 -| #2); 
-  \coordinate (pStartReceive-#3) at ($ (tmp) - (0, #7)$);
-  \coordinate (pEndReceive-#3) at ($ (pStartReceive-#3) - (0, #6)$);
+% \newcommand{\pplusa}[8]{% 
+%   % #1: start point
+%   % #2: end point 
+%   % #3: label 
+%   % #4: vertical offset from startpoint
+%   % #5: length of packet
+%   % #6: length of ack
+%   % #7: delay
+%   % #8: fill color 
 
-  % draw packet
-  \draw [fill=#8] (pStartSend-#3) to node [below, sloped] {#4} (pStartReceive-#3) -- (pEndReceive-#3) -- (pEndSend-#3); 
-}
+%   \coordinate (pStartSend-#3) at ($ (#1) - (0, #4)$);
+%   \coordinate (pEndSend-#3) at ($ (pStartSend-#3) - (0, #5)$);
 
+%   \coordinate (tmp) at (pStartSend-#3 -| #2); 
+%   \coordinate (pStartReceive-#3) at ($ (tmp) - (0, #7)$);
+%   \coordinate (pEndReceive-#3) at ($ (pStartReceive-#3) - (0, #5)$);
 
-\newcommand{\pplusa}[8]{% 
-  % #1: start point
-  % #2: end point 
-  % #3: label 
-  % #4: vertical offset from startpoint
-  % #5: length of packet
-  % #6: length of ack
-  % #7: delay
-  % #8: fill color 
-
-  \coordinate (pStartSend-#3) at ($ (#1) - (0, #4)$);
-  \coordinate (pEndSend-#3) at ($ (pStartSend-#3) - (0, #5)$);
-
-  \coordinate (tmp) at (pStartSend-#3 -| #2); 
-  \coordinate (pStartReceive-#3) at ($ (tmp) - (0, #7)$);
-  \coordinate (pEndReceive-#3) at ($ (pStartReceive-#3) - (0, #5)$);
-
-  \coordinate (aStartSend-#3) at (pEndReceive-#3);
-  \coordinate (aEndSend-#3) at ($(aStartSend-#3) - (0, #6)$);
+%   \coordinate (aStartSend-#3) at (pEndReceive-#3);
+%   \coordinate (aEndSend-#3) at ($(aStartSend-#3) - (0, #6)$);
   
-  \coordinate (tmp) at (aStartSend-#3 -| #1);
-  \coordinate (aStartReceive-#3) at ($ (tmp) - (0,#7)$);
-  \coordinate (aEndReceive-#3) at ($ (aStartReceive-#3) - (0,#6)$);
+%   \coordinate (tmp) at (aStartSend-#3 -| #1);
+%   \coordinate (aStartReceive-#3) at ($ (tmp) - (0,#7)$);
+%   \coordinate (aEndReceive-#3) at ($ (aStartReceive-#3) - (0,#6)$);
   
-  % draw packet
-  \draw [fill=#8] (pStartSend-#3) to node [below, sloped] {P #3} (pStartReceive-#3) -- (pEndReceive-#3) -- (pEndSend-#3);
-  % draw ACK
-  \draw [fill=#8] (aStartSend-#3) -- (aStartReceive-#3) -- (aEndReceive-#3) -- (aEndSend-#3);
+%   % draw packet
+%   \draw [fill=#8] (pStartSend-#3) to node [below, sloped] {P #3} (pStartReceive-#3) -- (pEndReceive-#3) -- (pEndSend-#3);
+%   % draw ACK
+%   \draw [fill=#8] (aStartSend-#3) -- (aStartReceive-#3) -- (aEndReceive-#3) -- (aEndSend-#3);
 
   
-}
+% }
 
 
 % \begin{tikzpicture}
@@ -506,6 +487,124 @@
   \draw [hpired, very thick, ->] (pl) edge (pEndReceive-P9ab)  edge (pEndReceive-P11ab); 
 
   \draw [decorate, decoration={brace,mirror,raise=10pt}] (pEndReceive-A8ba) to node[left=20pt, align=center] {ACK clock \\still working!} (pEndReceive-A10ba); 
+  
+  
+\end{tikzpicture}
+
+
+\begin{tikzpicture}
+
+  \label{page:cc:ackclocking:packet_burst}
+  % example: delay always 0.2, all ack times 0,
+  % packet times from A-B and C-D 0.5, from C-D 1 
+  
+  \node (a) {A}; 
+  \node [right= 3 of a] (errorline) {}; 
+  \node [right=of errorline] (b) {B};
+
+  \foreach \n in {a, b} { \draw [thin] (\n) -- ++ (0,-16); }
+
+  % \pplusa{a}{b}{1}{0.5}{1}{0.1}{2}{hpiblue}
+  % Args: start, end, label, offset, packeet, delay, color
+
+  % Packet 1: 
+  \pplus{a}{b}{P1}{P1}{0.5}{0.5}{0.5}{hpiyellow!10}
+  \pplus{pEndSend-P1}{b}{P2}{P2}{0.05}{0.5}{0.5}{hpired!10}
+  \pplus{pEndSend-P2}{b}{P3}{P3}{0.05}{0.5}{0.5}{hpiblue!10}
+  \pplus{pEndSend-P3}{b}{P4}{P4}{0.05}{0.5}{0.5}{hpiorange!10}
+  \pplus{pEndSend-P4}{b}{P5}{P5}{0.05}{0.5}{0.5}{hpiyellow!20}
+  \pplus{pEndSend-P5}{b}{P6}{P6}{0.05}{0.5}{0.5}{hpired!20}
+  \pplus{pEndSend-P6}{b}{P7}{P7}{0.05}{0.5}{0.5}{hpiblue!20}
+  \pplus{pEndSend-P7}{b}{P8}{P8}{0.05}{0.5}{0.5}{hpiorange!20}
+
+  \foreach \i in {1,...,8} {
+    \pplus{pEndReceive-P\i}{errorline}{A\i}{}{0.01}{0.01}{0.125}{red}
+    \node[red] at (pEndReceive-A\i) {X};
+  }
+
+  \coordinate (timeout-P1) at ($ (pEndSend-P8) + (0, -0.5)$);
+  \pplus{timeout-P1}{b}{P1a}{P1'}{0.5}{0.5}{0.5}{hpiyellow!10}
+
+  % \pplus{pEndSend-P1a}{b}{P2a}{P2'}{0.05}{0.5}{0.5}{hpired!10}
+
+  % \pplus{pEndSend-P2a}{b}{P3a}{P3'}{0.05}{0.5}{0.5}{hpiblue!10}
+
+  % ACKS: 
+  \pplus{pEndReceive-P1a}{a}{A8a}{A8}{0.01}{0.01}{0.5}{red}
+
+  \pplus{pEndReceive-A8a}{b}{P9}{P9}{0.05}{0.5}{0.5}{hpiyellow!40}
+  \pplus{pEndSend-P9}{b}{P10}{P10}{0.05}{0.5}{0.5}{hpired!40}
+  \pplus{pEndSend-P10}{b}{P11}{P12}{0.05}{0.5}{0.5}{hpiblue!40}
+  \pplus{pEndSend-P11}{b}{P11}{P12}{0.05}{0.5}{0.5}{hpiorange!40}
+  
+\end{tikzpicture}
+
+
+
+\begin{tikzpicture}
+
+  \label{page:cc:ackclocking:packet_burst_2}
+  % example: delay always 0.2, all ack times 0,
+  % packet times from A-B and C-D 0.5, from C-D 1 
+  
+  \node (a) {A}; 
+  \node [right= 3 of a] (errorline) {}; 
+  \node [right=of errorline] (b) {B};
+
+  \foreach \n in {a, b} { \draw [thin] (\n) -- ++ (0,-47); }
+
+  % \pplusa{a}{b}{1}{0.5}{1}{0.1}{2}{hpiblue}
+  % Args: start, end, label, offset, packeet, delay, color
+
+  % Packet 1: 
+  \pplus{a}{b}{P1}{P1}{2}{0.5}{8}{hpiyellow!10}
+  \pplus{pEndSend-P1}{b}{P2}{P2}{2}{0.5}{8}{hpired!10}
+  \pplus{pEndSend-P2}{b}{P3}{P3}{2}{0.5}{8}{hpiblue!10}
+  \pplus{pEndSend-P3}{b}{P4}{P4}{2}{0.5}{8}{hpiorange!10}
+  \pplus{pEndSend-P4}{b}{P5}{P5}{2}{0.5}{8}{hpiyellow!20}
+  \pplus{pEndSend-P5}{b}{P6}{P6}{2}{0.5}{8}{hpired!20}
+  \pplus{pEndSend-P6}{b}{P7}{P7}{2}{0.5}{8}{hpiblue!20}
+  % \pplus{pEndSend-P7}{b}{P8}{P8}{2}{0.5}{8}{hpiorange!20}
+
+  % previous ACKs:
+
+  \foreach \i in {1,...,7} {
+    \draw (pStartSend-P\i) -- ++(1, 1.75);
+  }
+
+  
+  \foreach \i in {1,...,7} {
+    \pplus{pEndReceive-P\i}{errorline}{A\i}{}{0.01}{0.01}{2}{red}
+    \node[red] at (pEndReceive-A\i) {X};
+  }
+  % \foreach \i in {1,...,8} {
+  %   \pplus{pEndReceive-P\i}{errorline}{A\i}{}{0.01}{0.01}{0.125}{red}
+  %   \node[red] at (pEndReceive-A\i) {X};
+  % }
+
+  \coordinate (timeout-P1) at ($ (pEndSend-P7) + (0, -2)$);
+  \pplus{timeout-P1}{b}{P1a}{P1'}{0}{0.5}{8}{hpiyellow!10}
+  \node [left=of pStartSend-P1a, align=right] (timeout-label) {Timeout for P1};
+  \draw [dotted] (timeout-label) -- (timeout-P1); 
+  
+  % \pplus{pEndSend-P1a}{b}{P2a}{P2'}{0.05}{0.5}{0.5}{hpired!10}
+
+  % \pplus{pEndSend-P2a}{b}{P3a}{P3'}{0.05}{0.5}{0.5}{hpiblue!10}
+
+  % ACKS:
+  \node [align=left, right=0.5 of pEndReceive-P1a] {All packets until P7 already received\\Send CumAck including P7};
+  \pplus{pEndReceive-P1a}{a}{A7a}{A7}{0.01}{0.01}{8}{red}
+  
+
+  \pplus{pEndReceive-A7a}{b}{P8}{P8}{0.05}{0.5}{8}{hpiyellow!40}
+  \pplus{pEndSend-P8}{b}{P9}{P9}{0.05}{0.5}{8}{hpired!40}
+  \pplus{pEndSend-P9}{b}{P10}{P10}{0.05}{0.5}{8}{hpiblue!40}
+  \pplus{pEndSend-P10}{b}{P11}{P11}{0.05}{0.5}{8}{hpiorange!40}
+
+
+  % annotate packet burst
+  \draw [decorate, decoration={brace, raise=10pt, mirror}] (pStartSend-P8) to node [left=15pt] (burstlabel) {} (pEndSend-P11);
+  \node [align=right, anchor=east, left=0 of burstlabel]  (burstdescr) {CWND=4\\no packets in flight\\send 4 packets back to back};
   
   
 \end{tikzpicture}

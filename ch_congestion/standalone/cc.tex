@@ -26,72 +26,72 @@
 \begin{document}
 
 
-% \begin{tikzpicture}
-%   \label{page:cc:basic_scenario}
-%   \node [client] (client1) {};
+\begin{tikzpicture}
+  \label{page:cc:basic_scenario}
+  \node [client] (client1) {};
   
-%   \node [switch,below right=of client1] (r1) {};
-%   \node [switch,right=of r1] (r2) {};
+  \node [switch,below right=of client1] (r1) {};
+  \node [switch,right=of r1] (r2) {};
 
-%   \node [server, right=of r2] (s) {};
+  \node [server, right=of r2] (s) {};
 
-%   \node [client, below left=of r1] (client2) {};
+  \node [client, below left=of r1] (client2) {};
 
-%   \draw (r1) edge[thick] node[above right] {10 Gbps} (client1)
-%   edge [very thick] node[below right] {40 Gbps} (client2)
-%   to [thin] node[above] {1 Gbps} (r2)
-%   edge [very thick] node [above] {100 Gbps} (s)
-%   ; 
-% \end{tikzpicture}
+  \draw (r1) edge[thick] node[above right] {10 Gbps} (client1)
+  edge [very thick] node[below right] {40 Gbps} (client2)
+  to [thin] node[above] {1 Gbps} (r2)
+  edge [very thick] node [above] {100 Gbps} (s)
+  ; 
+\end{tikzpicture}
 
-% \begin{tikzpicture}
-%   \label{page:cc:basic_scenario:with_queues}
+\begin{tikzpicture}
+  \label{page:cc:basic_scenario:with_queues}
 
-%   \node [client] (client1) {};
+  \node [client] (client1) {};
   
-%   \node [switch,below right=of client1] (r1) {};
-%   \node [switch,right=of r1] (r2) {};
+  \node [switch,below right=of client1] (r1) {};
+  \node [switch,right=of r1] (r2) {};
 
-%   \node [server, right=of r2] (s) {};
+  \node [server, right=of r2] (s) {};
 
-%   \node [client, below left=of r1] (client2) {};
+  \node [client, below left=of r1] (client2) {};
 
-%   \draw (r1) edge[thick] node[above right] {10 Gbps} (client1)
-%   edge [very thick] node[below right] {40 Gbps} (client2)
-%   to [thin] node[above] {1 Gbps} (r2)
-%   edge [very thick] node [above] {100 Gbps} (s)
-%   ;
+  \draw (r1) edge[thick] node[above right] {10 Gbps} (client1)
+  edge [very thick] node[below right] {40 Gbps} (client2)
+  to [thin] node[above] {1 Gbps} (r2)
+  edge [very thick] node [above] {100 Gbps} (s)
+  ;
 
-%   \pic [draw, fill=hpired!30, rotate=0] at ($(r1.east)+(-1, -0.1)$) {queue={4 scale 0.25}}; 
+  \pic [draw, fill=hpired!30, rotate=0] at ($(r1.east)+(-1, -0.1)$) {queue={4 scale 0.25}}; 
 
-%   \pic [draw, fill=hpiblue!30, rotate=180] at ($(r2.west)+(1.4, 0.1)$) {queue={5 scale 0.25}}; 
+  \pic [draw, fill=hpiblue!30, rotate=180] at ($(r2.west)+(1.4, 0.1)$) {queue={5 scale 0.25}}; 
   
-% \end{tikzpicture}
+\end{tikzpicture}
 
 
-% \begin{tikzpicture}
+\begin{tikzpicture}
     
-%   \label{page:cc:just_test}
-%   \node [circle, minimum width=1cm, draw] (client1) {};
+  \label{page:cc:just_test}
+  \node [circle, minimum width=1cm, draw] (client1) {};
   
-%   \node [circle, minimum width=1cm, draw,below right=of client1] (r1) {};
-%   \node [circle, minimum width=1cm, draw,right=of r1] (r2) {};
+  \node [circle, minimum width=1cm, draw,below right=of client1] (r1) {};
+  \node [circle, minimum width=1cm, draw,right=of r1] (r2) {};
 
-%   \node [circle, minimum width=1cm, draw, right=of r2] (s) {};
+  \node [circle, minimum width=1cm, draw, right=of r2] (s) {};
 
-%   \node [circle, minimum width=1cm, draw, below left=of r1] (client2) {};
+  \node [circle, minimum width=1cm, draw, below left=of r1] (client2) {};
 
-%   \draw (r1) edge[thick] node[above, sloped] {10 Gbps} (client1)
-%   edge [very thick] node[below, sloped] {40 Gbps} (client2)
-%   to [thin] node[above] {1 Gbps} (r2)
-%   edge [very thick] node [above] {100 Gbps} (s)
-%   ; 
+  \draw (r1) edge[thick] node[above, sloped] {10 Gbps} (client1)
+  edge [very thick] node[below, sloped] {40 Gbps} (client2)
+  to [thin] node[above] {1 Gbps} (r2)
+  edge [very thick] node [above] {100 Gbps} (s)
+  ; 
 
-%   \pic [draw, fill=hpired!10, rotate=0] at ($(r1.east)+(-1, -0.1)$) {queue={4 scale 0.25}}; 
+  \pic [draw, fill=hpired!10, rotate=0] at ($(r1.east)+(-1, -0.1)$) {queue={4 scale 0.25}}; 
 
-%   \pic [draw, fill=hpiblue!10, rotate=180] at ($(r2.west)+(1.4, 0.1)$) {queue={5 scale 0.25}}; 
+  \pic [draw, fill=hpiblue!10, rotate=180] at ($(r2.west)+(1.4, 0.1)$) {queue={5 scale 0.25}}; 
   
-% \end{tikzpicture}
+\end{tikzpicture}
 
 %----------------------------------------------
 \begin{tikzpicture}
@@ -111,6 +111,7 @@
 
 
 \begin{tikzpicture}[start chain]
+  \label{page:cc:fairness_scenario}
 
   \begin{scope}[every node/.style={client, on chain}]
     \foreach \i in {1,...,4} {
@@ -178,4 +179,13 @@
   
 \end{tikzpicture}
 
+\begin{tikzpicture}
+  \label{page:cc:sawtooth}
+  \draw [->] (0,0) -- (0,10) node [below left, align=center] {CWND};
+  \draw [->] (0,0)  -- (20,0) node[below right, align=center] {Time/RTT};
+
+  \draw [thick]  (0,2) -- ++ (5,5) -- ++ (0,-3.5)  -- ++(4.5, 4.5) --  ++ (0, -4) -- ++(6,6) --++(0, -5) --++(3,3) -- ++(0,-4);
+  
+  
+\end{tikzpicture}
 \end{document}
