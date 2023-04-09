@@ -78,8 +78,7 @@
 \newcommand{\logicalcomm}[0]{  \begin{scope}[every path/.style = <->, dashed, thick]
     \foreach \l/\r in { l7l/l7r, ll1/lr1, ll2/lr2, ll3/lr3, ll4/lrouter3,
       lrouter3/lr4, ll5/lrouter2, lrouter2/lswitch2, lswitch2/lr5,
-      ll6/lrouter1, lrouter1/lswitch1, lswitch1/lr6,
-    } { \draw (\l) -- (\r); }
+      ll6/lrouter1, lrouter1/lswitch1, lswitch1/lr6} { \draw (\l) -- (\r); }
   \end{scope}
 }
 

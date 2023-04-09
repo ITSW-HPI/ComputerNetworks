@@ -60,6 +60,16 @@ One way to foster abstractness: Layers
 - Higher layers: more complex functions, wider scope 
 - Lower layers: simpler functions, smaller scope 
 
+**** Layering 
+
+***** \Gls{layering}                                           :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+      \Glsdesc{layering}
+
+
 
 **** Layers provide services 
 Each layer uses capabilities of a lower layer, adds own rules and procedures, to provide a more useful, advanced *service*
@@ -99,14 +109,24 @@ Each layer uses capabilities of a lower layer, adds own rules and procedures, to
 
 
 **** Service primitives
-- Service primitives: set of operations available at the interface of a service (``channel object API'')
-  - Formal definition of the service
-- Example for Bit Transmission Layer
+
+***** \Gls{serviceprimitive}                                   :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+      \Glsdesc{serviceprimitive}
+
+
+***** Service primitives for Bit Transmission Layer               :B_example:
+      :PROPERTIES:
+      :BEAMER_env: example
+      :END:
   - SEND-BIT – sender can ask for the delivery of a bit to the receiver
   - RECEIVE-BIT – receive can wait for the arrival of a bit (blocking)
   - INDICATE-BIT – indicate to the receiver that bit is now available (asynchronous)
 - Many different ways to structure service primitives conceivable
-  - Unit of data: individual bytes, messages, \dots 
+  - E.g., unit of data: individual bytes, messages, \dots 
 
 **** Service primitives – correctness requirements
 - For both message and byte stream-oriented (set of) service primitives, correctness requirements are important
@@ -121,13 +141,19 @@ Each layer uses capabilities of a lower layer, adds own rules and procedures, to
 
 **** Typical examples of services
 
-***** Datagram service
+***** Datagram service                                            :B_example:
+      :PROPERTIES:
+      :BEAMER_env: example
+      :END:
 - Unit of data are messages
 - Correct, but not necessarily complete or in order
 - Connection-less
 - Usually insecure/not dependable, not confirmed
 
-***** Reliable byte stream
+***** Reliable byte stream                                        :B_example:
+      :PROPERTIES:
+      :BEAMER_env: example
+      :END:
 - Byte stream
 - Correct, complete, in order, confirmed
 - Sometimes, but not always secure/dependable
@@ -189,27 +215,27 @@ Each layer uses capabilities of a lower layer, adds own rules and procedures, to
 
 
 #+BEGIN_SRC c
-int main(int argc, char **argv)
-{
-	int	sockfd;
-	struct sockaddr_un	cliaddr, servaddr;
-	char 	buffer[100];
+   int main(int argc, char **argv)
+   {
+     int sockfd;
+     struct sockaddr_un cliaddr, servaddr;
+     char buffer[100];
 
-	sockfd = socket (AF_LOCAL, SOCK_DGRAM, 0);
+     sockfd = socket (AF_LOCAL, SOCK_DGRAM, 0);
 
-	bzero(&cliaddr, sizeof(cliaddr));	
-	cliaddr.sun_family = AF_LOCAL;
-	strcpy(cliaddr.sun_path, tmpnam(NULL));
+     bzero(&cliaddr, sizeof(cliaddr));	
+     cliaddr.sun_family = AF_LOCAL;
+     strcpy(cliaddr.sun_path, tmpnam(NULL));
 
-	bind(sockfd, (SA *) &cliaddr, sizeof(cliaddr));
+     bind(sockfd, (SA *) &cliaddr, sizeof(cliaddr));
+   
+     bzero(&servaddr, sizeof(servaddr));	
+     servaddr.sun_family = AF_LOCAL;
+     strcpy(servaddr.sun_path, "kanalobjekt");
 
-	bzero(&servaddr, sizeof(servaddr));	
-	servaddr.sun_family = AF_LOCAL;
-	strcpy(servaddr.sun_path, "kanalobjekt");
-
-	sendto (sockfd, "Hallo!", strlen("Hallo!"), 0, 
-		&servaddr, sizeof(servaddr);
-}
+     sendto (sockfd, "Hallo!", strlen("Hallo!"), 0, 
+	     &servaddr, sizeof(servaddr);
+   }
 #+END_SRC
 
 
@@ -222,23 +248,23 @@ int main(int argc, char **argv)
 
 
 #+BEGIN_SRC c
-int main(int argc, char **argv)
-{
-	int	sockfd;
-	struct sockaddr_un	servaddr, claddr;
-	char	buffer[127];
+  int main(int argc, char **argv)
+  {
+    int	sockfd;
+    struct sockaddr_un	servaddr, claddr;
+    char	buffer[127];
 
-	sockfd = socket (AF_LOCAL, SOCK_DGRAM, 0);
+    sockfd = socket (AF_LOCAL, SOCK_DGRAM, 0);
 
-	bzero (&servaddr, sizeof(servaddr));
-	servaddr.sun_family = AF_LOCAL;
-	strcpy (servaddr.sun_path, "kanal");
+    bzero (&servaddr, sizeof(servaddr));
+    servaddr.sun_family = AF_LOCAL;
+    strcpy (servaddr.sun_path, "kanal");
 
-	bind (sockfd, (SA *) &servaddr, sizeof(servaddr));
+    bind (sockfd, (SA *) &servaddr, sizeof(servaddr));
 
-	recvfrom (sockfd, buffer, 127, 0, &claddr, sizeof(claddr));
-	printf ("Auftrag: %s \n", buffer); 
-}
+    recvfrom (sockfd, buffer, 127, 0, &claddr, sizeof(claddr));
+    printf ("Auftrag: %s \n", buffer); 
+  }
 
 #+END_SRC
 
@@ -339,7 +365,7 @@ service
 - A protocol instance/protocol engine at each entity
 - Protocol instance (usually) has several states
 - E.g., for a protocol implementing a connection oriented service:
-  IDLE, CONNECTED, RELEASING\_CONNECTION
+  IDLE, CONNECTED, RELEASING-CONNECTION
 
 
 **** Protocols and FSM 
