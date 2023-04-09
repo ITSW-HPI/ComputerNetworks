@@ -10,35 +10,23 @@
 **** Plans for this chapter 
 
 
-- Basic ideas 
-
-
-\vskip-2.5em
-
-*****                     
-      :PROPERTIES:
-      :BEAMER_env: block
-      :BEAMER_col: 0.48
-      :END:
-
-
-
-
-*****                    
-      :PROPERTIES:
-      :BEAMER_env: block
-      :BEAMER_col: 0.48
-      :END:   
+- Transporting data by signals
+- Exchange of data between peers that
+  - can directly exchange signals
+    - and need to *duplex* a *channel* to realize both directions
+    - need to *share* a channel by *multiplexing*
+    - possibly have to create that channel across intermediate entities
+      (*circuit switching*)
+  - cannot directly exchange data but need the help of intermediate
+    entities that can store data (*packet switching*)
+- *Routing* and *forwarding*
+- *Control plane* vs *data plane* 
+- Dependability issues 
 
 
 
-*****                               :B_ignoreheading:
-      :PROPERTIES:
-      :BEAMER_env: ignoreheading
-      :END:
 
-
-** Internet in ten minutes 
+** Internet in ten minutes                                         :noexport:
 
 **** Internet design choices 
 
@@ -1157,7 +1145,8 @@ Traffic properties
 - Instead:
   - Circuits only between directly adjacent switches and end
     nodes
-  - Switches have buffer 
+  - Packet switches have buffer
+    - Note: Circuit switches don't! 
   - Group data into groups of bytes - a *packet*
   - A packet carries (at least) data about its destination - an
     *address*
