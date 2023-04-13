@@ -65,9 +65,9 @@
   \draw [hpiyellow, fill=hpiyellow!40] (1, -9.6) -- ++ (-1, -1) -- ++ (0, -0.1) -- ++ (+1, +1)-- ++ (0, -0.1);
 
 
-  \node [align=center] (wait) at (-1,-6) {Wait for \\ processing};
+  \node [align=center] (wait) at (-2,-6) {Wait for \\ processing};
   \foreach \p in {(1, -2), (2, -3.6),  (2, -8.1),  (1, -9.5), (0, -10.9)} {
-    \draw [->, hpired] (wait.east) -- (\p) ; 
+    \draw [->, hpired] (wait.east) -- \p ; 
   }
   \draw [hpiorange, decorate,decoration={brace,amplitude=6pt, raise=1pt}] (4,0) -- (4, -12) node [midway, right=10pt,anchor=west,align=left] {Circuit\\setup}; 
 
