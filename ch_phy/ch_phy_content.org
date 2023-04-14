@@ -10,17 +10,15 @@
 
 **** The story so far  
 
+- Basic concepts for networking established
+  - In particular, signals vs. data, duplexing, muliplexing, switching
+    (circuit or packet) vs. forwarding vs. routing
+- Basic architectural approaches
+  - Layering
+  - Reference models: ISO/OSI vs. TCP/IP 
+
+
 **** Plans for this chapter 
-
-
-\vskip-2.5em
-
-*****                     
-      :PROPERTIES:
-      :BEAMER_env: block
-      :BEAMER_col: 0.48
-      :END:
-
 
 - Answer the basic question: how can data be transported over a physical medium?
 - Understand the basic service provided by a physical layer
@@ -28,22 +26,8 @@
 - Reasons why performance of any physical layer is limited
 - Reasons for errors
 - A few examples of important physical layers
+\pause 
 - Note: This is vastly simplified material
-****** Learning outcomes 
-
-*****                    
-      :PROPERTIES:
-      :BEAMER_env: block
-      :BEAMER_col: 0.48
-      :END:   
-
-
-
-*****                               :B_ignoreheading:
-      :PROPERTIES:
-      :BEAMER_env: ignoreheading
-      :END:
-
 
 ** Baseband
 
@@ -127,23 +111,64 @@ g(t) = 1/2c + \sum_{n=1}^\infty a_n \sin(2\pi n f t) + \sum _{n=1}^\infty b_n \c
 \end{equation}
 \end{tcolorbox}
 
-\pause
-- Eq. \ref{eq:fourier} is called the *Fourier series* representation
-  of $g$
-\pause 
-- Constants $c$, $a_n$, $b_n$ are to be determined - the *Fourier analysis* of $g$
 
+
+**** Terminology for Fourier series 
+***** Fourier series / frequency-domain representation         :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+Eq. \ref{eq:fourier} is called the *Fourier series* representation
+  of $g$. It is also called the *\gls{frequencydomain}* (to distinguish
+  from the usual representation as a function of time in the *time domain*)
+
+\pause 
+
+***** \Gls{fourieranalysis}                                    :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+      \Glsdesc{fourieranalysis}
+
+
+\pause
+
+***** \Gls{DC}                                                 :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+      \Glsdesc{DC}
+
+\pause
+
+***** \Gls{harmonics}                                          :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+      \glsdesc{harmonics}
+
+\pause
+
+
+
+ Why squares? Say, $g(t)$ shows voltage $\leadsto$ Power 
+  $P = U \cdot I = U \cdot (U/R) = \frac{1}{R} g^2(t)$
 
 **** Good news: Orthogonal base system
  
-- Function family  ${\sin(2n \pi f t), \cos(2n \pi ft) }$ forms an *orthogonal base system* of all functions with period $1/f$ 
-  - For fixed base frequency $f$, $n=1, \dots, \infty$ 
+- Function family  ${\sin(2n \pi f t), \cos(2n \pi ft) }$ forms an
+  *orthogonal base system* of all functions with period $T$ 
+  - For fixed *base frequency* $f = 1/T$, $n=1, \dots, \infty$ 
   - Orthogonal under scalar product $<f, g> = \int_{t=0}^T f(t) g(t)  \mathrm{d}t$
 \pause 
 - Allows to calculate coefficients! 
 
 **** Fourier analysis – computing coefficients
-- Coefficients c, an, bn in the Fourier series can be computed using
+- Coefficients $c, a_n, b_n$ in the Fourier series can be computed using
   orthogonality 
 - Homework: convince yourself that
   - $\int_{t=0}^\infty \sin (2\pi n f t) \cos (2\pi m f t) \mathrm{d}t = 0$ for
@@ -177,20 +202,6 @@ We find:
 
 
 
-**** Terminology for Fourier series 
-
-- The representation of $g$ as in Eq. \ref{eq:fourier} is also called
-  the *frequency-domain representation*
-\pause
-- Constant term $1/2 c$ also called the *Direct Current component* (DC)
-\pause
-- The $n$ th terms of these sums  are called *harmonics*
-\pause
-- The sum of the squares of the $n$ th coefficients (i.e., $a_n^2 + b_n^2$) is proportional to the *power* contained in this harmonic
-\pause
-- Why squares? Say, $g(t)$ shows voltage $\leadsto$ Power 
-  $P = U \cdot I = U \cdot (U/R) = \frac{1}{R} g^2(t)$
-
 **** Functions with finite Fourier transform 
 
 - Eq \ref{eq:fourier} tells us that this sum exists
@@ -208,7 +219,7 @@ We find:
 - Case 2: The Fourier series of $g$ is infinite
   - I.e., for any $n$, there is some $m> n$ such that $a_m \not = 0$
     or $b_m \not= 0$
-  - \pause *Practically, however, often $a_n$, $b_n$ fall off quickly
+  - \pause *Practically*, however, often $a_n$, $b_n$ fall off quickly
     (often, exponentially)
     - Power in high harmonics quickly goes  to zero 
   - \pause Cutting off above some $n_\mathrm{upper}$ *does* introduce
@@ -245,12 +256,12 @@ So what is the signal bandwidth for ASCII letter ~b~ ?
       :END:
 
 
-- The transmitted waveform of ‘b’ is not a periodic signal – Fourier
+- The transmitted signal of ‘b’ is not a periodic signal – Fourier
   analysis not applicable directly
   - (Remark: The *continuous* Fourier *transform* is needed here; for
-    time-discrete signals, there is also a discrete Fourier transform)
+    signals with finitely many points, there is also a discrete Fourier transform)
 \pause 
-- We just a simplification here: *Pretend* waveform is repeated infinitely often, resulting in a periodic waveform with period 8 bit times
+- We use a simplification here: *Pretend* signal is repeated infinitely often, resulting in a periodic waveform with period 8 bit times
 
 
 ***** 
@@ -390,13 +401,23 @@ Characteristic: ``wiggling'' at the points of discontinuitiy
 
 
 \pause 
-- Relationship between $g$ and $\tilde{g}$ much easier to describe in
+- Relationship between $g$ and $\tilde{g}$ often much easier to describe in
   frequency domain 
 \pause 
 - We will look at:
   - Attenuation
   - Distortion (very briefly)
   - Noise 
+
+
+**** Channel 
+
+***** \Gls{channel}                                            :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+      \Glsdesc{channel}
 
 
 *** Attenuation 
@@ -761,21 +782,30 @@ We will revisit the third case in Section \ref{sec:phy:broadband}
     - ``white'': if we look at each harmonic separately, we see the
       same effect; homogeneous across frequency 
  
+**** Additive White Gaussian Noise 
+
+***** \Gls{awgn}                                               :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+      \Glsdesc{awgn}
+
+
 **** Noise – quantitatively?                                       :noexport:
 - What is the quantitatively relevant effect of noise on a signal? 
+\pause
 - Detour: Amplitude vs. power 
-- At the end, a receiver will collect energy for each bit (see later for details) 
-- Noise disturbs the amplitude of the received signal
-- As a Gaussian with standard deviation sigma 
-- Amplitude: Voltage measured at receiver
+  - At the end, a receiver will collect *energy* for each bit (see later for details) 
+  - Noise disturbs the amplitude of the received signal
+  - As a Gaussian with standard deviation sigma 
+  - Amplitude: Voltage measured at receiver
 - Relationship? 
 - Remember Ohm’s law and definition of power 
 - U = RI ; P = UI ; E = Pt  !
 - Receiver: modelled as constant resistor 
-- 
-- WS 19/20, v 1.11
-- Computer Networks - Physical layer
-- 28
+
+
 **** Noise – quantitatively? 
 - Hence: a noise disturbance of some $\Delta U$ corresponds to a power of $(\Delta U)^2$ 
 - The average power of the noise $\bar{N}$ is the average over time of all the instantaneous noise powers
@@ -808,16 +838,28 @@ We will revisit the third case in Section \ref{sec:phy:broadband}
 
 **** Noise vs. signal: Compare power 
 - Why is noise power relevant? 
-  - Power is what matters! 
-- Specifically: the *Signal-to-Noise Ratio* (SNR)
-  - Ratio of average signal power to average noise power
+  - We need to receive signal (its power) compared to noise 
 - Intuition: 
   - The louder the noise, the harder is to understand 
   - Receiver takes some time to receive a bit 
     - During that time, power is integrated and collected into energy 
     - For the signal, and the noise – this energy is what REALLY matters 
 
+\pause 
+
+***** \Gls{snr}                                                :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+      \Glsdesc{snr}
+
+
+
+
 ** Limitations
+
+*** Noise and bandwidth 
 
 **** Converting signals to data: Sampling
 - Suppose we have a channel with ample bandwidth, no noise, no distortion
@@ -911,6 +953,16 @@ C =  H \log_2(1 + \frac{S}{N})
 \end{tcolorbox}
 
 
+**** Channel capacity 
+
+***** \Gls{channelcapacity}                                    :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+      \Glsdesc{channelcapacity}
+
+
 **** Spectral efficiency 
 *****                               :B_ignoreheading:
       :PROPERTIES:
@@ -948,6 +1000,8 @@ Distinction:
   - Measured in *baud* (symbols/s)
 - *Data rate*: Rate at which physical layer sends incoming data bits
   - Measured in *bit/s*
+  - Data rate = Symbol rate \cdot bits/symbol
+
 
 **** Example: Use four-level symbols to encode two bits
 
@@ -1173,7 +1227,54 @@ Distinction:
 - Result: Data rate is twice the symbol rate
 - Technique is called *Quadrature Phase Shift Keying*  (QPSK)
 
-*** Constellation diagrams 
+
+**** Terminology 
+
+***** \Gls{baseband}                                           :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+      \Glsdesc{baseband}
+
+***** \Gls{broadband}                                          :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+      \Glsdesc{broadband}
+
+
+**** Terminology 
+
+***** \Gls{carrier}                                            :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+      \Glsdesc{carrier}
+
+***** \Gls{modulation}                                         :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+      \Glsdesc{modulation}
+
+
+***** \Gls{waveform}                                           :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+      \Glsdesc{waveform}
+
+
+
+*** Constellation diagrams
+    :PROPERTIES:
+    :BEAMER_env: quotation
+    :END:
 
 **** Visualization: 
 
@@ -1186,7 +1287,8 @@ Distinction:
 - Suppose: We work at a fixed carrier frequency (no FM)
 \pause
 - Then: a symbol corresponds to an (amplitude, phase) combination 
-  - Which is just a complex number in polar coordinates! 
+  - Which is just a complex number in polar coordinates!
+  - Which is just a representation of the waveform for that symbol
 
 
 **** Constellation diagrams
@@ -1280,7 +1382,7 @@ Distinction:
   scheme, supporting 4 bits/symbol 
 \pause 
 - Price to  pay: more susceptible to noise
-  - Compared against QPSK under same maximum / average signal power 
+  - Compared against QPSK under same maximum signal power 
 
 \onslide<1->
 ***** 

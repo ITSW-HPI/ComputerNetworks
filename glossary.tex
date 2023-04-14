@@ -81,3 +81,27 @@
 \newglossaryentry{layering}{name=layering, description={The approach of structuring a system by using an abstract modularization where there is a strict order between modules and modules are only allowed to interact with their adjacent modules. }}
 
 \newglossaryentry{serviceprimitive}{name=service primitive, description={The set of operations available at a service interface along with permissible sequences and parameters. }}
+
+\newglossaryentry{frequencydomain}{name=frequency-domain representation, description=A function represented as a sum of sine and cosine functions whose frequencies are integer multiples of the function's base frequency.}
+
+\newglossaryentry{fourieranalysis}{name=Fourier analysis, description={Determining the constants $c$, $a_n$, $b_n$ in a function's Fourier series.}}
+
+\newglossaryentry{DC}{name=direct current (DC), description={The term $1/2 c$ in a function's Fourier series.}}
+
+\newglossaryentry{harmonics}{name=harmonics, description={The terms $a_n$, $b_n$ of a function's Fourier series are its $n$th \textbf{harmonics}. It contains  \textbf{power} proportional to  $a_n^2 + b_n^2$}.}
+
+\newglossaryentry{awgn}{name=Additive White Gaussian Noise (AWGN), description={A model for noise inside a receiver, characterized by being added to the received signal and having the same power in all harmonics. This power follows a Gaussian distribution and is uncorrelated in time.}}
+
+\newglossaryentry{channelcapacity}{name=Channel capacity, description={The capacity of a channel (in the Shannon sense) is an upper bound on the data rate that can be transported over that channel without errors \textbf{after} possible error correction. It is not possible to actually achieve that rate, but it can be approached closely by using error correction over longer and longer codewords, trading off data rate against delay.}}
+
+\newglossaryentry{snr}{name=Signal-to-Noise Ratio (SNR), description={The ratio between the \emph{received} signal power and the noise power at a receiver, usually used in an average-over-time sense (sometimes, also as \emph{instantaneous} SNR).}}
+
+\newglossaryentry{baseband}{name=baseband transmission, description={In baseband transmission, symbol values are directly mapped to a parameter of the signal's physical quantity.}}
+
+\newglossaryentry{broadband}{name=broadband transmission, description={In broadband transmission, symbol values are mapped to a parameter of a \emph{function} of the signal's physical quantity (usually, a periodic function, e.g., a sine function). This function is often called the \emph{carrier}. The mapping process is called \emph{modulation}}}
+
+\newglossaryentry{carrier}{name=carrier, description={In broadband transmission, the \emph{carrier} is the unmodified, usually periodic function used for the signal. It usual has at least one parameter that is modified by modulation of symbol values.}}
+
+\newglossaryentry{modulation}{name=modulation, description={Modulation describes how a symbol value is used to choose a parameter of a signal's function.}}
+
+\newglossaryentry{waveform}{name=waveform, description={The actual function that is sent as a signal after the carrier has been modulated for a particular symbol value. Usually, there is one waveform for every possible symbol.}}
