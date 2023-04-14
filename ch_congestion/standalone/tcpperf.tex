@@ -107,6 +107,55 @@
 \end{tikzpicture}
 
 
+% \begin{tikzpicture}[spy using outlines={magnification=4, size=5cm, connect spies}]
+% compare: excel file cwnd_fairness
+%   \label{page:cc:fair:multiple_rtt}
+%   \draw [->] (0,0) -- (0, 10) node [left] {CWND A};
+%   \draw [->] (0,0) -- (10, 0) node [below right] {CWND B}; 
+
+%   % \pause 
+%   \draw (0.1,9) -- (-0.1,9) node [left] {$\mathrm{CWND}_\mathrm{max}$}; 
+%   \draw (9, 0.1) -- (9, -0.1) node [below] {$\mathrm{CWND}_\mathrm{max}$};
+%   % \pause 
+%   \draw [dotted] (0,0) -- (10,10);
+
+%   % \pause 
+%   \draw [dashed] (9,0) -- (0,9);
+%   % \pause 
+
+%   % first iteration:
+%   \draw [->] (3, 1) to (); 
+  
+%   % \pause 
+  
+%   \foreach \a/\b [remember=\a as \lasta (initially 6.66),
+%   remember=\b as \lastb (initially 2.33),
+%   ] in {3.33/2.166, 3/1.5, 5.25/3.75, 2.625/1.875, 4.875/4.125, 2.4375/2.0625, 4.6875/4.3125, 2.34275/2.15625} {
+%     \draw [->] (\lasta, \lastb)  -- (\a, \b); 
+%     % \pause 
+%   }
+
+%   % \pause
+  
+  
+%   % % \pause 
+%   % \foreach \a/\b [count=\i, remember=\a as \lasta (initially 3.75),
+%   % remember=\b as \lastb (initially 0.75),
+%   % ] in {3/1.5,  2.625/1.875, 2.4375/2.0625, 2.34275/2.15625} {
+%   % \draw [decorate, decoration={brace, raise=5pt}] (\lasta, \lastb) to node[below left=1pt] (rtt\i) {}  (\a, \b); 
+%   % }
+
+
+%   %   \node (rttlabel) at (1,0.5)  {One RTT}; 
+%   %   \foreach \i in {1,...,4} {
+%   %   %   \node [draw, rectangle callout,
+%   %   %   callout absolute pointer={(rtt\i)}] at (1,0.5) {One RTT};
+%   %   \draw [->] (rttlabel) -- (rtt\i); 
+%   % }
+
+% \end{tikzpicture}
+
+
 
 
 
