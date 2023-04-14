@@ -21,7 +21,7 @@
 **** Main research topics
 
 In general: architectures and protocols of communication systems
- - Structure, design, performance evaluation, implementation, …
+ - Structure, design, performance evaluation, implementation, \dots 
  - For all types of communication: computer networks, voice communication, data & multimedia content
 
 **** Main research topics                                          :noexport:
@@ -119,8 +119,8 @@ block/.style = {rectangle, draw=black, thick, align=center}]
 **** Time table 
 
 Regular: 
-- Tuesday, 15:15 - 16:45, HS 1 (?)
-- Thursday, 9:15 - 10:45, HS 1 (?)
+- Tuesday, 15:15 - 16:45 
+- Thursday, 9:15 - 10:45
 
 \pause 
 
@@ -148,7 +148,8 @@ To be scheduled on-demand
 
 **** No tutoring 
 
-There are no tutors available, no "Testate", ... 
+There are no tutors available, no "Testate", no handing in of
+assignments, no nothing,  ... 
 
 *** Resources 
 
@@ -156,7 +157,7 @@ There are no tutors available, no "Testate", ...
 
 - Only PDFs! 
 - No script 
-- Github 
+- [[https://github.com/ITSW-HPI/ComputerNetworks][Github]] 
 
 
 **** Acknowledgement 
