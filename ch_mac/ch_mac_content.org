@@ -8,6 +8,13 @@
 
 **** The story so far  
 
+- Physical layer told us how to transport data using signals 
+- Link layer told us how to
+  - deal with imperfections in the physical layer
+  - how to turn bit sequences into frames/packets
+- But link layer is only concerned with directly connected peers; it
+  does not deal with multiplexing a medium 
+
 **** Plans for this chapter 
 
 - The medium access problem and main options for solutions
@@ -17,31 +24,6 @@
 - Classification & examples of MAC protocols, performance aspects
   - An important example: Ethernet 
 
-
-
-\vskip-2.5em
-
-*****                     
-      :PROPERTIES:
-      :BEAMER_env: block
-      :BEAMER_col: 0.48
-      :END:
-
-
-****** Learning outcomes 
-
-*****                    
-      :PROPERTIES:
-      :BEAMER_env: block
-      :BEAMER_col: 0.48
-      :END:   
-
-
-
-*****                               :B_ignoreheading:
-      :PROPERTIES:
-      :BEAMER_env: ignoreheading
-      :END:
 
 ** Static multiplexing                                             
 **** Static multiplexing
@@ -82,16 +64,17 @@
 **** Statically multiplexed bursty traffic – delay 
 - Compare the delay resulting from static multiplexing
 \pause 
-- Base case: $No multiplexing$, a single traffic source with average rate \rho (bits/s), link capacity $C$ bits/s
+- Base case: *No multiplexing*, a single traffic source with average rate \rho (bits/s), link capacity $C$ bits/s
   - Write average delay as $T$
-    - In case you really want to know: $T = 1/(\mu C-\lambda), \rho=\lambda/\mu)$
+  - $T = 1/(\mu C-\lambda), \rho=\lambda/\mu)$
 \pause 
-- $Multiplexed case$: Split the single source in $N$ sources with same total rate, statically multiplex over the same link (e.g., FDM)
+- *Multiplexed case*: Split the single source in $N$ sources with same total rate, statically multiplex over the same link (e.g., FDM)
   - Resulting average delay $T_\mathrm{FDM} = N\cdot T$
   - Irrespective of FDM, TDM, - essentially, a queuing theory result!
   - Intuition: Because some channels are idle sometimes
 \pause 
-- Hence: static multiplexing of $N$ sources increases average delay of a packet $N$-fold
+- Hence: static multiplexing of $N$ sources increases average delay of
+  a packet $N$ -fold
   - $\leadsto$ Static multiplexing often unacceptable
 
 
@@ -122,7 +105,7 @@
 *Station model* (or terminal model, load model)
 - $N$ *independent* stations want to share a given resource
 - One possible load model: probability of generating a packet in
-  interval $\Delta t$ is $\lambda \cdot \Delta t$, for some $\lambda = const$
+  interval $\Delta t$ is $\lambda \cdot \Delta t$, for some $\lambda = \mathrm{const}$
 
 \pause 
 \vfill
@@ -380,7 +363,7 @@
   - Time between two attempts is exponentially distributed, independent for any pairs of events
   - All packets are of unit time length
   - Let G be the mean number of transmission attempts per unit time
-  - Then: \[ \mathrm{P}(k \mathrm{ attempt in time } t) = \frac{(Gt)^k}{k!} \mathrm{e}^{-Gt}  \]
+  - Then: \[ \mathrm{P}(k \text{ attempt in time } t) = \frac{(Gt)^k}{k!} \mathrm{e}^{-Gt}  \]
   - (Details: Mathe 3)  
 
 **** ALOHA - Packet successful? 
@@ -532,7 +515,7 @@ Idea 1: Be persistent
 
 **** p-persistent CSMA - Finite State Machine 
 
-#+caption: Finite state machine of a $p$-persistent MAC protocol
+#+caption: Finite state machine of a $p$ -persistent MAC protocol
 #+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:mac:ppersistent}
 #+NAME: fig:mac:ppersistent
 [[./standalone/fsm.pdf]]
@@ -590,7 +573,7 @@ Idea 1: Be persistent
 **** What to do after a collision happens? 
 - Stations do want to transmit their packets, despite detecting a
   collision
-  - Note: Unlike in non-persistent or $p$-persistent CSMA, here we *know*
+  - Note: Unlike in non-persistent or $p$ -persistent CSMA, here we *know*
 that a competing sender exists! 
 \pause 
 - Have to try again
