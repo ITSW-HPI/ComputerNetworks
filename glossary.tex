@@ -1,3 +1,5 @@
+% -*-LaTeX-*-
+
 \newglossaryentry{signal}{name=signal, description={A (usually deliberately caused) change of a physical quantity; this change propagates in space and time and can be measured.}}
 
 \newglossaryentry{simplex}{name=simplex, description={Using a physical medium or a channel only in single direction; the roles of transmitter and receiver stay fixed.}}
@@ -105,3 +107,17 @@
 \newglossaryentry{modulation}{name=modulation, description={Modulation describes how a symbol value is used to choose a parameter of a signal's function.}}
 
 \newglossaryentry{waveform}{name=waveform, description={The actual function that is sent as a signal after the carrier has been modulated for a particular symbol value. Usually, there is one waveform for every possible symbol.}}
+
+\newglossaryentry{connection}{name=connection, description={State shared between sender and receiver. Needs to be established by \emph{connection setup}.}}
+
+\newglossaryentry{flowcontrol}{name=flow control, description={Regulating the transmission rate of a sender in order not to overwhelm its receiver. \emph{Not} related to the network between them.}}
+
+\newglossaryentry{hammingdistance}{name=Hamming distance, description={Between two bit sequences, the number of 1s in their XOR. For a set of bit sequences, the smallest distance between any two (non-identical) of them. }}
+
+\newglossaryentry{generator}{name=generator, description={A generator matrix for a forward error correction scheme is a matrix $G$ that produces a codeword by mutliplication (from right) with payload. }}
+
+\newglossaryentry{codeword}{name=codeword, description={Payload plus redudancy}}
+
+\newglossaryentry{codinggain}{name={coding gain}, description={The reduction in SNR that can be tolerated when using a forward error correction code without compromising error rate. It is usually expressed as the ratio between (required) SNR for uncoded to coded scheme, and usually written in decibels. It is justifiable to talk about \textbf{the} coding gain of a particular FEC scheme (without referring to a particular error rate) when focusing on SNR regions where the ratio between coded and uncoded schemes becomes constant. This \emph{is} a simplification. }}
+
+\newglossaryentry{arq}{name=Automatic Repeat Request (ARQ), description={A family of backward-recovery protocols based on acknowledgements and timeouts.}}

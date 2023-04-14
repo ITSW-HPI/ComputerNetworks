@@ -58,6 +58,17 @@
 
 **** The story so far  
 
+- Clarified basic options how to structure, design a network
+  - Switching, multiplexing, layers, \dots
+- Details of data transported via signals
+- Inherent limitations:
+  - Physical transport cannot avoid bit errors
+  - It is just a string of bits
+  - It ``receives'' bits even when none were sent 
+
+
+
+
 **** Plans for this chapter 
 
 - Understand the main service provided by the link layer
@@ -68,30 +79,6 @@
   - Acknowledgement-based protocols
   - Flow control
 - Some ideas about how to use extended finite state machines to specify communication protocols
-
-\vskip-2.5em
-
-*****                     
-      :PROPERTIES:
-      :BEAMER_env: block
-      :BEAMER_col: 0.48
-      :END:
-
-
-****** Learning outcomes 
-
-*****                    
-      :PROPERTIES:
-      :BEAMER_env: block
-      :BEAMER_col: 0.48
-      :END:   
-
-
-
-*****                               :B_ignoreheading:
-      :PROPERTIES:
-      :BEAMER_env: ignoreheading
-      :END:
 
 
 
@@ -167,7 +154,8 @@
 - How to turn a physical layer’s bit stream abstraction into individual, well demarcated frames
   - Usually necessary to provide error control – not obvious how to do that over a bit stream abstraction
   - Frames and packets are really the same thing, only a convention to
-    talk about “frames'' in the link-layer context; we stick to ``packets''
+    talk about ``frames'' in the link-layer context
+
 \pause 
 - In addition: Fragmentation & reassembly if network layer packets are longer than link layer packets
 
@@ -188,7 +176,20 @@
 
 
 **** Basic link layer functions – Connection setup
-- Connection: Shared state at sender and receiver 
+
+***** \Gls{connection}                                         :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+      \Glsdesc{connection}
+
+
+
+*****                                                       :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
 - Connections useful for many purposes
   - Application context
   - Error control – several error control schemes rely on a *common context* between sender and receiver
@@ -214,6 +215,14 @@ Common confusion!
 \pause 
 - Problem reappears later in the transport layer again, with some
   additional complications – treated there!
+
+***** \Gls{flowcontrol}                                        :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+      \Glsdesc{flowcontrol}
+
 
 
 ** Framing                                                         
@@ -354,8 +363,8 @@ Note: Physical layer might try to detect and deliver bits when the sender is not
   - $\leadsto$ More than $2^m$ possible frames are required
   - $\leadsto$ More than $m$ bits are required in a frame  
   - Use frames with $n > m$ total length  
-    - $r=n-m$ are the $redundant bits$ (often, as header or trailer)
-- Having /more possible than legal frames/ allows receiver to detect
+    - $r=n-m$ are the *redundant bits* (often, as header or trailer)
+- Having *more possible than legal frames* allows receiver to detect
   illegal frames
 
 
@@ -401,7 +410,7 @@ Note: Physical layer might try to detect and deliver bits when the sender is not
 *** Hamming distance 
 **** Distance between frames
 - In previous example: Two bit changes necessary to go from one legal frame to another
-- Formally: *Hamming distance of two frames*
+- Formally:  *\gls{hammingdistance} of two frames*
 - Let $x=x_11,\dots, x_n$ and $y=y_1,…, y_n$ be two frames
 - $d(x,y)$ = number of ``1'' bits in $x\, \mathrm{XOR}\, y$ 
   - Or: the number of bit positions where x and y are different
@@ -420,7 +429,7 @@ Note: Physical layer might try to detect and deliver bits when the sender is not
 
 
 **** Hamming distance of a set of frames
-- The Hamming distance of a set of frames S: 
+- The \gls{hammingdistance} of a set of frames S: 
 
 \[ d(S) =  \min _{x, y \in S, x \not = y} d(x,y)
 \label{eq:hamming_distance}
@@ -468,10 +477,13 @@ Note: Physical layer might try to detect and deliver bits when the sender is not
 ** Forward error correction                                        
 
 *** Basic correction 
-**** Hamming distance and error detection/correction
-- What happens if $d(S) = 0$?
+**** \gls{hammingdistance} and error detection/correction
+What happens if $d(S) = 0$?
   - This is nonsense, by definition
-- What happens if $d(S) = 1$?
+
+\pause 
+
+What happens if $d(S) = 1$?
 
 #+begin_export latex
 \begin{center}
@@ -482,8 +494,8 @@ Note: Physical layer might try to detect and deliver bits when the sender is not
 - There exist $x,y \in S$ such that $d(x,y) = 1$; no other pair is closer
 - A single bit error converts from one legal frame $x$ to another legal frame $y$
 - Cannot detect or correct anything
-**** Hamming distance and detection/correction
-- What happens if $d(S) = 2$?
+**** \gls{hammingdistance} and detection/correction
+What happens if $d(S) = 2$?
   - There exist $x,y \in S$ such that $d(x,y) = 2$; no other pair is closer
 
 #+begin_export latex
@@ -503,8 +515,8 @@ to node [above, align=center] {1 bit \\difference} ++(3,0) node[fill=white] {$y$
   y had been sent (symmetry!)
 
 
-**** Hamming distance and detection/correction
-- What happens if $d(S) = 3$?
+**** \gls{hammingdistance} and detection/correction
+What happens if $d(S) = 3$?
   - There exist $x,y \in S$ such that $d(x,y) = 3$; no other pair is closer
   - Every $u$ with $d(x,u)=1$ is illegal AND $d(u,s) > 1$! 
 
@@ -526,7 +538,7 @@ to node [above, align=center] {1 bit \\difference} ++(3,0) node[fill=white] {$y$
 - Assuming that fewer errors have happened, a received frame $u$ *is presumed* to have been caused by sending $x$!
   - Hence, the error has been ``corrected'' – hopefully, correctly!
 
-**** Generalization – Required Hamming distances
+**** Generalization – Required \gls{hammingdistance}
 - The examples above can be generalized
 - To *detect* $d$ bit errors, a Hamming distance of $d+1$ in the set of legal frames is required
   - So that it is not possible to re-write a legal frame into another one using at most d bits
@@ -712,8 +724,8 @@ That can be written more compactly as a matrix mutliplication
 
 - What is a *suitable* matrix to compute coded bits? 
 - In general: a *nonsystematic code* 
-  - Using a *generator matrix*
-- Given payload $p$, find codeword c using generator $G$ as $c = pG$ 
+  - Using a *\gls{generator} matrix*
+- Given payload $p$, find *\gls{codeword}* c using generator $G$ as $c = pG$ 
 - Examples: 
 
 \[
@@ -734,7 +746,7 @@ That can be written more compactly as a matrix mutliplication
   - Identity matrix $I_k$, append matrix for $A$ parity bits 
   - For $k$ payloads, and $(n-k)$ redundancy bits, $A$ is a $(k, n-k)$
     matrix 
-  - $ G = (I_k | A)$
+  - $G = (I_k | A)$
 
 - Example 
 
@@ -754,26 +766,21 @@ That can be written more compactly as a matrix mutliplication
 **** Decoding of systematic codes? 
 - Encoding is easy – how about decoding? 
   - Getting back the original payload from the (possibly erroneous) received bits 
-- First step: Use a *parity-check matrix* $H$ 
-  - For $k$ payloads and $n-k$ redundancy bits, $H$ is an $(n-k, n)$ matrix 
+- Use a *parity-check matrix* $H$ 
+  - For $k$ payloads and $n-k$ redundancy bits, $H$ is an $(n-k, n)$
+    matrix
+    - \pause Write a generator $G$ using $A$:  \[ G = (I_k | A)\] 
+    - \pause Then define $H$: \[ H = (-A^T | I_{n-k})  \] 
+  - \pause Use this to show: 
+    \[  G H^T = 0   \]
+
+
+**** Parity-check property 
 - For a *valid* codeword $c$, it must hold:
-  \[ H c^T = 0]
+  \[ H c^T = 0 \]
   - Hence:  if result <> 0, codeword is not valid
 - One way to check for errors (but not a particularly efficient one, if error checking is all you want to do) 
 
-
-
-**** Relationship of generator and parity check matrix? 
-- Generator matrix and parity check matrix are related:
-  - Recall: A is a (k, n-k) matrix 
-  - \[  G = (I_k | A)\] 
-  - Then define: \[ H = (-A^T | I_{n-k})  \] 
-\pause 
-- Why use this to show: 
-  \[  G H^T = 0   \]
-  - And continue to show that this is indeed parity-check matrix! 
-- One way to check for errors (but not a particularly efficient one, if error checking is all you want to do) 
-  
 
 
 **** Example: Hamming (7,4) code                                   :noexport:
@@ -789,21 +796,18 @@ That can be written more compactly as a matrix mutliplication
   - For each payload, there is a likelihood that we received that invalid $c$ 
     - Under stochastic assumptions how errors happen
   - We decide for that payload that maximizes this likelihood (maximum likelihood decoding) 
-  - Under independent bit errors: the one with the smallest Hamming distance! 
+  - Under independent bit errors: the one with the smallest \gls{hammingdistance}! 
 \pause 
 - Details: highly depends on specific code family 
 
 **** Maximum likelihood decoding: How?                             :noexport:
 - Trivial approach: Search through all codewords around the received (invalid) codeword c 
-- Akin to an expanding ring search: Hamming distance 1, 2, … 
+- Akin to an expanding ring search: Hamming distance 1, 2, \dots 
 - Simple, but sloooow 
 - Efficient? 
 - Syndrome decoding 
 - Iterative algorithms, often amenable to hardware implementations
 - For details, check lecture Blömer Codes & Crypto 
-- WS 19/20, v 1.7
-- Computer Networks - Link layer
-- 51
 
 
 *** BCH 
@@ -965,6 +969,16 @@ Gives rise to notion of *coding gain*
       :END:
 
 
+**** Coding gain 
+
+***** \Gls{codinggain}                                         :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+      \Glsdesc{codinggain}
+
+
 *** Convolutional codes 
 **** Convolutional codes
 
@@ -986,7 +1000,7 @@ Gives rise to notion of *coding gain*
   - Otherwise, quite similar
   - Payloads in blocks of $k$ bits, $n$ output bits determined from
     the last $K\cdot k$ bits
-    - $K$: constraint length 
+    - $K > 1$: constraint length 
   
 
 
@@ -1033,7 +1047,7 @@ Gives rise to notion of *coding gain*
     - Used in UMTS, LTE, \dots 
 - Low-density parity check codes
   - Tend to outperform Turbo codes at higher code rates
-  - Used e.g. in DVB-S2, 10GBast-T Ethernet, \dots optional in 802.11n, 11ac
+  - Used e.g. in DVB-S2, 10G Ethernet, \dots optional in 802.11n, 11ac
 
 
 
@@ -1143,7 +1157,18 @@ Gives rise to notion of *coding gain*
   - Sender waits for acknowledgement for a certain time
   - If not received in time, packet is retransmitted
 \pause 
-First solution attempt: 
+
+***** \Gls{arq}                                                :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+      \Glsdesc{arq}
+
+
+**** A simple, simplex, acknowledgement-based protocol
+
+First solution attempt
 
 
 
@@ -1223,19 +1248,23 @@ Receiver: Identical to previous version!
 
 
 **** Does second version work correctly?
-- It holds back the transmitter until packets are processed
-  - It implements *flow control*!
-- Does it ensure that all packets arrive, in correct order? 
 
-\vskip-2em
+\vskip-2.5em
 
-***** No packets lost, using ARQ v2
+***** 
       :PROPERTIES:
       :BEAMER_env: block
       :BEAMER_col: 0.48
       :END:
 
 
+
+- It holds back the transmitter until packets are processed
+  - It implements *flow control*!
+- Does it ensure that all packets arrive, in correct order? 
+
+
+****** No packets lost, using ARQ v2
 #+caption: No packet loss, correct operation with v2 of our protocol
 #+attr_latex: :width 0.95\textwidth :height 0.3\textheight :options keepaspectratio,page=\getpagerefnumber{page:ll:arq:no_seq}
 #+NAME: fig:ll:arq:no_seq
@@ -1250,7 +1279,7 @@ Receiver: Identical to previous version!
       :END:   
 
 #+caption: Loosing one packet can be recovered by timeout in the v2 protocol
-#+attr_latex: :width 0.95\textwidth :height 0.3\textheight :options keepaspectratio,page=\getpagerefnumber{page:ll:arq:no_seq:packet_lost}
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:ll:arq:no_seq:packet_lost}
 #+NAME: fig:ll:arq:no_seq:packet_lost
 [[./standalone/arq_msc.pdf]]
 
@@ -1359,7 +1388,6 @@ Receiver: Identical to previous version!
 - This 3rd version is a correct implementation of a dependable protocol over an error-prone channel
   - Protocol name: *Alternating bit protocol*
     - As it uses only a single bit as sequence number 
-  - \pause Class of protocols where sender waits for a positive confirmation: *Automatic Repeat reQuest* (ARQ) protocols
   - It also implements a simple form of flow control
 \pause 
 - Note the dual task of the acknowledgement packet
@@ -1380,7 +1408,7 @@ Receiver: Identical to previous version!
 
 - *Efficiency* \rho depends on setting 
 - $\rho$:  ratio of time during which the sender sends *new* information
-  - Assuming an error-free channel in the simplest case; error-considerations make efficiency discussions difficult)
+  - Assuming an error-free channel in the simplest case; error-considerations make efficiency discussions difficult
   - Then: $\rho = T_\mathrm{packet}  / (T_\mathrm{packet} + d + T_\mathrm{ACK} + d)$ 
 - Efficiency of simple alternating bit protocol is low when *delay is large compared to data rate*
   - Equivalently: at large ``bandwidth''-delay product!
@@ -1421,11 +1449,12 @@ Receiver: Identical to previous version!
 - Always sending packets should improve  efficiency
   - More packets are ``outstanding'', ``in flight'' = sent, but not yet acknowledged
   - ``Pipelining'' of packets
-\pause 
+\onslide<2-> 
 - But not feasible with a single bit as sequence number
   - $\leadsto$ Needs larger sequence number space! 
   - It is simplified by full-duplex support
 
+\onslide<1-> 
 
 ***** 
       :PROPERTIES:
@@ -1448,7 +1477,7 @@ Receiver: Identical to previous version!
 **** Sender-side sliding window to handle multiple outstanding packets
 - Introduce a larger sequence number space to distinguish any possible
   in-flight packets 
-  - Say, $n$ bits or $2n$ sequence numbers 
+  - Say, $n$ bits or $2^n$ sequence numbers 
 \pause 
 - Not all of them may be allowed to be used simultaneously
   - Recall alternating bit case: 2 sequence numbers, but only 1 may be
@@ -1778,7 +1807,7 @@ Assumptions:
       :BEAMER_col: 0.28
       :END:
 
-#+caption: PER over SNR (repetation of Figure \ref{fig:ll:per_over_snr:with_coding_gain})
+#+caption: PER over SNR (repetition of Figure \ref{fig:ll:per_over_snr:with_coding_gain})
 #+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:ll:per_over_snr}
 #+NAME: fig:ll:per_over_snr_2
 [[./standalone/bch.pdf]]
