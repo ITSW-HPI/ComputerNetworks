@@ -8,6 +8,8 @@
 
 **** The story so far  
 - So far: we can communicate between nodes all connected directly to the same medium
+  - Either directly or by sharing the medium between different pairs
+
 
 **** Plans for this chapter 
 
@@ -58,6 +60,7 @@
 
 - Let’s start from classic Ethernet
   - Single wire, single collision domain
+  - Because of limited reach, it forms a \gls{lan}
 \pause 
 \vfill*
 - Works fine for a limited number of stations
@@ -125,10 +128,20 @@ Can be classified according to the layer in which they work
 
 
 
+**** What is a LAN? 
+
+***** \Gls{lan}                                                :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+      \Glsdesc{lan}
+
+
 ** Physical-layer interconnects
 
 **** Repeaters
-Simplest option: Repeater
+Simplest option: \Gls{repeater}
 - Physical-layer device
 - Connected to two cables
 - Amplifies *signal* arriving on either one, puts on the other cable
@@ -180,6 +193,26 @@ Uwe Schwöbel
 - $\leadsto$ Link-layer solutions
 
 
+
+**** Physical-layer terminology
+
+***** \Gls{repeater}                                           :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+      \Glsdesc{repeater}
+
+
+***** \Gls{hub}                                                :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+      \Glsdesc{hub}
+
+
+
 ** Data-link-layer interconnects
 
 
@@ -193,20 +226,22 @@ Uwe Schwöbel
   - One line in, one line out 
 - But: Converts signal to data, and resends the data
   - Can apply, e.g. \gls{FEC} 
-
+\pause 
+- Conceivable, but rarely used in isolation; usually as part of a
+  switch, \dots 
+    
 **** Types of link-layer interconnects 
-
 
 - Bridge & switch
 - Historic distinction 
-  - Switch: Interconnect several terminals
+  - \Gls{switch}: Interconnect several terminals
   - Bridge: Interconnect several networks
 - But terms nowadays often used interchangeably 
 
 
 **** Switch
-- Use a switch to connect several terminals
-- Without forming a single collision domain
+- Use a \gls{switch} to connect several terminals
+- *Without* forming a single collision domain
 - Switch inspects an arriving packet’s destination addresses and forwards its only on the right cable
   - Does not bother the other terminals
   - Needs: buffer, knowledge where which terminal is connected
@@ -237,7 +272,7 @@ Uwe Schwöbel
 
 **** Collisions vs. broadcasts? 
 
-- Switches do *not* form a single collision domain
+- Switches do *not* form a single *collision* domain
   - Transmissions on each port use a *separate* instance of a MAC
     protocol
     - Or are full-duplex point-to-point like, anyway
@@ -245,11 +280,21 @@ Uwe Schwöbel
   - Q: Is this statement true: ``A switched Ethernet by definition has
     no collision''? 
 \pause 
-- Switches *do* form a single broadcast domain
+- Switches *do* form a single *broadcast* domain
   - A broadcast packet arriving on one port is sent out one *all* other
     ports
   - Not necessarily at the same time; whenever a sending port's MAC
     protocol allows it 
+
+
+**** Switch 
+
+***** \Gls{switch}                                             :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+      \Glsdesc{switch}
 
 
 *** Routing and forwarding 
@@ -285,6 +330,7 @@ How to obtain knowledge about directions?
 #+attr_latex: :width 0.95\textwidth :height 0.4\textheight :options keepaspectratio,page=\getpagerefnumber{page:inter:backward:simple:after}
 #+NAME: fig:inter:backward:simple:after
 [[./standalone/internetworking.pdf]]
+
 
 **** Bigger example: backward learning with two switches 
 
@@ -427,10 +473,9 @@ How to obtain knowledge about directions?
 
 *** Flooding 
 
-
 **** Simplistic flooding  – problems 
 
-- Previous ``backward learning by flooding'' is simple, but problematic
+- Previous ``backward learning by \gls{flooding}'' is simple, but problematic
 - Consider example topology with second switch (or bridge) for reliability
 
 \begin{figure}[h]
@@ -554,7 +599,7 @@ How to obtain knowledge about directions?
 - Main issue: ``flat'', unstructured addresses do not scale 
   - E.g., In spanning tree, there is an entry for every device’s designated output port!
   - $\leadsto$ Need more sophisticated addressing structure and devices that operate on it
-- $\leadsto$ Routers and routing!
+- $\leadsto$ \Glspl{router} and \gls{routing}!
   - Structurally, very similar and very different to switches 
   - Treated in the Chapter \ref{ch:network}
 
@@ -566,7 +611,7 @@ How to obtain knowledge about directions?
 
 ** VLAN operation
 
-**** Further topic in LAN/LAN interconnection: virtual LANs 
+**** Proximity-based vs. logical LANs? 
 - Problem: LANs/switches are geared towards *physical* proximity of devices
 - But: LANs should respect *logical* proximity
   - E.g., connect devices of working groups together, irrespective where they happen to be located
@@ -584,7 +629,7 @@ How to obtain knowledge about directions?
       :BEAMER_col: 0.48
       :END:
 
-- Idea: put a *virtual LAN* on top of an existing physical LAN
+- Idea: put a *\gls{vlan}* on top of an existing physical LAN
 - Switches (or bridges) need configuration tables which port belongs to which VLAN(s)
   - Only forward packets to ports of correct VLAN
   - In particular, limit broadcasts to color of originating interface 
@@ -658,6 +703,17 @@ How to obtain knowledge about directions?
   - VLAN tags not needed on links between end hosts and switch 
   - Can be inserted by first switch, removed by last one, if necessary
   - And here, use one of the three options from previous slide 
+
+
+**** What is a VLAN? 
+
+***** \Gls{vlan}                                               :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+      \Glsdesc{vlan}
+
 
 ** Conclusion 
 **** Conclusion

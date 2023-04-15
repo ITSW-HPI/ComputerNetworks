@@ -38,6 +38,9 @@
 
 \newglossaryentry{forwarding}{name=forwarding, description={In a packet-switched network, the act of receiving a packet, determining its next hop, preparing it for transmission, and transmitting it to the next hop. Forwarding is a data-plane activity.   Forwarding typically, but not necessarily, uses information prepared by control-plane protocols (e.g. routing tables).}  }
 
+
+\newglossaryentry{routing}{name=routing, description={The process of filling routing tables.}}
+
 \newglossaryentry{storeandforward}{name=store-and-forward, description={A variant of a packet-switched network where a packet first has to be received completely before its meta-data is analyzed, the outgoing interface is determined, the packet is moved to the outoing interface and eventually transmitted. Cut-through networks are the alternative.}}
 
 \newglossaryentry{metadata}{name={meta data}, description={Data that describes how to process a packet. Examples include source and destination address, sequence numbers, checksums, etc. Usually found in a header or trailer of a packet, sometimes implicitly represented by, e.g., a position of time slot within a periodic time structure.}}
@@ -121,3 +124,18 @@
 \newglossaryentry{codinggain}{name={coding gain}, description={The reduction in SNR that can be tolerated when using a forward error correction code without compromising error rate. It is usually expressed as the ratio between (required) SNR for uncoded to coded scheme, and usually written in decibels. It is justifiable to talk about \textbf{the} coding gain of a particular FEC scheme (without referring to a particular error rate) when focusing on SNR regions where the ratio between coded and uncoded schemes becomes constant. This \emph{is} a simplification. }}
 
 \newglossaryentry{arq}{name=Automatic Repeat Request (ARQ), description={A family of backward-recovery protocols based on acknowledgements and timeouts.}}
+
+\newglossaryentry{lan}{name=Local Area Network (LAN), description={A network that spans a range smaller than a regional network but bigger than a personal network. It usually connects more devices or carries more load than would be feasible using a single shared medium. It can be geared to both private and public use and use different technologies (e.g., wired or wireless), often interconnecting between them (e.g., Ethernet and WiFi). It can use multiple address formats. It is usually under single administrative control. }}
+
+\newglossaryentry{vlan}{name=Virtual Local Area Network (VLAN), description={A VLAN creates the illusion of a LAN on top of some other network. It is not necessarily local in a geographic sense; it usually serves to limit broadcast domains. (Note: in a strict operating-system-terminology sense, it would not be a \emph{virtual}) LAN but a \emph{logial} LAN, but that is not commonly used in networking.) }}
+
+\newglossaryentry{repeater}{name=repeater, description={A repeater is a physical-layer device. It accepts a signal and sends out a signal that is in some sense an improved version of that signal (e.g., amplified). Usually, it is not possible to create a perfect copy; usually, at least noise is amplified as well during the process.}}
+
+\newglossaryentry{hub}{name=hub, description={A physical-layer device that assist in plugging together multiple devices into a single collision domain. Hubs exist in passive versions (purely a mechanical device) or combined with repeaters. }}
+
+\newglossaryentry{switch}{name=switch, description={A switch in the general sense is a device that connects multiple links, for e.g. packet or circuit-switching. In the narrower sense, switch designates a link-layer device that connects multiple devices without forming a physical collision domain but does forward broadcast packets to all its ports. Many variations exist! }}
+
+
+\newglossaryentry{flooding}{name=flooding, description={Forwarding a packet to all reachable devices. Flooding and broadcasting are often used interchangeably. }}
+
+\newglossaryentry{router}{name=router, description={A device that runs routing protocols in its control plane to fill its routing tables, derives forwarding tables from them, and uses them to forward (e.g.) packets. Routers often, but not necessarily, use some form of structured addresses, wheres switches often, but not necessarily, work on flat address spaces. In the narrower sense, routers are devices on the network layer of a typical protocol stack, but that definition has many exceptions. }}
