@@ -139,3 +139,20 @@
 \newglossaryentry{flooding}{name=flooding, description={Forwarding a packet to all reachable devices. Flooding and broadcasting are often used interchangeably. }}
 
 \newglossaryentry{router}{name=router, description={A device that runs routing protocols in its control plane to fill its routing tables, derives forwarding tables from them, and uses them to forward (e.g.) packets. Routers often, but not necessarily, use some form of structured addresses, wheres switches often, but not necessarily, work on flat address spaces. In the narrower sense, routers are devices on the network layer of a typical protocol stack, but that definition has many exceptions. }}
+
+
+\newglossaryentry{congestion}{name=congestion, description={A link is congested if the sum of the incoming rates exceeds its service rate for a substantial time, leading to queue buildup and eventual packet drops.}}
+
+\newglossaryentry{congestioncontrol}{name=congestion control, description={A (set of) mechanism(s) to ensure that packets are not dropped due to full buffers inside the network.}}
+
+\newglossaryentry{CWND}{name=Congestion Window (CWND), description={The set of sequence numbers that a sender is allowed to have ``in flight'' (transmitted without being acknowledged yet).}}
+
+\newglossaryentry{TCP}{name=Transmission Control Protocol (TCP), description={A protocol (actually: a family of protocol variants) that provides connection-oriented, dependable, in-order, congestion-controlled, flow-controlled byte streams (primarily) on top of a best-effort packet-switched network.}}
+
+\newglossaryentry{UDP}{name=User Datagram Protocol (UDP), description={Simple transport protocol that basically only provides multiplexing service.}}
+
+\newglossaryentry{SCTP}{name={Stream Control Transmission Protocol (SCTP)}, description={A transport protocol that combines datagram transmission with dependable delivery and congestion control, with additional features like support for multiple streams without head-of-line blocking between streams.}}
+
+\newglossaryentry{QUIC}{name=QUIC, description={A transport protocol that combines ideas from TCP and SCTP with additional concepts for short delay on first packets. Often used in web browsing applications.}}
+
+\newglossaryentry{fourtuple}{name=four tuple, description={The combination of source and destination IP and port numbers that can be used to identify a flow. Combined with the TCP protocol flag, it identifies a TCP connection.}}

@@ -8,6 +8,13 @@
 
 **** The story so far  
 
+- Network layer creates illusion of each end device directly connected
+  to each other 
+- Congestion control (tries to) ensure that no packets are lost inside
+  the network 
+- but: no means yet to establish shared context between end devices
+
+
 **** Plans for this chapter 
 
 
@@ -26,21 +33,6 @@
       :BEAMER_col: 0.48
       :END:
 
-
-****** Learning outcomes 
-
-*****                    
-      :PROPERTIES:
-      :BEAMER_env: block
-      :BEAMER_col: 0.48
-      :END:   
-
-
-
-*****                               :B_ignoreheading:
-      :PROPERTIES:
-      :BEAMER_env: ignoreheading
-      :END:
 
 
 ** Services & addressing                                           
@@ -66,9 +58,9 @@
 
 **** Basic transport protocols 
 
-- TCP: reliable byte stream 
-- UDP: unreliable datagrams 
-- SCTP, QUIC: multiple, reliable streams of data over one connection 
+- *\gls{TCP}*: reliable byte stream 
+- *\gls{UDP}*: unreliable datagrams 
+- *\gls{SCTP}*, *\gls{QUIC}*: multiple, reliable streams of data over one connection 
 
 **** Header 
 
@@ -321,7 +313,7 @@ Solution: Have the sender answer a question that the receiver asks!
 - Sequence numbers negotiated here are also used for the following data packets
 
 
-**** Terminology for TCP
+**** Terminology for \gls{TCP}
 - Connection setup – SYN (synchronize) packet
 - Connection accepted – SYN/ACK packet (because both the previous sequence number is acknowledged and a new sequence number from the receiver is proposed)
 - Connection confirmation – ACK packet (combined with DATA, as a rule)
@@ -333,7 +325,7 @@ Solution: Have the sender answer a question that the receiver asks!
   - More precisely, between application processes running on these systems
   - TCP can multiplex several such connections over the network layer, using the port numbers as Transport SAP identifiers
 
-- A TCP connection is thus identified by a *four tuple*: (Source Port,
+- A TCP connection is thus identified by a *\gls{fourtuple}*: (Source Port,
   Source IP Address, Destination Port, Destination IP Address) 
   - Together with ``TCP'' as transport protocol: *five tuple* 
 
@@ -520,7 +512,7 @@ Solution: Have the sender answer a question that the receiver asks!
 
 
 
-**** Flow control
+**** \Gls{flowcontrol}
 - Recall: Flow control = prevent a fast sender from overrunning a slow receiver
   - Similar issue in link and transport layer
 - In transport layer more complicated
@@ -788,11 +780,13 @@ Similar approaches for standard deviation
 ** UDP                                                             
 
 **** A simple demultiplexer transport protocol – UDP 
-- An example for an unreliable, datagram protocol: User Datagram Protocol (UDP)
+- An example for an unreliable, datagram protocol: \gls{UDP}
 - Only real function: (de)multiplex several data flows onto the IP layer and back to the applications
 - In addition: ensures packet’s correctness
-- Checksum out of UDP header + data + ``pseudoheader'' (pivotal IP header fields) 
-**** Remote Procedure Call (RPC)
+- Checksum out of UDP header + data + ``pseudoheader'' (pivotal IP
+  header fields) 
+
+**** Remote Procedure Call (RPC)                                   :noexport:
 - UDP and TCP have essentially simple semantics: Transport data from A to B 
 - A bit like ``goto'' in sequential languages: no structure in data flow
 - More complex interactions can be directly captured in communication primitives
@@ -969,7 +963,7 @@ Expensive 6-way handshake / 3 RTTs to establish TCP + TLS connection
 
 **** QUIC: Overview 
 
-QUIC \cite{rfc8999,rfc9000,rfc9001,rfc9002}
+*\gls{QUIC}* \cite{rfc8999,rfc9000,rfc9001,rfc9002}
   - Connection-oriented, TLS integrated 
   - Streams within a connection
     - Ordered, reliable byte stream
