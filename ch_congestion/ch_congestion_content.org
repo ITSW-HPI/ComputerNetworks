@@ -82,41 +82,21 @@
 
 **** The story so far  
 
+- Network layer created the illusion of directly connected end devices
+- But usually just provides best-effort service 
+- No protection against \gls{congestion}: sources send faster than a
+  bottleneck link can deal with 
+- We need to control the sending rate of end devices lest we overwhelm
+  a network 
+
 **** Plans for this chapter 
 
 - Understand sources of the congestion control/resource allocation problem
-- Difference between congestion control and flow control
+- Difference between \gls{congestioncontrol} and flow control
 - Possible solutions and their classification
 - Case study: TCP 
 
-\vskip-2.5em
-
-*****                     
-      :PROPERTIES:
-      :BEAMER_env: block
-      :BEAMER_col: 0.48
-      :END:
-
-
-****** Learning outcomes 
-
-*****                    
-      :PROPERTIES:
-      :BEAMER_env: block
-      :BEAMER_col: 0.48
-      :END:   
-
-
-
-*****                               :B_ignoreheading:
-      :PROPERTIES:
-      :BEAMER_env: ignoreheading
-      :END:
-
 ** Problems and options                                            
-
-
-
 
 **** Why congestion control?
 \vskip-2.5em
@@ -130,7 +110,7 @@
 
 - Any network can only transport a bounded amount of traffic per unit time
 - Link capacities are limited, processing speed in routers, buffer
-  space, … 
+  space, \dots 
 
 \pause 
 - Challenging case: Flows merge at a *bottleneck* link
@@ -202,7 +182,7 @@
 
 
 **** Snowball effects
-- *Congestion control* is essential to avoid snowball effects
+- *\Gls{congestioncontrol}* is essential to avoid snowball effects
   - Once a network is overloaded, it will loose packets (buffer overflows, etc.)
   - Once a reliable transport protocol detects packet loss, it will retransmit the lost packets
   - These retransmissions further increase the load in the network
@@ -248,10 +228,12 @@
 *** Taxonomy 
 
 **** Design options for congestion control mechanisms
-- Open loop: Design system up front so that it will work correctly, no corrections at runtime necessary
-- Closed loop: Use some sort of feedback to allow sender to adapt to current situation
-  - Explicit feedback: Some entity (e.g., point where congestion occurs) informs sender
-  - Implicit feedback: No explicit action taken; congestion is deduced by sender from the network’s behavior (e.g., missing acknowledgements)
+- *Open loop*: Design system up front so that it will work correctly,
+  no corrections at runtime necessary
+\pause 
+- *Closed loop*: Use some sort of feedback to allow sender to adapt to current situation
+  - *Explicit feedback*: Some entity (e.g., point where congestion occurs) informs sender
+  - *Implicit feedback*: No explicit action taken; congestion is deduced by sender from the network’s behavior (e.g., missing acknowledgements)
 
 #+caption: Types of congestion control approaches
 #+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:cc:cc_types}
@@ -262,7 +244,10 @@
 - *Increase capacity* – activate additional links, routers, …
   - Often not practical on short timescales 
 \pause 
-- *Reservations* and admission control – do not admit additional traffic when network is nearing capacity limit
+- *Reservations* and *admission control*
+  - New flows need to explicitly ask for capacity before being allowed
+    to send 
+  - Do not admit additional traffic when network is nearing capacity limit
   - Usually applied to circuit-switched (or similar) networks; difficult (but not impossible) in packet-switched networks 
   - Feedback about network state only relatively rarely – akin to
     open-loop control
@@ -289,10 +274,10 @@ Where: Router-centric vs. host-centric
 
 How is the allowed amount of traffic injected into the network described? 
 - By a *rate* – so and so many bytes per second?
-- By a *congestion window* (*CWND*) – as a set of sequence numbers/amount of bytes that may be injected into the network before further permits are received?
+- By a *\gls{CWND}* – as a set of sequence numbers/amount of bytes that may be injected into the network before further permits are received?
   - Versions for both packets or bytes exist (identical if all packets
     are the same size)
-  - Briefly: Packets / bytes in flight \leq CWND 
+  - Briefly: Packets / bytes in flight $\in$  CWND 
   - Compare sender-side windows for ARQ protocols!
 
 **** Relationship of CWND and rate 
@@ -390,11 +375,9 @@ Interesting scenario: high datarate/delay product
 
 ** Case study: TCP 
 
-
-
-
 **** Popular example: Congestion control in TCP
 - We will use TCP as a case study
+  - *\gls{TCP}*
   - Assumption: Flow control not an issue, ignored for this chapter!
   - A general treatment of congestion control is too broad a topic
 \pause 
