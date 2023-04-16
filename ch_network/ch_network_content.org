@@ -7,19 +7,25 @@
 
 **** The story so far  
 
+- Link layer provides links with useful properties 
+- MAC layer allows to share media, creating logical links
+- But still in a collision domain 
+- Internetworking devices allow to separate collision domains
+  - And have simple techniques to forward packets
+- But these techniques do not scale to larger networks 
+
 **** Plans for this chapter 
 
 
-- Building larger networks by simply interconnecting LANs is limited, it does not scale
 - To build larger networks, the following questions have to be explicitly solved:
-- What are good paths that a packet should take to get from a source node to a destination node? 
-- How to represent these paths by routing tables and how to construct them efficiently? 
-- How to use routing tables (once constructed) efficiently?
-- How to organize larger networks with respect to an addressing structure that allows efficient & compact routing tables? 
+  - What are good paths that a packet should take to get from a source node to a destination node? 
+  - How to represent these paths by routing tables and how to construct them efficiently? 
+  - How to use routing tables (once constructed) efficiently?
+  - How to organize larger networks with respect to an addressing structure that allows efficient & compact routing tables? 
 - In addition, we will look at how the Internet’s routing structure looks like as a case study
 
 
-** Routing
+** \Gls{routing}
 
 **** Goal: Build LARGE networks
 - The “internetworking” mechanisms described in previous chapter can help packets to reach their destination
@@ -98,7 +104,7 @@
 
 **** Forwarding table 
 
-***** \gls{forwardingtable}                                    :B_definition:
+***** \Gls{forwardingtable}                                    :B_definition:
       :PROPERTIES:
       :BEAMER_env: definition
       :END:
@@ -332,7 +338,7 @@ Formalization:
 \pause 
 Formalization: 
   - *Stretch of a path between node a and b*: 
-     \[ \mathrm{strecht} (a, b) = \frac{\text{Lenght of path from $a$ to
+     \[ \mathrm{strecht} (a, b) = \frac{\text{Length of path from $a$ to
     $b$ according to routing tables}}{\text{Length of shortest path from
     $a$ to $b$}} \]
 \pause 
@@ -604,12 +610,14 @@ Interactive example at
 **** Centralized vs. distributed algorithms – Link-state routing
 - Dijkstra’s algorithm nice and well
 - But how to obtain centralized view of the entire network to be able to apply Dijkstra’s algorithm?
-- Assumption: only direct neighbors know the (current) cost of a link or know whether a link has failed/been restored/upgraded/\dots
+- Assumption: only direct neighbors know the (current) cost of a link
+  or know whether a link has failed/been restored/upgraded/\dots
+\pause 
 - Solution: Have each node distribute this information – state of all its links – in the entire network
-- Then, all nodes know entire network topology & can apply Dijkstra’s algorithm
-- Distribution itself can happen via flooding
--  $\leadsto$ *Link-state routing*
-- Intuition: Little information (about direct neighbors) is spread over large distances (to the entire network)
+  - Then, all nodes know entire network topology & can apply Dijkstra’s algorithm
+  - Distribution itself can happen via flooding
+- $\leadsto$ *Link-state routing*
+  - Intuition: Little information (about direct neighbors) is spread over large distances (to the entire network)
 
 **** Link-state packets 
 
@@ -843,7 +851,7 @@ Neither  approach is clearly superior
   - Suppose you send a packet to an Australian university – do you care which route it takes from one campus router to the next? 
   - It suffices to get the packet towards Australia
   - For local packets, a router better should care!
-- $\leadsto$ Hierarchical routing
+- $\leadsto$ *Hierarchical routing*
 **** Hierarchical routing – Regions 
 - Group nodes/routers into regions
 - Routers know 
@@ -866,8 +874,9 @@ Neither  approach is clearly superior
 [[./standalone/hierarchical.pdf]]
 
 
+\pause 
 
-*****                    Limited visibility for the blue region
+*****   Limited visibility for the blue region
       :PROPERTIES:
       :BEAMER_env: block
       :BEAMER_col: 0.48
