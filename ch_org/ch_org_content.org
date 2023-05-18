@@ -78,10 +78,9 @@ block/.style = {rectangle, draw=black, thick, align=center}]
 ** Topics 
 **** Topic of ``Computer Networks''
 - Ever wondered what really happened after 
-  - Typing http://www.uni-paderborn.de into a Web browser?
+  - Typing http://www.hpi.de into a Web browser?
   - Making a phone call?
 - How does data get from one device to another?
-  - Basic abstractions have been treated in KMS
   - What happens ``behind the scene'' and ``on the wire''?
 - Communication systems enable this transport of data
   - What are the necessary ingredients for such systems? Typical components?
@@ -137,14 +136,11 @@ To be scheduled on-demand
 
 **** Homework assignments 
 
-- A list of smaller and bigger homework assignments will be made
-  available in Moodle 
-- From the bigger assignments: *choose any two* to hand in
-  - They will be checked 
-  - "big" will be clearly marked 
-- You will need *two* successful submissions to be admitted to the
-  exam 
 
+- Homework assignments are already in Moodle
+- They are self-study only
+- No need / no possibility to submit anything 
+- You are automatically cleared for the exam 
 
 **** No tutoring 
 
