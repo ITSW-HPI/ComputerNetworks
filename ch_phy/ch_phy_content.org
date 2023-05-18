@@ -171,11 +171,11 @@ Eq. \ref{eq:fourier} is called the *Fourier series* representation
 - Coefficients $c, a_n, b_n$ in the Fourier series can be computed using
   orthogonality 
 - Homework: convince yourself that
-  - $\int_{t=0}^\infty \sin (2\pi n f t) \cos (2\pi m f t) \mathrm{d}t = 0$ for
+  - $\int_{t=0}^T \sin (2\pi n f t) \cos (2\pi m f t) \mathrm{d}t = 0$ for
     any $n, m$. 
-  - $\int_{t=0}^\infty \sin (2\pi n f t) \sin (2\pi m f t) \mathrm{d}t = 0$ for
+  - $\int_{t=0}^T \sin (2\pi n f t) \sin (2\pi m f t) \mathrm{d}t = 0$ for
     any $n \not= m$. 
-  - $\int_{t=0}^\infty \sin (2\pi n f t) \sin (2\pi n f t) \mathrm{d}t = T/2$ for
+  - $\int_{t=0}^T \sin (2\pi n f t) \sin (2\pi n f t) \mathrm{d}t = T/2$ for
     any $n$.
   - Hint: Standard trigonometric identities 
 \pause 
@@ -274,7 +274,7 @@ So what is the signal bandwidth for ASCII letter ~b~ ?
 \onslide<1->
 
 
-#+caption: The direction representation of an ASCII b is not periodic and hence not directly amenable to Fourier analysis (copy of Figure \ref{fig:phy:ascii_b})
+#+caption: The direct representation of an ASCII b is not periodic and hence not directly amenable to Fourier analysis (copy of Figure \ref{fig:phy:ascii_b})
 #+attr_latex: :width 0.95\textwidth :height 0.2\textheight :options keepaspectratio,page=\getpagerefnumber{page:phy:ascii_b}
 #+NAME: fig:phy:ascii_b_2
 [[./standalone/plots.pdf]]
@@ -470,7 +470,8 @@ What is attenuation in Figure \ref{fig:phy:attenuated_simple_fourier}?
 \end{tcolorbox}
 
 \pause 
-- Example in Figure \ref{fig:phy:attenuated_simple_fourier} assumed
+- Example in Figure \ref{fig:phy:attenuated_simple_fourier}
+  simplistically assumed
   so-called *flat attenuation* 
 
 **** Frequency-selective attenuation: Simple cases
@@ -580,6 +581,7 @@ Some simplified cases:
 [[./standalone/plots.pdf]]
 
 
+\pause
 
 ***** Semi-realistic bandpass channel 
       :PROPERTIES:
@@ -687,13 +689,13 @@ We will revisit the third case in Section \ref{sec:phy:broadband}
 \pause 
 - Consequence: Harmonics arrive at receiver out of phase
   - Amount of phase shift in the medium depends on frequency
-  - I.e., at receivers sees something like 
+  - I.e., at receivers sees something like ($d$ is distance)
 
 \begin{tcolorbox}
 \[
 \tilde{g}(t) = 1/2 \frac{1}{\alpha(0)} c + \sum_{n=1}^\infty 
-\frac{1}{\sqrt{\alpha(n f)}} a_n \sin(2\pi n f t + \alert{\phi_f}) + \sum _{n=1}^\infty
-\frac{1}{\sqrt{\alpha(n f)}} b_n \cos(2\pi n f t + \alert{\phi_f} )
+\frac{1}{\sqrt{\alpha(n f)}} a_n \sin(2\pi n f t + \alert{\phi_{n f, d}}) + \sum _{n=1}^\infty
+\frac{1}{\sqrt{\alpha(n f)}} b_n \cos(2\pi n f t + \alert{\phi_{n f, d}} )
 \label{eq:fourier:distorted}
 \]
 \end{tcolorbox}
@@ -777,9 +779,9 @@ We will revisit the third case in Section \ref{sec:phy:broadband}
   - Look at physics, measure effects, count how often how big a deviation occurs 
   - Typical model: noise adds to signal a Gaussian random variable 
     - Zero mean and some standard deviation \sigma, distribution $N(0, \sigma^2)$, uncorrelated in time
-    - Standard deviation proportional to temperature (in Kelvin!)
+    - Variance proportional to temperature (in Kelvin!)
   - This is *Additive White Gaussian Noise* (AWGN)
-    - ``white'': if we look at each harmonic separately, we see the
+    - ``white'': if we look at each harmonic (of the noise) separately, we see the
       same effect; homogeneous across frequency 
  
 **** Additive White Gaussian Noise 
@@ -812,7 +814,7 @@ We will revisit the third case in Section \ref{sec:phy:broadband}
 
 \begin{tcolorbox}
 \[
-\bar{N} = \lim_{T\rightarrow T} \frac{1}{T} \int_{0}^T (\Delta U(t))^2
+\bar{N} = \lim_{T\rightarrow \infty} \frac{1}{T} \int_{0}^T (\Delta U(t))^2
 \mathrm{d} t
 \label{eq:avg_noise_power}
 \]
@@ -953,16 +955,6 @@ C =  H \log_2(1 + \frac{S}{N})
 \end{tcolorbox}
 
 
-**** Channel capacity 
-
-***** \Gls{channelcapacity}                                    :B_definition:
-      :PROPERTIES:
-      :BEAMER_env: definition
-      :END:
-
-      \Glsdesc{channelcapacity}
-
-
 **** Spectral efficiency 
 *****                               :B_ignoreheading:
       :PROPERTIES:
@@ -974,6 +966,19 @@ C =  H \log_2(1 + \frac{S}{N})
   - In a normal AWGN channel, only $\eta<1$ feasible 
   - \pause Note: terminology varies here; sometimes, $\eta$ is already
     absorbed in $C$ 
+\pause 
+- Unit: bits per second, per Hertz
+  - Rate that can be realized using one unit of bandwidth 
+
+**** Channel capacity 
+
+***** \Gls{channelcapacity}                                    :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+      \Glsdesc{channelcapacity}
+
 
 **** Terminology 
 
@@ -1202,7 +1207,7 @@ Distinction:
 
 
 **** Phase modulation
-- Similarly, a phase modulated signal is given by 
+- Similarly, a phase-modulated signal is given by 
 
 \[ f_\mathrm{P}(t) = a \sin (2\pi f t +  \alert{s(t)})\]
 
