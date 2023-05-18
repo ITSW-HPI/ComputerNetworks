@@ -426,7 +426,7 @@
   \draw [->] (sender) to node[above] (g) {$g(t)$} (channel) to node[above] (gtilde) {$\tilde{g}(t)$} (rec); 
 
   \begin{axis}
-    [xlabel=Frequency/Hz, ylabel=Attenuation, at={($(channel.north)+(0,2cm)$)}, anchor=south, scale=0.25]
+    [xlabel=Frequency/Hz, ylabel=1/Attenuation, at={($(channel.north)+(0,2cm)$)}, anchor=south, scale=0.25]
     \addplot coordinates {(0, 1) (0.125, 1)
       (2*0.125, 1)
       (3*0.125, 1)
