@@ -680,21 +680,21 @@ A good code should have large distance and large rate – but arbitrary combinat
 **** Notation for block codes: one output bit  
 
 - Output bit of a block code: XOR of several payload bits
-  - E.g.: $o = x_1 \,\mathrm{XOR}\, x_5  \,\mathrm{XOR}\, x_7 \,\mathrm{XOR}\, x8$ 
+  - E.g.: $o = x_1 \,\mathrm{XOR}\, x_5  \,\mathrm{XOR}\, x_7 \,\mathrm{XOR}\, x_8$ 
 \pause 
 - Equivalent: Sum of these payload bits, modulo 2 
   - E.g., $o = (x_1 + _x5 + x_7 + x_8) \, \mathrm{MOD}\, 2$
 \pause 
 - Which payload bits: multiply by zero or one 
-  - E.g., $o = (0\cdot x_0 + 1\cdot  x_1 + 0 \cdot x_2 + 0 \cdot x_3 +  0 \cdot x4 + 1 \cdot _x5 + 0 \cdot x_6 + 1 \cdot  x_7 + 1\cdot  x_8) \, \mathrm{MOD}\, 2$
+  - E.g., $o = (0\cdot x_0 + 1\cdot  x_1 + 0 \cdot x_2 + 0 \cdot x_3 +  0 \cdot x_4 + 1 \cdot x_5 + 0 \cdot x_6 + 1 \cdot  x_7 + 1\cdot  x_8) \, \mathrm{MOD}\, 2$
 
 **** Notation for block codes: several  output bits 
 
 E.g.: 
 
-- $o_0 = (0\cdot x_0 + 1\cdot  x_1 + 0 \cdot x_2 + 0 \cdot x_3 +  0  \cdot x4 + 1 \cdot _x5 + 0 \cdot x_6 + 1 \cdot  x_7 + 1 \cdot x_8) \, \mathrm{MOD}\, 2$
-- $o_1 = (1\cdot x_0 + 1\cdot  x_1 + 0 \cdot x_2 + 0 \cdot x_3 +  1  \cdot x4 +0 \cdot _x5 + 1 \cdot x_6 + 1 \cdot  x_7 + 0 \cdot x_8) \, \mathrm{MOD}\, 2$
-- $o_2 = (0\cdot x_0 + 0\cdot  x_1 + 1 \cdot x_2 + 0 \cdot x_3 +  1  \cdot x4 + 1 \cdot _x5 + 0 \cdot x_6 + 0 \cdot  x_7 + 0 \cdot x_8) \, \mathrm{MOD}\, 2$
+- $o_0 = (0\cdot x_0 + 1\cdot  x_1 + 0 \cdot x_2 + 0 \cdot x_3 +  0  \cdot x_4 + 1 \cdot x_5 + 0 \cdot x_6 + 1 \cdot  x_7 + 1 \cdot x_8) \, \mathrm{MOD}\, 2$
+- $o_1 = (1\cdot x_0 + 1\cdot  x_1 + 0 \cdot x_2 + 0 \cdot x_3 +  1  \cdot x_4 +0 \cdot x_5 + 1 \cdot x_6 + 1 \cdot  x_7 + 0 \cdot x_8) \, \mathrm{MOD}\, 2$
+- $o_2 = (0\cdot x_0 + 0\cdot  x_1 + 1 \cdot x_2 + 0 \cdot x_3 +  1  \cdot x_4 + 1 \cdot x_5 + 0 \cdot x_6 + 0 \cdot  x_7 + 0 \cdot x_8) \, \mathrm{MOD}\, 2$
 - \dots 
 \pause 
 
