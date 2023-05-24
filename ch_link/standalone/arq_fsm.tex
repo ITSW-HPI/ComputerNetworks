@@ -88,10 +88,19 @@
     cancel timer
   } (qidle); 
 
-  \draw (qidle) edge [loop left] node[left] {
+  % and the useless transitions: 
+  
+  \draw (qidle) edge [loop, out=150, in=120, min distance=15mm] node[left] {
     timeout;\\
     ignore
   } (qidle);   
+
+
+  \draw (qidle) edge [loop, out=240, in=210, min distance=15mm] node[left] {
+    ACK from below;\\
+    ignore
+  } (qidle);   
+
 \end{tikzpicture}
 
 
@@ -143,17 +152,31 @@
     ACK 1 from below;\\
     cancel timer
   } (qidle0); 
-  
-  \draw (qidle0) edge [loop left] node[left] {
+
+  % ignore timeouts in idle states: 
+  \draw (qidle0) edge [loop, out=150, in=120, min distance=15mm] node[left] {
     timeout;\\
     ignore
   } (qidle0);   
 
-  \draw (qidle1) edge [loop right] node[right] {
+  \draw (qidle1) edge [loop, out=60, in=30, min distance=15mm] node[right] {
     timeout;\\
     ignore
   } (qidle1);
 
+  % ignore ACKs in idle states: 
+  \draw (qidle0) edge [loop, out=240, in=210, min distance=15mm] node[left] {
+    any ACK from below;\\
+    ignore
+  } (qidle0);   
+ 
+  \draw (qidle1) edge [loop, out=330, in=300, min distance=15mm] node[right] {
+    any ACK from below;\\
+    ignore
+  } (qidle1);
+
+
+  
   % and wrong ACKs:
   \draw (qwait0) edge [loop, out=240, in=210, min distance=15mm] node[below left] {
     ACK 1 from below;\\
