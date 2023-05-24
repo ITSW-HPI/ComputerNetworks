@@ -1076,10 +1076,10 @@ Gives rise to notion of *coding gain*
   - Known to both sender and receiver
 - Given: message/frame $M$, represented by polynomial $M(x)$
 - Transmitter
-  - Compute remainder $r(x)$ of division $xgM(x) / G(x)$
+  - Compute remainder $r(x)$ of division $(x^gM(x)) / G(x)$
   - Note: Remainder after division is of degree $< g$, fitting into $g$ bits!
-  - Transmit $T(x) = xgM(x) - r(x)$ 
-  - Note: $xgM(x)- r(x)$ is divisible *without remainder* by $G(x)$
+  - Transmit $T(x) = (x^gM(x))  - r(x)$ 
+  - Note: $(x^gM(x)) - r(x)$ is divisible *without remainder* by $G(x)$
 - Receiver
   - Receive $m(x)$
   - Compute remainder of division of $m(x)$ by $G(x)$
@@ -1316,8 +1316,8 @@ Receiver: Identical to previous version!
       :END:   
 
 #+caption: Loosing an acknowledgement leads to timeout as well and then to duplicate delivery of the same packet to the upper layer; v2 fails
-#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:ll:arq:no_seq:packet_lost}
-#+NAME: fig:ll:arq:no_seq:packet_lost
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:ll:arq:no_seq:arq_lost}
+#+NAME: fig:ll:arq:no_seq:arq_lost
 [[./standalone/arq_msc.pdf]]
 
 
