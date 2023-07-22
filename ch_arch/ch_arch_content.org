@@ -750,7 +750,7 @@ service
 - WG-Meetings: 
   - Every 6-9 months
   - National organizations have time to accept proposed concepts
-  - Then: actual standarization process
+  - Then: actual standardization process
     - DP: Draft Proposal
     - DIS: Draft International Standard
     - IS: International Standard
