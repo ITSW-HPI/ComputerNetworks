@@ -336,7 +336,7 @@ Solution: Have the sender answer a question that the receiver asks!
 - Once connection context between two peers is established, releasing a connection should be easy
   - Goal: Only release connection when both peers have agreed that they have received all data and have nothing more to say
   - I.e., both sides must have invoked a ``Close''-like service primitive
-- It fact, it is impossible
+- In fact, it is impossible
   - Problem: How to be sure that the other peer knows that you know that it knows that you know \dots that all data have been transmitted and that the connection can now safely be terminated?
 
 
