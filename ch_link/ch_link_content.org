@@ -1462,7 +1462,7 @@ Receiver: Identical to previous version!
       :BEAMER_col: 0.38
       :END:   
 
-#+caption: Efficent ARQ protocol in large bandwidth-delay product settings as long as many packets can be in flight (which requires large sequence number space)
+#+caption: Efficient ARQ protocol in large bandwidth-delay product settings as long as many packets can be in flight (which requires large sequence number space)
 #+attr_latex: :width 0.95\textwidth :height 0.5\textheight :options keepaspectratio,page=\getpagerefnumber{page:ll:packets_in_flight}
 #+NAME: fig:page:ll:packets_in_flight
 [[./standalone/arq_msc.pdf]]
