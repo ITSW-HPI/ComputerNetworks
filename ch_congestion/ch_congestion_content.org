@@ -1852,7 +1852,7 @@ Actions:
 \end{tikzpicture}
   
   }
-  \caption{Simplfied CWND dynamics of a single TCP Reno flow, $W=4$ in example,  packets are dropped once every $1/p$ packets, all else stays constant}
+  \caption{Simplified CWND dynamics of a single TCP Reno flow, $W=4$ in example,  packets are dropped once every $1/p$ packets, all else stays constant}
   \label{fig:cc:reno_throughput}
 \end{figure}
 
