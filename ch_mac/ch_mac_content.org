@@ -974,7 +974,7 @@ Same idea: slightly better PHY, functionality largely unchanged
       :BEAMER_col: 0.28
       :END:
 
-- Based on measurements, smoothed over incresing time windows 
+- Based on measurements, smoothed over increasing time windows 
 - Hence: too bursty to be easily smoothed!
 
 
