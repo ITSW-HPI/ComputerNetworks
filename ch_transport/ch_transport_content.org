@@ -977,7 +977,7 @@ Expensive 6-way handshake / 3 RTTs to establish TCP + TLS connection
 
 **** QUIC and TLS 
 
-- TLS and TCP: striclty layered
+- TLS and TCP: strictly layered
 - TLS and QUIC: more tightly integrated; cooperation, even
   co-dependent 
   - E.g., QUIC uses TLS keys, TLS uses relible/ordered delivery
