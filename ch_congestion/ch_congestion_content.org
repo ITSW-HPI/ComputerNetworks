@@ -1710,7 +1710,7 @@ Actions:
       :BEAMER_col: 0.48
       :END:
 
-- We can fit a cubic polynomial to theses properties!
+- We can fit a cubic polynomial to these properties!
 - Choose  \[ W(t) = C \cdot (t- K)^3 + W^* \label{eq:cubic}\]
   - With $t_1 = K = \sqrt[3]{\frac{\beta W^*}{C}}$
   - $C$, $\beta$ parameters controlling behavior 
