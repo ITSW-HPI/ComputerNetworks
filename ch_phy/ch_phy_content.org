@@ -1031,7 +1031,7 @@ Distinction:
 
 \begin{tcolorbox}
 \[
-\text{maxmimum data rate} < 2 \frac{\text{bit/s}}{\mathrm{Hz}} H
+\text{maximum data rate} < 2 \frac{\text{bit/s}}{\mathrm{Hz}} H
 \log_2 V
 \label{eq:nyquist}
 \]
