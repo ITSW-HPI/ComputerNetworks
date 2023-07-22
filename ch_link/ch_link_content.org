@@ -1495,7 +1495,7 @@ Receiver: Identical to previous version!
 **** Manipulating sender-side windows 
 
 - Acknowledgement arrives at sender 
-  - Indicates to sender the  some packet has left the network
+  - Indicates to sender that some packet has left the network
     - (implicit channel storage is less used)
   - Typically shifts the sliding window, allowing new packet(s) to be sent
 \pause 
