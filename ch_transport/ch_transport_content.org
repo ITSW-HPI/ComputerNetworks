@@ -712,7 +712,7 @@ TCP maintains buffer at
 
 **** Estimating parameters when distribution changes
 - What to do when the RTT distribution changes over time?
-- I.e., the samples di were not generated from independent, identically distributed random variables
+- I.e., the samples $d_i$ were not generated from independent, identically distributed random variables
 - There is no longer the expected delay, the standard deviation
 - At best: attempt to find a good approximation of the current distribution’s parameters 
 - Danger: tracking changes too slowly, overreacting to temporary
