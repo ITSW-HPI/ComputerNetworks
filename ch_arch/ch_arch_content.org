@@ -436,7 +436,7 @@ service
       :END:   
 
 
-#+caption: A protocol ususally needs at least two FSMs (one per peer) to implement a service
+#+caption: A protocol usually needs at least two FSMs (one per peer) to implement a service
 #+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:arch:protocols:two_fsms}
 #+NAME: fig:arch:protocols:two_fsms
 [[./standalone/protocols.pdf]]
