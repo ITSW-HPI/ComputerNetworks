@@ -645,7 +645,7 @@ Question: How to choose upper bound $k$?
   - Each station/terminal is assigned a fixed time slot in a periodic schedule
 \pause 
 - Terminology:
-  - All protocols above were *dynamic* TDMA protcols
+  - All protocols above were *dynamic* TDMA protocols
     - They controlled a TDM scheme
   - Often, TDMA is used as shorthand for ``static TDMA'', but that is
     not really correct 
