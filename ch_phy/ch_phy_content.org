@@ -360,7 +360,7 @@ What happens when we just use 128 terms instead of 1024?
 
 \pause 
 
-Characteristic: ``wiggling'' at the points of discontinuitiy 
+Characteristic: ``wiggling'' at the points of discontinuity 
 - Unavoidable when using finite Fourier series to approximate discontinuous signals! 
 - Formally, so-called *Gibbs ringing*
 
