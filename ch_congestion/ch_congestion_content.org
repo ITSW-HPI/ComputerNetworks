@@ -1504,7 +1504,7 @@ Conclusions to draw
   there are still packets coming through!
 \pause 
 Actions:  
-- Hence: Packet n+2 has to be resent, some overload, but no severe
+- Hence: Packet n+1 has to be resent, some overload, but no severe
   measures against congestion are (yet) necessary!
 \pause 
 - *TCP Reno*
