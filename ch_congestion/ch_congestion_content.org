@@ -1292,7 +1292,7 @@ Consequences of AIMD
 \end{tikzpicture}
   
   }
-  \caption{Example MSC for packet bursts, iniital CWND=8, all ACKs for packets starting from 1 are lost, triggering a retrnamission of packet 1, resulting in a packet burst once packet arrives}
+  \caption{Example MSC for packet bursts, initial CWND=8, all ACKs for packets starting from 1 are lost, triggering a retrnamission of packet 1, resulting in a packet burst once packet arrives}
   \label{fig:cc:packet_burst_msc:1}
 \end{figure}
 \usetikzlibrary{spy}
