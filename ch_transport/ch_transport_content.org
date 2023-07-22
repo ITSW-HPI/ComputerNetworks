@@ -688,7 +688,7 @@ TCP maintains buffer at
 - P (premature retrans.) = P (D > Timeout) = P (D > c\mu) = 1- FD (c\mu) 
 - Required: p > 1-FD(c\mu) $ c > 1/\mu FD-1(1-p)
 - Case 2: Distribution of D unknown 
-- P(D > timeout) = P (D - \mu > c\mu - \mu) < P(|D-\mu| > (c-1)\mu) < \sigma^2/ ((c-1)\mu)2  (Tschebyschow inqueality!)
+- P(D > timeout) = P (D - \mu > c\mu - \mu) < P(|D-\mu| > (c-1)\mu) < \sigma^2/ ((c-1)\mu)2  (Tschebyschow inequality!)
 - Suppose this probability should be bounded by p
 - Implies c < 1 + \sigma / (\sqrt{p} \mu)
 - Or: Timeout = \mu + \sigma / \sqrt{p} 
