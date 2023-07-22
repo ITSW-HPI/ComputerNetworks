@@ -1147,7 +1147,7 @@ Gives rise to notion of *coding gain*
   - Sometimes, delivering incorrect frame is acceptable
   - Typically, have to repair the error somehow 
 - *Backward* error recovery
-  - Take action *after* the error has occured 
+  - Take action *after* the error has occurred 
 - Here: frame has to be retransmitted
 - How to tell the sender? 
 
