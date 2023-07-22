@@ -943,7 +943,7 @@ Same idea: slightly better PHY, functionality largely unchanged
   - Server access: 4x10G twin copper, about 7m 
   - Data centre: parallel optics – 4x 10G in 4 fibres per direction, 100-150m 
   - Metro-area: coarse WDM, four wavelengths each one at 10G, about 10
-    km; or 40G over one wavelengths, about 2 km 
+    km; or 40G over one wavelength, about 2 km 
 - 100G with similar factors 
 
 \pause 
