@@ -814,7 +814,7 @@ Similar approaches for standard deviation
   - Web page consists of many, small, independent components
     (pictures, text, \dots )
   - Each can be processed once complete
-  - Each is typically small (often fits into a few TCP segmentes,
+  - Each is typically small (often fits into a few TCP segments,
     within slow start)
   - User-observable latency more important than throughput 
 
