@@ -11,7 +11,7 @@
 **** The story so far  
 
 - Basic concepts for networking established
-  - In particular, signals vs. data, duplexing, muliplexing, switching
+  - In particular, signals vs. data, duplexing, multiplexing, switching
     (circuit or packet) vs. forwarding vs. routing
 - Basic architectural approaches
   - Layering
