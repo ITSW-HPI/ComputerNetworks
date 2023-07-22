@@ -1075,11 +1075,11 @@ Same idea: slightly better PHY, functionality largely unchanged
 - 
 **** Performance of nonpersistent CSMA – successful packets
 - Number U of correct packets per busy/idle cycle: 
-- Expected number of successful packets per busy/idle cyle then simply: 
+- Expected number of successful packets per busy/idle cycle then simply: 
 - 
 **** Performance of nonpersistent CSMA – throughput 
 - Putting it together
-- Throughput S is expected number of successful packets / expected duration for transmission cylce
+- Throughput S is expected number of successful packets / expected duration for transmission cycle
 - Hence: 
 **** Performance analysis: 1-Persistent CSMA/CD
 - Assumptions
