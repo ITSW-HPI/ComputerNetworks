@@ -1684,7 +1684,7 @@ Actions:
   - Then, treat careful around W*
   - If we manage to increase CWND beyond W*, then
     - additional capacity has become available
-    - ramp up CWND agressively 
+    - ramp up CWND aggressively 
 
 **** TCP Cubic: CWND as a function of time since packet loss 
 
