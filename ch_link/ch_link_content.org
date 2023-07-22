@@ -956,7 +956,7 @@ Gives rise to notion of *coding gain*
       :BEAMER_col: 0.48
       :END:   
 
-#+caption: Coding gain: Factor between two SNR needed by two dfiferent FEC schemes to obtain comparable PER
+#+caption: Coding gain: Factor between two SNR needed by two different FEC schemes to obtain comparable PER
 #+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:ll:per_over_snr:with_coding_gain}
 #+NAME: fig:ll:per_over_snr:with_coding_gain
 [[./standalone/bch.pdf]]
