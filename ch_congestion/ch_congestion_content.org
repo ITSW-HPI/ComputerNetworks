@@ -1054,7 +1054,7 @@ Consequences of AIMD
 \pause 
 - Results
   - Bottleneck rate in packet/s = 12 Gbit/s / 1500 bytes/packet = 12
-    Git/s / 12000 bits/packet = 1 MPacket / s 
+    Gbit/s / 12000 bits/packet = 1 MPacket / s 
   - CWND = Bottleneck rate \cdot RTT = 1 MPacket/s * 0,4 s = 400.000
     Packets  
   - It takes 400.000 RTTs to go from closed CWND to desired size
