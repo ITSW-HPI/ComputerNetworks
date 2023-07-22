@@ -547,7 +547,7 @@ to node [above, align=center] {1 bit \\difference} ++(3,0) node[fill=white] {$y$
 **** Frame sets – code books, codes
 
 Some terminology: 
-- The set of legal frames $S \in {0,1}^n$ is also called a *code book* or simply a *code*
+- The set of legal frames $S \subseteq \{0,1\}^n$ is also called a *code book* or simply a *code*
 - The *rate* $R_S$ of a code $S$ is defined as:
   \[  R_S = \frac{\log |S|}{n} \] 
   - Rate characterizes the efficiency
