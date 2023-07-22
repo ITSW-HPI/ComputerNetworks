@@ -348,7 +348,7 @@ Solution: Have the sender answer a question that the receiver asks!
 - Which rules shall the commanders use to agree on an attack date? 
 
 \pause 
-- *Provably unsolvable* if the network can loose messages
+- *Provably unsolvable* if the network can lose messages
 
 #+caption: Two-army problem
 #+attr_latex: :width 0.95\textwidth :height 0.3\textheight :options keepaspectratio,page=\getpagerefnumber{page:transport:two_army}
