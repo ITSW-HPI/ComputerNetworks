@@ -919,7 +919,7 @@ Expensive 6-way handshake / 3 RTTs to establish TCP + TLS connection
       :BEAMER_col: 0.48
       :END:   
 
-#+caption: Head-of-line blocking when one dropped packet stalls the delivery of a second, fully transmmitted object at the receiver
+#+caption: Head-of-line blocking when one dropped packet stalls the delivery of a second, fully transmitted object at the receiver
 #+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:quic:hol_tcp}
 #+NAME: fig:quic:hol_tcp
 [[./standalone/quic_msc.pdf]]
