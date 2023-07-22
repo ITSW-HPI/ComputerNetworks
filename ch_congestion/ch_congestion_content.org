@@ -33,7 +33,7 @@
 
 \newcommand{\pplusa}[6]{%
   % #1: offset, #2: fill color #3: packet length #4: ACK length, #5 label
-  % #6: X to loose the ACK 
+  % #6: X to lose the ACK 
   
   \coordinate (pStartSend_#5) at ($(a) + (0,-0.5)-(0,#1)$); 
   \coordinate (pEndSend_#5) at  ($  (pStartSend_#5) + (0,-#3) $ ); 
@@ -183,7 +183,7 @@
 
 **** Snowball effects
 - *\Gls{congestioncontrol}* is essential to avoid snowball effects
-  - Once a network is overloaded, it will loose packets (buffer overflows, etc.)
+  - Once a network is overloaded, it will lose packets (buffer overflows, etc.)
   - Once a reliable transport protocol detects packet loss, it will retransmit the lost packets
   - These retransmissions further increase the load in the network
   - More packets will be lost

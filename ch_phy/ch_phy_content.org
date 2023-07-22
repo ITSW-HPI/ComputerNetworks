@@ -425,7 +425,7 @@ Characteristic: ``wiggling'' at the points of discontinuitiy
 
 **** Attenuation 
 - Typical behavior: *Attenuation*
-- Intuition: Every signal looses *power* when traveling over a
+- Intuition: Every signal loses *power* when traveling over a
   physical medium 
 
 ***** \Gls{attenuation} $\alpha$                               :B_definition:
@@ -1127,7 +1127,7 @@ Distinction:
 - Would the simple 0 $\leadsto$ low, 1 $\leadsto$ high mapping of
   bit $\leadsto$ symbol work?
 - It should – after all, receiver can use 0-1-0 transitions to detect the length of a bit
-- But it fails depending on bit sequences: think of long runs of 1s or 0s – receiver can loose synchronization
+- But it fails depending on bit sequences: think of long runs of 1s or 0s – receiver can lose synchronization
 - Not nice not to be able to transmit arbitrary data
 
 **** Extract clock information from signal itself – Manchester 
@@ -1640,7 +1640,7 @@ via Wikimedia Commons
 - Case 1: Signal bandwidth fits completely into channel bandwidth
 - All good 
 - Case 2: Signal wider than channel 
-- You loose signal quality 
+- You lose signal quality 
 - Case 3: It would fit, but at the wrong place  
 - No problem: Move signal left or right (``modulation''); compare later  
 - 
