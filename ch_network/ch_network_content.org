@@ -1961,14 +1961,14 @@ RFC 1958, based on papers from mid-80s:
 **** Policy aspects 
 
 - Peering disputes: Who pays whom for what?
-- Traffic priorization
+- Traffic prioritization
   - Technically not trivial, economically unclear, politically highly
     debated
     - Control-plane packets like routing updates usually must be
       prioritized over data packets 
-  - Issue: /paid priorization/ vs. /net neutrality/
-    - Neutrality: no blocking, no throttling, no paid priorization,
-      disclosure of any priorization practices 
+  - Issue: /paid prioritization/ vs. /net neutrality/
+    - Neutrality: no blocking, no throttling, no paid prioritization,
+      disclosure of any prioritization practices 
     - Which regulatory body is in charge? 
 
 
