@@ -698,7 +698,7 @@ E.g.:
 - \dots 
 \pause 
 
-That can be written more compactly as a matrix mutliplication 
+That can be written more compactly as a matrix multiplication 
 
 **** Notation for block codes: matrix representation 
 
