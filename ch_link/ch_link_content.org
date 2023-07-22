@@ -571,7 +571,7 @@ A good code should have large distance and large rate – but arbitrary combinat
 
 **** Block codes: Bounds 
 - Block codes operate on blocks of $k$ payload bits, outputting blocks of length $n$ by adding redundancy $r=n-k$
-- Defining property: Output of $n bits *only* depends on these very $k$ input bits
+- Defining property: Output of $n$ bits *only* depends on these very $k$ input bits
 - Each coded bit: XOR of several payload bits
   - Which payload bits get XOR'ed into which output bit defines the
     specific code as such 
