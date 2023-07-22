@@ -980,7 +980,7 @@ Expensive 6-way handshake / 3 RTTs to establish TCP + TLS connection
 - TLS and TCP: strictly layered
 - TLS and QUIC: more tightly integrated; cooperation, even
   co-dependent 
-  - E.g., QUIC uses TLS keys, TLS uses relible/ordered delivery
+  - E.g., QUIC uses TLS keys, TLS uses reliable/ordered delivery
     provided by QUIC 
   - E.g., so-called 0-RTT handshake without protection against replays
   - 1-RTT handshake integrates separate TCP and TLS handshakes 
