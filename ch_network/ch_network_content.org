@@ -813,7 +813,7 @@ Interactive example at
       :BEAMER_col: 0.48
       :END:
 
-- Exchange few information over large distances 
+- Exchange little information over large distances 
 
 *****  Distance vector                   
       :PROPERTIES:
