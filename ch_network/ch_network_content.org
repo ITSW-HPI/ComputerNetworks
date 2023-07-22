@@ -988,7 +988,7 @@ Destination & Next hop & \# Hops\\
 
 **** Gateways between networks
 - *Gateways* are those nodes that connect to peer conglomerates
-- Such conglomerates arefairly independent of each other
+- Such conglomerates are fairly independent of each other
   - Different routing protocols can be used – an *interior gateway
     protocol* inside each conglomerate 
   - Between gateways, yet another protocol is conceivable – an *exterior gateway protocol*
