@@ -764,7 +764,7 @@ We will revisit the third case in Section \ref{sec:phy:broadband}
 
 \pause 
 \vfill
-***** Noise is not inference, interference is not noise        :B_alertblock:
+***** Noise is not interference, interference is not noise        :B_alertblock:
       :PROPERTIES:
       :BEAMER_env: alertblock
       :END:
