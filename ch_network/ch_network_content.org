@@ -338,7 +338,7 @@ Formalization:
 \pause 
 Formalization: 
   - *Stretch of a path between node a and b*: 
-     \[ \mathrm{strecht} (a, b) = \frac{\text{Length of path from $a$ to
+     \[ \mathrm{stretch} (a, b) = \frac{\text{Length of path from $a$ to
     $b$ according to routing tables}}{\text{Length of shortest path from
     $a$ to $b$}} \]
 \pause 
