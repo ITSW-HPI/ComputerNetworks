@@ -46,7 +46,7 @@
   - \dots but there are many ways to modularize 
 
 - Good: Abstract modularization 
-  - /abstract/ is a a property of a modularization: Modules should depend on each other as little as possible 
+  - /abstract/ is a property of a modularization: Modules should depend on each other as little as possible 
   - Needs: Interface and internals; specification and implementation are separated
   - Danger: /clever/ implementers try to circumvent module boundaries 
   - Typical motto: /Be tolerant what you accept, be strict what you send out/
