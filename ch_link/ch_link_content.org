@@ -736,7 +736,7 @@ That can be written more compactly as a matrix multiplication
 1 & 0& 1& 1& 0& 1& 1  \\
 0 &0 &0 &1 &0 &0 &0  \\
 \end{pmatrix}}_{\mathrm{Generator }\,G} = 
-\underbrace{(0 0 1 1 0 0 1)}_{\mathrm{Codeword}}
+\underbrace{(0 1 1 1 1 1 0)}_{\mathrm{Codeword}}
 \]
 
 
