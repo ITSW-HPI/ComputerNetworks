@@ -11,7 +11,7 @@
 **** The story so far  
 
 - Basic concepts for networking established
-  - In particular, signals vs. data, duplexing, muliplexing, switching
+  - In particular, signals vs. data, duplexing, multiplexing, switching
     (circuit or packet) vs. forwarding vs. routing
 - Basic architectural approaches
   - Layering
@@ -360,7 +360,7 @@ What happens when we just use 128 terms instead of 1024?
 
 \pause 
 
-Characteristic: ``wiggling'' at the points of discontinuitiy 
+Characteristic: ``wiggling'' at the points of discontinuity 
 - Unavoidable when using finite Fourier series to approximate discontinuous signals! 
 - Formally, so-called *Gibbs ringing*
 
@@ -425,7 +425,7 @@ Characteristic: ``wiggling'' at the points of discontinuitiy
 
 **** Attenuation 
 - Typical behavior: *Attenuation*
-- Intuition: Every signal looses *power* when traveling over a
+- Intuition: Every signal loses *power* when traveling over a
   physical medium 
 
 ***** \Gls{attenuation} $\alpha$                               :B_definition:
@@ -764,7 +764,7 @@ We will revisit the third case in Section \ref{sec:phy:broadband}
 
 \pause 
 \vfill
-***** Noise is not inference, interference is not noise        :B_alertblock:
+***** Noise is not interference, interference is not noise        :B_alertblock:
       :PROPERTIES:
       :BEAMER_env: alertblock
       :END:
@@ -1031,7 +1031,7 @@ Distinction:
 
 \begin{tcolorbox}
 \[
-\text{maxmimum data rate} < 2 \frac{\text{bit/s}}{\mathrm{Hz}} H
+\text{maximum data rate} < 2 \frac{\text{bit/s}}{\mathrm{Hz}} H
 \log_2 V
 \label{eq:nyquist}
 \]
@@ -1127,7 +1127,7 @@ Distinction:
 - Would the simple 0 $\leadsto$ low, 1 $\leadsto$ high mapping of
   bit $\leadsto$ symbol work?
 - It should – after all, receiver can use 0-1-0 transitions to detect the length of a bit
-- But it fails depending on bit sequences: think of long runs of 1s or 0s – receiver can loose synchronization
+- But it fails depending on bit sequences: think of long runs of 1s or 0s – receiver can lose synchronization
 - Not nice not to be able to transmit arbitrary data
 
 **** Extract clock information from signal itself – Manchester 
@@ -1640,7 +1640,7 @@ via Wikimedia Commons
 - Case 1: Signal bandwidth fits completely into channel bandwidth
 - All good 
 - Case 2: Signal wider than channel 
-- You loose signal quality 
+- You lose signal quality 
 - Case 3: It would fit, but at the wrong place  
 - No problem: Move signal left or right (``modulation''); compare later  
 - 

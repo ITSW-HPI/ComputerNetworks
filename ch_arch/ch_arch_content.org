@@ -46,7 +46,7 @@
   - \dots but there are many ways to modularize 
 
 - Good: Abstract modularization 
-  - /abstract/ is a a property of a modularization: Modules should depend on each other as little as possible 
+  - /abstract/ is a property of a modularization: Modules should depend on each other as little as possible 
   - Needs: Interface and internals; specification and implementation are separated
   - Danger: /clever/ implementers try to circumvent module boundaries 
   - Typical motto: /Be tolerant what you accept, be strict what you send out/
@@ -436,7 +436,7 @@ service
       :END:   
 
 
-#+caption: A protocol ususally needs at least two FSMs (one per peer) to implement a service
+#+caption: A protocol usually needs at least two FSMs (one per peer) to implement a service
 #+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:arch:protocols:two_fsms}
 #+NAME: fig:arch:protocols:two_fsms
 [[./standalone/protocols.pdf]]
@@ -750,7 +750,7 @@ service
 - WG-Meetings: 
   - Every 6-9 months
   - National organizations have time to accept proposed concepts
-  - Then: actual standarization process
+  - Then: actual standardization process
     - DP: Draft Proposal
     - DIS: Draft International Standard
     - IS: International Standard

@@ -1194,7 +1194,7 @@ Lacking a physical medium stretching from one end of the other,
 
 **** Multiple hops in packet switching 
 
-#+caption: Switches can follow each other; packets are fowarded between them
+#+caption: Switches can follow each other; packets are forwarded between them
 #+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:basics:multi_hop_packet}
 #+NAME: fig:basics:multi_hop_packet 
 [[./standalone/switching.pdf]]
