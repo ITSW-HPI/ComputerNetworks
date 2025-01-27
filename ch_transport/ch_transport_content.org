@@ -286,8 +286,20 @@ Solution: Have the sender answer a question that the receiver asks!
 
 
 
+***** Connection request & data both appear as old duplicates
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
 
-***** Connection request & confirmation both appear as old duplicates
+#+caption: Both ConnReq and Data are old duplicates
+#+attr_latex: :width 0.95\textwidth :height 0.45\textheight :options keepaspectratio,page=\getpagerefnumber{page:transport:conn_est_old_cr_data}
+#+NAME: fig:transport:conn_est_old_cr_data
+[[./standalone/tl_msc.pdf]]
+
+
+
+***** Connection request & confirmation both appear as old duplicates :noexport:
       :PROPERTIES:
       :BEAMER_env: block
       :BEAMER_col: 0.48
@@ -359,7 +371,8 @@ Solution: Have the sender answer a question that the receiver asks!
 
 **** Connection release in practice
 - Two-army problem equivalent to connection release
-- But: when releasing a connection, maybe bigger risks can be taken? 
+- But: when releasing a connection, maybe bigger risks can be taken?
+  - Risk: Possible to release connection state? 
 
 \vskip-2.5em
 
@@ -409,7 +422,7 @@ Solution: Have the sender answer a question that the receiver asks!
 #+NAME: fig:transport:disconnect:lost_ack
 [[./standalone/tl_msc.pdf]]
 
-
+\pause 
 
 ***** Lost 2nd ConnReq causes timeout 
       :PROPERTIES:
@@ -462,7 +475,7 @@ Solution: Have the sender answer a question that the receiver asks!
 
 
 
-#+caption: TCP state machine (Author Ivan Griffin, \url{https://texample.net/tikz/examples/tcp-state-machine/})
+#+caption: TCP state machine (based on Author Ivan Griffin, \url{https://texample.net/tikz/examples/tcp-state-machine/}; with fixes)
 #+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=1
 #+NAME: fig:transport:tcp_state_machine
 [[./standalone/tcp_state_machine.pdf]]
@@ -510,40 +523,7 @@ Solution: Have the sender answer a question that the receiver asks!
 
 ** Flow control                                                    
 
-
-
-**** \Gls{flowcontrol}
-- Recall: Flow control = prevent a fast sender from overrunning a slow receiver
-  - Similar issue in link and transport layer
-- In transport layer more complicated
-  - Many connections, need to adapt the amount of buffer per connection dynamically (instead of just simply allocating a fixed amount of buffer space per outgoing link)
-  - Transport layer PDUs can differ widely in size, unlike link layer frames
-  - Network’s implicit packet buffering complicates the picture
- 
-**** Flow control – buffer allocation
-- In order to support outstanding packets, the sender either
-  - Has to rely on the receiver to process packets as they come in (packets must not be reordered) – unrealistic, or 
-  - Has to assume that the receiver has sufficient buffer space available
-- The more buffer, the more outstanding packets
-  - Necessary to obtain highly efficient transmission, recall bandwidth-delay product!
-- How does sender have buffer assurance? 
-  - Sender can request buffer space
-  - Receiver can tell sender: ``I have X buffers available at the moment''
-    - For sliding window protocols: Influence size of sender’s send window
- 
-**** Example of flow control with ACK/permit separation            :noexport:
-- Arrows show direction of transmission, ``\dots'' indicates lost packet
-- Potential deadlock in step 16 when control PDU is lost and not retransmitted
-**** Flow control – permits and acknowledgements
-- Distinguish 
-  - Receiver-Permits (``Receiver has buffer space, go ahead and send more data'')
-  - Acknowledgements (``Receiver has received certain packets'')
-- Should be separated in real-world protocols!
-  - Unfortunately, often intermixed – TCP, e.g., uses ACKs as Network-Permits; see congestion control chapter
-- Can be combined with dynamically changing buffer space at the receiver
-  - Due to, e.g., different speed with which the application actually retrieves received data from the transport layer
-  - Following example: TCP 
- 
+*** Buffers in TCP 
 **** Send and receive buffers in TCP 
 TCP maintains buffer at 
 - Sender, to assist in error control
@@ -587,7 +567,41 @@ TCP maintains buffer at
       :END:
 
 
+*** TCP flow control 
 
+**** \Gls{flowcontrol}
+- Recall: Flow control = prevent a fast sender from overrunning a slow receiver
+  - Similar issue in link and transport layer
+- In transport layer more complicated
+  - Many connections, need to adapt the amount of buffer per connection dynamically (instead of just simply allocating a fixed amount of buffer space per outgoing link)
+  - Transport layer PDUs can differ widely in size, unlike link layer frames
+  - Network’s implicit packet buffering complicates the picture
+ 
+**** Flow control – buffer allocation
+- In order to support outstanding packets, the sender either
+  - Has to rely on the receiver to process packets as they come in (packets must not be reordered) – unrealistic, or 
+  - Has to assume that the receiver has sufficient buffer space available
+- The more buffer, the more outstanding packets
+  - Necessary to obtain highly efficient transmission, recall bandwidth-delay product!
+- How does sender have buffer assurance? 
+  - Sender can request buffer space
+  - Receiver can tell sender: ``I have X buffers available at the moment''
+    - For sliding window protocols: Influence size of sender’s send window
+ 
+**** Example of flow control with ACK/permit separation            :noexport:
+- Arrows show direction of transmission, ``\dots'' indicates lost packet
+- Potential deadlock in step 16 when control PDU is lost and not retransmitted
+**** Flow control – permits and acknowledgements
+- Distinguish 
+  - Receiver-Permits (``Receiver has buffer space, go ahead and send more data'')
+  - Acknowledgements (``Receiver has received certain packets'')
+- Should be separated in real-world protocols!
+  - Unfortunately, often intermixed – TCP, e.g., uses ACKs as Network-Permits; see congestion control chapter
+- Can be combined with dynamically changing buffer space at the receiver
+  - Due to, e.g., different speed with which the application actually retrieves received data from the transport layer
+  - Following example: TCP 
+ 
+*** Advertised receiver window 
 
 **** TCP flow control: Advertised window
 
@@ -678,7 +692,7 @@ TCP maintains buffer at
 - Simple rule when ignoring packet errors:
   - Fix an acceptable percentage $p_\text{premature}$ of premature timeouts
 \[ \text{Timeout} = \min_T \{ P (\text{RTT} > T) < p_\text{premature}
-\} + \epsilon  = \] 
+\} + \epsilon  \] 
 
 **** A simple timeout selection rule                               :noexport:
 - Possible rule: Timeout = c \mu for some constant c > 1
@@ -692,7 +706,7 @@ TCP maintains buffer at
 - Suppose this probability should be bounded by p
 - Implies c < 1 + \sigma / (\sqrt{p} \mu)
 - Or: Timeout = \mu + \sigma / \sqrt{p} 
--  → Need also to know \sigma D for decent timeout selection!
+- \rightarrow Need also to know \sigma D for decent timeout selection!
 **** Timeout values depend on delay distribution                   :noexport:
 - Round trip time exponentially or lognormal distributed 
 **** Estimating delay parameters
@@ -703,8 +717,8 @@ TCP maintains buffer at
 \pause 
 - Simple case: Suppose RTT is stable 
   - Suppose $d_1, \dots, d_n$ RTT values have been observed
-  - Estimate average: $dd = 1/n \sum d_i$  
-  - Estimating standard deviation: sd = ( 1/(n-1) \sum _i(dd-d_i)^2 )^{1/2}
+  - Estimate average: $\bar{d} = 1/n \sum d_i$  
+  - Estimating standard deviation: $\sigma = ( 1/(n-1) \sum _i(\bar{d}-d_i)^2 )^{1/2}$
 \pause 
 - But: RTT can vary considerably over time (load patterns, failures,
   \dots)
@@ -1004,7 +1018,7 @@ Expensive 6-way handshake / 3 RTTs to establish TCP + TLS connection
 
 - To speed up adoption, originally implemented on top of UDP 
 - Congestion control algorithm is pluggable, can be (relatively)
-  easily be replaced 
+  easily replaced 
 
 
 
