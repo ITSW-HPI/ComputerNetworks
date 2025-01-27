@@ -600,11 +600,12 @@
   \pplus{pEndSend-P8}{b}{P9}{P9}{0.05}{0.5}{8}{hpired!40}
   \pplus{pEndSend-P9}{b}{P10}{P10}{0.05}{0.5}{8}{hpiblue!40}
   \pplus{pEndSend-P10}{b}{P11}{P11}{0.05}{0.5}{8}{hpiorange!40}
+  \pplus{pEndSend-P11}{b}{P12}{P12}{0.05}{0.5}{8}{hpiyellow!60}
 
 
   % annotate packet burst
-  \draw [decorate, decoration={brace, raise=10pt, mirror}] (pStartSend-P8) to node [left=15pt] (burstlabel) {} (pEndSend-P11);
-  \node [align=right, anchor=east, left=0 of burstlabel]  (burstdescr) {CWND=4\\no packets in flight\\send 4 packets back to back};
+  \draw [decorate, decoration={brace, raise=10pt, mirror}] (pStartSend-P8) to node [left=15pt] (burstlabel) {} (pEndSend-P12);
+  \node [align=right, anchor=east, left=0 of burstlabel]  (burstdescr) {CWND=5\\no packets in flight\\send 5 packets back to back};
   
   
 \end{tikzpicture}

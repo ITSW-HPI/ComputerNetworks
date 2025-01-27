@@ -64,9 +64,14 @@
 **** Statically multiplexed bursty traffic – delay 
 - Compare the delay resulting from static multiplexing
 \pause 
-- Base case: *No multiplexing*, a single traffic source with average rate \rho (bits/s), link capacity $C$ bits/s
-  - Write average delay as $T$
-  - $T = 1/(\mu C-\lambda), \rho=\lambda/\mu)$
+- Base case: *No multiplexing*, a single traffic source with average
+  rate \rho (bits/s); link capacity $C$ bits/s
+  - \pause $\rho$ is given as ratio of arrival rate $\lambda$ and
+    service rate $\mu$: $ \rho=\lambda/\mu$
+    - Units: $\lambda$ in packets/s; average time to serve a packet
+      $1/\mu$  in  bits/packet 
+  - \pause Write average delay as $T$
+  - $T = 1/(\mu C-\lambda)$
 \pause 
 - *Multiplexed case*: Split the single source in $N$ sources with same total rate, statically multiplex over the same link (e.g., FDM)
   - Resulting average delay $T_\mathrm{FDM} = N\cdot T$
@@ -410,7 +415,7 @@
 - Hence: Packet is successful if there is *no additional transmission in two packet times*
 \pause
 - Throughput $S(G) = G \cdot$ probability $P_0$ of a packet not colliding 
-- Probability: \[ P_0 = \mathrm{P} (\mathrm{0 transmission in two packet times by other
+- Probability: \[ P_0 = \mathrm{P} (\text{0 transmission in two packet times by other
   nodes}) = \mathrm{e}^{-2G} \]
 - Throughput $S (G) = G \cdot P_0 = G \mathrm{e}^{-2G}$
 - Optimal for $G = 0.5 \rightarrow S = 1/(2e) \approx 0.184$ 

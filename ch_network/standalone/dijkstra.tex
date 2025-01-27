@@ -66,7 +66,7 @@
 \begin{tikzpicture}
   \label{page:routing:dijkstra:example:0}
 
-  \dijkstraGraph{(0, tent., \\unknown)}{(0, tent., \\unknown)}{(0, tent., \\unknown)}{(0, tent., \\unknown)}{(0, tent., \\unknown)}{(0, tent., \\unknown)}
+  \dijkstraGraph{($\infty$, tent., \\unknown)}{($\infty$, tent., \\unknown)}{($\infty$, tent., \\unknown)}{($\infty$, tent., \\unknown)}{($\infty$, tent., \\unknown)}{($\infty$, tent., \\unknown)}
 \end{tikzpicture}
 
 
@@ -74,7 +74,7 @@
 \begin{tikzpicture}
   \label{page:routing:dijkstra:example:1}
 
-  \dijkstraGraph{(0, perm., \\--)}{(0, tent., \\unknown)}{(0, tent., \\unknown)}{(0, tent., \\unknown)}{(0, tent., \\unknown)}{(0, tent., \\unknown)}
+  \dijkstraGraph{(0, perm., \\--)}{($\infty$, tent., \\unknown)}{($\infty$, tent., \\unknown)}{($\infty$, tent., \\unknown)}{($\infty$, tent., \\unknown)}{($\infty$, tent., \\unknown)}
 
   % this is totally ugly, but redrawing seems to be the simplest option,
   % lacking proper parameter-passing mechanisms 
@@ -84,7 +84,7 @@
 \begin{tikzpicture}
   \label{page:routing:dijkstra:example:2}
 
-  \dijkstraGraph{(0, perm., \\--)}{(3, tent., \\A)}{(0, tent., \\unknown)}{(0, tent., \\unknown)}{(75, tent., \\A)}{(150, tent., \\A)}
+  \dijkstraGraph{(0, perm., \\--)}{(3, tent., \\A)}{($\infty$, tent., \\unknown)}{($\infty$, tent., \\unknown)}{(75, tent., \\A)}{(15$\infty$, tent., \\A)}
 
   % this is totally ugly, but redrawing seems to be the simplest option,
   % lacking proper parameter-passing mechanisms 
@@ -98,7 +98,7 @@
 \begin{tikzpicture}
   \label{page:routing:dijkstra:example:3}
 
-  \dijkstraGraph{(0, perm., \\--)}{(3, perm., \\A)}{(0, tent., \\unknown)}{(0, tent., \\unknown)}{(75, tent., \\A)}{(150, tent., \\A)}
+  \dijkstraGraph{(0, perm., \\--)}{(3, perm., \\A)}{($\infty$, tent., \\unknown)}{($\infty$, tent., \\unknown)}{(75, tent., \\A)}{(15$\infty$, tent., \\A)}
 
 
   % this is totally ugly, but redrawing seems to be the simplest option,
@@ -130,7 +130,7 @@
 \begin{tikzpicture}
   \label{page:routing:dijkstra:example:4}
 
-  \dijkstraGraph{(0, perm., \\--)}{(3, perm., \\A)}{(8, tent., \\B)}{(23, tent., \\B)}{(75, tent., \\A)}{(150, tent., \\A)}
+  \dijkstraGraph{(0, perm., \\--)}{(3, perm., \\A)}{(8, tent., \\B)}{(23, tent., \\B)}{(7, tent., \\B)}{(15$\infty$, tent., \\A)}
 
 
   % this is totally ugly, but redrawing seems to be the simplest option,
@@ -146,13 +146,13 @@
 
 
   % tentative: 
-  \foreach \done in {f,z} {
+  \foreach \done in {z} {
     \node [fill=hpiorange, circle] at (\done) {\MakeUppercase \done}; 
   }
 
   
   % now considered 
-  \foreach \n in {c,d}
+  \foreach \n in {f, c,d}
   { \node [fill=hpiyellow, circle] at (\n) {\MakeUppercase \n}; }
 
 
@@ -162,7 +162,7 @@
 \begin{tikzpicture}
   \label{page:routing:dijkstra:example:5}
 
-  \dijkstraGraph{(0, perm., \\--)}{(3, perm., \\A)}{(8, perm., \\B)}{(18, tent., \\C)}{(16, tent., \\C)}{(150, tent., \\A)}
+  \dijkstraGraph{(0, perm., \\--)}{(3, perm., \\A)}{(8, tent., \\B)}{(23, tent., \\B)}{(7, perm., \\B)}{(15$\infty$, tent., \\A)}
 
 
   % this is totally ugly, but redrawing seems to be the simplest option,
@@ -174,17 +174,17 @@
   }
 
   % just made permanent
-  \node [fill=green, circle] at (c) {C};
+  \node [fill=green, circle] at (f) {F};
 
 
   % tentative: 
-  \foreach \done in {z} {
+  \foreach \done in {c, d, z} {
     \node [fill=hpiorange, circle] at (\done) {\MakeUppercase \done}; 
   }
 
   
   % now considered 
-  \foreach \n in {d,f}
+  \foreach \n in {}
   { \node [fill=hpiyellow, circle] at (\n) {\MakeUppercase \n}; }
 
 
@@ -194,14 +194,14 @@
 \begin{tikzpicture}
   \label{page:routing:dijkstra:example:6}
 
-  \dijkstraGraph{(0, perm., \\--)}{(3, perm., \\A)}{(8, perm., \\B)}{(18, tent., \\C)}{(16, perm., \\C)}{(76, tent., \\F)}
+  \dijkstraGraph{(0, perm., \\--)}{(3, perm., \\A)}{(8, tent., \\B)}{(23, tent., \\B)}{(7, perm., \\B)}{(67, tent., \\F)}
 
 
   % this is totally ugly, but redrawing seems to be the simplest option,
   % lacking proper parameter-passing mechanisms 
 
   % done: 
-  \foreach \done in {a, b, c} {
+  \foreach \done in {a, b} {
     \node [fill=green!10, circle] at (\done) {\MakeUppercase \done}; 
   }
 
@@ -216,17 +216,105 @@
 
   
   % now considered 
-  \foreach \n in {z}
+  \foreach \n in {c, z}
   { \node [fill=hpiyellow, circle] at (\n) {\MakeUppercase \n}; }
-
-
   
 \end{tikzpicture}
 
 \begin{tikzpicture}
   \label{page:routing:dijkstra:example:7}
 
-  \dijkstraGraph{(0, perm., \\--)}{(3, perm., \\A)}{(8, perm., \\B)}{(18, perm., \\C)}{(16, perm., \\C)}{(20, tent., \\D)}
+  \dijkstraGraph{(0, perm., \\--)}{(3, perm., \\A)}{(8, tent., \\B)}{(23, tent., \\B)}{(7, perm., \\B)}{(67, tent., \\F)}
+
+
+  % this is totally ugly, but redrawing seems to be the simplest optin,
+  % lacking proper parameter-passing mechanisms 
+
+  % done: 
+  \foreach \done in {a, b, f} {
+    \node [fill=green!10, circle] at (\done) {\MakeUppercase \done}; 
+  }
+
+  % just made permanent
+  \node [fill=green, circle] at (c) {C};
+
+
+  % tentative: 
+  \foreach \done in {d, z} {
+    \node [fill=hpiorange, circle] at (\done) {\MakeUppercase \done}; 
+  }
+
+  
+  % now considered 
+  \foreach \n in {}
+  { \node [fill=hpiyellow, circle] at (\n) {\MakeUppercase \n}; }
+  
+\end{tikzpicture}
+
+\begin{tikzpicture}
+  \label{page:routing:dijkstra:example:8}
+
+  \dijkstraGraph{(0, perm., \\--)}{(3, perm., \\A)}{(8, perm., \\B)}{(18, tent., \\C)}{(7, perm., \\B)}{(67, tent., \\F)}
+
+
+  % this is totally ugly, but redrawing seems to be the simplest optin,
+  % lacking proper parameter-passing mechanisms 
+
+  % done: 
+  \foreach \done in {a, b, f} {
+    \node [fill=green!10, circle] at (\done) {\MakeUppercase \done}; 
+  }
+
+  % just made permanent
+  \node [fill=green, circle] at (c) {C};
+
+
+  % tentative: 
+  \foreach \done in {z} {
+    \node [fill=hpiorange, circle] at (\done) {\MakeUppercase \done}; 
+  }
+
+  
+  % now considered 
+  \foreach \n in {d}
+  { \node [fill=hpiyellow, circle] at (\n) {\MakeUppercase \n}; }
+  
+\end{tikzpicture}
+
+\begin{tikzpicture}
+  \label{page:routing:dijkstra:example:9}
+
+  \dijkstraGraph{(0, perm., \\--)}{(3, perm., \\A)}{(8, perm., \\B)}{(18, perm., \\C)}{(7, perm., \\B)}{(67, tent., \\F)}
+
+
+  % this is totally ugly, but redrawing seems to be the simplest optin,
+  % lacking proper parameter-passing mechanisms 
+
+  % done: 
+  \foreach \done in {a, b, c, f} {
+    \node [fill=green!10, circle] at (\done) {\MakeUppercase \done}; 
+  }
+
+  % just made permanent
+  \node [fill=green, circle] at (d) {D};
+
+
+  % tentative: 
+  \foreach \done in {z} {
+    \node [fill=hpiorange, circle] at (\done) {\MakeUppercase \done}; 
+  }
+
+  
+  % now considered 
+  \foreach \n in {}
+  { \node [fill=hpiyellow, circle] at (\n) {\MakeUppercase \n}; }
+  
+\end{tikzpicture}
+
+\begin{tikzpicture}
+  \label{page:routing:dijkstra:example:10}
+
+  \dijkstraGraph{(0, perm., \\--)}{(3, perm., \\A)}{(8, perm., \\B)}{(18, perm., \\C)}{(7, perm., \\B)}{(20, tent., \\D)}
 
 
   % this is totally ugly, but redrawing seems to be the simplest option,
@@ -245,27 +333,25 @@
   \foreach \done in {} {
     \node [fill=hpiorange, circle] at (\done) {\MakeUppercase \done}; 
   }
-
+  
   
   % now considered 
   \foreach \n in {z}
   { \node [fill=hpiyellow, circle] at (\n) {\MakeUppercase \n}; }
-
-
   
 \end{tikzpicture}
 
 \begin{tikzpicture}
-  \label{page:routing:dijkstra:example:8}
+  \label{page:routing:dijkstra:example:11}
 
-  \dijkstraGraph{(0, perm., \\--)}{(3, perm., \\A)}{(8, perm., \\B)}{(18, perm., \\C)}{(16, perm., \\C)}{(20, perm., \\D)}
+  \dijkstraGraph{(0, perm., \\--)}{(3, perm., \\A)}{(8, perm., \\B)}{(18, perm., \\C)}{(7, perm., \\B)}{(20, perm., \\D)}
 
 
   % this is totally ugly, but redrawing seems to be the simplest option,
   % lacking proper parameter-passing mechanisms 
 
   % done: 
-  \foreach \done in {a, b, c, f, d} {
+  \foreach \done in {a, b, c, d, f} {
     \node [fill=green!10, circle] at (\done) {\MakeUppercase \done}; 
   }
 
@@ -282,10 +368,104 @@
   % now considered 
   \foreach \n in {}
   { \node [fill=hpiyellow, circle] at (\n) {\MakeUppercase \n}; }
+  
+\end{tikzpicture}
+
+% \begin{tikzpicture}
+%   \label{page:routing:dijkstra:example:6}
+
+%   \dijkstraGraph{(0, perm., \\--)}{(3, perm., \\A)}{(8, perm., \\B)}{(18, tent., \\C)}{(16, perm., \\C)}{(76, tent., \\F)}
+
+
+%   % this is totally ugly, but redrawing seems to be the simplest optin,
+%   % lacking proper parameter-passing mechanisms 
+
+%   % done: 
+%   \foreach \done in {a, b, c} {
+%     \node [fill=green!10, circle] at (\done) {\MakeUppercase \done}; 
+%   }
+
+%   % just made permanent
+%   \node [fill=green, circle] at (f) {F};
+
+
+%   % tentative: 
+%   \foreach \done in {d} {
+%     \node [fill=hpiorange, circle] at (\done) {\MakeUppercase \done}; 
+%   }
+
+  
+%   % now considered 
+%   \foreach \n in {z}
+%   { \node [fill=hpiyellow, circle] at (\n) {\MakeUppercase \n}; }
 
 
   
-\end{tikzpicture}
+% \end{tikzpicture}
+
+% \begin{tikzpicture}
+%   \label{page:routing:dijkstra:example:7}
+
+%   \dijkstraGraph{(0, perm., \\--)}{(3, perm., \\A)}{(8, perm., \\B)}{(18, perm., \\C)}{(16, perm., \\C)}{(2$\infty$, tent., \\D)}
+
+
+%   % this is totally ugly, but redrawing seems to be the simplest optin,
+%   % lacking proper parameter-passing mechanisms 
+
+%   % done: 
+%   \foreach \done in {a, b, c, f} {
+%     \node [fill=green!10, circle] at (\done) {\MakeUppercase \done}; 
+%   }
+
+%   % just made permanent
+%   \node [fill=green, circle] at (d) {D};
+
+
+%   % tentative: 
+%   \foreach \done in {} {
+%     \node [fill=hpiorange, circle] at (\done) {\MakeUppercase \done}; 
+%   }
+
+  
+%   % now considered 
+%   \foreach \n in {z}
+%   { \node [fill=hpiyellow, circle] at (\n) {\MakeUppercase \n}; }
+
+
+  
+% \end{tikzpicture}
+
+% \begin{tikzpicture}
+%   \label{page:routing:dijkstra:example:8}
+
+%   \dijkstraGraph{(0, perm., \\--)}{(3, perm., \\A)}{(8, perm., \\B)}{(18, perm., \\C)}{(16, perm., \\C)}{(20, perm., \\D)}
+
+
+%   % this is totally ugly, but redrawing seems to be the simplest optin,
+%   % lacking proper parameter-passing mechanisms 
+
+%   % done: 
+%   \foreach \done in {a, b, c, f, d} {
+%     \node [fill=green!10, circle] at (\done) {\MakeUppercase \done}; 
+%   }
+
+%   % just made permanent
+%   \node [fill=green, circle] at (z) {Z};
+
+
+%   % tentative: 
+%   \foreach \done in {} {
+%     \node [fill=hpiorange, circle] at (\done) {\MakeUppercase \done}; 
+%   }
+
+  
+%   % now considered 
+%   \foreach \n in {}
+%   { \node [fill=hpiyellow, circle] at (\n) {\MakeUppercase \n}; }
+
+
+  
+% \end{tikzpicture}
 
 
 \begin{tikzpicture}[wordbox/.code={\\\wordbox{1}{#1}}]

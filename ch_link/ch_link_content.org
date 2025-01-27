@@ -726,7 +726,7 @@ That can be written more compactly as a matrix multiplication
 - In general: a *nonsystematic code* 
   - Using a *\gls{generator} matrix*
 - Given payload $p$, find *\gls{codeword}* c using generator $G$ as $c = pG$ 
-- Examples: 
+- Example: 
 
 \[
 \underbrace{( 1 0 0 1)}_{\mathrm{Payload}} \cdot
@@ -758,7 +758,7 @@ That can be written more compactly as a matrix multiplication
 0 & 0& 1& 0 & | & 0& 1& 1  \\
 0 &0 &0 &1  & | & 0 &0 &0  \\
 \end{pmatrix}}_{\mathrm{Generator }\,G} = 
-\underbrace{(1 0 0 1 |  0 0 1)}_{\mathrm{Codeword}}
+\underbrace{(1 0 0 1 |  1 1 0)}_{\mathrm{Codeword}}
 \]
 
 

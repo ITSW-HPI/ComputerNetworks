@@ -295,7 +295,7 @@ How to obtain knowledge about directions?
 - Packet with following parameters arrives at a switch: 
   - Source address a:b
   - Destination address g:h
-  - Arrives at port 
+  - Arrives at switch port c:d
 - (Note: MAC addresses shown simplified here and in following
   examples)
 
@@ -307,7 +307,7 @@ How to obtain knowledge about directions?
 
 **** Backward learning, forwarding table  
 - Switch concludes: a:b can be reached by sending *to* port c:d
-- Enters this is its forwarding table
+- Enters this in its forwarding table
 - Assumption: Symmetric network! 
 - *Nothing* concluded about g:h! 
 
@@ -451,7 +451,7 @@ How to obtain knowledge about directions?
 - Traditionally, distinction between switch and bridge made sense
   - Key difference: *Bridges can interconnect heterogeneous networks* 
 - Today: most devices contain both types of functionality
-  - Terms be treated more or less interchangeably today 
+  - Terms are treated more or less interchangeably today 
   - Often more a marketing distinction than a technical one
 
 
@@ -582,7 +582,7 @@ How to obtain knowledge about directions?
 - All devices so far either ignored addresses (repeaters, hubs) or worked on MAC-layer addresses (switches, bridges)
 - For interconnection outside a single LAN/connection of LAN, these simple addresses are insufficient
 - Main issue: ``flat'', unstructured addresses do not scale 
-  - E.g., In spanning tree, there is an entry for every device’s designated output port!
+  - E.g., in spanning tree, there is an entry for every device’s designated output port!
   - $\leadsto$ Need more sophisticated addressing structure and devices that operate on it
 - $\leadsto$ \Glspl{router} and \gls{routing}!
   - Structurally, very similar and very different to switches 
@@ -641,7 +641,7 @@ How to obtain knowledge about directions?
 
 **** VLAN operation, using legacy packets  
 - Basic assumption: no change to packet format is allowed
-  - Legacy operation! 100s of millions of cars, switches deployed
+  - Legacy operation! 100s of millions of switches deployed
     (ca. 1995)
 - VLAN-capable switch knows: 
   - Which VLANs exist on which ports
@@ -688,7 +688,8 @@ How to obtain knowledge about directions?
   - VLAN tags not needed on links between end hosts and switch 
   - Can be inserted by first switch, removed by last one, if necessary
   - And here, use one of the three options from previous slide 
-
+\pause 
+- But a debated aspect of the IEEE~802 architecture; cmp. e.g. \url{https://mentor.ieee.org/802.1/dcn/22/1-22-0003-01-ICne-vlan-aware-end-stations-in-the-ieee-802-architecture.pdf}
 
 **** What is a VLAN? 
 
