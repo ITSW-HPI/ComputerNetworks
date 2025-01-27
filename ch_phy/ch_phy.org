@@ -1,4 +1,4 @@
-#+TITLE: Computer Networks  \newline Chapter \thechapter: \newline  Physical layer
+#+TITLE: Computer Networks  \newline Kapitel \thechapter: \newline  Physical layer
 #+include: "../templates/slidehead.org"
 # if you want to add a short title as well: 
 #+BEAMER_HEADER: \title[Ch. \thechapter: PHY]{Computer Networks  \newline Chapter \thechapter: \newline  Physical layer}
@@ -6,7 +6,7 @@
 #+BEAMER_HEADER: \date{SS 23}
 
 
-\setcounter{chapter}{1}
+\setcounter{chapter}{2}
 \refstepcounter{chapter}
 
 

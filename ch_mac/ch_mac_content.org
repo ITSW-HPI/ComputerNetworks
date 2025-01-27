@@ -650,7 +650,7 @@ Question: How to choose upper bound $k$?
   - Each station/terminal is assigned a fixed time slot in a periodic schedule
 \pause 
 - Terminology:
-  - All protocols above were *dynamic* TDMA protcols
+  - All protocols above were *dynamic* TDMA protocols
     - They controlled a TDM scheme
   - Often, TDMA is used as shorthand for ``static TDMA'', but that is
     not really correct 
@@ -948,7 +948,7 @@ Same idea: slightly better PHY, functionality largely unchanged
   - Server access: 4x10G twin copper, about 7m 
   - Data centre: parallel optics – 4x 10G in 4 fibres per direction, 100-150m 
   - Metro-area: coarse WDM, four wavelengths each one at 10G, about 10
-    km; or 40G over one wavelengths, about 2 km 
+    km; or 40G over one wavelength, about 2 km 
 - 100G with similar factors 
 
 \pause 
@@ -979,7 +979,7 @@ Same idea: slightly better PHY, functionality largely unchanged
       :BEAMER_col: 0.28
       :END:
 
-- Based on measurements, smoothed over incresing time windows 
+- Based on measurements, smoothed over increasing time windows 
 - Hence: too bursty to be easily smoothed!
 
 
@@ -1080,11 +1080,11 @@ Same idea: slightly better PHY, functionality largely unchanged
 - 
 **** Performance of nonpersistent CSMA – successful packets
 - Number U of correct packets per busy/idle cycle: 
-- Expected number of successful packets per busy/idle cyle then simply: 
+- Expected number of successful packets per busy/idle cycle then simply: 
 - 
 **** Performance of nonpersistent CSMA – throughput 
 - Putting it together
-- Throughput S is expected number of successful packets / expected duration for transmission cylce
+- Throughput S is expected number of successful packets / expected duration for transmission cycle
 - Hence: 
 **** Performance analysis: 1-Persistent CSMA/CD
 - Assumptions

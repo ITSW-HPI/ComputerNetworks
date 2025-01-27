@@ -423,7 +423,7 @@ How to obtain knowledge about directions?
 
 **** Forwarding and backwarding learning in complex example
 
-#+caption: Complex example for backward learning and flooding, in combination of swtiches and brigdes with heterogeneous LAN technologies
+#+caption: Complex example for backward learning and flooding, in combination of switches and brigdes with heterogeneous LAN technologies
 #+attr_latex: :width 0.95\textwidth :height 0.5\textheight :options keepaspectratio,page=\getpagerefnumber{page:inter:complex:backwardlearning}
 #+NAME: fig:inter:complex:backwardlearning
 [[./standalone/internetworking.pdf]]

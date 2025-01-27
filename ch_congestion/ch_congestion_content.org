@@ -33,7 +33,7 @@
 
 \newcommand{\pplusa}[6]{%
   % #1: offset, #2: fill color #3: packet length #4: ACK length, #5 label
-  % #6: X to loose the ACK 
+  % #6: X to lose the ACK 
   
   \coordinate (pStartSend_#5) at ($(a) + (0,-0.5)-(0,#1)$); 
   \coordinate (pEndSend_#5) at  ($  (pStartSend_#5) + (0,-#3) $ ); 
@@ -183,7 +183,7 @@
 
 **** Snowball effects
 - *\Gls{congestioncontrol}* is essential to avoid snowball effects
-  - Once a network is overloaded, it will loose packets (buffer overflows, etc.)
+  - Once a network is overloaded, it will lose packets (buffer overflows, etc.)
   - Once a reliable transport protocol detects packet loss, it will retransmit the lost packets
   - These retransmissions further increase the load in the network
   - More packets will be lost
@@ -1054,7 +1054,7 @@ Consequences of AIMD
 \pause 
 - Results
   - Bottleneck rate in packet/s = 12 Gbit/s / 1500 bytes/packet = 12
-    Git/s / 12000 bits/packet = 1 MPacket / s 
+    Gbit/s / 12000 bits/packet = 1 MPacket / s 
   - CWND = Bottleneck rate \cdot RTT = 1 MPacket/s * 0,4 s = 400.000
     Packets  
   - It takes 400.000 RTTs to go from closed CWND to desired size
@@ -1685,7 +1685,7 @@ Actions:
   - Then, treat careful around W*
   - If we manage to increase CWND beyond W*, then
     - additional capacity has become available
-    - ramp up CWND agressively 
+    - ramp up CWND aggressively 
 
 **** TCP Cubic: CWND as a function of time since packet loss 
 
@@ -1711,7 +1711,7 @@ Actions:
       :BEAMER_col: 0.48
       :END:
 
-- We can fit a cubic polynomial to theses properties!
+- We can fit a cubic polynomial to these properties!
 - Choose  \[ W(t) = C \cdot (t- K)^3 + W^* \label{eq:cubic}\]
   - With $t_1 = K = \sqrt[3]{\frac{\beta W^*}{C}}$
   - $C$, $\beta$ parameters controlling behavior 

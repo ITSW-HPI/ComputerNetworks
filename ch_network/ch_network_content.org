@@ -338,7 +338,7 @@ Formalization:
 \pause 
 Formalization: 
   - *Stretch of a path between node a and b*: 
-     \[ \mathrm{strecht} (a, b) = \frac{\text{Length of path from $a$ to
+     \[ \mathrm{stretch} (a, b) = \frac{\text{Length of path from $a$ to
     $b$ according to routing tables}}{\text{Length of shortest path from
     $a$ to $b$}} \]
 \pause 
@@ -886,7 +886,7 @@ Interactive example at
       :BEAMER_col: 0.48
       :END:
 
-- Exchange few information over large distances 
+- Exchange little information over large distances 
 
 *****  Distance vector                   
       :PROPERTIES:
@@ -1061,7 +1061,7 @@ Destination & Next hop & \# Hops\\
 
 **** Gateways between networks
 - *Gateways* are those nodes that connect to peer conglomerates
-- Such conglomerates arefairly independent of each other
+- Such conglomerates are fairly independent of each other
   - Different routing protocols can be used – an *interior gateway
     protocol* inside each conglomerate 
   - Between gateways, yet another protocol is conceivable – an *exterior gateway protocol*
@@ -2034,14 +2034,14 @@ RFC 1958, based on papers from mid-80s:
 **** Policy aspects 
 
 - Peering disputes: Who pays whom for what?
-- Traffic priorization
+- Traffic prioritization
   - Technically not trivial, economically unclear, politically highly
     debated
     - Control-plane packets like routing updates usually must be
       prioritized over data packets 
-  - Issue: /paid priorization/ vs. /net neutrality/
-    - Neutrality: no blocking, no throttling, no paid priorization,
-      disclosure of any priorization practices 
+  - Issue: /paid prioritization/ vs. /net neutrality/
+    - Neutrality: no blocking, no throttling, no paid prioritization,
+      disclosure of any prioritization practices 
     - Which regulatory body is in charge? 
 
 

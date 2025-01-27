@@ -11,7 +11,7 @@
 
 \newcommand{\pplusa}[6]{%
   % #1: offset, #2: fill color #3: packet length #4: ACK length, #5 label
-  % #6: X to loose the ACK 
+  % #6: X to lose the ACK 
   
   \coordinate (pStartSend_#5) at ($(a) + (0,-0.5)-(0,#1)$); 
   \coordinate (pEndSend_#5) at  ($  (pStartSend_#5) + (0,-#3) $ ); 
@@ -547,7 +547,7 @@ to node [above, align=center] {1 bit \\difference} ++(3,0) node[fill=white] {$y$
 **** Frame sets – code books, codes
 
 Some terminology: 
-- The set of legal frames $S \in {0,1}^n$ is also called a *code book* or simply a *code*
+- The set of legal frames $S \subseteq \{0,1\}^n$ is also called a *code book* or simply a *code*
 - The *rate* $R_S$ of a code $S$ is defined as:
   \[  R_S = \frac{\log |S|}{n} \] 
   - Rate characterizes the efficiency
@@ -571,7 +571,7 @@ A good code should have large distance and large rate – but arbitrary combinat
 
 **** Block codes: Bounds 
 - Block codes operate on blocks of $k$ payload bits, outputting blocks of length $n$ by adding redundancy $r=n-k$
-- Defining property: Output of $n bits *only* depends on these very $k$ input bits
+- Defining property: Output of $n$ bits *only* depends on these very $k$ input bits
 - Each coded bit: XOR of several payload bits
   - Which payload bits get XOR'ed into which output bit defines the
     specific code as such 
@@ -698,7 +698,7 @@ E.g.:
 - \dots 
 \pause 
 
-That can be written more compactly as a matrix mutliplication 
+That can be written more compactly as a matrix multiplication 
 
 **** Notation for block codes: matrix representation 
 
@@ -736,7 +736,7 @@ That can be written more compactly as a matrix mutliplication
 1 & 0& 1& 1& 0& 1& 1  \\
 0 &0 &0 &1 &0 &0 &0  \\
 \end{pmatrix}}_{\mathrm{Generator }\,G} = 
-\underbrace{(0 1 1 1 1 1 0 )}_{\mathrm{Codeword}}
+\underbrace{(0 1 1 1 1 1 0)}_{\mathrm{Codeword}}
 \]
 
 
@@ -956,7 +956,7 @@ Gives rise to notion of *coding gain*
       :BEAMER_col: 0.48
       :END:   
 
-#+caption: Coding gain: Factor between two SNR needed by two dfiferent FEC schemes to obtain comparable PER
+#+caption: Coding gain: Factor between two SNR needed by two different FEC schemes to obtain comparable PER
 #+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:ll:per_over_snr:with_coding_gain}
 #+NAME: fig:ll:per_over_snr:with_coding_gain
 [[./standalone/bch.pdf]]
@@ -1147,7 +1147,7 @@ Gives rise to notion of *coding gain*
   - Sometimes, delivering incorrect frame is acceptable
   - Typically, have to repair the error somehow 
 - *Backward* error recovery
-  - Take action *after* the error has occured 
+  - Take action *after* the error has occurred 
 - Here: frame has to be retransmitted
 - How to tell the sender? 
 
@@ -1462,7 +1462,7 @@ Receiver: Identical to previous version!
       :BEAMER_col: 0.38
       :END:   
 
-#+caption: Efficent ARQ protocol in large bandwidth-delay product settings as long as many packets can be in flight (which requires large sequence number space)
+#+caption: Efficient ARQ protocol in large bandwidth-delay product settings as long as many packets can be in flight (which requires large sequence number space)
 #+attr_latex: :width 0.95\textwidth :height 0.5\textheight :options keepaspectratio,page=\getpagerefnumber{page:ll:packets_in_flight}
 #+NAME: fig:page:ll:packets_in_flight
 [[./standalone/arq_msc.pdf]]
@@ -1495,7 +1495,7 @@ Receiver: Identical to previous version!
 **** Manipulating sender-side windows 
 
 - Acknowledgement arrives at sender 
-  - Indicates to sender the  some packet has left the network
+  - Indicates to sender that some packet has left the network
     - (implicit channel storage is less used)
   - Typically shifts the sliding window, allowing new packet(s) to be sent
 \pause 
@@ -1858,7 +1858,7 @@ Assumptions:
 
 \newcommand{\pplusa}[6]{%
   % #1: offset, #2: fill color #3: packet length #4: ACK length, #5 label
-  % #6: X to loose the ACK 
+  % #6: X to lose the ACK 
   
   \coordinate (pStartSend_#5) at ($(a) + (0,-0.5)-(0,#1)$); 
   \coordinate (pEndSend_#5) at  ($  (pStartSend_#5) + (0,-#3) $ ); 
