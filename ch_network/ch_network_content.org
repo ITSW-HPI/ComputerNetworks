@@ -533,7 +533,7 @@ With distributed schemes:
       :END:
 
 
-#+caption: Example network to illustrate Dijkstra algorithm, step 4
+#+caption: Example network to illustrate Dijkstra algorithm, step 4: Update cost at F; nodes C and D first discovered 
 #+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio ,page=\getpagerefnumber{page:routing:dijkstra:example:4}
 #+NAME: fig:routing:dijkstra:example:4
 [[./standalone/dijkstra.pdf]]
@@ -569,7 +569,7 @@ With distributed schemes:
       :END:
 
 
-#+caption: Example network to illustrate Dijkstra algorithm, step 6
+#+caption: Example network to illustrate Dijkstra algorithm, step 6: Update neighbots of F; only results in changes at Z, C already has a shorter path than the one via F 
 #+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio ,page=\getpagerefnumber{page:routing:dijkstra:example:6}
 #+NAME: fig:routing:dijkstra:example:6
 [[./standalone/dijkstra.pdf]]
@@ -584,7 +584,7 @@ With distributed schemes:
 
 
 
-#+caption: Example network to illustrate Dijkstra algorithm, step 7: make tentative node with lowest cost  permanent
+#+caption: Example network to illustrate Dijkstra algorithm, step 7: make tentative node with lowest cost permanent, node C
 #+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio ,page=\getpagerefnumber{page:routing:dijkstra:example:7}
 #+NAME: fig:routing:dijkstra:example:7
 [[./standalone/dijkstra.pdf]]
@@ -594,7 +594,80 @@ With distributed schemes:
       :BEAMER_env: ignoreheading
       :END:
 
-**** Centralized routing – Dijkstra – Example: Result 
+
+**** Centralized routing – Dijkstra – Example: Step 8 and 9
+
+\vskip-2.5em
+
+*****  Update neighbors 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+
+#+caption: Example network to illustrate Dijkstra algorithm, step 8
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio ,page=\getpagerefnumber{page:routing:dijkstra:example:8}
+#+NAME: fig:routing:dijkstra:example:8
+[[./standalone/dijkstra.pdf]]
+
+\pause 
+
+***** Make lowest-cost node permanent                    
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+
+
+#+caption: Example network to illustrate Dijkstra algorithm, step 9
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio ,page=\getpagerefnumber{page:routing:dijkstra:example:9}
+#+NAME: fig:routing:dijkstra:example:9
+[[./standalone/dijkstra.pdf]]
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+**** Centralized routing – Dijkstra – Example: Step 10 and 11
+
+\vskip-2.5em
+
+*****  Update neighbors 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+
+#+caption: Example network to illustrate Dijkstra algorithm, step 10
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio ,page=\getpagerefnumber{page:routing:dijkstra:example:10}
+#+NAME: fig:routing:dijkstra:example:10
+[[./standalone/dijkstra.pdf]]
+
+\pause 
+
+***** Make lowest-cost node permanent: Final step!                     
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+
+
+#+caption: Example network to illustrate Dijkstra algorithm, step 11 -- the result 
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio ,page=\getpagerefnumber{page:routing:dijkstra:example:11}
+#+NAME: fig:routing:dijkstra:example:11
+[[./standalone/dijkstra.pdf]]
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+**** Centralized routing – Dijkstra – Example: Result              :noexport:
 
 
 #+caption: Example network to illustrate Dijkstra algorithm, step 8: last node made permanent 
@@ -1107,7 +1180,7 @@ Names, addresses do not have to be:
 
 ** Case study: IP
 
-*** IPv4                                                           :noexport:
+*** IPv4
 
 
 **** Addressing case study: Internet IP addresses
@@ -1355,7 +1428,7 @@ aggregation
 
 
 
-*** IPv6                                                           :noexport:
+*** IPv6
 **** IPv6
 
 - Originally intended to overcome address shortages of IPv4
@@ -1456,7 +1529,7 @@ Examples from  \cite{rfc6890}:
 - fe80::/64 - link-local address 
 
 
-*** IP and lower layer                                             :noexport:
+*** IP and lower layer
 
 **** Forwarding table of router 3                                  :noexport:
 - Have a look at Linux ifconfig and route commands
@@ -1626,7 +1699,7 @@ packets
 - Must all interfaces in a LAN have IP addresses from the same prefix? 
 
   
-*** Intra-domain                                                   :noexport:
+*** Intra-domain
 
 **** Autonomous systems in the IP world
 - Large organizations can own multiple networks that are under a single administrative control
@@ -1706,7 +1779,7 @@ Resulting structure
       :END:   
 
 #+caption: OSPF area examples (based on Figue 5-66 of \cite{Tanenbaum_computer_networks_2021})
-#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio ,page=\getpagerefnumber{page:routing:ospf_areas}
+#+attr_latex: :width 0.75\textwidth :height 0.4\textheight :options keepaspectratio ,page=\getpagerefnumber{page:routing:ospf_areas}
 #+NAME: fig:routing:ospf_areas
 [[./standalone/intra_inter.pdf]]
 
@@ -1840,7 +1913,7 @@ All shown routers are so-called *BGP speaker* (=participate in BGP protocol)
   - Has received BGP route via iBGP, carrying router 1b interface as next hop
 - Essential part to tie inter- and intra-AS routing protocols together 
 
-TODO: check interface IPs are correct here?? 
+
 
 **** BGP routing advertisements: example
 
