@@ -14,4 +14,34 @@
 
 #+include: "./ch_basics_content.org"
 
-#+include: "../templates/references.org"
+
+* Material 
+
+
+*** Referenzen                                                     :noexport:
+    :PROPERTIES:
+    :BEAMER_OPT: allowframebreaks
+    :END:
+
+\renewcommand*{\bibfont}{\small}
+\printbibliography[heading=none]
+
+
+*** Abkürzungen                                                    :noexport:
+    :PROPERTIES:
+    :BEAMER_OPT: allowframebreaks
+    :END:
+
+
+
+\printacronyms
+
+
+*** Glossar
+    :PROPERTIES:
+    :BEAMER_OPT: allowframebreaks
+    :END:
+
+\printglossary[type=main]
+    
+

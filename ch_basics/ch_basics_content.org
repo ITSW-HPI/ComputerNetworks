@@ -690,7 +690,7 @@ no statements about how to duplex within a pair!
 
 **** Multiplexing in time 
 
-Idea: Use time slots for pairs -- \gls{tdm}
+Idea: Use time slots for pairs @@latex: \textemdash @@  \gls{tdm}
 
 #+caption: Multiplexing in time for pairs $A\leftrightarrow C$ and $B \leftrightarrow D$
 #+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:mux:tdm}
@@ -1357,7 +1357,7 @@ Recall *mechanism* vs. *strategy*
 **** Access to a shared medium 
 
 - Suppose we multiplex a physical medium
-  - TDM, FDM, \dots - does not matter
+  - TDM, FDM, \dots  @@latex: \textemdash @@  does not matter
 - We need to control access to the medium
   - Typical goal: at most one signal arrives at a receiver within the used
     multiplexing option 
@@ -1508,7 +1508,7 @@ Routing tables jointly mandate *paths*
 
 Routing tables are filled by *routing protocols* 
 
-- Details in Chapter \ref{sec:routing}
+- Details in Chapter \ref{ch:network}
 
 \pause 
 
@@ -1597,7 +1597,7 @@ At end of circuit usage: destroy circuit
 ** Errors 
 
 **** Things go wrong 
-- So we are done building a network – unless something goes wrong!
+- So we are done building a network  @@latex: \textemdash @@  unless something goes wrong!
 - Source of errors/abnormal situations
   - Conversion from signals to bits can fail
   - Access to a shared medium might not work
@@ -1611,11 +1611,11 @@ At end of circuit usage: destroy circuit
 **** Error control 
 - Error control at various abstraction levels needed
 - Between two direct neighbors, over a given connection
-- Between end systems, to compensate for errors not detected locally – e.g., incorrect order of packets
+- Between end systems, to compensate for errors not detected locally  @@latex: \textemdash @@  e.g., incorrect order of packets
 
 **** Overload control
 - Protect the network against buffer overflows, regulate the number of packets injected into the network – Congestion control
-- Protect end system against too many packets coming in – Flow control
+- Protect end system against too many packets coming in  @@latex: \textemdash @@  Flow control
 
 **** How? 
 
