@@ -33,7 +33,7 @@
   - Especially: non-linear, feedback 
 - Many special cases and exceptions 
 - Huge description, huge volume of specification 
-  - \gls{rfc}: > 9360  (2023-03-10), compare https://ietf.org 
+  - \gls{rfc}: > 9717  (2025-01-28), compare https://ietf.org 
 - Many people needed to realize a system 
 
 
@@ -44,6 +44,7 @@
   - Typical property: Changing a module is simple; changing
     modularization itself is difficult 
   - \dots but there are many ways to modularize 
+\pause
 
 - Good: Abstract modularization 
   - /abstract/ is a property of a modularization: Modules should depend on each other as little as possible 
@@ -271,7 +272,7 @@ Each layer uses capabilities of a lower layer, adds own rules and procedures, to
 
 
 
-**** Plain sockets -- good? 
+**** Plain sockets  @@latex: \textemdash @@  good? 
 
 - Complex API, owing to its age 
 - But full control over all details 
@@ -282,7 +283,7 @@ Each layer uses capabilities of a lower layer, adds own rules and procedures, to
 
 
 
-**** Sockets in C -- good? 
+**** Sockets in C  @@latex: \textemdash @@  good? 
 
 - Even with 0mq (or similar), sockets stay cumbersome 
   - Advantage: Full, detailed control
