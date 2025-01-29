@@ -21,11 +21,11 @@
 
 
 \begin{tikzpicture}
-  \node[fill=hpiyellow!10, draw=hpiyellow, align=center, rounded corners] (sap1l)  {SAP Layer 1};
-  \node[fill=hpiyellow!10, draw=hpiyellow, align=center, below=0 of -(sap1l)] (l1l)  {Layer 1: Bit $\leftrightarrow$ Voltage \\conversion}; 
+  \node[fill=hpiyellow!10, draw=hpiyellow, align=center,] (l1l)  {Layer 1: Bit $\leftrightarrow$ Voltage \\conversion}; 
+  \node[fill=hpiyellow!10, draw=hpiyellow, align=center, rounded corners, above=0 of -(l1l)] (sap1l)  {SAP Layer 1};
 
-  \node[fill=hpiyellow!10, draw=hpiyellow, align=center, rounded corners, right=6cm of sap1l] (sap1r)  {SAP Layer 1}; 
-  \node[fill=hpiyellow!10, draw=hpiyellow, align=center, below=0 of -(sap1r)] (l1r)  {Layer 1: Bit $\leftrightarrow$ Voltage \\conversion}; 
+  \node[fill=hpiyellow!10, draw=hpiyellow, align=center,right=5cm of l1l, ] (l1r)  {Layer 1: Bit $\leftrightarrow$ Voltage \\conversion}; 
+  \node[fill=hpiyellow!10, draw=hpiyellow, align=center, rounded corners, above=0 of -(l1r)] (sap1r)  {SAP Layer 1}; 
 
 
   \node[fill=hpiblue!10, draw=hpiblue, below=1cm of -(l1l)(l1r)] (phy)  {Layer 0: Physical medium}; 
@@ -45,17 +45,17 @@
 \begin{tikzpicture}
   \label{page:arch:saps_layers}
 
-  \node[fill=hpiyellow!10, draw=hpiyellow, align=center, rounded corners] (sap1l)  {SAP n+1};
+  \node[fill=hpiyellow!10, draw=hpiyellow, align=center, minimum width=2cm, rounded corners] (sap1l)  {SAP n+1};
   \node[fill=hpiyellow!10, draw=hpiyellow, align=center, below=0 of -(sap1l)] (l1l)  {Layer n+1}; 
 
-  \node[fill=hpiyellow!10, draw=hpiyellow, align=center, rounded corners, right=6cm of sap1l] (sap1r)  {SAP n+1}; 
+  \node[fill=hpiyellow!10, draw=hpiyellow, align=center, minimum width=2cm, rounded corners, right=6cm of sap1l] (sap1r)  {SAP n+1}; 
   \node[fill=hpiyellow!10, draw=hpiyellow, align=center, below=0 of -(sap1r)] (l1r)  {Layer n+1}; 
 
   
-  \node[fill=hpiorange!10, draw=hpiorange, align=center, rounded corners, below=of l1l] (sap0l)  {SAP n};
+  \node[fill=hpiorange!10, draw=hpiorange, align=center, minimum width=2cm, rounded corners, below=of l1l] (sap0l)  {SAP n};
   \node[fill=hpiorange!10, draw=hpiorange, align=center, below=0 of -(sap0l)] (l0l)  {Layer n}; 
 
-  \node[fill=hpiorange!10, draw=hpiorange, align=center, rounded corners, below=of l1r] (sap0r)  {SAP n}; 
+  \node[fill=hpiorange!10, draw=hpiorange, align=center, minimum width=2cm, rounded corners, below=of l1r] (sap0r)  {SAP n}; 
   \node[fill=hpiorange!10, draw=hpiorange, align=center, below=0 of -(sap0r)] (l0r)  {Layer n}; 
 
 
@@ -86,17 +86,17 @@
 \begin{tikzpicture}
   \label{page:arch:layers:send_receive}
 
-  \node[fill=hpiyellow!10, draw=hpiyellow, align=center, rounded corners] (sap1l)  {SAP n+1};
+  \node[fill=hpiyellow!10, draw=hpiyellow, align=center, minimum width=2cm, rounded corners] (sap1l)  {SAP n+1};
   \node[fill=hpiyellow!10, draw=hpiyellow, align=center, below=0 of -(sap1l)] (l1l)  {Layer n+1}; 
 
-  \node[fill=hpiyellow!10, draw=hpiyellow, align=center, rounded corners, right=6cm of sap1l] (sap1r)  {SAP n+1}; 
+  \node[fill=hpiyellow!10, draw=hpiyellow, align=center, minimum width=2cm, rounded corners, right=6cm of sap1l] (sap1r)  {SAP n+1}; 
   \node[fill=hpiyellow!10, draw=hpiyellow, align=center, below=0 of -(sap1r)] (l1r)  {Layer n+1}; 
 
   
-  \node[fill=hpiorange!10, draw=hpiorange, align=center, rounded corners, below=of l1l] (sap0l)  {SAP n};
+  \node[fill=hpiorange!10, draw=hpiorange, align=center, minimum width=2cm, rounded corners, below=of l1l] (sap0l)  {SAP n};
   \node[fill=hpiorange!10, draw=hpiorange, align=center, below=0 of -(sap0l)] (l0l)  {Layer n}; 
 
-  \node[fill=hpiorange!10, draw=hpiorange, align=center, rounded corners, below=of l1r] (sap0r)  {SAP n}; 
+  \node[fill=hpiorange!10, draw=hpiorange, align=center, minimum width=2cm, rounded corners, below=of l1r] (sap0r)  {SAP n}; 
   \node[fill=hpiorange!10, draw=hpiorange, align=center, below=0 of -(sap0r)] (l0r)  {Layer n}; 
 
 

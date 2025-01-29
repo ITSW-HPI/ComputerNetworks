@@ -14,4 +14,33 @@
 
 #+include: "./ch_arch_content.org"
 
-#+include: "../templates/references.org"
+
+* Material 
+
+
+*** COMMENT Referenzen  
+    :PROPERTIES:
+    :BEAMER_OPT: allowframebreaks
+    :END:
+
+\renewcommand*{\bibfont}{\small}
+\printbibliography[heading=none]
+
+
+*** COMMENT Abkürzungen
+    :PROPERTIES:
+    :BEAMER_OPT: allowframebreaks
+    :END:
+
+
+
+\printacronyms
+
+
+*** Glossary
+    :PROPERTIES:
+    :BEAMER_OPT: allowframebreaks
+    :END:
+
+\printglossary[type=main]
+    

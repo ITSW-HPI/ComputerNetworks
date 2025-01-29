@@ -532,7 +532,8 @@ service
 
 
 **** Traversing a protocol stack 
-- Downwards: Add headers 
+- Downwards: Add headers
+  - Usually: *prepend*; sometimes: append; very rarely: in the middle 
 - Upwards: Remove headers 
 
 
@@ -552,12 +553,19 @@ service
 
 **** How to structure functions/layers in real systems? 
 - Many functions have to be realized
-- How to actually group them so as to obtain a real, working communication system?
-  - Layering structure, interfaces between them, and according protocols define the *communication architecture*
+- How to actually group them so as to obtain a real, working
+  communication system?
+\pause
+
+- *Reference model*:
+  - Layering structure, interfaces between them 
+  - Only general duties of each layer are defined
+\pause
+- *Communication architecture*: reference model + *concrete protocols* 
+\pause
 - Two main reference models exist
   - *ISO/OSI* reference model  (International Standards Organization Open Systems Interconnection)
-  - *TCP/IP* reference model (by IETF – Internet Engineering Taskforce)
-  - Reference model = architecture – concrete protocols (roughly)
+  - *TCP/IP* reference model (by IETF   @@latex: \textemdash @@  Internet Engineering Taskforce)
 
 
 *** ISO/OSI 
@@ -569,8 +577,7 @@ service
   - Choose layer boundaries such that information flow across the boundary is minimized (minimize inter-layer interaction)
   - Enough layers to keep separate things separate, few enough to keep architecture manageable
 - Result: 7-layer model
-  - Not strictly speaking an architecture, because protocol details are not specified
-  - Only general duties of each layer are defined
+
 
 **** ISO/OSI 7-layer reference model (two entities)
 
@@ -616,7 +623,7 @@ service
 - Application layer: Actual application, e.g., protocols to transport Web pages
 
 
-**** 7 layers - function vs. scope? 
+**** 7 layers  @@latex: \textemdash @@  function vs. scope? 
 
 - In a *very* abstract sense, all layers to do the same thing:
   Transport data between their peers
@@ -627,7 +634,7 @@ service
     each other
     - But on top of the network layer, all peers = all devices 
 
-**** ISO/OSI reference model – Critique 
+**** ISO/OSI reference model  @@latex: \textemdash @@  Critique 
 - The reference model as such, in its structuring of functions into layers, is very influential until today
 - Actual protocols developed for it are irrelevant in practice
 - ISO failed in gaining actual market acceptance for its model
@@ -674,7 +681,7 @@ service
 
 
 
-**** TCP/IP reference model – Critique 
+**** TCP/IP reference model  @@latex: \textemdash @@  Critique 
 - No clear distinction between service, protocol, interface
   - Reliable byte stream is equated with TCP, although there is a clear difference
   - Particularly below IP
@@ -738,14 +745,16 @@ service
 - Manufacturer bodies
 
 **** Standardization – Traditional organizations
-- ITU – International Telecommunication Union (formerly CCITT und CCIR)
-- CCITT – Consultative Committee on International Telegraphy and Telephony (Comité Consultatif International Télégraphique et Téléphonique)
-- CCIR – Consultative Committee on International Radio
-- CEPT – Conférence Européenne des Administrations des Postes et des Télécommunications
-- ISO – International Organization for Standardization  
-- DIN – Deutsches Institut für Normung
-  - German partner organization of ISO
-- 3GPPP - 3rd Generation Partnership Project (cellular systems)
+- International Telecommunication Union (ITU, formerly CCITT und CCIR)
+- Consultative Committee on International Telegraphy and Telephony
+  (Comité Consultatif International Télégraphique et Téléphonique, CCITT)
+- Consultative Committee on International Radio (CCIR)
+- Conférence Européenne des Administrations des Postes et des
+  Télécommunications (CEPT)
+- International Organization for Standardization   (ISO)
+  - American National Standardization Institute (ANSI); American partner organization of ISO
+  - Deutsches Institut für Normung (DIN); German partner organization of ISO
+- 3rd Generation Partnership Project (3GPPP, cellular systems)
 
 **** ISO standardization work
 - WG-Meetings: 
@@ -757,7 +766,7 @@ service
     - IS: International Standard
 - Move a proposal to a higher level by incorporating all dissenting voices and international consensus
 - Very slow process
-**** IETF – http://www.ietf.org 
+**** IETF  @@latex: \textemdash @@  http://www.ietf.org 
 - IETF is organized in areas and Working Groups
   - Volunteers from industry, academia, government organizations participate
   - Example: \cite{Ermert2023-ab}
