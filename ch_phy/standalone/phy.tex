@@ -11,7 +11,7 @@
 
 \begin{tikzpicture}
   \label{page:phy:channel_bandwidth}
-  \draw [->] (0,0) -- (0,5) node [left] {Attenuation}; 
+  \draw [->] (0,0) -- (0,5) node [above left, rotate=90] {Attenuation}; 
   \draw [->] (0,0) -- (10,0) node [below] {Frequency};
 
   \draw (0.1,1) -- (-0.1,1)  node [left] {1}; 
@@ -30,7 +30,7 @@
 
 \begin{tikzpicture}
   \label{page:phy:channel_bandwidth:small_signalbw}
-  \draw [->] (0,0) -- (0,5) node [left] {Attenuation}; 
+  \draw [->] (0,0) -- (0,5) node [above left, rotate=90] {Attenuation}; 
   \draw [->] (0,0) -- (10,0) node [below] {Frequency};
 
   \draw (0.1,1) -- (-0.1,1)  node [left] {1}; 
@@ -53,7 +53,7 @@
 
 \begin{tikzpicture}
   \label{page:phy:channel_bandwidth:large_signalbw}
-  \draw [->] (0,0) -- (0,5) node [left] {Attenuation}; 
+  \draw [->] (0,0) -- (0,5) node [above left, rotate=90] {Attenuation}; 
   \draw [->] (0,0) -- (10,0) node [below] {Frequency};
 
   \draw (0.1,1) -- (-0.1,1)  node [left] {1}; 
@@ -77,7 +77,7 @@
 
 \begin{tikzpicture}
   \label{page:phy:channel_bandwidth:outside_signalbw}
-  \draw [->] (0,0) -- (0,5) node [left] {Attenuation}; 
+  \draw [->] (0,0) -- (0,5) node [above left, rotate=90] {Attenuation}; 
   \draw [->] (0,0) -- (10,0) node [below] {Frequency};
 
   \draw (0.1,1) -- (-0.1,1)  node [left] {1}; 
@@ -167,13 +167,14 @@
     \node [circle] (sink) {Sink};
   \end{scope}
 
-  \draw [->, dashed] (tx) -- (rx);
+  
+  \draw [->, dashed] (tx) to node[above right](signal) {Signal} (rx);
 
   \node [below=4 of chencode] (bits) {Data bits};
   \node [below=2.5 of tx] (symbols) {Channel symbols};
 
-  \draw [->] (bits) edge (sencode.south east) edge (chdecode.south east); 
-  \draw [->] (symbols) edge (chencode.south east) edge (rx.south east); 
+  \draw [dotted, ->] (bits) edge[out=120,in=270] ($ (sencode)!.5!(chencode) $) edge[out=30,in=270] ($ (chdecode)!.5!(sdecode) $); 
+  \draw [dotted, ->] (symbols) edge[out=120,in=270] ($(chencode)!.5!(tx)$) edge[out=30,in=270] ($(rx)!.5!(chdecode)$); 
 \end{tikzpicture}
 
 \begin{tikzpicture}[start chain=1, start chain=2, every join/.style={->}]
@@ -195,15 +196,17 @@
     \node [circle] (sink) {Sink};
   \end{scope}
 
-  \draw [->, dashed] (tx) -- (rx);
+  \draw [->, dashed] (tx) to node[above right](signal) {Signal} (rx);
 
-  \node [below=5 of modulate] (bits) {Data bits};
+  \node [below=5.5 of modulate] (bits) {Data bits};
   \node [below=3.5 of tx] (symbols) {Channel symbols};
   \node [below=0.5 of rx.south west] (waves) {Waveforms};
 
-  \draw [->] (bits) edge (sencode.south east) edge (chdecode.south east); 
-  \draw [->] (symbols) edge (chencode.south east) edge (demodulate.south east); 
-  \draw [->] (waves) edge (modulate.south east) edge (rx.south east); 
+  \draw [dotted, ->] (bits) edge[out=120,in=270] ($ (sencode)!.5!(chencode) $) edge[out=30,in=270] ($ (chdecode)!.5!(sdecode) $); 
+  \draw [dotted, ->] (symbols) edge[out=120,in=270] ($(chencode)!.5!(modulate)$) edge[out=30,in=270] ($(demodulate)!.5!(chdecode)$); 
+  % \draw [->] (bits) edge (sencode.south east) edge (chdecode.south east); 
+  % \draw [->] (symbols) edge (chencode.south east) edge (demodulate.south east); 
+  \draw [dotted, ->] (waves) edge[out=120,in=270] ($(modulate)!.5!(tx)$) edge[out=30,in=270] ($(rx)!.5!(demodulate)$); 
 \end{tikzpicture}
 
 
@@ -263,6 +266,16 @@
   \node [draw, right=of channel] (rec) {Receiver};
 
   \draw [->] (sender) to node[above] {$g(t)$} (channel) to node[above] {$\tilde{g}(t)$} (rec); 
+  
+\end{tikzpicture}
+
+\begin{tikzpicture}
+  \label{page:fig:channel_freq}
+  \node [draw] (sender) {Sender};
+  \node [draw, rounded corners, right=of sender] (channel) {Channel};
+  \node [draw, right=of channel] (rec) {Receiver};
+
+  \draw [->] (sender) to node[above] {$g(f)$} (channel) to node[above] {$\tilde{g}(f)$} (rec); 
   
 \end{tikzpicture}
 

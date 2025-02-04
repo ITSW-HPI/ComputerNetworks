@@ -423,7 +423,7 @@
   \node [draw, rounded corners, right=of sender] (channel) {Channel};
   \node [draw, right=of channel] (rec) {Receiver};
 
-  \draw [->] (sender) to node[above] (g) {$g(t)$} (channel) to node[above] (gtilde) {$\tilde{g}(t)$} (rec); 
+  \draw [->] (sender) to node[above] (g) {$g(f)$} (channel) to node[above] (gtilde) {$\tilde{g}(f)$} (rec); 
 
   \begin{axis}
     [xlabel=Frequency/Hz, ylabel=1/Attenuation, at={($(channel.north)+(0,2cm)$)}, anchor=south, scale=0.25]
