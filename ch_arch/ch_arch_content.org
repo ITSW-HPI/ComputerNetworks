@@ -766,7 +766,7 @@ service
     - IS: International Standard
 - Move a proposal to a higher level by incorporating all dissenting voices and international consensus
 - Very slow process
-**** IETF  @@latex: \textemdash @@  http://www.ietf.org 
+**** IETF  @@latex: \textemdash\, @@  http://www.ietf.org 
 - IETF is organized in areas and Working Groups
   - Volunteers from industry, academia, government organizations participate
   - Example: \cite{Ermert2023-ab}
