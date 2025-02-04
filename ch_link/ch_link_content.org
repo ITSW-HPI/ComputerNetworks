@@ -128,19 +128,18 @@
 
 **** Requirement options for link layer service
 
-- Dependable service – yes/no
+- Dependable service @@latex: \textemdash{} @@ yes/no
   - Has many facets
     - A delivered packet should have the same content as the transmitted packet
     - All packets have to be delivered eventually
     - Packets have to be delivered in order
   - Error control may be required 
     - Forward error control, acknowledgements
-- Connection-oriented – yes/no 
+- Connection-oriented @@latex: \textemdash{} @@ yes/no 
   - Is a *shared context* to/with the peer entity required?
 - Packet or bitstream abstraction
   - Usually in computer networks: packets 
   - What about a maximal packet length? 
-
 
 **** Distinguish: Service versus implementation
 - Note the difference between service and implementation
@@ -150,22 +149,22 @@
 - What about other combinations? 
 
 
-**** Basic link layer functions – Framing 
+**** Basic link layer functions @@latex: \textemdash{} @@ Framing 
 - How to turn a physical layer’s bit stream abstraction into individual, well demarcated frames
-  - Usually necessary to provide error control – not obvious how to do that over a bit stream abstraction
+  - Usually necessary to provide error control @@latex: \textemdash{} @@ not obvious how to do that over a bit stream abstraction
   - Frames and packets are really the same thing, only a convention to
     talk about ``frames'' in the link-layer context
 
 \pause 
 - In addition: Fragmentation & reassembly if network layer packets are longer than link layer packets
 
-**** Basic link layer functions – Error control
-- If desired by the network layer – usually is
+**** Basic link layer functions @@latex: \textemdash{} @@ Error control
+- If desired by the network layer @@latex: \textemdash{} @@ usually is
 - Usually built on top of frames 
-- Error detection – are there incorrect bits?  
-- Error correction – repair any mistakes that have happened? 
-  - Forward error correction – invest effort before error happened; try to hide it from higher layers
-  - Backward error correction – invest effort after error happened;
+- Error detection @@latex: \textemdash{} @@ are there incorrect bits?  
+- Error correction @@latex: \textemdash{} @@ repair any mistakes that have happened? 
+  - Forward error correction @@latex: \textemdash{} @@ invest effort before error happened; try to hide it from higher layers
+  - Backward error correction @@latex: \textemdash{} @@ invest effort after error happened;
     try to repair it 
 
 #+caption: Options for error control
@@ -175,7 +174,7 @@
 
 
 
-**** Basic link layer functions – Connection setup
+**** Basic link layer functions @@latex: \textemdash{} @@ Connection setup
 
 ***** \Gls{connection}                                         :B_definition:
       :PROPERTIES:
@@ -192,11 +191,11 @@
       :END:
 - Connections useful for many purposes
   - Application context
-  - Error control – several error control schemes rely on a *common context* between sender and receiver
+  - Error control @@latex: \textemdash{} @@ several error control schemes rely on a *common context* between sender and receiver
 - Question: how to *set up and terminate* a connection? What state information is required? 
   - Especially: if used on top of frames / packets? 
 - Problem reappears later in the transport layer again, with some
-  additional complications – treated there!
+  additional complications @@latex: \textemdash{} @@ treated there!
 
 \pause 
 
@@ -207,14 +206,14 @@
 
 Common confusion! 
 
-**** Basic link layer functions – Flow control
+**** Basic link layer functions @@latex: \textemdash{} @@ Flow control
 - What happens with a fast sender and a slow receiver? 
 - Sender will overrun buffers faster than the receiver can process the packets in that buffer
 - Lots of transmission effort is wasted in this case
 - Necessary to control the amount of frames a link layer sends per unit time, adapt to receiver’s capabilities
 \pause 
 - Problem reappears later in the transport layer again, with some
-  additional complications – treated there!
+  additional complications @@latex: \textemdash{} @@ treated there!
 
 ***** \Gls{flowcontrol}                                        :B_definition:
       :PROPERTIES:
@@ -269,7 +268,7 @@ Note: Physical layer might try to detect and deliver bits when the sender is not
 **** Framing by character counting
 - Idea: Announce the number of bits (bytes, characters) in a frame to the receiver
 - Put this information into the frame
-- Has to be at the beginning of a frame – a frame header
+- Has to be at the beginning of a frame @@latex: \textemdash{} @@ a frame header
 - 
 
 **** Basic technique: Put control data into a header               :noexport:
@@ -281,24 +280,24 @@ Note: Physical layer might try to detect and deliver bits when the sender is not
 **** Framing by flag bytes/byte stuffing
 - Use dedicated flag bytes to demarcate start/stop of a frame
 - What happens when the flag byte appears in the payload? 
-- Escape it with a special control character – byte stuffing
+- Escape it with a special control character @@latex: \textemdash{} @@ byte stuffing
 - If that appears, escape it as well
 **** Framing by flag bit patterns/bit stuffing
-- Byte stuffing is closely tied to characters/bytes as fundamental unit – often not appropriate
+- Byte stuffing is closely tied to characters/bytes as fundamental unit @@latex: \textemdash{} @@ often not appropriate
 - Use same idea, but stick with the bit stream abstraction of the physical layer
-- Use a bit pattern instead of a flag byte – often, 01111110
+- Use a bit pattern instead of a flag byte @@latex: \textemdash{} @@ often, 01111110
 - Actually, it IS a flag byte
 - Use bit stuffing
-- Whenever sender sends five 1’s in a row, it automatically adds a zero into the bit stream – except in the flag pattern
+- Whenever sender sends five 1’s in a row, it automatically adds a zero into the bit stream @@latex: \textemdash{} @@ except in the flag pattern
 - Receiver throws away (``destuffs'') any 0 after five 1’s
 **** Framing by coding violations
 - Suppose the physical layer’s encoding rules ``bits $\leadsto$ signals'' still provide some options to play with
 - Not all possible combinations that the physical layer can express are used to express bit patterns
-- Example: Manchester encoding – only low/high and high/low is used
-- When ``violating'' these encoding rules, data can be transmitted – e.g., the start and end of a frame
-- Example: Manchester – use high/high or low/low 
+- Example: Manchester encoding @@latex: \textemdash{} @@ only low/high and high/low is used
+- When ``violating'' these encoding rules, data can be transmitted @@latex: \textemdash{} @@ e.g., the start and end of a frame
+- Example: Manchester @@latex: \textemdash{} @@ use high/high or low/low 
 - This drops the self-clocking feature of Manchester, but clock synchronization is sufficiently good to hold for a short while
-- Powerful and simple scheme – used e.g. by Ethernet networks 
+- Powerful and simple scheme @@latex: \textemdash{} @@ used e.g. by Ethernet networks 
 - But raises questions regarding bandwidth efficiency
 
 
@@ -318,7 +317,7 @@ Note: Physical layer might try to detect and deliver bits when the sender is not
     - Functions for correction (very) inefficient if you only want to detect 
 - Or combine both functions
 
-**** Error control – redundancy 
+**** Error control @@latex: \textemdash{} @@ redundancy 
 
 \vskip-2.5em
 
@@ -356,7 +355,7 @@ Note: Physical layer might try to detect and deliver bits when the sender is not
 
 - How could a receiver possibly decide that one legal frame is not the one that had originally been transmitted? 
 - Not possible!
-**** Error control – redundancy 
+**** Error control @@latex: \textemdash{} @@ redundancy 
 
 - Core idea: Declare some of the possible messages illegal!
   - Still need to be able to express $2^m$ legal frames
@@ -389,7 +388,7 @@ Note: Physical layer might try to detect and deliver bits when the sender is not
 - *Hope*: A legal frame is only corrupted into an illegal frame
   - But one legal frame is never turned into another legal frame
 - Necessary to realize this hope: 
-  - Physical medium only alters up to a certain number of bits (by assumption) – say, $k$ bits per frame
+  - Physical medium only alters up to a certain number of bits (by assumption) @@latex: \textemdash{} @@ say, $k$ bits per frame
     - *This is only an assumption!*
     - Alternative formulation: More than $k$ bit alternations have negligible probability 
     - How does it relate to the BER or the SNR? 
@@ -511,7 +510,7 @@ to node [above, align=center] {1 bit \\difference} ++(3,0) node[fill=white] {$y$
 - I.e., errors that modify a single bit always lead to an illegal frame
 - $\leadsto$ Error can be detected!
 - Generalizes to all legal frames, because Hamming distance describes the ``critical cases''
-- But not corrected – upon receiving u, no way to decide whether x or
+- But not corrected @@latex: \textemdash{} @@ upon receiving u, no way to decide whether x or
   y had been sent (symmetry!)
 
 
@@ -536,15 +535,15 @@ to node [above, align=center] {1 bit \\difference} ++(3,0) node[fill=white] {$y$
   - Originally, $y$ had been sent, but 2 bit errors occurred
   - (Originally, some other frame had been sent, but at least 2 bit errors occurred)
 - Assuming that fewer errors have happened, a received frame $u$ *is presumed* to have been caused by sending $x$!
-  - Hence, the error has been ``corrected'' – hopefully, correctly!
+  - Hence, the error has been ``corrected'' @@latex: \textemdash{} @@ hopefully, correctly!
 
-**** Generalization – Required \gls{hammingdistance}
+**** Generalization @@latex: \textemdash{} @@ Required \gls{hammingdistance}
 - The examples above can be generalized
 - To *detect* $d$ bit errors, a Hamming distance of $d+1$ in the set of legal frames is required
   - So that it is not possible to re-write a legal frame into another one using at most d bits
 - To *correct* $d$ bit errors, a Hamming distance of $2d+1$ in the set of legal frames is required
   - So that all illegal frames at most $d$ bits away from legal frame are more than $d$ bits away from any other legal frame 
-**** Frame sets – code books, codes
+**** Frame sets @@latex: \textemdash{} @@ code books, codes
 
 Some terminology: 
 - The set of legal frames $S \subseteq \{0,1\}^n$ is also called a *code book* or simply a *code*
@@ -556,7 +555,7 @@ Some terminology:
   - Distance characterizes error correction/detection capabilities
 
 \pause 
-A good code should have large distance and large rate – but arbitrary combinations are not possible
+A good code should have large distance and large rate @@latex: \textemdash{} @@ but arbitrary combinations are not possible
 **** How to construct error correcting codes
 - Constructing good codes (e.g., highest rate at given error correction needs) is difficult
 - Simple example: use several parity bits
@@ -764,7 +763,7 @@ That can be written more compactly as a matrix multiplication
 
 
 **** Decoding of systematic codes? 
-- Encoding is easy – how about decoding? 
+- Encoding is easy @@latex: \textemdash{} @@ how about decoding? 
   - Getting back the original payload from the (possibly erroneous) received bits 
 - Use a *parity-check matrix* $H$ 
   - For $k$ payloads and $n-k$ redundancy bits, $H$ is an $(n-k, n)$
@@ -813,7 +812,7 @@ That can be written more compactly as a matrix multiplication
 *** BCH 
 **** Block code examples 
 
-- Bose Chaudhuri Hocquenghem (BCH) codes – based on polynomials over finite fields 
+- Bose Chaudhuri Hocquenghem (BCH) codes @@latex: \textemdash{} @@ based on polynomials over finite fields 
 - Reed Solomon codes (special case of non-binary BCH codes)
 
 
@@ -888,7 +887,7 @@ Codeword length \(n\) & Payload \(k\) & Correctable errors \(t\)\\
 - Generalization of BCH codes to non-binary symbols 
 
 - Applications: 
-  - Data storage – RAID, CDs, DVDs
+  - Data storage @@latex: \textemdash{} @@ RAID, CDs, DVDs
   - Some simple data transmission techniques 
 
 **** Block error rate for BCH codes
@@ -1026,7 +1025,7 @@ Gives rise to notion of *coding gain*
 
 
 
-**** Decoding convolutional codes – Viterbi algorithm
+**** Decoding convolutional codes @@latex: \textemdash{} @@ Viterbi algorithm
 - Encoding convolutional codes is trivial
   - simple shift register (just like block codes)
 - Decoding? 
@@ -1060,7 +1059,7 @@ Gives rise to notion of *coding gain*
 ** Error detection                                                 
 
 
-**** How to construct error detecting codes – CRC 
+**** How to construct error detecting codes @@latex: \textemdash{} @@ CRC 
 - Efficient error detection: *Cyclic Redundancy Check*  (CRC)
 - Gives rules how to compute redundancy bits and how to decide whether a received bit pattern is correct
   - Very high detection probability with few redundancy bits
@@ -1069,7 +1068,7 @@ Gives rise to notion of *coding gain*
   - Bit string is interpreted as representing a polynomial
   - Coefficients 0 and 1 are possible, interpreted modulo 2
 
-**** Use polynomials to compute redundancy bits – CRC 
+**** Use polynomials to compute redundancy bits @@latex: \textemdash{} @@ CRC 
 - Define a generator polynomial $G(x)$ of degree $g$
   - I.e., it needs $g+1$ bits for all coefficients 
   - We will use $g$ redundancy bits in the end
@@ -1099,7 +1098,7 @@ Gives rise to notion of *coding gain*
 \underbrace{T(x)/G(x)}_{\text{no remainder}} + 
 \underbrace{E(x)/G(x)}_{\text{SHOULD have non-zero remainder!}}
 \]
-**** CRC – Overview 
+**** CRC @@latex: \textemdash{} @@ Overview 
 
 #+caption: OVerview of CRC at transmitter, channel, and receiver
 #+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:ll:crc}
@@ -1347,7 +1346,7 @@ Receiver: Identical to previous version!
 - Retransmissions are usually *not* distinguished from the original
   packet     
 
-**** Acknowledgements & sequence numbers – 3rd version
+**** Acknowledgements & sequence numbers @@latex: \textemdash{} @@ 3rd version
 
 \vskip-2.5em
 
@@ -1384,7 +1383,7 @@ Receiver: Identical to previous version!
 
 
 
-**** Assessment of 3rd version – Alternating bit protocol
+**** Assessment of 3rd version @@latex: \textemdash{} @@ Alternating bit protocol
 - This 3rd version is a correct implementation of a dependable protocol over an error-prone channel
   - Protocol name: *Alternating bit protocol*
     - As it uses only a single bit as sequence number 
@@ -1397,7 +1396,7 @@ Receiver: Identical to previous version!
 
 *** Efficiency 
 
-**** Alternating bit protocol – Efficiency  
+**** Alternating bit protocol @@latex: \textemdash{} @@ Efficiency  
 \vskip-3.5em
 
 ***** 
@@ -1434,7 +1433,7 @@ Receiver: Identical to previous version!
 
 
 
-**** Improving efficiency – have more ``outstanding'' packets
+**** Improving efficiency @@latex: \textemdash{} @@ have more ``outstanding'' packets
 
 
 \vskip-2.5em
@@ -1513,7 +1512,7 @@ Receiver: Identical to previous version!
   - Usually governed by available buffer space at receiver
 - May be fixed in size or adapt dynamically over time
 
-**** Sliding window – simple example                               :noexport:
+**** Sliding window @@latex: \textemdash{} @@ simple example                               :noexport:
 - A simple sliding window example for n=3, window size fixed to 1
 - Sender here represents the currently unacknowledged sequence numbers (``in flight'') 
 
@@ -1776,10 +1775,10 @@ Assumptions:
 - So far, simplex operation at the (upper) service interface was assumed
   - The receiver only sent back acknowledgements, possibly using duplex operation of the lower layer service
 - What happens when the upper service interface should support full-duplex operation?
-  - One option: Use two separate channels for each direction – wasteful
+  - One option: Use two separate channels for each direction @@latex: \textemdash{} @@ wasteful
   - Better: Interleave acknowledgement and data frames in a given direction
   - Best (and usual): Put the acknowledgement information for direction A! B into the data frames for B $\leadsto$ A 
-  - As part of B’s header – piggyback it 
+  - As part of B’s header @@latex: \textemdash{} @@ piggyback it 
 
 
 
@@ -1793,7 +1792,7 @@ Assumptions:
     header overhead 
 
 
-**** Combine FEC and ARQ? – Performance 
+**** Combine FEC and ARQ? @@latex: \textemdash{} @@ Performance 
 
 - Codewords 127 bit, varying number of correctable bit errors (``t'' in legend)
 - For at varying SNR, AWGN channel, BPSK modulation, infinitely many
