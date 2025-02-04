@@ -27,7 +27,7 @@
 - Reasons for errors
 - A few examples of important physical layers
 \pause 
-- Note: This is vastly simplified material
+- Note: This is *vastly* simplified material
 
 ** Baseband
 
@@ -46,8 +46,8 @@
 
 **** A bit $\leftrightarrow$ signal conversion rule
 A simple conversion rule
-- For a ``1'' bit, apply voltage to the pair of wires
-- For a ``0'' bit, no voltage
+- For a ``1'' bit, apply voltage to the pair of wires, for one second
+- For a ``0'' bit, no voltage, for one second 
 
 
 
@@ -102,7 +102,7 @@ What is going on here?
       :BEAMER_env: theorem
       :END:
 
-Any (reasonable, e.g., partially continuous)  *periodic* function g(t) with period $T$ can be *written as* a (possibly infinite) sum of sine and cosine functions; the frequencies of these functions are integer multiples of the fundamental frequency f = 1/T. 
+Any (reasonable, e.g., partially continuous)  *periodic* function g(t) with period $T$ can be *written as* a (possibly infinite) sum of sine and cosine functions; the frequencies of these functions are integer multiples of the *fundamental frequency* $f = 1/T$. 
 
 \begin{tcolorbox}
 \begin{equation}
@@ -167,7 +167,7 @@ Eq. \ref{eq:fourier} is called the *Fourier series* representation
 \pause 
 - Allows to calculate coefficients! 
 
-**** Fourier analysis – computing coefficients
+**** Fourier analysis @@latex: \textemdash{} @@ computing coefficients
 - Coefficients $c, a_n, b_n$ in the Fourier series can be computed using
   orthogonality 
 - Homework: convince yourself that
@@ -181,7 +181,7 @@ Eq. \ref{eq:fourier} is called the *Fourier series* representation
 \pause 
 - These identities help  calculating $a_n$, $b_n$ 
 
-**** Fourier analysis – computing coefficients
+**** Fourier analysis @@latex: \textemdash{} @@ computing coefficients
  
 We find: 
 
@@ -189,7 +189,7 @@ We find:
 - $a_n = \frac{2}{T} \int_{t=0}^T g(t) \sin(2\pi nf t) \mathrm{d}t$
 - $b_n = \frac{2}{T} \int_{t=0}^T g(t) \cos(2\pi nf t) \mathrm{d}t$
 
-**** Fourier analysis - Compute! 
+**** Fourier analysis  @@latex: \textemdash{} @@  Compute! 
 
 - Compute $a_1$ for the function 
 
@@ -256,9 +256,9 @@ So what is the signal bandwidth for ASCII letter ~b~ ?
       :END:
 
 
-- The transmitted signal of ‘b’ is not a periodic signal – Fourier
+- The transmitted signal of ‘b’ is not a periodic signal  @@latex: \textemdash{} @@   Fourier
   analysis not applicable directly
-  - (Remark: The *continuous* Fourier *transform* is needed here; for
+  - (Remark: The *continuous* Fourier transform is needed here; for
     signals with finitely many points, there is also a discrete Fourier transform)
 \pause 
 - We use a simplification here: *Pretend* signal is repeated infinitely often, resulting in a periodic waveform with period 8 bit times
@@ -387,8 +387,9 @@ Characteristic: ``wiggling'' at the points of discontinuity
 \end{figure}
 
 
+*** Channel 
 
-**** Relevance: Channel effects! 
+**** Relevance: Channel! 
 
 - Physical media affects different harmonics differently!
 - Abstraction: *\Gls{channel}* turns a transmitted signal $g(t)$ into a
@@ -400,11 +401,24 @@ Characteristic: ``wiggling'' at the points of discontinuity
 [[./standalone/phy.pdf]]
 
 
-\pause 
+**** Channel in frequency domain 
+
 - Relationship between $g$ and $\tilde{g}$ often much easier to describe in
   frequency domain 
-\pause 
-- We will look at:
+
+#+caption: Channel turns transmitted signal $g$ into received signal $\tilde{g}$, represented as frequency response 
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:fig:channel_freq}
+#+NAME: fig:fig:channel
+[[./standalone/phy.pdf]]
+
+\pause
+
+- Typical channels: modify each harmonic of a signal *separately*
+  - By multiplying  and phase-shifting it 
+
+
+**** Channel effects 
+- We will look at (in this lecture):
   - Attenuation
   - Distortion (very briefly)
   - Noise 
@@ -457,7 +471,7 @@ What is attenuation in Figure \ref{fig:phy:attenuated_simple_fourier}?
 **** Attenuation depends on frequency! 
 
 - Real channels: different frequencies see different attenuation! 
-  - So-called *frequency-selective attenuation*, $\alpha(f)$ 
+  - So-called *frequency-selective attenuation* $\alpha(\cdot)$
 - Formally: 
 
 \begin{tcolorbox}
@@ -477,17 +491,19 @@ What is attenuation in Figure \ref{fig:phy:attenuated_simple_fourier}?
 **** Frequency-selective attenuation: Simple cases
 
 Some simplified cases: 
-- (Simplified) *lowpass channel*: Channel has a cutoff frequency $f_\mathrm{cutoff}$
+- (Simplified) *lowpass channel*: Channel has a *cutoff frequency* $f_\mathrm{cutoff}$
   - All harmonics *below* $f_\mathrm{cutoff}$ experience small
     attenuation 
   - All harmonics *above* $f_\mathrm{cutoff}$ experience infinite 
-    attenuation 
+    attenuation  \pause
+  - E.g., $\alpha(f') = 2, f'<f_\mathrm{cutoff}$ and $\alpha(f') = \infty$ else 
 \pause 
 - (Simplified) *highpass channel*: Channel has a cutoff frequency $f_\mathrm{cutoff}$
   - All harmonics *above* $f_\mathrm{cutoff}$ experience small
     attenuation 
   - All harmonics *below* $f_\mathrm{cutoff}$ experience infinite 
     attenuation 
+  - E.g., $\alpha(f') =  \infty, f'<f_\mathrm{cutoff}$ and $\alpha(f') = 2$ else 
 \pause 
 - (Simplified) *bandpass channel*: Channel has a low cutoff
   frequency $f_\mathrm{low cutoff}$ and a high cutoff $f_\mathrm{high cutoff}$
@@ -556,7 +572,7 @@ Some simplified cases:
 - Results in upper and lower frequencies
 - Difference is *channel bandwidth* 
 
-**** Channel bandwidth - definition 
+**** Channel bandwidth  @@latex: \textemdash{} @@  definition 
 
 ***** \Gls{channelbw}                                          :B_definition:
       :PROPERTIES:
@@ -565,7 +581,7 @@ Some simplified cases:
 
       \Glsdesc{channelbw}
 
-**** Channels with limited bandwidth - more examples 
+**** Channels with limited bandwidth  @@latex: \textemdash{} @@  more examples 
 
 
 
@@ -613,7 +629,7 @@ Some simplified cases:
   - Usually, no control! 
 - Cases? 
 
-**** Relationship of signal bandwidth and channel bandwidth - Cases? 
+**** Relationship of signal bandwidth and channel bandwidth  @@latex: \textemdash{} @@  Cases? 
 
 
 
@@ -624,7 +640,7 @@ Some simplified cases:
       :BEAMER_col: 0.3
       :END:
 
-#+caption: Signal bandwidth fits into channel bandwidth - desirable situation
+#+caption: Signal bandwidth fits into channel bandwidth  @@latex: \textemdash{} @@  desirable situation
 #+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:phy:channel_bandwidth:small_signalbw}
 #+NAME: fig:phy:channel_bandwidth:small_signalbw
 [[./standalone/phy.pdf]]
@@ -639,7 +655,7 @@ Some simplified cases:
       :END:   
 
 
-#+caption: Signal BW larger than channel BW - will lead to quality loss
+#+caption: Signal BW larger than channel BW  @@latex: \textemdash{} @@  will lead to quality loss
 #+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:phy:channel_bandwidth:large_signalbw}
 #+NAME: fig:phy:channel_bandwidth:large_signalbw
 [[./standalone/phy.pdf]]
@@ -704,7 +720,7 @@ We will revisit the third case in Section \ref{sec:phy:broadband}
 
 - This effect is called *distortion*  of a signal
 \pause 
-- Mostly an issue in optical fibre
+- Mostly an issue in optical fibre, indirectly also for wireless signals
   - \pause Because of long distances and large signal bandwidths 
 
 **** Example with frequency-dependent attenuation and distortion   :noexport:
@@ -756,10 +772,10 @@ We will revisit the third case in Section \ref{sec:phy:broadband}
 
 
 
-**** Noise – source? 
+**** Noise  @@latex: \textemdash{} @@  source? 
 - Where does noise come from? 
-  - Physics – in particular, random fluctuations of electrons  inside the receiver 
-  - Noise is not an effect of the channel; it happens inside the receiver
+  - Physics  @@latex: \textemdash{} @@  in particular, random fluctuations of electrons  inside the receiver 
+  - Noise is *not* an effect of the channel; it happens inside the receiver
   - Causes mis-measurement of signal at receiver around the ``actual'' (noise-free) signal amplitude 
 
 \pause 
@@ -773,18 +789,143 @@ We will revisit the third case in Section \ref{sec:phy:broadband}
 - Interference: effect of *other transmitters*
   - Deliberate or by chance 
 
+**** Noise as addition to received signal 
+
+\begin{tcolorbox}
+
+  \begin{equation}
+    \hat{g}(t) = \tilde{g}(t) + \Delta U(t)
+    \label{eq:noise_as_addition}
+  \end{equation}
+\end{tcolorbox}
+
+\noindent with $\tilde{g}$ the channel output, $\hat{g}$ the receiver
+output 
 
 
-**** Models for noise 
+**** Power of noise: Instantaneous and average over time 
+
+- Noise  is voltage deviation: $\Delta U(t) = \hat{g}(t) - \tilde{g}(t)$
+- *Instantaneous* noise power 
+  - Power is proportional to square of voltage ($P = U\cdot I \propto U^2$ )
+  - So: Noise  of some  $\Delta U$ has  a power of $(\Delta U)^2$ 
+\pause
+
+- The *average power* of the noise $\bar{N}$ is the average over time of all the instantaneous noise powers
+
+\begin{tcolorbox}
+
+  \begin{equation}
+    \bar{N} = \lim_{T\rightarrow \infty} \frac{1}{T} \int_{0}^T (\Delta U(t))^2
+    \mathrm{d} t
+    \label{eq:avg_noise_power}
+  \end{equation}
+\end{tcolorbox}
+
+\pause
+
+- Challenge: How to get rid of the $T \rightarrow \infty$
+  inconvenience? 
+
+
+**** Noise is random 
+
+- $\Delta U$ is random
+- Probabilities of any deviation $u$ occurring is described by density
+  $f_{\Delta U}(u)$
+
+\pause
+
+***** Rewriting time averages
+- Hence,  we can rewrite Eq. \ref{eq:avg_noise_power} as:
+
+\begin{tcolorbox}
+  \begin{equation}
+    \bar{N} =  \int_{n=-\infty}^\infty f_{\Delta U(t)} n^2 \mathrm{d} n
+    \label{eq:avg_noise_power_density}
+  \end{equation}
+\end{tcolorbox}
+
+\pause
+
+
+***** Noise power is variance of random variable 
+- But this is just the definition of the variance of the random
+  variable ! \pause
+- Hence: Noise power is (proportional to) the variance of the noise
+
+
+**** Detour: From time averages to probability averages 
+
+\vspace{-4ex}
+
+***** Time-averaged area 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+      
+#+caption: Approximating area by looking at each point in time 
+#+attr_latex: :width 0.95\textwidth :height 0.4\textheight :options keepaspectratio,page=\getpagerefnumber{page:phy:averages:time}
+#+NAME: fig:phy:averages:time
+[[./standalone/averages.pdf]]
+
+
+- Area \approx 2 + 4 + 7+ 6 + 2+ 6 + 4 + 7 + 8 + 6 
+- Think: Riemann integral 
+
+
+***** Averaging across probabilities 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+#+caption: Approximating area by looking at values and how often they occur  
+#+attr_latex: :width 0.95\textwidth :height 0.4\textheight :options keepaspectratio,page=\getpagerefnumber{page:phy:averages:values}
+#+NAME: fig:phy:averages:values
+[[./standalone/averages.pdf]]
+
+
+- Area \approx 2\cdot 2 + 2 \cdot 4 + 3 \cdot 6 + 2 \cdot  7 + 1 \cdot  8  
+- Think: Lebesgues integral 
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+
+
+**** Concrete models for random noise, $\Delta U$  
+
+But *which* density $f_{\Delta U}$ ? 
+
   - Look at physics, measure effects, count how often how big a deviation occurs 
-  - Typical model: noise adds to signal a Gaussian random variable 
+  - Typical model: $\Delta U$ is  a *Gaussian random variable*
     - Zero mean and some standard deviation \sigma, distribution $N(0, \sigma^2)$, uncorrelated in time
-    - Variance proportional to temperature (in Kelvin!)
+      - Watch out for notation: THIS $N$ is for /normal distribution/,
+        *not* /noise/  \pause
+    - Variance $\sigma^2$ proportional to temperature (in Kelvin!)
+
+\pause
+
+Hence: *Noise power is proportional to absolute temperature*! 
+
+
+
+**** Additive White Gaussian Noise 
+
   - This is *Additive White Gaussian Noise* (AWGN)
     - ``white'': if we look at each harmonic (of the noise) separately, we see the
       same effect; homogeneous across frequency 
  
-**** Additive White Gaussian Noise 
+\pause
+
 
 ***** \Gls{awgn}                                               :B_definition:
       :PROPERTIES:
@@ -794,7 +935,7 @@ We will revisit the third case in Section \ref{sec:phy:broadband}
       \Glsdesc{awgn}
 
 
-**** Noise – quantitatively?                                       :noexport:
+**** Noise  @@latex: \textemdash{} @@  quantitatively?                                      :noexport:
 - What is the quantitatively relevant effect of noise on a signal? 
 \pause
 - Detour: Amplitude vs. power 
@@ -808,35 +949,6 @@ We will revisit the third case in Section \ref{sec:phy:broadband}
 - Receiver: modelled as constant resistor 
 
 
-**** Noise – quantitatively? 
-- Hence: a noise disturbance of some $\Delta U$ corresponds to a power of $(\Delta U)^2$ 
-- The average power of the noise $\bar{N}$ is the average over time of all the instantaneous noise powers
-
-\begin{tcolorbox}
-\[
-\bar{N} = \lim_{T\rightarrow \infty} \frac{1}{T} \int_{0}^T (\Delta U(t))^2
-\mathrm{d} t
-\label{eq:avg_noise_power}
-\]
-\end{tcolorbox}
-
-**** Noise – quantitatively? 
-- Since we know the distribution of $\Delta U(t)$ to be Gaussian (and assume
-  independence over time) we can rewrite this as:
-
-\begin{tcolorbox}
-
-\[
-\bar{N} =  \int_{n=-\infty}^\infty f_{\Delta U(t)} n^2 \mathrm{d} n
-\label{eq:avg_noise_power_density}
-\]
-\end{tcolorbox}
-
-- where $f_{\Delta U}$ is the density of the Gaussian random variable representing noise, with distribution $N(0, \sigma^2)$
-  - But this is just the definition of the variance of the random variable !
-  - Hence: Noise power is (proportional to) the variance of the noise  
-
-
 
 **** Noise vs. signal: Compare power 
 - Why is noise power relevant? 
@@ -845,7 +957,7 @@ We will revisit the third case in Section \ref{sec:phy:broadband}
   - The louder the noise, the harder is to understand 
   - Receiver takes some time to receive a bit 
     - During that time, power is integrated and collected into energy 
-    - For the signal, and the noise – this energy is what REALLY matters 
+    - For the signal, and the noise  @@latex: \textemdash{} @@  this energy is what REALLY matters 
 
 \pause 
 
@@ -942,7 +1054,7 @@ We will revisit the third case in Section \ref{sec:phy:broadband}
 
 \begin{tcolorbox}
 \[
-C =  H \log_2(1 + \frac{S}{N})
+C =  H \log_2 \left(1 + \frac{S}{N} \right)
 \]
 \end{tcolorbox}
 
@@ -963,7 +1075,6 @@ C =  H \log_2(1 + \frac{S}{N})
 
  
 - Spectral efficiency $\eta$ relates bandwidth to data rate
-  - In a normal AWGN channel, only $\eta<1$ feasible 
   - \pause Note: terminology varies here; sometimes, $\eta$ is already
     absorbed in $C$ 
 \pause 
@@ -1020,7 +1131,7 @@ Distinction:
 
 
 
-**** Data rate with multi-valued symbols – Nyquist 
+**** Data rate with multi-valued symbols  @@latex: \textemdash{} @@  Nyquist 
 
 - Using symbols with multiple values, the data rate can be increased
 
@@ -1049,8 +1160,9 @@ Distinction:
 \pause 
 - So, not unlimited? 
   - No, of course not: *both* Nyquist *and* Shannon bounds must hold
-    at the same time 
-
+    at the same time \pause
+  - A concrete system can be *bandwidth-limited* or *noise-limited*,
+    depending which of the bounds is tight 
 
 *** Old limitations                                                :noexport:
 
@@ -1102,14 +1214,14 @@ Distinction:
 - The receiver has to be *synchronized* with the sender at the symbol level
   - (``Symbol'' if more than one bit per symbol; if only one bit per symbol, then ``bit synchronization'' is the usual, yet still sloppy term)
   - The link layer will have to deal with frame synchronization
-  - There is also ``character'' synchronization – omitted here
+  - There is also ``character'' synchronization  @@latex: \textemdash{} @@  omitted here
 
 **** Overly simplistic bit synchronization
 - One simple option: 
   - Assume that sender and receiver at some point in time are synchronized
   - That both have an internal clock that tics at every symbol step
 - Usually, this does not work
-  - *Clock drift* is major problem – two different clocks never stay in perfect synchrony 
+  - *Clock drift* is major problem  @@latex: \textemdash{} @@  two  clocks never stay in perfect synchrony 
 
 **** Options to tell the receiver when to sample
 - Relying on permanently synchronized clocks does not work
@@ -1126,11 +1238,12 @@ Distinction:
 - Put enough information into the data signal itself so that the receiver can know immediately when a bit starts/stops
 - Would the simple 0 $\leadsto$ low, 1 $\leadsto$ high mapping of
   bit $\leadsto$ symbol work?
-- It should – after all, receiver can use 0-1-0 transitions to detect the length of a bit
-- But it fails depending on bit sequences: think of long runs of 1s or 0s – receiver can lose synchronization
+- It should @@latex: \textemdash{} @@ after all, receiver can use 0-1-0 transitions to detect the length of a bit
+- But it fails depending on bit sequences: think of long runs of 1s or
+  0s  @@latex: \textemdash{} @@ receiver can lose synchronization
 - Not nice not to be able to transmit arbitrary data
 
-**** Extract clock information from signal itself – Manchester 
+**** Extract clock information from signal itself @@latex: \textemdash{} @@ Manchester 
 
 - Idea: At each bit, provide indication to receiver that this is where a bit {starts/stops/has its middle}
   - Example: Manchester encoding 
@@ -1156,13 +1269,41 @@ Distinction:
     received signal 
 - Possible alternative: *broadband transmission*
   - Examples: Wireless communication, DSL, \dots 
+
+
 **** Broadband transmission
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+Recall Figure \ref{fig:phy:channel_bandwidth:outside_signalbw}
+
+
+#+caption: Signal BW would fit into channel BW, but is at the wrong part of the spectrum; can be cured by proper modulation techniques (Repetition of \ref{fig:phy:channel_bandwidth:outside_signalbw})
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:phy:channel_bandwidth:outside_signalbw}
+#+NAME: fig:phy:channel_bandwidth:outside_signalbw_2
+[[./standalone/phy.pdf]]
+      
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+
+
+
 - Idea: Shift signal into channel bandwidth! 
 - Use a sine wave as a *carrier* for the signal  to be transmitted
   - Typically, the sine wave has high frequency and is well within the
     channel bandwidth 
   - But only a single frequency! 
-\pause 
+
+**** Modulation 
 - Pure sine wave carries no information, so its shape has to be influenced according to the symbols to be transmitted
   - The carrier has to be *modulated* by the symbols (widening its spectrum)
 - Three parameters that can be influenced: $a \sin(2 \pi f t + \phi)$
@@ -1177,11 +1318,11 @@ Distinction:
 
 - Receiver can extract $s(t)$ from $f_\mathrm{A}(t)$
 - Special cases: 
-  - $s(t)$ is an analog signal – *amplitude modulation*
-  - $s(t)$ is a digital signal –  *amplitude keying*
-  - $s(t)$ only takes 0 and 1 (or 0 and a) as values – *on/off keying*
+  - $s(t)$ is an analog signal @@latex: \textemdash{} @@ *amplitude modulation*
+  - $s(t)$ is a digital signal @@latex: \textemdash{} @@  *amplitude keying*
+  - $s(t)$ only takes 0 and 1 (or 0 and a) as values @@latex: \textemdash{} @@ *on/off keying*
 
-**** Amplitude modulation – example 
+**** Amplitude modulation @@latex: \textemdash{} @@ example 
 
 #+caption: Amplitude modulation
 #+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:phy:xonxoff}
@@ -1275,6 +1416,19 @@ Distinction:
       \Glsdesc{waveform}
 
 
+**** Caution: Time scales 
+
+- Watch out for different time scales! 
+- Figures above seemed to indicate: period of signal and length of
+  symbols is comparable
+  - This is but a drawing issue! 
+\pause
+
+- Usually, *very* different
+  - E.g., WiFi
+    - Symbol duration: 4 $\mu$s
+    - Signal frequency 5 GHz, hence signal period 0.5 ns 
+    - So roughly 1000 signal oscillations per symbol 
 
 *** Constellation diagrams
     :PROPERTIES:
@@ -1415,7 +1569,7 @@ Distinction:
 **** Bit error rate as function of SNR 
 - The higher the SNR, the better the reception
   - The more reliably can signals be converted to bits at receiver
-  - Actually: *Energy per bit* $E_b$ – takes into account data rate, #bits/symbol
+  - Actually: *Energy per bit* $E_b$ @@latex: \textemdash{} @@ takes into account data rate, #bits/symbol
     - We simplify here to signal power
 - Concrete bit error probability/rate (BER) depends on SNR and used modulation 
 - Example: differential phase shift keying (DPSK)
@@ -1439,8 +1593,8 @@ Distinction:
 
 **** Digital vs. analog signals
 - A sender has two principal options what types of signals to generate
-  - It can choose from a *finite set* of different signals – *digital transmission* 
-  - There is an *infinite set* of possible signals – *analog transmission*
+  - It can choose from a *finite set* of different signals @@latex: \textemdash{} @@ *digital transmission* 
+  - There is an *infinite set* of possible signals @@latex: \textemdash{} @@ *analog transmission*
 - Simplest example: Signal corresponds to current/voltage level on the wire
   - In the digital case, there are finitely many voltage levels to choose from
   - In the analog case, any voltage is legal
@@ -1487,6 +1641,7 @@ Distinction:
   - Better results available when combining these two coding steps?
   - That would mean: depending on the channel, information has to be
     represented differently  
+\pause
 
 - Good news: In many important settings, separating source and channel coding is indeed optimal 
   - In particular, single sender, single receiver 
@@ -1510,7 +1665,7 @@ Distinction:
   distance measure
   - E.g.: \[  d_i = || r(\cdot) - s_i(\cdot) ||_2 ^2 = \int_0^T
     (r(t) - s_i(t))^2 \mathrm{d} t  \]
-  - T is length of a channel symbol
+  - $T$ is length of a channel symbol
 - Result is that waveform $i^*$ that minimizes this distance measure, 
 \[ i^* = \mathrm{argmin}_i d_i  \]
  - This waveform is assumed to be the one that the transmitter has sent
@@ -1530,8 +1685,8 @@ Distinction:
 
 
 - Guided transmission media
-  - Copper wire – twisted pair
-  - Copper wire – coaxial cable
+  - Copper wire @@latex: \textemdash{} @@ twisted pair
+  - Copper wire @@latex: \textemdash{} @@ coaxial cable
   - Fiber optics
 - Wireless transmission
   - Electromagnetic in various frequency bands
@@ -1628,7 +1783,7 @@ via Wikimedia Commons
 - High frequencies are attenuated to zero
 - Intuition: Range of frequencies that can pass through a medium is relevant 
 
-**** Channel with limited frequency range – example 
+**** Channel with limited frequency range @@latex: \textemdash{} @@ example 
 - Result when fewer and fewer harmonics are transported
 **** Fact 3: Frequency-selective attenuation, bandwidth
 - Strictly speaking: channel bandwidth is caused by frequency-selective attenuation 
