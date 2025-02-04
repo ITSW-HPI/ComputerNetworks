@@ -66,3 +66,13 @@
 #+LATEX_HEADER: \externaldocument{../ch_congestion/standalone/dup_ack}
 #+LATEX_HEADER: \externaldocument{../ch_congestion/standalone/cc_fsm}
 #+LATEX_HEADER: \externaldocument{../ch_congestion/standalone/cubic}
+#+LATEX_HEADER: \externaldocument{../ch_inter/standalone/bla}
+#+LATEX_HEADER: \externaldocument{../ch_link/standalone/bufferspace}
+#+LATEX_HEADER: \externaldocument{../ch_network/standalone/leadingzeros}
+#+LATEX_HEADER: \externaldocument{../ch_network/standalone/bla}
+#+LATEX_HEADER: \externaldocument{../ch_basics/standalone/basics_examples}
+#+LATEX_HEADER: \externaldocument{../ch_basics/standalone/latencyRate}
+#+LATEX_HEADER: \externaldocument{../ch_basics/standalone/graphs}
+#+LATEX_HEADER: \externaldocument{../templates/standalone}
+#+LATEX_HEADER: \externaldocument{../templates/standalone_header}
+#+LATEX_HEADER: \externaldocument{../ch_phy/standalone/averages}

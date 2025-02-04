@@ -79,6 +79,7 @@ slides169: $(slides169Pdf)
 	make output
 
 %.tex: %.org %_content.org $(TEMPLATES) $(BACKMATTER)
+	cd ../templates ; ./fixExternal.sh
 	${EMACS} $< ${EMACSEXPORTPARAMS}
 
 %_handout.tex: %.org %_content.org $(TEMPLATES) $(BACKMATTER)
