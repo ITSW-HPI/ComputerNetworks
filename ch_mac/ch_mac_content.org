@@ -61,21 +61,20 @@
 - (or a combination thereof)
 
 
-**** Statically multiplexed bursty traffic – delay 
+**** Statically multiplexed bursty traffic @@latex: \textemdash{} @@ delay 
 - Compare the delay resulting from static multiplexing
 \pause 
 - Base case: *No multiplexing*, a single traffic source with average
   rate \rho (bits/s); link capacity $C$ bits/s
   - \pause $\rho$ is given as ratio of arrival rate $\lambda$ and
-    service rate $\mu$: $ \rho=\lambda/\mu$
+    service rate $\mu$: $\rho=\lambda/\mu$
     - Units: $\lambda$ in packets/s; average time to serve a packet
       $1/\mu$  in  bits/packet 
-  - \pause Write average delay as $T$
-  - $T = 1/(\mu C-\lambda)$
+  - \pause Average delay $T = 1/(\mu C-\lambda)$
 \pause 
 - *Multiplexed case*: Split the single source in $N$ sources with same total rate, statically multiplex over the same link (e.g., FDM)
   - Resulting average delay $T_\mathrm{FDM} = N\cdot T$
-  - Irrespective of FDM, TDM, - essentially, a queuing theory result!
+  - Irrespective of FDM, TDM,  \dots @@latex: \textemdash{} @@  essentially, a queuing theory result!
   - Intuition: Because some channels are idle sometimes
 \pause 
 - Hence: static multiplexing of $N$ sources increases average delay of
@@ -85,14 +84,14 @@
 
 ** Dynamic channel allocation                                      
 
-**** Dynamic channel allocation – MAC 
-- Because of the bad delay properties – caused by idle sub-channels – static multiplexing is not appropriate for bursty traffic sources
+**** Dynamic channel allocation @@latex: \textemdash{} @@ MAC 
+- Because of the bad delay properties @@latex: \textemdash{} @@ caused by idle sub-channels @@latex: \textemdash{} @@ static multiplexing is not appropriate for bursty traffic sources
   - Telephony or automation networks are not bursty
   - Internet is  bursty 
 - Alternative: Assign channel/link/resource to that source that *currently* has data to send
   - *Dynamic medium allocation*
   - Instead of fixed assignments of parts of a shared resource
-- Terminology: Access to the transmission has to be organized – a
+- Terminology: Access to the transmission has to be organized @@latex: \textemdash{} @@ a
   *medium access control protocol (MAC)* is required 
 
 **** MAC vs. multiplexing 
@@ -110,7 +109,8 @@
 *Station model* (or terminal model, load model)
 - $N$ *independent* stations want to share a given resource
 - One possible load model: probability of generating a packet in
-  interval $\Delta t$ is $\lambda \cdot \Delta t$, for some $\lambda = \mathrm{const}$
+  interval $\Delta t$ is $\lambda \cdot \Delta t$, for some $\lambda =
+  \mathrm{const}$ and $\Delta t$ small 
 
 \pause 
 \vfill
@@ -140,7 +140,8 @@
 
 \onslide<5->
 
-- Note: it is an assumption – we can build systems that work even with collisions 
+- Note: it is an assumption @@latex: \textemdash{} @@ we can build
+  systems that work even with collisions, but complicated
 
 ***** 
       :PROPERTIES:
@@ -352,16 +353,16 @@
 - Goal: Use of satellite networks with *very* long RTT 
 
 
-**** ALOHA – Analysis 
+**** ALOHA @@latex: \textemdash{} @@ Analysis 
 - ALOHA advantages
   - Trivially simple
   - No coordination between participants necessary
 - ALOHA disadvantages
-  - Collisions can and will occur – sender does not check channel state
-  - Sender has no (immediate) means of learning about the success of its transmission – link layer mechanisms (ACKs) are needed
+  - Collisions can and will occur @@latex: \textemdash{} @@ sender does not check channel state
+  - Sender has no (immediate) means of learning about the success of its transmission @@latex: \textemdash{} @@ link-layer mechanisms (ACKs) are needed
     - ACKs can collide as well :-(
 
-**** ALOHA – Performance under Poisson arrivals 
+**** ALOHA @@latex: \textemdash{} @@ Performance under Poisson arrivals 
 - Assume a Poisson arrival process to describe packet transmissions,
   i.e., 
   - Infinite number of stations, all behave identically, independently
@@ -371,7 +372,7 @@
   - Then: \[ \mathrm{P}(k \text{ attempt in time } t) = \frac{(Gt)^k}{k!} \mathrm{e}^{-Gt}  \]
   - (Details: Mathe 3)  
 
-**** ALOHA - Packet successful? 
+**** ALOHA  @@latex: \textemdash{} @@  Packet successful? 
 
 \vskip-2.5em
 
@@ -407,7 +408,7 @@
       :END:
 
 
-**** ALOHA – Performance 
+**** ALOHA @@latex: \textemdash{} @@ Performance 
 - A packet X is destroyed by another packet either
   - Starting *up to one packet time before* X
   - Starting *up to immediately before the end of* X
@@ -424,7 +425,7 @@
 **** A slight improvement: Slotted ALOHA
 
 - ALOHA’s problem: Long vulnerability period of a packet
-- Reduce it by introducing time slots – transmissions may only start at the start of a slot
+- Reduce it by introducing time slots @@latex: \textemdash{} @@ transmissions may only start at the start of a slot
 \pause 
 - Slot synchronization is assumed to be “somehow” available
 
@@ -473,7 +474,7 @@ Idea 1: Be persistent
   - Some form of retransmission required, after some random time
 
 
-**** 1-persistent CSMA – Finite State Machine 
+**** 1-persistent CSMA @@latex: \textemdash{} @@ Finite State Machine 
 #+caption: Finite state machine for a 1-persistent MAC protocol
 #+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:mac:onepersistent}
 #+NAME: fig:mac:onepersistent
@@ -495,7 +496,7 @@ Idea 1: Be persistent
   - But in general better throughput than persistent CSMA for higher loads
   - At low loads, long random waiting is not necessary and wasteful
 
-**** Non-persistent CSMA – Finite State Machine 
+**** Non-persistent CSMA @@latex: \textemdash{} @@ Finite State Machine 
 
 #+caption: Finite state machine for non-persistent MAC protocol
 #+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:mac:nonpersistent}
@@ -557,14 +558,14 @@ Idea 1: Be persistent
 
 *** Collision detection 
 
-**** Collision detection – CSMA/CD 
+**** Collision detection @@latex: \textemdash{} @@ CSMA/CD 
 - When two packets collide, lots of time is wasted by completing their transmission
 - If it were possible to detect a collision when it happens, transmission could be aborted and a new attempt made
   - Wasted time reduced, no need to wait for (destroyed) packets to complete
 - Depending on physical layer, collisions can be detected!
   - Necessary: Sender must be able to listen to the medium when sending, compare what it sends with what it receives
   - If different: declare a collision
-- $\leadsto$ *CSMA/CD – Carrier Sense Multiple Access/Collision Detection*
+- $\leadsto$ *CSMA/CD @@latex: \textemdash{} @@ Carrier Sense Multiple Access/Collision Detection*
 
 **** CSMA/CD 
 
@@ -594,7 +595,7 @@ that a competing sender exists!
 **** How to choose random waiting time?
 - Simplest approach to choose a random waiting time: Pick any one of $k$ slots
   - Assumes a slotted time model for simplicity
-  - Uniformly distributed from $[0,\dots, k-1]$ – the *contention
+  - Uniformly distributed from $[0,\dots, k-1]$ @@latex: \textemdash{} @@ the *contention
     window*
 
 **** Contention slots to react to collision 
@@ -621,16 +622,16 @@ Question: How to choose upper bound $k$?
 \pause 
 - What is the (likely) consequence of a small $k$ when load is high?
   - Collisions (again)!
-  - Hence: Use a collision as an indication that the contention window is too small – increase it!
+  - Hence: Use a collision as an indication that the contention window is too small @@latex: \textemdash{} @@ increase it!
     - Will reduce probability of collisions, automatically adapt to higher load
 \pause 
 - Question: How to increase k after collision, how to decrease it
   again?
 
-**** How to adapt k – Binary exponential backoff
+**** How to adapt k @@latex: \textemdash{} @@ Binary exponential backoff
 - Increase after collisions: Many possibilities
   - Commonly used: Double the contention window size $k$
-  - But only up to a certain limit, say, 1024 slots – start out with
+  - But only up to a certain limit, say, 1024 slots @@latex: \textemdash{} @@ start out with
     e.g. $k=2$
   - This is called *binary exponential backoff*
 \pause 
@@ -680,7 +681,7 @@ Question: How to choose upper bound $k$?
 
 
 
-**** Bit-map protocol – properties 
+**** Bit-map protocol @@latex: \textemdash{} @@ properties 
 - Behavior at low load
   - For (hardly) any packet, the medium will repeat the (empty) contention slots
   - A station that wants to transmit has to wait its turn before it can do so
@@ -690,20 +691,20 @@ Question: How to choose upper bound $k$?
   - Overhead is negligible
 \pause 
 - $\leadsto$ Good and stable throughput
-  - Yet practically irrelevant - why?
+  - Yet practically irrelevant  @@latex: \textemdash{} @@  why?
   - \pause Synchronization issues, how to recover from errors, how to
     change number of terminals, \dots 
 \pause
 - Note: Bit-map is a carrier-sense protocol!
 
 
-** Limited contention protocols                                    
+** Limited-contention protocols                                    
 
 
 **** Best of both worlds? 
 - Desirable: Protocol with
-- Low delay at low load – like a contention protocol
-- High throughput at high load – like a contention-free protocol
+- Low delay at low load @@latex: \textemdash{} @@ like a contention protocol
+- High throughput at high load @@latex: \textemdash{} @@ like a contention-free protocol
 - Hybrid or *adaptive* solution?
   - Limited-contention protocols do exist
 \pause 
@@ -868,7 +869,7 @@ Idea: Use several “levels of resolution” for the contention slots
 - “Normal” (even switched) Ethernet “only” achieves 10 MBit/s
 - 1992: Build a faster Ethernet!
   - Goals: Backward compatible, stick with the old protocol to avoid hidden traps, get job done quickly
-  - Result: 802.3u – aka “Fast Ethernet”
+  - Result: 802.3u @@latex: \textemdash{} @@ aka “Fast Ethernet”
 - Fast Ethernet
   - Keep almost everything the same (frame format, protocol rules)
   - Reduce bit time from 100 ns to 10 ns
@@ -876,12 +877,12 @@ Idea: Use several “levels of resolution” for the contention slots
     packet sizes? (Recall unavoidable collisions in CSMA!)
 
 
-**** Fast Ethernet – Cabling                                       :noexport:
-- 
+**** Fast Ethernet @@latex: \textemdash{} @@ Cabling                                       :noexport:
+
 - Standard category 3 twisted pairs (telephony cables) cannot support 200 MBaud over 100 m cable length
 - Solution: use 2 pairs of wires in this case, reduce baud rate
 - Also, Fast Ethernet/cat 5 cabling does not use Manchester, but 4B/5B
-- 
+k- 
 
 
 
@@ -890,7 +891,7 @@ Idea: Use several “levels of resolution” for the contention slots
 **** Gigabit Ethernet
 
 - Ok: can we go another factor of 10 faster?
-  - 1995 – gigabit Ethernet
+  - 1995 @@latex: \textemdash{} @@ gigabit Ethernet
   - Goal: again, keep basic scheme as it is
 - Works, but price to pay: *No more multi-drop configurations* as in classic Ethernet
   - In gigabit Ethernet, each wire has exactly two machines attached to it
@@ -907,14 +908,14 @@ Idea: Use several “levels of resolution” for the contention slots
   - Actually: not very sensible combination from a cost/performance
     perspective
 
-**** Gigabit Ethernet – Cabling 
+**** Gigabit Ethernet @@latex: \textemdash{} @@ Cabling 
 
 #+caption: Cable types for Gigabit Ethernet (adapted from Table 4-21, \cite{Tanenbaum_computer_networks_2021})
 #+name: tab:mac:gigabit_cables
 | Name        | Cable          | Max. segment length | Remarks             |
 |-------------+----------------+---------------------+---------------------|
-| 1000Base-SX | Fibre optics   | 550\,m              | Multimode fibre     |
-| 1000Base-LX | Fibre optics   | 5000\,m             | Monomode            |
+| 1000Base-SX | Fibre optics   | 550 m               | Multimode fibre     |
+| 1000Base-LX | Fibre optics   | 5000 m              | Monomode            |
 | 1000Base-T  | 4 Pairs of UTP | 100 m               | Standard Cat5 cable |
 
 Note: \gls{utp}
@@ -933,12 +934,75 @@ Same idea: slightly better PHY, functionality largely unchanged
 #+name: tab:mac:10gigabit_cables
 | Name       | Cable        | Max. segment length | Remarks   |
 |------------+--------------+---------------------+-----------|
-| 10GBase-SR | Fibre optics | 300\,m              | Multimode |
-| 10GBase-LR | Fibre optics | 10\,km              | Monomode  |
-| 10GBase-ER | Fibre optics | 40\,km              | Monomode  |
-| 10GBase-T  | 4 Pairs UTP  | 100\,m              | CAt 6a UTP |
+| 10GBase-SR | Fibre optics | 300 m               | Multimode |
+| 10GBase-LR | Fibre optics | 10 km               | Monomode  |
+| 10GBase-ER | Fibre optics | 40 km               | Monomode  |
+| 10GBase-T  | 4 Pairs UTP  | 100 m               | CAt 6a UTP |
 
 
+
+**** Cable types: twisted pair (ISO/IEC 11801:2002)
+
+- Typical copper cable for Ethernet: Twisted pair
+  - 4 pairs of wire in a single cable 
+- Categories: Limit on attenuation over a given channel bandwidth
+- Challenge: Shielding against crosstalk, interference
+- Shielding options: 
+  - Shield each individual wire?
+  - Shield entire cable?
+  - Each one: unshielded (*U*), braided shield (*S*), foild shield (*F*)
+
+**** Twisted pair notation 
+
+
+\vskip-4ex
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+
+- Notation: *cable shield/wire shieldTP*
+  - Example: F/UTP  @@latex: \textemdash{} @@ foild for cable, no
+    shield around individual wire (often used for CAT 6, 6a)
+  - Example: S/FTP  @@latex: \textemdash{} @@ braid around entire
+    cable, foils around each wire (often used for  CAT 7)
+
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+
+#+caption: F/UTP cable (\url{https://en.wikipedia.org/wiki/File:FTP_cable3.jpg})
+#+attr_latex: :width 0.95\textwidth :height 0.1\textheight :options keepaspectratio
+#+NAME: fig:futpcable 
+[[./figures/FTP_cable3.jpg]]
+
+#+caption: S/FTP cable (\url{https://en.wikipedia.org/wiki/File:S-FTP_CAT_7.jpg})
+#+attr_latex: :width 0.95\textwidth :height 0.1\textheight :options keepaspectratio
+#+NAME: fig:sftpcable
+[[./figures/S-FTP_CAT_7.jpg]]
+
+
+
+#+caption: Types of twisted-pair cables for Ethernet (Fred the Oyster, \href{https://creativecommons.org/licenses/by-sa/4.0}{CC BY-SA 4.0}, via Wikimedia Commons) 
+#+attr_latex: :width 0.95\textwidth :height 0.1\textheight :options keepaspectratio,page=\getpagerefnumber{label}
+#+NAME: fig:types_tp
+[[./figures/512px-10G_BASE-T_x_3_cables.svg.png]]
+
+
+
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
 
 
 **** 40G, 100G Ethernet
@@ -946,7 +1010,7 @@ Same idea: slightly better PHY, functionality largely unchanged
 - Currently standardized (IEEE 802.3ba), market introduction a bit sluggish (cost!) 
 - Various profiles and target markets, e.g., 40G: 
   - Server access: 4x10G twin copper, about 7m 
-  - Data centre: parallel optics – 4x 10G in 4 fibres per direction, 100-150m 
+  - Data centre: parallel optics @@latex: \textemdash{} @@ 4x 10G in 4 fibres per direction, 100-150m 
   - Metro-area: coarse WDM, four wavelengths each one at 10G, about 10
     km; or 40G over one wavelength, about 2 km 
 - 100G with similar factors 
@@ -1007,7 +1071,7 @@ Same idea: slightly better PHY, functionality largely unchanged
 **** Conclusion
 - MAC protocols are a crucial ingredient, pivotal for good performance
   - Static multiplexing just won’t do for bursty traffic
-- Main categories: Collision, collision-free, limited contention
+- Main categories: Collision, collision-free, limited-contention
 - Main figures of merit: Throughput, delay, fairness
   - There hardly is a “best” solution
 - Important case study: Ethernet
@@ -1023,19 +1087,19 @@ Same idea: slightly better PHY, functionality largely unchanged
 - WS 19/20, v 2.5
 - Computer Networks - Medium Access Control
 - 64
-**** Performance of nonpersistent CSMA – analytic derivation 
+**** Performance of nonpersistent CSMA @@latex: \textemdash{} @@ analytic derivation 
 - Nonpersistent CSMA protocol
 - A terminal with a packet to send senses an idle channel: transmit
 - A terminal with a packet to send senses a busy channel: reschedule the packet to some random later transmission time
 - Average mean retransmission delay is X*   
 - At this later time, repeat the process
-- Traffic model – where do packets come from? 
+- Traffic model @@latex: \textemdash{} @@ where do packets come from? 
 - All packets are of constant length with T seconds for transmission 
 - Infinite population of users generates new packets according to a Poisson process with aggregate rate ¸ packets/s
 - Hence: S = ¸ T is average number of new packets generated per transmission time 
 - Additionally, packets are retransmitted 
 - $\leadsto$ Total transmission attempts G per transmission time T (G ¸ S)
-**** Performance of nonpersistent CSMA – traffic model
+**** Performance of nonpersistent CSMA @@latex: \textemdash{} @@ traffic model
 - For a tractable traffic model, two further assumptions are necessary
 - Assumption 1: Average retransmission delay X* is large compared to T 
 - Assumption 2: Interarrival times of all packet start times (including retransmissions!) are independent and exponentially distributed 
@@ -1043,7 +1107,7 @@ Same idea: slightly better PHY, functionality largely unchanged
 - … but not to a large degree, and makes analysis much simpler
 - Assumption 1 is necessary to make this an acceptable approximation 
 - I.e.: all packet transmissions form a Poisson process of rate G!
-**** Performance of nonpersistent CSMA – parameters
+**** Performance of nonpersistent CSMA @@latex: \textemdash{} @@ parameters
 - Summary of parameters
 - S: rate of new packets injected
 - G: traffic offered to the channel (new packets plus retransmissions)
@@ -1058,7 +1122,7 @@ Same idea: slightly better PHY, functionality largely unchanged
 - Normalize this to packet duration: a = ¿ / T (for convenience) 
 - Goal of analysis: What is relation of S and G?
 - 
-**** Performance of nonpersistent CSMA – idle and busy periods
+**** Performance of nonpersistent CSMA @@latex: \textemdash{} @@ idle and busy periods
 - Observation: nonpersistent CSMA alternates between idle and busy
 - Busy periods start with transmission of a packet at some time t by some terminal on an idle channel 
 - Additional transmissions can only start within time t+a 
@@ -1066,23 +1130,23 @@ Same idea: slightly better PHY, functionality largely unchanged
 - Say, at t+Y the last packet starts in this busy period
 - Channel is sensed as idle after t+Y+1+a
 - Packet duration and propagation delay to all stations
-**** Performance of nonpersistent CSMA – average busy period
+**** Performance of nonpersistent CSMA @@latex: \textemdash{} @@ average busy period
 - What is the average length of a busy period?
 - Randomness comes from the point Y of the last packet starting transmission in the busy period
 - These arrivals of packet transmission were assumed to form a Poisson process of rate G
 - Distribution function of random variable Y:
 - Expected value of Y: 
 - $\leadsto$ Average busy period: 
-**** Performance of nonpersistent CSMA – average idle period
+**** Performance of nonpersistent CSMA @@latex: \textemdash{} @@ average idle period
 - Probability that idle period I is at least c long (0 terminals transmit during c):
 - Average value E[I] = 1/G 
 - $\leadsto$ On average, a busy/idle cycle lasts: 
 - 
-**** Performance of nonpersistent CSMA – successful packets
+**** Performance of nonpersistent CSMA @@latex: \textemdash{} @@ successful packets
 - Number U of correct packets per busy/idle cycle: 
 - Expected number of successful packets per busy/idle cycle then simply: 
 - 
-**** Performance of nonpersistent CSMA – throughput 
+**** Performance of nonpersistent CSMA @@latex: \textemdash{} @@ throughput 
 - Putting it together
 - Throughput S is expected number of successful packets / expected duration for transmission cycle
 - Hence: 
@@ -1126,14 +1190,14 @@ Same idea: slightly better PHY, functionality largely unchanged
 - Use Eigenvalue decomposition of P to compute lim k! 1Pk : 
 - Hence: 
 - 
-**** Backoff Markov model – state description 
+**** Backoff Markov model @@latex: \textemdash{} @@ state description 
 - State of one terminal:
 - With previous parameters: k+1+T states for each terminal
 - State of system: Product of individual terminal states
 - E.g., two terminals: (i1, i2) 
 - Initial state: E.g., (0, …, 0)   
-**** Backoff Markov model – state transitions (I) 
-- Note: This is only done for two terminals here – generalization is simple (yet a bit tedious) 
+**** Backoff Markov model @@latex: \textemdash{} @@ state transitions (I) 
+- Note: This is only done for two terminals here @@latex: \textemdash{} @@ generalization is simple (yet a bit tedious) 
 - Both terminals idle: (0, 0)$\leadsto$ (T, T) 
 - Collision 
 - With probability 1 
@@ -1141,7 +1205,7 @@ Same idea: slightly better PHY, functionality largely unchanged
 - i1, i2 chosen at random, independently, uniformly from U(1,k)
 - Hence, each possible backoff state is entered with probability 1/k2
 - Only place of randomness!
-**** Backoff Markov model – state transitions (II)
+**** Backoff Markov model @@latex: \textemdash{} @@ state transitions (II)
 - In backoff state, count-down happens until one terminal reaches 0
 - (i1, i2)$\leadsto$ (i1 + 1, i2 + 1) if i1, i2 < 0
 - Once one terminal has reached 0 and the other is still in backoff, terminal will start to transmit
@@ -1149,7 +1213,7 @@ Same idea: slightly better PHY, functionality largely unchanged
 - (i1, 0)$\leadsto$ (i1+1, T) if i1 < 0 
 - If both terminals reach (0,0): see above!
 - 
-**** Backoff Markov model – state transitions (III)
+**** Backoff Markov model @@latex: \textemdash{} @@ state transitions (III)
 - Terminal transmitting, the other still in backoff: 
 - (i1, i2)$\leadsto$ (i1-1, i2+1) if i1 > 0, i2 < 0 
 - (i1, i2)$\leadsto$ (i1+1, i2-1) if i1 < 0, i2 > 0 
@@ -1158,7 +1222,7 @@ Same idea: slightly better PHY, functionality largely unchanged
 - (0, i2)$\leadsto$ (0, i2-1) if i2 > 0
 - Other states not reached! 
 - 
-**** State transitions – Overview 
+**** State transitions @@latex: \textemdash{} @@ Overview 
 **** State transition matrix 
 - Previous rules give the state transitions 
 - We have (k+1+T) states per terminal, i.e., (k+1+T)2 system states for two terminals 
