@@ -46,8 +46,9 @@
 - Let’s start from classic Ethernet
   - Single wire, single collision domain
   - Because of limited reach, it forms a \gls{lan}
-\pause 
-\vfill*
+\pause
+ 
+\vfill
 - Works fine for a limited number of stations
   - Collapses when number of nodes becomes too large
   - CSMA/CD will not keep up, limited bandwidth
@@ -99,7 +100,7 @@
   - Don’t put all your eggs into one basket
   - E.g., ``babbling idiot'' problem
 - Security
-  - Promiscuous operation – contain possible damage
+  - Promiscuous operation @@latex: \textemdash{} @@ contain possible damage
 
 **** Several options to overcome some of these limitations
 Can be classified according to the layer in which they work
@@ -171,7 +172,7 @@ Uwe Schwöbel
 
 
 **** Physical layer solutions not satisfactory
-- Physical layer devices – repeater, hub – do not solve the more interesting problems
+- Physical layer devices @@latex: \textemdash{} @@ repeater, hub @@latex: \textemdash{} @@ do not solve the more interesting problems
   - E.g., how to handle load
 - Some knowledge of the data link layer structure is necessary
   - To be able to inspect the content of the packets/frames and do something with that knowledge
@@ -205,9 +206,9 @@ Uwe Schwöbel
 
 \label{sec:inter:dll:architecture}
 
-**** Link-layer amplifiers 
+**** Link-layer repeaters 
 
-- Similar to a repeater
+- Similar to a PHY repeater
   - One line in, one line out 
 - But: Converts signal to data, and resends the data
   - Can apply, e.g. \gls{FEC} 
@@ -377,13 +378,17 @@ How to obtain knowledge about directions?
 
 - Switches connect simple terminals
 - Sometimes, entire networks have to be connected: Bridges
-- Bridge: basic operation very similar to switch 
+- Bridge: basic operation *very* similar to switch 
 - Differences: 
   - Each network connected to a bridge is a separate collision domain
     *and* broadcast domain 
   - Bridges can also interconnect different LAN types (e.g., Ethernet,
     Token Ring, \dots)
-    - Not possible on physical layer only; usually not part of switches
+    - Not possible on physical layer only; usually not part of mere
+      switches \pause
+    - Example: WiFi access point! 
+      
+
 
 
 ***** 
@@ -412,7 +417,7 @@ How to obtain knowledge about directions?
 #+NAME: fig:inter:bridge_switch
 [[./standalone/internetworking.pdf]]
 
-**** Two switches directly connected without a switch? 
+**** Two switches directly connected without a bridge? 
 
 #+caption: Directly connecting switches leads to similar results
 #+attr_latex: :width 0.95\textwidth :height 0.5\textheight :options keepaspectratio,page=\getpagerefnumber{page:inter:two_switches}
@@ -430,18 +435,18 @@ How to obtain knowledge about directions?
 
 
 **** Backward learning in bridges                                  :noexport:
-- Backward learning is trivial in a switch – how about a bridge?
+- Backward learning is trivial in a switch @@latex: \textemdash{} @@ how about a bridge?
 - Example: A sends packet to E
 - Suppose bridges B1 and B2 know where E is
 - B2 will see A’s packet coming from LAN2
 - Since B2 does not know about LAN1, B2 will assume A to be on LAN2
 - Which is fine! B1 will forward any packet destined to A arriving at LAN2 to LAN1, so that works out nicely
 
-**** Backward learning in bridges – bootstrapping                  :noexport:
+**** Backward learning in bridges @@latex: \textemdash{} @@ bootstrapping                  :noexport:
 - In previous example: how does bridge B2 know initially where node E is?
 - Answer: It does NOT know
-- Option 1: Manual configuration – not nice!
-- Option 2: Do not care – simply forward the data everywhere for an unknown address
+- Option 1: Manual configuration @@latex: \textemdash{} @@ not nice!
+- Option 2: Do not care @@latex: \textemdash{} @@ simply forward the data everywhere for an unknown address
 - Except to the network where it came from 
 - Algorithm is thus: flood if not known, discard if known to be not necessary, forward specifically if destination is known
 
@@ -458,7 +463,7 @@ How to obtain knowledge about directions?
 
 *** Flooding 
 
-**** Simplistic flooding  – problems 
+**** Simplistic flooding  @@latex: \textemdash{} @@ problems 
 
 - Previous ``backward learning by \gls{flooding}'' is simple, but problematic
 - Consider example topology with second switch (or bridge) for reliability
@@ -539,7 +544,7 @@ How to obtain knowledge about directions?
   - If already seen and forwarded a packet, simply drop it
 - Requires: State & uniqueness
   - Switches/bridges have to remember which packets have passed through 
-  - Packets must be uniquely identifiable – at least *source,
+  - Packets must be uniquely identifiable @@latex: \textemdash{} @@ at least *source,
     destination, and sequence number* are necessary to distinguish
     packets 
 
@@ -559,7 +564,7 @@ How to obtain knowledge about directions?
 - Simplest approach: Compute a spanning tree on this LAN-bridge graph
   - Simple, self-configured, no manual intervention
   - But not optimal: actual capacity of installed bridges might not be fully exploited
-  - Buzzword: IEEE 802.1dIEEE 802.1w
+  - Buzzwords: IEEE 802.1d, IEEE 802.1w Rapid Spanning Tree Protocol
 - Not further explored here 
 
 
@@ -601,6 +606,16 @@ How to obtain knowledge about directions?
 - But: LANs should respect *logical* proximity
   - E.g., connect devices of working groups together, irrespective where they happen to be located
   - E.g., limit broadcasts to devices that should receive them 
+
+**** What is a VLAN? 
+
+***** \Gls{vlan}                                               :B_definition:
+      :PROPERTIES:
+      :BEAMER_env: definition
+      :END:
+
+      \Glsdesc{vlan}
+
 
 
 **** Virtual LANs: Basic idea 
@@ -680,25 +695,17 @@ How to obtain knowledge about directions?
 
 
 
-**** IEEE 802.11q – discussion 
+**** IEEE 802.1q @@latex: \textemdash{} @@ discussion 
 - It changed the Ethernet header!!! 
   - Big legacy issue at the time (ca. 1995)
   - Compatibility with existing cards? Who generates header? Maximum frame size exceeded when inserting new field? \dots? 
-- Observation: End machines do not really use the VLAN fields, only switches/bridges 
+- Observation: End machines do not necessarily use the VLAN fields,
+  maybe only switches/bridges 
   - VLAN tags not needed on links between end hosts and switch 
   - Can be inserted by first switch, removed by last one, if necessary
   - And here, use one of the three options from previous slide 
 \pause 
 - But a debated aspect of the IEEE~802 architecture; cmp. e.g. \url{https://mentor.ieee.org/802.1/dcn/22/1-22-0003-01-ICne-vlan-aware-end-stations-in-the-ieee-802-architecture.pdf}
-
-**** What is a VLAN? 
-
-***** \Gls{vlan}                                               :B_definition:
-      :PROPERTIES:
-      :BEAMER_env: definition
-      :END:
-
-      \Glsdesc{vlan}
 
 
 ** Conclusion 
