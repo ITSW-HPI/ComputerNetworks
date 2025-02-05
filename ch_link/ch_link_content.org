@@ -510,14 +510,14 @@ to node [above, align=center] {1 bit \\difference} ++(3,0) node[fill=white] {$y$
 - I.e., errors that modify a single bit always lead to an illegal frame
 - $\leadsto$ Error can be detected!
 - Generalizes to all legal frames, because Hamming distance describes the ``critical cases''
-- But not corrected @@latex: \textemdash{} @@ upon receiving u, no way to decide whether x or
-  y had been sent (symmetry!)
+- But not corrected @@latex: \textemdash{} @@ upon receiving $u$, no way to decide whether $x$ or
+  $y$ had been sent (symmetry!)
 
 
 **** \gls{hammingdistance} and detection/correction
 What happens if $d(S) = 3$?
   - There exist $x,y \in S$ such that $d(x,y) = 3$; no other pair is closer
-  - Every $u$ with $d(x,u)=1$ is illegal AND $d(u,s) > 1$! 
+  - Every $u$ with $d(x,u)=1$ is illegal
 
 #+begin_export latex
 \begin{center}
@@ -530,7 +530,7 @@ to node [above, align=center] {1 bit \\difference} ++(3,0) node[fill=white] {$y$
 #+end_export 
 
 
-- Hence: the receipt of u could have the following causes:
+- Hence: the receipt of $u$ could have the following causes:
   - Originally, $x$ had been sent, but 1 bit error occurred
   - Originally, $y$ had been sent, but 2 bit errors occurred
   - (Originally, some other frame had been sent, but at least 2 bit errors occurred)
@@ -556,7 +556,7 @@ Some terminology:
 
 \pause 
 A good code should have large distance and large rate @@latex: \textemdash{} @@ but arbitrary combinations are not possible
-**** How to construct error correcting codes
+**** How to construct error-correcting codes
 - Constructing good codes (e.g., highest rate at given error correction needs) is difficult
 - Simple example: use several parity bits
   - Distribute the parity bits over the entire codeword to protect against burst errors 
@@ -724,7 +724,7 @@ That can be written more compactly as a matrix multiplication
 - What is a *suitable* matrix to compute coded bits? 
 - In general: a *nonsystematic code* 
   - Using a *\gls{generator} matrix*
-- Given payload $p$, find *\gls{codeword}* c using generator $G$ as $c = pG$ 
+- Given payload $p$, find *\gls{codeword}* $c$ using generator $G$ as $c = pG$ 
 - Example: 
 
 \[
@@ -1529,7 +1529,7 @@ Assumptions:
 
 
 
-**** Example: Receiver window size 1 - Go-back-N
+**** Example: Receiver window size 1  @@latex: \textemdash{} @@  Go-back-N
 
 - With receiver window size 1, all *frames following a lost* frame cannot be handled by receiver
   - They are *out of sequence*
