@@ -182,9 +182,10 @@
   \draw (r) to node[right, draw=none] {$I_1$} (i1);   
   \draw (n0) |- (i1); 
 
-  \node [above right=0.5cm and 5cm of r] (n1) {$\substack{N_{1}\\ \displayasbinary{1}} $};
+  \coordinate (i2) at ($(r.east)+(5,0)$);
+  % \node [above right=0.5cm and 5cm of r] (n1) {$\substack{N_{1}\\ \displayasbinary{1}} $};
+  \node [above right=0.5cm and 0.5cm of i2] (n1) {$\substack{N_{1}\\ \displayasbinary{1}} $};
   \node [draw=none,rotate=90] at ($(n1)!0.5!(n15)$) {}; 
-  \coordinate (i2) at ($(r.east)+(4,0)$);
   \draw (r) to node[below, draw=none] {$I_2$} (i2); 
   \draw (n1) -| (i2); 
 
