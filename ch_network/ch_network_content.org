@@ -65,31 +65,36 @@
       :BEAMER_col: 0.48
       :END:
 
-#+caption: Example graph for networking (repeated from Chapter 1)
+#+caption: Example topology for networking (repeated from Chapter 1)
 #+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio ,page=\getpagerefnumber{page:basics:routing:interfaces}
 #+NAME: fig:routing:example_graph
 [[../ch_basics/standalone/routing.pdf]]
 
 
 
-*****     Example routing table for node Sw 5                
+*****     Example routing table for node Sw 4                
       :PROPERTIES:
       :BEAMER_env: block
       :BEAMER_col: 0.48
       :END:   
 
-#+caption: A possible routing table for switch 4 (repeated from Table \ref{tab:basics:routing_table_sw4})
-#+NAME: tab:basics:routing_table_sw4
-| Destination | a | b | c | d | e |
-|-------------+---+---+---+---+---|
-| N 1         | - | 4 | 3 | - | - |
-| N 2         | - | 4 | 3 | - | - |
-| N 3         | - | 2 | 3 | - | - |
-| N 4         | - | 3 | 2 | - | - |
-| N 5         | 1 | - | - | - | - |
-| N 6         | - | - | - | 1 | - |
-| N 7         | - | - | - | - | 1 |
-
+\begin{table}[htbp]
+\caption{\label{tab:basics:routing_table_sw4}A possible routing table for switch 4}
+\centering
+\begin{tabular}{llrrll}
+Destination & \multicolumn{5}{c}{Neighbor/interface} \\
+ & N5  & Sw3 & Sw2  & N4 & N7\\[0pt]
+ &  via a &  via b &  via c &  via d &  via e\\[0pt]
+\hline
+N 1 & - & 4 & 3 & - & -\\[0pt]
+N 2 & - & 4 & 3 & - & -\\[0pt]
+N 3 & - & 2 & 3 & - & -\\[0pt]
+N 4 & - & 3 & 2 & - & -\\[0pt]
+N 5 & 1 & - & - & - & -\\[0pt]
+N 6 & - & - & - & 1 & -\\[0pt]
+N 7 & - & - & - & - & 1\\[0pt]
+\end{tabular}
+\end{table}
 
 
 *****                               :B_ignoreheading:
@@ -140,16 +145,98 @@
 
 #+caption: Forwarding table of Switch 4 (repeated from Table \ref{tag:basics:forwading})
 #+NAME: tab:routing:forwading
-| Destination | Interface |
-|-------------+-----------|
-| N 1         | c         |
-| N 2         | c         |
-| N 3         | b         |
-| N 4         | c         |
-| N 5         | a         |
-| N 6         | d         |
-| N 7         | e         |
+| Destination | Interface to neighbor |
+|-------------+-----------------------|
+| N 1         | c  to Sw2             |
+| N 2         | c  to Sw2             |
+| N 3         | b  to Sw3             |
+| N 4         | c  to Sw2             |
+| N 5         | a  to N5              |
+| N 6         | d  to N6              |
+| N 7         | e  to N7              |
 
+
+
+**** Forwarding table: Orthogonal view 
+
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+
+- Alternative, equivalent representation of forwarding table:
+  Interface-wise 
+  - For each interface, store list of all destinations that are best
+    reached via that interface     
+\onslide<2->  
+- Partially an implementation issue, partially way of thinking 
+- Challenge: how to efficiently express such sets of nodes? 
+
+\onslide<1->  
+
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+#+caption: Forwarding table of Switch 4, represented per-interface 
+#+NAME: tab:routing:forwading:orthogonal
+| Interfaces to neighbors | Destinations |
+|-------------------------+--------------|
+| a  to N5                | N 5          |
+| b  to Sw3               | N 3          |
+| c  to Sw2               | N 1, N2, N4  |
+| d  to N6                | N 6          |
+| e  to N7                | N 7          |
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
+
+
+
+**** Timescales: Routing vs. forwarding 
+
+***** Routing
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
+- Routing tables (re-)computed upon substantial changes in the network
+- Simplest case: Topology changes
+  - Devices added, fail
+  - Edges added, fail 
+- Fancy case: Load changes substantially
+- Sometimes, periodically, as fall back 
+  - Eg. OSPF: default after 30 minutes 
+
+\pause
+
+***** Forwarding 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+Forwarding table
+- *Recomputed* when routing table changes 
+- *Used* for *every packet*
+  - Might be every few nanoseconds 
+
+*****  Timescales matter!                                      :B_alertblock:
+      :PROPERTIES:
+      :BEAMER_env: alertblock
+      :END:
 
 
 
@@ -163,16 +250,24 @@
   - Can compensate quickly for failing links
   - Non-adaptive/adaptive to current situation of a network
   - Also called: static/dynamic routing
-  - Stable – will converge to an equilibrium over time
+  - Stable @@latex: \textemdash{} @@ will converge to an equilibrium over time
   - Optimality (in throughput, delay, … or some other metric)
   - Fairness
   - *Small routing tables* 
 
 
+**** Properties of forwarding algorithms
+
+- Should use *small, constant* time per packet 
+- Assisted by
+  - Small forwarding tables
+  - Constant packet header size; $O(\log(n))$ bits ok 
+
 **** Storing forwarding tables
-- How to store forwarding tables? 
-- Actually one entry per known destination clearly impossible 
-- Need to compress, group ``similar'' entries 
+- How to store forwarding tables, especially in "orthogonal" view
+  (Table \ref{tab:routing:forwading:orthogonal})? 
+  - Actually one entry per known destination clearly impossible 
+  - Need to compress lists of destinations per interface, group ``similar'' entries 
 
 
 
@@ -308,7 +403,7 @@
       :END:
 
 - Needs twelve rules instead of four
-- Reason Addresses not ``nicely'' laid out in topology (and:
+- Reason: Addresses not ``nicely'' laid out in topology (and:
   simplistic approach?)
 
 **** Relationship between forwarding table size and name assignment 
@@ -386,15 +481,16 @@ With distributed schemes:
 
 *** Link-state routing 
 
-**** Computing routing tables – A centralized view
+**** Computing routing tables @@latex: \textemdash{} @@ A centralized view
 - Given a graph $G=(V,E)$ and a cost function $c : E \rightarrow \mathbb{R}$
 - Compute, for each node $v \in V$, the routing table to each destination $u \in V$
 - Such that for each pair $(v,u)$ the path $(v, s_1, \dots, s_n, u)$
-  with the  smallest (known) cost can be easily derived from the routing table
+  with the  smallest (known) cost can be easily derived from the routing tables
   - By simply choosing the neighbor with the smallest entry 
   - *Cost of a path* is computed from  *costs of its edges*
     - Typically, *sum* 
-- ``*Single-source shortest path problem*''
+\pause
+- *Single-source shortest path problem*
   - Approach: Compute shortest paths from a given node to all possible destination nodes; do that for all nodes in the network
   - ``Shortest path tree''
   - *NOT* a minimum spanning tree computation
@@ -410,7 +506,7 @@ With distributed schemes:
 
 
 
-**** Centralized shortest path – Dijkstra 
+**** Centralized shortest path @@latex: \textemdash{} @@ Dijkstra 
 - Given graph $G=(V,E)$, cost $c : E \rightarrow \mathbb{R}$, source node $A$
   - Algorithm can be applied to any source node, of course
 - Compute shortest paths to all destinations (and their cost)
@@ -425,7 +521,7 @@ With distributed schemes:
       - Or ``unknown''
   - Initially, all labels are (\infty, tentative, unknown)
 
-**** Centralized shortest path – Dijkstra
+**** Centralized shortest path @@latex: \textemdash{} @@ Dijkstra
 - Initial action: Make node $A$ permanent
 - Whenever a node $X$ is changed from tentative to permanent with label ($c_X$, permanent, $W$):
   - For all neighbors $Y$ of $X$ with label (\infty, tentative,
@@ -434,12 +530,12 @@ With distributed schemes:
   - For all neighbors $Y$ of $X$ with label ($c_Y$, tentative, $U$):If $c_X + c(X,Y) < c_Y$, replace label by ($c_X + c(X,Y)$, tentative, $X$)
     - A better path to $Y$ has been found, via $X$ instead of via $U$
     - Else, $Y$'s label stays unchanged 
-- Once relabeling step is complete, search (in entire graph) tentative node with smallest cost – and make it permanent
+- Once relabeling step is complete, search (in entire graph) tentative node with smallest cost @@latex: \textemdash{} @@ and make it permanent
   - This is the closest node to A which is still uncertain, for any
     other node a still cheaper path might be found 
 - Proceed until all nodes are labeled as ``permanent''
 
-**** Centralized routing – Dijkstra – Example 
+**** Centralized routing @@latex: \textemdash{} @@ Dijkstra @@latex: \textemdash{} @@ Example 
 
 #+caption: Example network to illustrate Dijkstra algorithm
 #+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio ,page=\getpagerefnumber{page:routing:dijkstra:example:plain}
@@ -447,7 +543,7 @@ With distributed schemes:
 [[./standalone/dijkstra.pdf]]
 
 
-**** Centralized routing – Dijkstra – Example: Step 0 and 1 
+**** Centralized routing @@latex: \textemdash{} @@ Dijkstra @@latex: \textemdash{} @@ Example: Step 0 and 1 
 
 \vskip-2.5em
 
@@ -485,7 +581,7 @@ With distributed schemes:
 
 
 
-**** Centralized routing – Dijkstra – Example: Step 2 and 3
+**** Centralized routing @@latex: \textemdash{} @@ Dijkstra @@latex: \textemdash{} @@ Example: Step 2 and 3
 
 \vskip-2.5em
 
@@ -522,7 +618,7 @@ With distributed schemes:
       :END:
 
 
-**** Centralized routing – Dijkstra – Example: Step 4 and 5 
+**** Centralized routing @@latex: \textemdash{} @@ Dijkstra @@latex: \textemdash{} @@ Example: Step 4 and 5 
 
 \vskip-2.5em
 
@@ -558,7 +654,7 @@ With distributed schemes:
       :BEAMER_env: ignoreheading
       :END:
 
-**** Centralized routing – Dijkstra – Example: Step 6 and 7
+**** Centralized routing @@latex: \textemdash{} @@ Dijkstra @@latex: \textemdash{} @@ Example: Step 6 and 7
 
 \vskip-2.5em
 
@@ -595,7 +691,7 @@ With distributed schemes:
       :END:
 
 
-**** Centralized routing – Dijkstra – Example: Step 8 and 9
+**** Centralized routing @@latex: \textemdash{} @@ Dijkstra @@latex: \textemdash{} @@ Example: Step 8 and 9
 
 \vskip-2.5em
 
@@ -631,7 +727,7 @@ With distributed schemes:
       :BEAMER_env: ignoreheading
       :END:
 
-**** Centralized routing – Dijkstra – Example: Step 10 and 11
+**** Centralized routing @@latex: \textemdash{} @@ Dijkstra @@latex: \textemdash{} @@ Example: Step 10 and 11
 
 \vskip-2.5em
 
@@ -667,7 +763,7 @@ With distributed schemes:
       :BEAMER_env: ignoreheading
       :END:
 
-**** Centralized routing – Dijkstra – Example: Result              :noexport:
+**** Centralized routing @@latex: \textemdash{} @@ Dijkstra @@latex: \textemdash{} @@ Example: Result              :noexport:
 
 
 #+caption: Example network to illustrate Dijkstra algorithm, step 8: last node made permanent 
@@ -680,13 +776,13 @@ With distributed schemes:
 Interactive example at
 [[https://algorithms.discrete.ma.tum.de/graph-algorithms/spp-dijkstra/index_en.html][Dijsktra-Algorithmus at TUM]] 
 
-**** Centralized vs. distributed algorithms – Link-state routing
+**** Centralized vs. distributed algorithms @@latex: \textemdash{} @@ Link-state routing
 - Dijkstra’s algorithm nice and well
 - But how to obtain centralized view of the entire network to be able to apply Dijkstra’s algorithm?
 - Assumption: only direct neighbors know the (current) cost of a link
   or know whether a link has failed/been restored/upgraded/\dots
 \pause 
-- Solution: Have each node distribute this information – state of all its links – in the entire network
+- Solution: Have each node distribute this information @@latex: \textemdash{} @@ state of all its links @@latex: \textemdash{} @@ in the entire network
   - Then, all nodes know entire network topology & can apply Dijkstra’s algorithm
   - Distribution itself can happen via flooding
 - $\leadsto$ *Link-state routing*
@@ -712,20 +808,22 @@ Interactive example at
 - After receiving a routing table from a neighbor, compare whether it contains ``good news'', i.e., a shorter route than the one currently known
   - Assumption: each router knows cost to each of its direct neighbors
 - In practice:  distance vectors or distance paths are exchanged 
+- Interactive example at [[https://algorithms.discrete.ma.tum.de/graph-algorithms/spp-bellman-ford/index_en.html][Bellman-Ford Algorithm at TUM]]
+ 
 
-**** Distance-vector routing – Formally 
+**** Distance-vector routing @@latex: \textemdash{} @@ Formally 
 - Suppose that node $X$ 
-  - Has distance vector ($x_1$, \dots, $x_n$) for each of the $n$ possible destinations in the network
-    - Missing distances are assumed to be $\infty$ 
+  - Has distance vector $(x_1, \dots, x_n)$, next-hop vector $(h_1, \dots, h_n)$ for all  $n$ destinations 
+    - Unknown distances are assumed to be $\infty$ 
   - Receives distance vector ($y_1$, \dots, $y_n$) from its neighbor $Y$
   - Has cost $c_{X,Y}$ to reach neighbor $Y$
 \pause 
 - Then: Node $X$ compares, for every destination $i$, whether \[x_i > y_i + c_{X,Y}\]
-  - i.e., is it cheaper to go first to Y and then to i rather than to go to node i via the so-far used neighbor? 
-  - If yes, replace outgoing link for node i by y, update cost to yi + cXY
-- Algorithm keeps iterating forever 
+  - If yes, update: $x_i \leftarrow y_i  + c_{X,Y}$, $h_i \leftarrow Y$
+\pause
+- Algorithm keeps iterating forever, triggered by updates  
 
-**** Distance-vector routing – Example 
+**** Distance-vector routing @@latex: \textemdash{} @@ Example 
      
 - Reusing the example from Figure
   \ref{fig:routing:dijkstra:example:plain}
@@ -736,7 +834,7 @@ Interactive example at
   \label{tab:dv:step:0}
   \begin{tabular}{l|c|c|c|c|c|c|c|c|c|c|c|c}
     \toprule
-    & \multicolumn{2}{c|}{A}&\multicolumn{2}{c|}{B}&\multicolumn{2}{c|}{C}&\multicolumn{2}{c|}{D}&\multicolumn{2}{c|}{F}&\multicolumn{2}{c|}{Z} \\
+    & \multicolumn{2}{c|}{A}&\multicolumn{2}{c|}{B}&\multicolumn{2}{c|}{C}&\multicolumn{2}{c|}{D}&\multicolumn{2}{c|}{F}&\multicolumn{2}{c}{Z} \\
     Destination & via&Cost&via&Cost&via&Cost&via&Cost&via&Cost&via&Cost \\ 
     \midrule
     A & A & 0 &B & 3 &--- & ---&--- & ---&F & 75 &Z & 150 
@@ -750,7 +848,7 @@ Interactive example at
 \end{table}
 
 
-**** Distance-vector - Sequence of examples 
+**** Distance-vector  @@latex: \textemdash{} @@  Sequence of examples 
 
 - Following example: In each step, a *randomly chosen* distance vector
   arrives from one node to another 
@@ -764,7 +862,7 @@ Interactive example at
 \pause 
 - But: distance vector does *not* assume synchronous updates! 
 
-**** Distance vector - Step 1  
+**** Distance vector  @@latex: \textemdash{} @@ Step 1  
 
 \begin{table}
     \caption{Distance vector  routing example, step 1, update from Z to F }
@@ -784,7 +882,7 @@ Interactive example at
 \end{tabular}
 \end{table}
 
-**** Distance vector - Step 2  
+**** Distance vector  @@latex: \textemdash{} @@ Step 2  
 
 \begin{table}
     \caption{Distance vector  routing example, step 2, update from A to Z }
@@ -804,7 +902,7 @@ Interactive example at
 \end{tabular}
 \end{table}
 
-**** Distance vector - Step 3
+**** Distance vector  @@latex: \textemdash{} @@ Step 3
 
 \begin{table}
     \caption{Distance vector  routing example, step 3, update from C to D }
@@ -824,7 +922,7 @@ Interactive example at
 \end{tabular}
 \end{table}
 
-**** Distance vector - Step 4
+**** Distance vector  @@latex: \textemdash{} @@ Step 4
 \begin{table}
     \caption{Distance vector  routing example, step 4, update from C to F }
     \label{tab:dv:step:4}
@@ -843,7 +941,7 @@ Interactive example at
 \end{tabular}
 \end{table}
 
-**** Distance vector - Step 5
+**** Distance vector  @@latex: \textemdash{} @@ Step 5
 
 \begin{table}
     \caption{Distance vector  routing example, step 5, update from A to Z }
@@ -869,7 +967,7 @@ Interactive example at
 - No changes from step 4 to step 5
   - Done? 
 \pause 
-- Not done - detecting termination of DV is complex 
+- Not done  @@latex: \textemdash{} @@  detecting termination of DV is complex 
 - And not useful: Should continuously react to changes
   - Protocol keeps running forever 
 
@@ -878,7 +976,7 @@ Interactive example at
 
 **** Comparison link-state vs. distance-vector 
 
-\vskip-2.5em
+
 
 *****            Link state          
       :PROPERTIES:
@@ -921,17 +1019,17 @@ Neither  approach is clearly superior
   - Searching through routing/forwarding tables takes more and more time, reducing throughput of a router/increasing delay
   - Run-time of routing algorithms becomes larger
 - But: does a given node really care about details of the route ``far away''?
-  - Suppose you send a packet to an Australian university – do you care which route it takes from one campus router to the next? 
+  - Suppose you send a packet to an Australian university @@latex: \textemdash{} @@ do you care which route it takes from one campus router to the next? 
   - It suffices to get the packet towards Australia
   - For local packets, a router better should care!
 - $\leadsto$ *Hierarchical routing*
-**** Hierarchical routing – Regions 
+**** Hierarchical routing @@latex: \textemdash{} @@ Regions 
 - Group nodes/routers into regions
 - Routers know 
   - How to reach each node/router in their own region
   - How to reach every other region (but nothing inside that region)
 
-**** Hierarchical routing - Example network
+**** Hierarchical routing  @@latex: \textemdash{} @@  Example network
 
 \vskip-2.5em
 
@@ -969,7 +1067,7 @@ Neither  approach is clearly superior
 
 
 
-**** Hierarchical Routing – Example tables 
+**** Hierarchical Routing @@latex: \textemdash{} @@ Example tables 
 \vskip-2.5em
 
 
@@ -1040,7 +1138,7 @@ Destination & Next hop & \# Hops\\
   - Once a packet enters its destination region, router knows about the details how to reach the destination node
 - *Necessary*: Router must be able to easily infer the target region from packet’s destination!
   - Requires adequate addressing structure for a quick address $\leadsto$ region mapping
-  - Treated a few slides later
+  - Treated  Slides \ref{s:network:addr_hierachy}ff
 
 **** Price of hierarchy
 - Hierarchical routing good for algorithm runtime, memory required for routing tables, next-hop lookup times, \dots
@@ -1062,14 +1160,16 @@ Destination & Next hop & \# Hops\\
 **** Gateways between networks
 - *Gateways* are those nodes that connect to peer conglomerates
 - Such conglomerates are fairly independent of each other
-  - Different routing protocols can be used – an *interior gateway
+  - Different routing protocols can be used @@latex: \textemdash{} @@ an *interior gateway
     protocol* inside each conglomerate 
-  - Between gateways, yet another protocol is conceivable – an *exterior gateway protocol*
+  - Between gateways, yet another protocol is conceivable @@latex: \textemdash{} @@ an *exterior gateway protocol*
     - operating only on the ``gateway graph''
   - Because of autonomy, the name *autonomous system* is used
 
 
-**** Addressing – Failure of simple addresses
+**** Addressing @@latex: \textemdash{} @@ Failure of simple addresses
+\label{s:network:addr_hierachy}
+
 - Think back to the MAC/LLC layer: Each device has a globally unique MAC address
 - Why is there then a need to talk about some other addressing scheme?
 - How did spanning tree algorithm for bridges work? 
@@ -1078,10 +1178,12 @@ Destination & Next hop & \# Hops\\
 - $\leadsto$ Clearly, this does not scale to large networks
 
 **** Addressing and hierarchical routing
-- ``Flat'' addresses – addresses that express no structure – do not work well together with hierarchical routing
+
+
+- ``Flat'' addresses @@latex: \textemdash{} @@ addresses that express no structure @@latex: \textemdash{} @@ do not work well together with hierarchical routing
 - Necessary: Addresses that express/respect the hierarchical routing structure 
   - Essentially, something like: Group-IDn:Group-IDn-1:\dots:Group-ID1:Device-ID
-  - *Hierarchical addresses* – addresses are relative to higher groups
+  - *Hierarchical addresses* @@latex: \textemdash{} @@ addresses are relative to higher groups
 
 
 ** Namespaces
@@ -1186,12 +1288,13 @@ Names, addresses do not have to be:
 **** Addressing case study: Internet IP addresses
 IP addresses as such distinguish two levels of hierarchy
 
-- *Network interfaces*/hosts
-- *Networks* or subnets
-  - Nodes know to which subnet they belong
-  - Routers have to know about all other subnets (or at least about a
-    router that knows about all of them as a default solution to send
-    a packet)
+- *Network interfaces* /hosts
+- *Networks* or *subnets*
+  - *Subnets*: easily identifiable subsets of the IP name space 
+  - Interfaces know to which subnet they belong
+  - Routers usually work on the level of subnets, not individual nodes
+    - Only at the very last hop, nodes matter
+
 
 **** IP addresses belong to interfaces, not machines 
 
@@ -1204,15 +1307,14 @@ IP addresses as such distinguish two levels of hierarchy
       :END:
 
 
-- On previous slide: ``hosts'' is incorrect; *interfaces* are  addressed;
+- On previous slide: *interfaces* are  addressed;
   - Or a virtual version thereof; think virtual machines 
-  - Nonetheless common terminology
+  - Still: sometimes, people (incorrectly) just talk about *hosts*
+\pause
 - Recall router example from early on: Interfaces of the router belong to different networks
   - (Actually, an interface can even have multiple IP addresses in
     different networks \dots)
-\onslide<2->
-\vfill
-- Yes, it should be names \dots 
+ - \onslide<2-> (Yes, it should be names \dots)
 
 ***** 
       :PROPERTIES:
@@ -1234,7 +1336,6 @@ IP addresses as such distinguish two levels of hierarchy
       :PROPERTIES:
       :BEAMER_env: ignoreheading
       :END:
-
 
 
 
@@ -1329,7 +1430,7 @@ boundary?
 
 
 
-**** Forwarding using IP addresses/IP routing tables
+**** COMMENT Forwarding using IP addresses/IP routing tables
 - A router is in charge of its ``own'' network, has to know how to handle packets for all destinations within
 - Upon a packet arrival, check if packet is destined for own network
   - If yes: Look at ``host'' bits of the destination address, look up corresponding outgoing link, forward packet to that host
@@ -1416,6 +1517,28 @@ aggregation
 
 
 
+**** Example IPv4 routing table 
+
+On an example Linux box, from \url{https://ubuntu.com/core/docs/networkmanager/routing-tables} 
+
+#+begin_src  shell-session 
+$ ip route 
+    default via 10.0.0.1 dev wlp3s0 proto static metric 600 
+    10.0.0.0/24 dev wlp3s0 proto kernel scope link src 10.0.0.73 metric 600 
+    10.0.1.0/24 dev lxcbr0 proto kernel scope link src 10.0.1.1 
+    169.254.0.0/16 dev docker0 scope link metric 1000 linkdown 
+    172.17.0.0/16 dev docker0 proto kernel scope link src 172.17.0.1 linkdown 
+    192.168.122.0/24 dev virbr0 proto kernel scope link src 192.168.122.1 linkdown  
+#+end_src
+
+- Read ~default~ as prefix ~0.0.0.0/0~, the least-specific prefix of
+  all 
+
+**** IPv4 prefix example 
+
+- Universität Potsdam: 141.89.0.0/16
+- Compare [[https://bgp.tools/prefix/141.89.0.0/16][BGP Tools entry]]
+
 **** Old explanation of subnetting                                 :noexport:
 - Distinction between network part and host part of an IP address
 - Aspect 1: Breaking down the hostid part of an address into smaller groups 
@@ -1495,24 +1618,29 @@ aggregation
 
 - 128 bit address 
   - Typically written as 8 groups of four hexadecimal digits, groups separated by colon 
-  - Leading zeros or groups of zeros can be omitted, replaced by double-colon
     - E.g.: 2001:0db8:85a3:0000:0000:8a2e:0370:7334
+  - Leading zeros or groups of zeros can be omitted, replaced by double-colon
+    - E.g.: 2001:0db8:85a3::8a2e:0370:7334
   - IPv4 addresses can be expressed by leading double colon, e.g.  ::192.168.10.15 
 
 **** IPv6 addresses: structure  
 
-
+ 
   - Unicast: 64-bit network prefix; 64-bit interface identifier
     - Network prefix subdivided into routing prefix and subnet id;
-      similar to IPv4 ideas
+      similar to IPv4 CIDR ideas
+    - Variable prefix length (via slash notation) built in from the start
     - Interface (!) identifier: randomly chosen, from DHCPv6 server,
       manually assigned 
+\pause
   - Link-local unicast (non-routable): fe80::
     - E.g.: fe80::a00:27ff:fe25:e18b/64
     - Corresponds to 192.168\dots or 10.0.\dots   addresses in v4 
+\pause
+
   - Multicast addresses 
 
-**** IPv6 addresses – assignment  
+**** IPv6 addresses @@latex: \textemdash{} @@ assignment  
 Interface identifier: 
 - From DHCPv6 server 
 - Randomly assigned
@@ -1529,11 +1657,12 @@ Examples from  \cite{rfc6890}:
 - fe80::/64 - link-local address 
 
 
+
 *** IP and lower layer
 
 **** Forwarding table of router 3                                  :noexport:
 - Have a look at Linux ifconfig and route commands
-- Maybe easier: route –n
+- Maybe easier: route @@latex: \textemdash{} @@n
 - Note: prefix length is displayed via the netmask 
 **** Golden rule for forwarding: local or not?                     :noexport:
 - When a packet with a local destination address arrives at an interface: Try to send it directly over LAN 
@@ -1549,7 +1678,7 @@ Examples from  \cite{rfc6890}:
 
 
 
-**** Relationship of layer 2, 3? 
+**** Relationship of layer 2, 3?  @@latex: \textemdash{} @@  Direct Layer3 neighbors 
 
 \vskip-2.5em
 
@@ -1562,11 +1691,17 @@ Examples from  \cite{rfc6890}:
 
 
 - Suppose we send a layer 3 packet from Client to Router 1 (Figure \ref{fig:routing:ip_mac:small_example})
-- Obviously, two packet transmissions necessary (Client - Switch,
-  Switch - Router)
+- Obviously, two packet transmissions necessary (Client  @@latex: \textemdash{} @@  Switch,
+  Switch  @@latex: \textemdash{} @@  Server)
   - Which addresses are in these packets?
   - Where do they come from? 
+\pause
+- Recall: IP Layer 3 sees Client -- Server as *direct neighbors*, is
+  unaware of any Layer 2 devices
+  - Does not know about Switch A! 
 
+
+\onslide<1->
 ***** 
       :PROPERTIES:
       :BEAMER_env: block
@@ -1585,21 +1720,34 @@ Examples from  \cite{rfc6890}:
       :BEAMER_env: ignoreheading
       :END:
 
-**** Finding out MAC of IP next hop 
 
-- Assume we know already the IP destination address 1.2.3.1
-- If we *knew* that interface's MAC address g:h, L2 forwarding (based
-  on backward learning)  can deal with it 
+**** Sending to next IP hop 
+
+- Assume client already knows the IP destination address 1.2.3.1
+
+***** Next IP hop 
+- It needs to find out the next IP hop towards destination 
+  - From its routing table
+  - Could be another IP node, could already be the destination itself 
+  - Then: no more progress *on L3* possible; these are L3 neighbors!  
+
+\pause
+
+***** Sending to next IP hop 
+
+- To send to that neighbor: Pass packet towards L2, ask it to send it
+  there 
+\pause
+- But L2 only understands L2 addresses! 
 - We need to *resolve the IP name into its MAC address*
   - Compare Slide \ref{s:routing:name_resolution}
-- How??? 
 
 
 **** Resolving IP into MAC: ARP
 
 Simple solution: Yell! 
   - Broadcast on the LAN, asking which node has IP address 1.2.3.1 
-  - Comprise own MAC address to indicate where to return answer 
+  - Comprises own MAC address to indicate where to return answer 
 - Node 1.2.3.1 answers with its MAC address g:h 
   - Using unicast L2 packet 
 
@@ -1610,6 +1758,18 @@ Simple solution: Yell!
 - With ~ARP request~ and ~ARP reply~ packets
 - Replies are cached in ~ARP cache~ 
 - Command line tool: ~arp~ 
+
+
+\pause
+***** Example ARP cache  
+
+#+begin_src shell-session 
+$ arp -a
+? (172.17.12.1) at cc:4e:24:d0:f1:80 on en4 ifscope [ethernet]
+smab111ws07.hpi.uni-potsdam.de (172.17.12.19) at f4:8e:38:bb:e7:30 on en4 ifscope [ethernet]
+? (172.17.12.149) at 0:d2:b1:d8:23:69 on en4 ifscope [ethernet]
+dgipfel3.hpi.uni-potsdam.de (172.17.12.179) at 9c:76:e:53:34:db on en4 ifscope [ethernet]
+#+end_src
 
 
 **** ARP: Small example with MSC 
@@ -1708,11 +1868,15 @@ packets
 - ASes form level of aggregating routing information
   - Gives raise to inter- and intra-domain routing
   - AS have an autonomous system number for inter-domain routing 
-- Inter-domain routing is hard
-  - One organization not interested in carrying a competitor’s traffic, \dots
-  - Routing metrics of different domains cannot be compared; only reachability can be expressed
-  - Scale – currently, inter-domain routers have to know about 140.000
-    networks (rapidly outdated figure\dots)
+
+***** Examples 
+
+- \gls{DFN}: AS number 680, [[https://bgp.tools/as/680][BGP tools entry for DFN]]
+- Deutsche Telekom, Tier 1 carrier: e.g. AS 15996, 2773, [[https://bgpview.io/asn/3320][3320]]
+  - 3320: mostly inbound, 8 internet exchanges (at 1  @@latex:
+    \textemdash{} @@ 110 GBps), estimated total at 50-100
+    TBps, prefixes: a lot 
+
 
 
 **** Structure of autonomous systems in IP
@@ -1720,10 +1884,14 @@ Resulting structure
 - *Stub AS*: Only a single connection to other AS; only carries local traffic
 - *Multihomed AS*: Has connections to multiple other ASs but refuses to carry non-local traffic for anybody else
 - *Transit AS*: Multiple connections, does carry both local and
-  transit traffic – typical example of an Internet service provider
+  transit traffic @@latex: \textemdash{} @@ typical example of an Internet service provider
   (ISP)
+  - Asymmetry between provider and client; money typically flows from
+    customer AS to transit AS 
 - *Peering points* (or *Internet exchanges*): point of connection
-  between many providers 
+  between many providers
+  - Symmetric relationship; usually no money involved 
+  - Example IX: [[https://bgpview.io/ix/25][DE-CIX]]
 
 #+caption: Possible examples of AS relationships 
 #+attr_latex: :width 0.95\textwidth :height 0.3\textheight :options keepaspectratio ,page=\getpagerefnumber{page:routing:as_structure}
@@ -1733,13 +1901,41 @@ Resulting structure
 
 
 
-
 **** Number of unique ASes
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:
+
 
 #+caption: Number of ASes advertised in Internet routing tables (Fig. 11 from \cite{potaroo_2023}) 
 #+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio
 #+NAME: fig:routing:potaroo
 [[./figures/potaroo_2023.png]]
+
+      
+
+***** 
+      :PROPERTIES:
+      :BEAMER_env: block
+      :BEAMER_col: 0.48
+      :END:   
+
+#+caption: Active BGP entires, from [[https://www.cidr-report.org/cgi-bin/plota?file=%2fvar%2fdata%2fbgp%2fas2.0%2fbgp%2dactive%2etxt&descr=Active%20BGP%20entries%20%28FIB%29&ylabel=Active%20BGP%20entries%20%28FIB%29&with=step][CIDR-report.org]] 
+#+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio
+#+NAME: fig:activebgp
+[[./figures/active_bgp_2025.png]]
+
+
+
+
+*****                               :B_ignoreheading:
+      :PROPERTIES:
+      :BEAMER_env: ignoreheading
+      :END:
+
 
 
 
@@ -1750,7 +1946,7 @@ Resulting structure
 - Internet’s most prevalent intra-domain (=interior gateway) routing protocol: *Open Shortest Path First*
 - Main properties
   - Open, variety of routing distances, dynamic algorithm
-  - Routing based on traffic type (e.g., real-time traffic uses different paths) – different metrics for a link for different traffic 
+  - Routing based on traffic type (e.g., real-time traffic uses different paths) @@latex: \textemdash{} @@ different metrics for a link for different traffic 
   - Load balancing: also put some packets on the 2nd, 3rd best path
   - Hierarchical routing, ``areas'' as additional level, some security in place, support tunneled routers
 - Essential operation: Compute shortest paths on graph abstraction of an autonomous system
@@ -1825,23 +2021,37 @@ Resulting structure
 
 *** Inter-domain
 
+**** Inter-domain routing 
+
+Inter-domain routing is hard
+  - One organization not interested in carrying a competitor’s traffic, \dots
+  - Routing metrics of different domains cannot be compared; only reachability can be expressed
+  - Scale @@latex: \textemdash{} @@ currently, inter-domain routers have to know about 140.000
+    networks (rapidly outdated figure\dots)
+
+
+**** Challenge: Traffic engineering between ASes
+
+- Inbound
+  - Control routes via which traffic enters network
+  - Might want to steer traffic to other peering points, connections
+    to other ASes
+- Outbound
+  - Control where traffic leaves your AS 
+
 **** Inter-domain routing: BGPv4
 - Routing between domains: *Border Gateway Protocol* (BGP)
   - Routing complicated by politics, e.g., only route packets for paying customers, do not route transit traffic, \dots 
   - Legal constraints, e.g.: Traffic originating and ending in Canada must not leave Canada while in transit!
 - BGP’s perspective: only autonomous systems and their connections
   - Only talk about reachability, ``optimal'' is a vain hope 
-- Operation: Distance vector protocol
-  - But not only keep track of cost via a given neighbor, but store entire paths to destination ASs
-  - More robust, solves problems like count to infinity
-  - Infernally complicated protocol\dots 
+- Operation: *Path-based version* of a distance vector protocol
+  - Does not only keep track of cost via a given neighbor, but stores *entire paths* to destination ASs
+  - *BGP path*: (next hop router, sequence of ASes)
+  - More robust, attacks problems like count to infinity
 
-**** Relationships between ASes
+- Infernally complicated protocol\dots 
 
-- Unequal: *Transit provider* AS vs. customer/client AS 
-  - Money flows from customer AS to transit AS 
-- Equal: *Peer AS* 
-  - ASes exchange traffic in a fair way 
 
 
 **** BGP example scenario
@@ -1855,19 +2065,22 @@ Resulting structure
 
 All shown routers are so-called *BGP speaker* (=participate in BGP protocol)
 
-**** BGP basics 
-- BGP routers exchange information with each other
-- Internally in an AS: *iBGP session*
-  - All BGP speakers of an AS participate
-  - Exchange *all* known routing information with each other 
-- Externally, among neighboring AS: *eBGP session*
-  - Example: external sessions among R1a $\leftrightarrow$ R2c, R2b $\leftrightarrow$ R3d
-  - Routers of such a session are BGP peers
-
 **** BGP prefixes
 - Unit of BGP data exchange: subnetwork prefixes 
   - Prefixes can represent collection of networks by aggregation
   - Longest prefix matching rule assumed for forwarding, to allow aggressive aggregation 
+
+**** BGP basics 
+- BGP routers exchange information with each other
+- Internally in an AS: *iBGP session*
+  - All BGP speakers of an AS participate, all learn all routes 
+  - Gateway routers distribute *all known* prefixes to all *all other*
+    iBGP routers  (inside their AS)
+- Externally, among neighboring AS: *eBGP session*
+  - Example: external sessions among R1a $\leftrightarrow$ R2c, R2b $\leftrightarrow$ R3d
+  - Routers of such a session are *BGP peers*
+  - eBGP peers mutually announce lists of reachable network prefixes 
+
 
 **** BGP prefixes: Example
 
@@ -1893,26 +2106,29 @@ All shown routers are so-called *BGP speaker* (=participate in BGP protocol)
 
 
 **** BGP: Prefix, attribute, route
-- eBGP session peers mutually announce lists of reachable network prefixes 
-- Gateway routers distribute prefixes over iBGP session inside their AS 
+
 - Advertisements carry *BGP attributes* 
-  - In BGP: prefix + attribute = route 
-  - AS-PATH attribute: list of ASs through which the announcement has passed, extended by each gateway router upon receipt
-    - Example: 138.16.64/22 announced from AS2 via AS1 to AS3: AS-PATH = AS2 AS1
-  - Next Hop:
-    - Possibly (and likely), table populated by an intra-AS routing
-      protocol 
-    - *not* part of the packet header!
+  - In BGP: *prefix + attributes = route*
+\pause
+
+- AS-PATH attribute: list of ASs through which the announcement has passed, extended by each gateway router upon receipt
+  - Example: 138.16.64/22 announced via AS2 from AS3 to AS1:
+    AS-PATH = AS 3,  AS 1
 
 
 **** BGP routes, NEXT-HOP
-- NEXT-HOP attribute:  essentially, for recursive lookup in forwarding table
-  - Also, by construction, the router interface where the AS-PATH begins, i.e, from where the gateway router has received the announcement 
-- Usage: Router inside receiving AS can present the NEXT-HOP to its INTRA-AS routing protocol to get a route to the correct gateway 
-  - Example: Router 1d wants to learn how to send packets to a host in 138.16.64/22 
-  - Has received BGP route via iBGP, carrying router 1b interface as next hop
-- Essential part to tie inter- and intra-AS routing protocols together 
-
+- NEXT-HOP attribute:
+  - eBGP: interface of router in neighboring AS 
+  - iBGP: interface of router in own AS
+\pause
+- Usage, at border router (assume packet needs to traverse own AS to
+  an egress BGP router):
+  - Look up NEXT-HOP in BGP table 
+  - Look up route towards this NEXT-HOP in the INTRA-AS routing
+    protocol; returns on INTRA-AS next-hop IP address
+  - Look up outgoing interface / MAC address as usual via ARP 
+\pause
+- Caution: Plenty of variations here; compare homework assignment 
 
 
 **** BGP routing advertisements: example
@@ -2016,10 +2232,10 @@ Other things to watch out for
 
 \dots but are not covered here due to lack of time
 
-**** Some IP design principles – A historical side remark
+**** Some IP design principles @@latex: \textemdash{} @@ A historical side remark
 
 RFC 1958, based on papers from mid-80s:
-- Make sure it works – before writing the standard
+- Make sure it works @@latex: \textemdash{} @@ before writing the standard
 - Keep it simple
 - Make clear choices
 - Exploit modularity
@@ -2054,3 +2270,4 @@ RFC 1958, based on papers from mid-80s:
 - Different metrics and goals have to be fulfilled, in particular in inter-domain routing where optimality is only a single aspect 
 
 
+ 
