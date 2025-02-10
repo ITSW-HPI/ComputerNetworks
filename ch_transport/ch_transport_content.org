@@ -20,7 +20,7 @@
 
 - We will discuss the mechanisms in addition to congestion control that are required to build a reliable, connection-oriented, end-to-end transport protocol 
   - With TCP as the evident case study, intermixed with the presentation
-  - We will draw heavily on material from the link layer, as many similar problems are solved there in similar fashion – e.g., sliding window for error control
+  - We will draw heavily on material from the link layer, as many similar problems are solved there in similar fashion  @@latex: \textemdash{} @@ e.g., sliding window for error control
 - A brief discussion of other transport protocols complements the chapter
   - Namely, QUIC, UDP
 
@@ -37,12 +37,12 @@
 
 ** Services & addressing                                           
 
-**** Transport protocols – Services to upper layer
+**** Transport protocols  @@latex: \textemdash{} @@ Services to upper layer
 - Connection-less and connection-oriented transport service
-  - Connection management necessary as auxiliary service – setup and teardown
+  - Connection management necessary as auxiliary service  @@latex: \textemdash{} @@ setup and teardown
 - Reliable or unreliable transport
   - In-order, all packets
-- Be a good citizen in the network – perform congestion control
+- Be a good citizen in the network  @@latex: \textemdash{} @@ perform congestion control
 - Allow several transport endpoints in a single host 
   - Demultiplexing 
 - Support different interaction models
@@ -54,7 +54,7 @@
   - SAPs can identify connections or data flows
 - E.g., ``port numbers''
   - Dynamically allocated
-  - Predefined for ``well-known services'' – e.g., port 80 for Web server
+  - Predefined for ``well-known services''  @@latex: \textemdash{} @@ e.g., port 80 for Web server
 
 **** Basic transport protocols 
 
@@ -320,16 +320,16 @@ Solution: Have the sender answer a question that the receiver asks!
 
 
 
-**** Connection setup – further issues 
+**** Connection setup  @@latex: \textemdash{} @@ further issues 
 - Further problems due to crashing nodes, need some memory
 - Sequence numbers negotiated here are also used for the following data packets
 
 
 **** Terminology for \gls{TCP}
-- Connection setup – SYN (synchronize) packet
-- Connection accepted – SYN/ACK packet (because both the previous sequence number is acknowledged and a new sequence number from the receiver is proposed)
-- Connection confirmation – ACK packet (combined with DATA, as a rule)
-- Problem: SYN attack – flooding with nonsense SYN packets
+- Connection setup  @@latex: \textemdash{} @@ SYN (synchronize) packet
+- Connection accepted  @@latex: \textemdash{} @@ SYN/ACK packet (because both the previous sequence number is acknowledged and a new sequence number from the receiver is proposed)
+- Connection confirmation  @@latex: \textemdash{} @@ ACK packet (combined with DATA, as a rule)
+- Problem: SYN attack  @@latex: \textemdash{} @@ flooding with nonsense SYN packets
 
 **** Connection identification in TCP 
 - A TCP connection is set up 
@@ -355,7 +355,7 @@ Solution: Have the sender answer a question that the receiver asks!
 **** Two-army problem
 - Coordinated attack
   - Two armies form up for an attack against each other 
-  - One army is split into two parts that have to attack together – alone they will lose 
+  - One army is split into two parts that have to attack together  @@latex: \textemdash{} @@ alone they will lose 
   - Commanders of the parts communicate via messengers who might be captured 
 - Which rules shall the commanders use to agree on an attack date? 
 
@@ -489,7 +489,7 @@ Solution: Have the sender answer a question that the receiver asks!
 
 
  
-**** TCP state sequence – unfolding the state machine
+**** TCP state sequence  @@latex: \textemdash{} @@ unfolding the state machine
 - Example scenario: Web server/client
   - Web server opens a socket and listens on a connection
   - Web browser connects to that socket
@@ -501,7 +501,7 @@ Solution: Have the sender answer a question that the receiver asks!
     - No ``unusual'' behavior (closing a socket before establishing
       connection, \dots) !
 
-**** TCP MSC – connection establishment
+**** TCP MSC  @@latex: \textemdash{} @@ connection establishment
 
 #+caption: Establishing a TCP connection
 #+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:transport:tcp_establish}
@@ -510,7 +510,7 @@ Solution: Have the sender answer a question that the receiver asks!
 
 
 
-**** TCP MSC – connection release 
+**** TCP MSC  @@latex: \textemdash{} @@ connection release 
 
 #+caption: Releasing a TCP connection
 #+attr_latex: :width 0.95\textwidth :height 0.6\textheight :options keepaspectratio,page=\getpagerefnumber{page:transport:tcp_release}
@@ -577,9 +577,9 @@ TCP maintains buffer at
   - Transport layer PDUs can differ widely in size, unlike link layer frames
   - Network’s implicit packet buffering complicates the picture
  
-**** Flow control – buffer allocation
+**** Flow control  @@latex: \textemdash{} @@ buffer allocation
 - In order to support outstanding packets, the sender either
-  - Has to rely on the receiver to process packets as they come in (packets must not be reordered) – unrealistic, or 
+  - Has to rely on the receiver to process packets as they come in (packets must not be reordered)  @@latex: \textemdash{} @@ unrealistic, or 
   - Has to assume that the receiver has sufficient buffer space available
 - The more buffer, the more outstanding packets
   - Necessary to obtain highly efficient transmission, recall bandwidth-delay product!
@@ -591,12 +591,12 @@ TCP maintains buffer at
 **** Example of flow control with ACK/permit separation            :noexport:
 - Arrows show direction of transmission, ``\dots'' indicates lost packet
 - Potential deadlock in step 16 when control PDU is lost and not retransmitted
-**** Flow control – permits and acknowledgements
+**** Flow control  @@latex: \textemdash{} @@ permits and acknowledgements
 - Distinguish 
   - Receiver-Permits (``Receiver has buffer space, go ahead and send more data'')
   - Acknowledgements (``Receiver has received certain packets'')
 - Should be separated in real-world protocols!
-  - Unfortunately, often intermixed – TCP, e.g., uses ACKs as Network-Permits; see congestion control chapter
+  - Unfortunately, often intermixed  @@latex: \textemdash{} @@ TCP, e.g., uses ACKs as Network-Permits; see congestion control chapter
 - Can be combined with dynamically changing buffer space at the receiver
   - Due to, e.g., different speed with which the application actually retrieves received data from the transport layer
   - Following example: TCP 
@@ -609,17 +609,17 @@ TCP maintains buffer at
   - Maximum buffer space available: MaxRcvdBuffer
   - Advertised buffer space *Advertised window* =  MaxRcvdBuffer –
     OccupiedBufferSpace 
-    - Buffer space occupied: (NextByteExpected-1) – LastByteRead
+    - Buffer space occupied: (NextByteExpected-1)  @@latex: \textemdash{} @@ LastByteRead
 
 \pause 
 
 - Recall: Advertised window limits the amount of data that a sender will inject into the network
-  - TCP sender ensures that LastByteSent – LastByteAcked <  AdvertisedWindow 
+  - TCP sender ensures that LastByteSent  @@latex: \textemdash{} @@ LastByteAcked <  AdvertisedWindow 
 
-**** Nagle’s algorithm – self-clocking and windows                 :noexport:
+**** Nagle’s algorithm  @@latex: \textemdash{} @@ self-clocking and windows                 :noexport:
 - Recall TCP self-clocking: Arrival of an ACK is an indication that new data can be injected into the network
 - What happens when an ACK for only small amount of data (e.g., 1 byte) arrives?
-  - Send immediately? Network will be burdened by small packets (``silly window syndrome'') – inefficient 
+  - Send immediately? Network will be burdened by small packets (``silly window syndrome'')  @@latex: \textemdash{} @@ inefficient 
 
 \pause 
 - Nagle’s algorithm describes *how much* data TCP is allowed to send
@@ -638,7 +638,7 @@ TCP maintains buffer at
 - Consequence
   - Sender does not have clear picture of which data has already been
     received
-    - Compare discussion on FastRecovery in Chapter \ref{ch:cc}
+    - Compare discussion on FastRecovery in Chapter \ref{ch:congestion}
 
 **** Selective acknowledgement 
 
@@ -657,12 +657,12 @@ TCP maintains buffer at
   - All data up to and including sequence number 2780 has been
     received
   - Further data up to and including sequence number 2912
-  - With sequence numbers missing: 2781 - 2900, 2903 - 2906
+  - With sequence numbers missing: 2781  @@latex: \textemdash{} @@  2900, 2903  @@latex: \textemdash{} @@  2906
 - TCP header specifies:
   - CumAck 2780
   - Announce SACK option (takes 2 bytes) 
-  - SACK Block 1: 2902 - 2903
-  - SACK Block 2: 2907 - 2912
+  - SACK Block 1: 2902  @@latex: \textemdash{} @@  2903
+  - SACK Block 2: 2907  @@latex: \textemdash{} @@  2912
 - Challenge: Only 40 bytes available for all options 
 
 
@@ -757,13 +757,13 @@ Similar approaches for standard deviation
 - Autoregressive estimates of standard deviation have high overhead
 - Instead: use deviation as a simple approximation 
 - Jacobsen/Karels algorithm for new estimation: 
-- Differencen = SampleRTTn – EstimatedRTTn-1 
+- Differencen = SampleRTTn  @@latex: \textemdash{} @@ EstimatedRTTn-1 
 - EstimatedRTTn = EstimatedRTTn-1 + (\delta Differencen) 
-- Deviationn = Deviationn-1 + \delta (|Difference|n – Deviationn-1) 
+- Deviationn = Deviationn-1 + \delta (|Difference|n  @@latex: \textemdash{} @@ Deviationn-1) 
 - Timeoutn = \mu EstimatedRTTn + \phi Deviationn
 -  \delta 2 (0,1) a constant, \mu typically = 1, \phi = 4 (in TCP)
 - Deviation is an upper bound of standard deviation, but easier to compute 
-**** Jacobsen/Karels algorithm – Example                           :noexport:
+**** Jacobsen/Karels algorithm  @@latex: \textemdash{} @@ Example                           :noexport:
 - Same scenario 
 - \alpha = 0.8 (for both mean and deviation estimation)
 - \phi = 4
@@ -786,14 +786,14 @@ Similar approaches for standard deviation
 - Timeout calculation can suffer from coarse-grained timer resolution in the operating system
 - Example: some old Unixes only had 500 ms resolution
 - Also: firing a timer heavily depends on relatively precise timer interrupts to be available 
-- Sometimes, timeouts can happen only seconds after a packet has been transmitted – far too sluggish 
+- Sometimes, timeouts can happen only seconds after a packet has been transmitted  @@latex: \textemdash{} @@ far too sluggish 
 
 
 
 
 ** UDP                                                             
 
-**** A simple demultiplexer transport protocol – UDP 
+**** A simple demultiplexer transport protocol  @@latex: \textemdash{} @@ UDP 
 - An example for an unreliable, datagram protocol: \gls{UDP}
 - Only real function: (de)multiplex several data flows onto the IP layer and back to the applications
 - In addition: ensures packet’s correctness
@@ -906,6 +906,17 @@ Expensive 6-way handshake / 3 RTTs to establish TCP + TLS connection
 
 **** Challenge 2: Head-of-line blocking 
 
+- Recall: TCP guarantees in-order delivery of packets to application 
+- Consequence: a missing packet stalls delivery of following packets
+  - So-called *head-of-line blocking* (HolB or HOL)
+  - Even if they have no semantic dependence; even if possible to
+    process separately
+  - TCP has no knowledge
+    about semantic boundaries 
+
+
+**** Challenge 2: Head-of-line blocking, example  
+
 \vskip-2.5em
 
 ***** 
@@ -914,13 +925,6 @@ Expensive 6-way handshake / 3 RTTs to establish TCP + TLS connection
       :BEAMER_col: 0.48
       :END:
 
-- Recall: TCP guarantees in-order delivery of packets to application 
-- Consequence: a missing packet stalls delivery of following packets
-  - So-called *head-of-line blocking* (HolB or HOL)
-  - Even if they have no semantic dependence; even if possible to
-    process separately
-  - TCP has no knowledge
-    about semantic boundaries 
 - Example: 
   - Server sends two objects G, R, each two packets long (G1,
     G2 and R1, R2)
@@ -951,12 +955,12 @@ Expensive 6-way handshake / 3 RTTs to establish TCP + TLS connection
 - Suggestion: Just use a separate TCP connection for each object 
 \pause 
 - Bad idea!
-  - Incurs setup latency for each object
+  - Incurs connection setup latency for each object
   - These small connections would not even get out of slow start
   - Fairness!
   - OS overhead (separate socket buffers, \dots)
 \pause 
-- Not used; e.g., Web browsers use at most 2-4 connections in parallel 
+- Not used; e.g., Web browsers use at most 6--8 connections (per host) in parallel 
 \pause 
 - We need to make these separate objects visible to transport-layer
   mechanisms! 
@@ -1039,7 +1043,7 @@ Expensive 6-way handshake / 3 RTTs to establish TCP + TLS connection
 - Use a proper experimental design to finish in one human lifetime
 **** System design for better performance
 - CPU speed is more important than network speed
-- Or interfaces like NIC $ CPU 
+- Or interfaces like NIC \leftrightarrow  CPU 
 - Reduce packet count to reduce software overhead
 - Minimize context switches
 - Minimize copying 
@@ -1056,7 +1060,7 @@ Expensive 6-way handshake / 3 RTTs to establish TCP + TLS connection
   - Fairly share this bandwidth among all connections
   - I.e.: If n connections share a given bottleneck link, each connection obtains 1/n of its bandwidth
 - Interaction with other protocols
-  - Bottleneck bandwidth depends on load of other protocols as well, e.g., UDP – which is NOT congestion-controlled
+  - Bottleneck bandwidth depends on load of other protocols as well, e.g., UDP  @@latex: \textemdash{} @@ which is NOT congestion-controlled
   - I.e., UDP traffic can ``push aside'' TCP traffic 
 - Consequence: Transport protocols should be TCP friendly 
   - They should not consume more bandwidth than a TCP connection would consume in a comparable situation
@@ -1065,12 +1069,12 @@ Expensive 6-way handshake / 3 RTTs to establish TCP + TLS connection
 
 
 
-**** TCP – Summary 
+**** TCP  @@latex: \textemdash{} @@ Summary 
 - TCP consists of 
-  - Reliable byte stream – error control via GoBack-N or Selective Repeat (depending on version)
-  - Congestion control – window-based, AIMD, slow start, congestion threshold
-  - Flow control – advertised receiver window
-  - Connection management – three-way handshake for setup and teardown
+  - Reliable byte stream  @@latex: \textemdash{} @@ error control via GoBack-N or Selective Repeat (depending on version)
+  - Congestion control  @@latex: \textemdash{} @@ window-based, AIMD, slow start, congestion threshold
+  - Flow control  @@latex: \textemdash{} @@ advertised receiver window
+  - Connection management  @@latex: \textemdash{} @@ three-way handshake for setup and teardown
 - TCP is perhaps the single most complicated and subtle protocol in
   the internet (or BGP?)
   - Many little details and extensions are not discussed here 
@@ -1081,7 +1085,7 @@ Expensive 6-way handshake / 3 RTTs to establish TCP + TLS connection
 
 **** Conclusion 
 - Transport protocols can be anything from trivial to highly complex, depending on the purpose they serve
-- They determine to a large degree the dynamics of a network and – in particular – its stability
+- They determine to a large degree the dynamics of a network and  @@latex: \textemdash{} @@ in particular  @@latex: \textemdash{} @@ its stability
 - It is trivial to build ``faster'' than TCP protocols, but they are unstable
 - The interdependencies of various mechanisms in a transport protocols can be very subtle with big consequences
 - E.g., fairness, coexistence of different TCP versions  
