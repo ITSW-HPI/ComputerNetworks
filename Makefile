@@ -39,7 +39,7 @@ all:
 #	-make biberclean
 #	-make cleanstandalone 
 	-make chapterfigures
-	-make -C book book
+# 	-make -C book book
 	-make chapters
 
 chapters:
